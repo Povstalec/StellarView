@@ -1,0 +1,56 @@
+package net.povstalec.stellarview;
+
+import java.util.function.BiFunction;
+
+import org.slf4j.Logger;
+
+import com.mojang.logging.LogUtils;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.ConfigScreenHandler;
+import net.minecraftforge.client.event.RegisterDimensionSpecialEffectsEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
+import net.povstalec.stellarview.client.render.level.StellarViewOverworldEffects;
+import net.povstalec.stellarview.client.screens.config.ConfigScreen;
+import net.povstalec.stellarview.common.config.StellarViewConfig;
+
+@Mod(StellarView.MODID)
+public class StellarView
+{
+	public static final String MODID = "stellarview";
+    
+    public static final Logger LOGGER = LogUtils.getLogger();
+
+	public StellarView()
+	{
+		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, StellarViewConfig.CLIENT_CONFIG, MODID + "-client.toml");
+		
+		ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class, 
+				() -> new ConfigScreenHandler.ConfigScreenFactory(new BiFunction<Minecraft, Screen, Screen>()
+				{
+					@Override
+					public Screen apply(Minecraft mc, Screen screen)
+					{
+						return new ConfigScreen(screen);
+					}
+				}));
+		
+		MinecraftForge.EVENT_BUS.register(this);
+	}
+    
+    @Mod.EventBusSubscriber(modid = StellarView.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    public static class ClientModEvents
+    {
+    	@SubscribeEvent
+        public static void registerDimensionEffects(RegisterDimensionSpecialEffectsEvent event)
+        {
+        	event.register(StellarViewOverworldEffects.OVERWORLD_EFFECTS, new StellarViewOverworldEffects());
+        }
+    }
+}

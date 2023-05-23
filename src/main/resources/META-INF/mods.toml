@@ -1,0 +1,28 @@
+modLoader="javafml"
+loaderVersion="[44,)"
+license="Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License"
+#issueTrackerURL="https://github.com/Povstalec/StellarView/issues"
+[[mods]]
+modId="stellarview"
+version="0.1.0"
+displayName="Stellar View"
+#logoFile="stellarview_large.png"
+credits="-"
+authors="Woldericz_Junior"
+displayTest="IGNORE_ALL_VERSION"
+
+description='''
+Customize the sky to your desire.
+'''
+[[dependencies.stellarview]]
+    modId="forge"
+    mandatory=true
+    versionRange="[44,)"
+    ordering="NONE"
+    side="CLIENT"
+[[dependencies.stellarview]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.19.3,1.20)"
+    ordering="NONE"
+    side="BOTH"

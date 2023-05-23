@@ -1,0 +1,14 @@
+{
+	"gui.stellarview.config_stellarview": "Stellar View Config",
+	"gui.stellarview.replace_vanilla": "Replace Vanilla",
+	"gui.stellarview.disable_sun": "Disable Sun",
+	"gui.stellarview.disable_moon": "Disable Moon",
+	"gui.stellarview.disable_moon_phases": "Disable Moon Phases",
+	"gui.stellarview.disable_stars": "Disable Stars",
+	"gui.stellarview.day_stars": "Stars During Day",
+	"gui.stellarview.bright_stars": "Bright Stars",
+	
+	"gui.stellarview.reset": "Reset",
+	"gui.stellarview.true": "True",
+	"gui.stellarview.false": "False"
+}
