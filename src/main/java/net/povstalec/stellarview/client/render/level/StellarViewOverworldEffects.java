@@ -21,13 +21,11 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 	{
 		super(192.0F, true, DimensionSpecialEffects.SkyType.NORMAL, false, false);
 		this.spiralGalaxy4Arms(10842L, 1500, 0, 0, 16, 0.5 * Math.PI, 0.1 * Math.PI, 0);
-		//this.spiralGalaxy4Arms(10842L, 1500, 16, 15, 16, 0.35 * Math.PI, 0, 0);
-		//this.spiralGalaxy2Arms(10842L, 1500, 8, 0, 16, 0.35 * Math.PI, 0.35 * Math.PI, 0.15 * Math.PI);
 		
 		this.vanillaSun();
 		//this.vanillaMoon();
-		this.moon((Moon) new Moon.DefaultMoon());
-		this.skybox(new ResourceLocation(StellarView.MODID, "textures/environment/overworld_skybox/overworld.png"));
+		this.celestialObject(new Moon.DefaultMoon());
+		this.skybox(new ResourceLocation(StellarView.MODID, "textures/environment/overworld_skybox/overworld"));
 	}
 	
 	@Override

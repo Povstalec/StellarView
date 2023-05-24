@@ -10,11 +10,10 @@ import net.minecraft.client.renderer.DimensionSpecialEffects;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
-import net.povstalec.stellarview.api.celestial_objects.Moon;
-import net.povstalec.stellarview.api.celestial_objects.Sun;
+import net.povstalec.stellarview.api.celestial_objects.CelestialObject;
 import net.povstalec.stellarview.client.render.level.StellarViewSky;
 
-public abstract class StellarViewSpecialEffects extends DimensionSpecialEffects
+public class StellarViewSpecialEffects extends DimensionSpecialEffects
 {
 	protected StellarViewSky skyRenderer;
 	
@@ -67,23 +66,23 @@ public abstract class StellarViewSpecialEffects extends DimensionSpecialEffects
 	}
 	
 	/**
+	 * Adds a Celestial Object
+	 * @param object Celestial Object that will be added
+	 * @return self
+	 */
+	public final StellarViewSpecialEffects celestialObject(CelestialObject object)
+	{
+		this.skyRenderer = this.skyRenderer.celestialObject(object);
+		return this;
+	}
+	
+	/**
 	 * Adds a Sun with properties comparable to that of Vanilla Minecraft
 	 * @return self
 	 */
 	public final StellarViewSpecialEffects vanillaSun()
 	{
 		this.skyRenderer = this.skyRenderer.vanillaSun();
-		return this;
-	}
-	
-	/**
-	 * Adds a Sun
-	 * @param sun Sun that will be added
-	 * @return self
-	 */
-	public final StellarViewSpecialEffects sun(Sun sun)
-	{
-		this.skyRenderer = this.skyRenderer.sun(sun);
 		return this;
 	}
 
@@ -94,17 +93,6 @@ public abstract class StellarViewSpecialEffects extends DimensionSpecialEffects
 	public final StellarViewSpecialEffects vanillaMoon()
 	{
 		this.skyRenderer = this.skyRenderer.vanillaMoon();
-		return this;
-	}
-	
-	/**
-	 * Adds a Moon
-	 * @param moon Moon that will be added
-	 * @return self
-	 */
-	public final StellarViewSpecialEffects moon(Moon moon)
-	{
-		this.skyRenderer = this.skyRenderer.moon(moon);
 		return this;
 	}
 	

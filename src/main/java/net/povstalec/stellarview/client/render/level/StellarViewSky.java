@@ -1,7 +1,7 @@
 package net.povstalec.stellarview.client.render.level;
 
 import net.minecraft.resources.ResourceLocation;
-import net.povstalec.stellarview.StellarView;
+import net.povstalec.stellarview.api.celestial_objects.CelestialObject;
 import net.povstalec.stellarview.api.celestial_objects.Moon;
 import net.povstalec.stellarview.api.celestial_objects.Sun;
 import net.povstalec.stellarview.client.render.level.misc.StellarViewGalaxy;
@@ -37,27 +37,21 @@ public class StellarViewSky extends AbstractStellarViewSky
 		return this;
 	}
 	
+	public final StellarViewSky celestialObject(CelestialObject object)
+	{
+		this.celestialObjects.add(object);
+		return this;
+	}
+	
 	public final StellarViewSky vanillaSun()
 	{
 		this.celestialObjects.add(new Sun.VanillaSun());
 		return this;
 	}
 	
-	public final StellarViewSky sun(Sun sun)
-	{
-		this.celestialObjects.add(sun);
-		return this;
-	}
-	
 	public final StellarViewSky vanillaMoon()
 	{
 		this.celestialObjects.add(new Moon.VanillaMoon());
-		return this;
-	}
-	
-	public final StellarViewSky moon(Moon moon)
-	{
-		this.celestialObjects.add(moon);
 		return this;
 	}
 	

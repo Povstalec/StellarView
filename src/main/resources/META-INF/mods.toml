@@ -4,7 +4,7 @@ license="Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
 issueTrackerURL="https://github.com/Povstalec/StellarView/issues"
 [[mods]]
 modId="stellarview"
-version="0.1.0"
+version="0.1.1"
 displayName="Stellar View"
 #logoFile="stellarview_large.png"
 credits="-"
@@ -12,7 +12,7 @@ authors="Woldericz_Junior"
 displayTest="IGNORE_ALL_VERSION"
 
 description='''
-Customize the sky to your desire.
+Enjoy a Stellar View of the Sky
 '''
 [[dependencies.stellarview]]
     modId="forge"
