@@ -89,7 +89,6 @@ public class StellarViewSkybox
         	boolean resourcePresent = minecraft.getResourceManager().getResource(texturePath.withPath(path)).isPresent();
         	path = resourcePresent ? texturePath.getPath() : texturePath.getPath() + SUFFIXES[i];
         	path = path + ".png";
-        	System.out.println(resourcePresent);
         	
         	float[] uv = resourcePresent ? UV[i] : FULL_UV;
         	
