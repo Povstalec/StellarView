@@ -82,15 +82,15 @@ public class StellarViewConfig
 				"Makes Stars brighter");
 
 		milky_way_x = new StellarViewConfigValue.IntValue(client, "client.milky_way_x", 
-				0, -20, 20, 
+				0, -30, 30, 
 				"Specifies Milky Way X position");
 
 		milky_way_y = new StellarViewConfigValue.IntValue(client, "client.milky_way_y", 
-				0, -20, 20, 
+				0, -30, 30, 
 				"Specifies Milky Way Y position");
 
 		milky_way_z = new StellarViewConfigValue.IntValue(client, "client.milky_way_z", 
-				16, -20, 20, 
+				16, -30, 30, 
 				"Specifies Milky Way Z position");
 
 		milky_way_alpha = new StellarViewConfigValue.IntValue(client, "client.milky_way_alpha", 

@@ -1,5 +1,7 @@
 package net.povstalec.stellarview.client.screens.config;
 
+import javax.annotation.Nullable;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.gui.components.Button;
@@ -24,7 +26,7 @@ public class ConfigScreen extends Screen
     private static final int OPTIONS_LIST_ITEM_HEIGHT = 25;
 
 	
-	public ConfigScreen(Screen parentScreen)
+	public ConfigScreen(@Nullable Screen parentScreen)
 	{
 		super(Component.translatable("gui.sgjourney.config_stellarview"));
 		this.parentScreen = parentScreen;
@@ -73,7 +75,13 @@ public class ConfigScreen extends Screen
 		this.addWidget(this.configList);
 
 		this.addRenderableWidget(Button.builder(CommonComponents.GUI_BACK, 
-				(button) -> this.minecraft.setScreen(this.parentScreen))
+				(button) ->
+				{
+					if(this.parentScreen != null)
+						this.minecraft.setScreen(this.parentScreen);
+					else
+						this.onClose();
+				})
 				.bounds((this.width - BACK_BUTTON_WIDTH) / 2, this.height - BACK_BUTTON_TOP_OFFSET, BACK_BUTTON_WIDTH, BACK_BUTTON_HEIGHT).build());
     }
 	

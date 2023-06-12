@@ -8,6 +8,9 @@
 	"gui.stellarview.day_stars": "Stars During Day",
 	"gui.stellarview.bright_stars": "Bright Stars",
 	
+	"key.category.stellarview.config_screen": "Stellar View Config Screen",
+	"key.stellarview.open_config_screen": "Open Config Screen",
+	
 	"gui.stellarview.reset": "Reset",
 	"gui.stellarview.true": "True",
 	"gui.stellarview.false": "False"
