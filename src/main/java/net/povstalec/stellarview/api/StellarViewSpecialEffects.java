@@ -26,6 +26,16 @@ public class StellarViewSpecialEffects extends DimensionSpecialEffects
 	}
 	
 	/**
+	 * Creates Milky Way
+	 * @return self
+	 */
+	public final StellarViewSpecialEffects milkyWay(double xOffset, double yOffset, double zOffset, double alpha, double beta, double gamma)
+	{
+		this.skyRenderer = this.skyRenderer.milkyWay(xOffset, yOffset, zOffset, alpha, beta, gamma);
+		return this;
+	}
+	
+	/**
 	 * Creates a Spiral Galaxy with 4 arms
 	 * @param seed Seed used for Star generation
 	 * @param numberOfStars Number of Stars per arm

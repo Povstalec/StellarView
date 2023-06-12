@@ -48,4 +48,20 @@ public class StellarViewGalaxy
 		
 		return starBuffer;
 	}
+	
+	public final static VertexBuffer createMilkyWay(double xOffset, double yOffset, double zOffset, double alpha, double beta, double gamma)
+	{
+		VertexBuffer starBuffer = new VertexBuffer();
+		Tesselator tesselator = Tesselator.getInstance();
+		BufferBuilder bufferbuilder = tesselator.getBuilder();
+		RenderSystem.setShader(GameRenderer::getPositionShader);
+		BufferBuilder.RenderedBuffer bufferbuilder$renderedbuffer = StellarViewStarFormations.drawMilkyWay(bufferbuilder, 
+				xOffset, yOffset, zOffset, alpha, beta, gamma);
+		
+		starBuffer.bind();
+		starBuffer.upload(bufferbuilder$renderedbuffer);
+		VertexBuffer.unbind();
+		
+		return starBuffer;
+	}
 }

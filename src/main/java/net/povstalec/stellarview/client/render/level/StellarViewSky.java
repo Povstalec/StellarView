@@ -19,6 +19,12 @@ public class StellarViewSky extends AbstractStellarViewSky
 		return this;
 	}
 	
+	public final StellarViewSky milkyWay(double xOffset, double yOffset, double zOffset, double alpha, double beta, double gamma)
+	{
+		this.starBuffer = StellarViewGalaxy.createMilkyWay(xOffset, yOffset, zOffset, alpha, beta, gamma);
+		return this;
+	}
+	
 	public final StellarViewSky spiralGalaxy4Arms(long seed, int numberOfStars,
 			double xOffset, double yOffset, double zOffset, double alpha, double beta, double gamma)
 	{

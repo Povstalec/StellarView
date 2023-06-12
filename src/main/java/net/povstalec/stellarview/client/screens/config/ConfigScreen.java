@@ -7,6 +7,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.povstalec.stellarview.client.screens.config.ConfigList.BooleanConfigEntry;
+import net.povstalec.stellarview.client.screens.config.ConfigList.SliderConfigEntry;
 import net.povstalec.stellarview.common.config.StellarViewConfig;
 
 public class ConfigScreen extends Screen
@@ -54,6 +55,20 @@ public class ConfigScreen extends Screen
 				this.width, StellarViewConfig.day_stars));
 		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.bright_stars"), 
 				this.width, StellarViewConfig.bright_stars));
+
+		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_x"), 
+				this.width, StellarViewConfig.milky_way_x));
+		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_y"), 
+				this.width, StellarViewConfig.milky_way_y));
+		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_z"), 
+				this.width, StellarViewConfig.milky_way_z));
+
+		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_alpha"), 
+				this.width, StellarViewConfig.milky_way_alpha));
+		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_beta"), 
+				this.width, StellarViewConfig.milky_way_beta));
+		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_gamma"), 
+				this.width, StellarViewConfig.milky_way_gamma));
 		
 		this.addWidget(this.configList);
 
