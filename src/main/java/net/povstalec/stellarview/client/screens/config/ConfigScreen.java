@@ -28,7 +28,7 @@ public class ConfigScreen extends Screen
 	
 	public ConfigScreen(@Nullable Screen parentScreen)
 	{
-		super(Component.translatable("gui.sgjourney.config_stellarview"));
+		super(Component.translatable("gui.stellarview.config_stellarview"));
 		this.parentScreen = parentScreen;
 	}
 
@@ -58,18 +58,24 @@ public class ConfigScreen extends Screen
 		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.bright_stars"), 
 				this.width, StellarViewConfig.bright_stars));
 
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_x"), 
+		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_x"),
+				Component.empty(),
 				this.width, StellarViewConfig.milky_way_x));
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_y"), 
+		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_y"),
+				Component.empty(),
 				this.width, StellarViewConfig.milky_way_y));
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_z"), 
+		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_z"),
+				Component.empty(),
 				this.width, StellarViewConfig.milky_way_z));
 
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_alpha"), 
+		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_alpha"),
+				Component.literal("\u00b0"),
 				this.width, StellarViewConfig.milky_way_alpha));
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_beta"), 
+		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_beta"),
+				Component.literal("\u00b0"),
 				this.width, StellarViewConfig.milky_way_beta));
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_gamma"), 
+		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_gamma"),
+				Component.literal("\u00b0"),
 				this.width, StellarViewConfig.milky_way_gamma));
 		
 		this.addWidget(this.configList);

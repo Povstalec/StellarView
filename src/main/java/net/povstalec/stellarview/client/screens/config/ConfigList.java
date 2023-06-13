@@ -127,12 +127,11 @@ public class ConfigList extends ObjectSelectionList<ConfigList.ConfigEntry>
 		protected AbstractWidget sliderButton;
 		protected StellarViewConfigValue.IntValue value;
 		
-		public SliderConfigEntry(Component component, int screenWidth, StellarViewConfigValue.IntValue value)
+		public SliderConfigEntry(Component component1, Component component2, int screenWidth, StellarViewConfigValue.IntValue value)
 		{
 			this.value = value;
 			this.sliderButton = new ForgeSlider(0, 0, 200, 20, 
-					(Component) Component.literal("0").withStyle(ChatFormatting.GREEN),
-					(Component) Component.literal("1").withStyle(ChatFormatting.RED),
+					component1, component2,
 					value.getMin(), value.getMax(), value.get(), 1.0, 1, true);
 		}
 		

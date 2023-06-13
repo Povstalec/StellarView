@@ -8,6 +8,14 @@
 	"gui.stellarview.day_stars": "Stars During Day",
 	"gui.stellarview.bright_stars": "Bright Stars",
 	
+	"gui.stellarview.milky_way_x": "Milky Way X-Offset: ",
+	"gui.stellarview.milky_way_y": "Milky Way Y-Offset: ",
+	"gui.stellarview.milky_way_z": "Milky Way Z-Offset: ",
+	
+	"gui.stellarview.milky_way_alpha": "Milky Way X-Rotation: ",
+	"gui.stellarview.milky_way_beta": "Milky Way Z-Rotation: ",
+	"gui.stellarview.milky_way_gamma": "Milky Way Y-Rotation: ",
+	
 	"key.category.stellarview.config_screen": "Stellar View Config Screen",
 	"key.stellarview.open_config_screen": "Open Config Screen",
 	
