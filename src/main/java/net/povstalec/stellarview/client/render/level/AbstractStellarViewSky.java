@@ -54,7 +54,7 @@ public abstract class AbstractStellarViewSky implements StellarViewSkyEffects, S
 	protected void renderEcliptic(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, Matrix4f projectionMatrix, Runnable setupFog, BufferBuilder bufferbuilder, float rain)
 	{
 		double zPos = camera.getEntity().getPosition(partialTicks).z();
-		float zRotation = 2 * (float) Math.toDegrees(Math.atan(zPos / 30000000));
+		float zRotation = 2 * (float) Math.toDegrees(Math.atan(zPos / (100000 * StellarViewConfig.rotation_multiplier.get())));
 		
 		stack.pushPose();
         stack.mulPose(Axis.YP.rotationDegrees(-90.0F));

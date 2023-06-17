@@ -58,6 +58,10 @@ public class ConfigScreen extends Screen
 		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.bright_stars"), 
 				this.width, StellarViewConfig.bright_stars));
 
+		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.rotation_multiplier"),
+				Component.empty(),
+				this.width, StellarViewConfig.rotation_multiplier));
+
 		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_x"),
 				Component.empty(),
 				this.width, StellarViewConfig.milky_way_x));

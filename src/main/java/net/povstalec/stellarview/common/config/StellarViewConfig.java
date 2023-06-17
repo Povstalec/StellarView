@@ -26,6 +26,8 @@ public class StellarViewConfig
 	public static StellarViewConfigValue.BooleanValue day_stars;
 	public static StellarViewConfigValue.BooleanValue bright_stars;
 	
+	public static StellarViewConfigValue.IntValue rotation_multiplier;
+	
 	public static StellarViewConfigValue.IntValue milky_way_x;
 	public static StellarViewConfigValue.IntValue milky_way_y;
 	public static StellarViewConfigValue.IntValue milky_way_z;
@@ -81,14 +83,16 @@ public class StellarViewConfig
 				true, 
 				"Makes Stars brighter");
 
+		rotation_multiplier = new StellarViewConfigValue.IntValue(client, "client.rotation_multiplier", 
+				300, 1, 300, 
+				"Controls how much the sky rotates when moving");
+
 		milky_way_x = new StellarViewConfigValue.IntValue(client, "client.milky_way_x", 
 				0, -30, 30, 
 				"Specifies Milky Way X position");
-
 		milky_way_y = new StellarViewConfigValue.IntValue(client, "client.milky_way_y", 
 				0, -30, 30, 
 				"Specifies Milky Way Y position");
-
 		milky_way_z = new StellarViewConfigValue.IntValue(client, "client.milky_way_z", 
 				16, -30, 30, 
 				"Specifies Milky Way Z position");
@@ -96,11 +100,9 @@ public class StellarViewConfig
 		milky_way_alpha = new StellarViewConfigValue.IntValue(client, "client.milky_way_alpha", 
 				90, 0, 360, 
 				"Specifies Milky Way Alpha rotation");
-
 		milky_way_beta = new StellarViewConfigValue.IntValue(client, "client.milky_way_beta", 
 				18, 0, 360, 
 				"Specifies Milky Way Beta rotation");
-
 		milky_way_gamma = new StellarViewConfigValue.IntValue(client, "client.milky_way_gamma", 
 				0, 0, 360, 
 				"Specifies Milky Way Gamma rotation");
