@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[44,)"
+loaderVersion="[45,)"
 license="Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License"
 issueTrackerURL="https://github.com/Povstalec/StellarView/issues"
 [[mods]]
@@ -17,12 +17,12 @@ Enjoy a Stellar View of the Sky
 [[dependencies.stellarview]]
     modId="forge"
     mandatory=true
-    versionRange="[44,)"
+    versionRange="[45,)"
     ordering="NONE"
     side="CLIENT"
 [[dependencies.stellarview]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.19.3,1.20)"
+    versionRange="[1.19.4,1.20)"
     ordering="NONE"
     side="BOTH"

@@ -55,8 +55,7 @@ public interface StellarViewSkyEffects
 		builder.begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION);
 		builder.vertex(0.0D, (double)scale, 0.0D).endVertex();
 		
-		for(int i = -180; i <= 180; i += 45)
-		{
+		for(int i = -180; i <= 180; i += 45) {
 			builder.vertex((double)(f1 * Mth.cos((float)i * ((float)Math.PI / 180F))), (double)scale, (double)(512.0F * Mth.sin((float)i * ((float)Math.PI / 180F)))).endVertex();
 		}
 		
@@ -69,7 +68,6 @@ public interface StellarViewSkyEffects
 		if(sunriseColor != null)
 		{
 			RenderSystem.setShader(GameRenderer::getPositionColorShader);
-			RenderSystem.disableTexture();
 			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 			stack.pushPose();
 			stack.mulPose(Axis.XP.rotationDegrees(90.0F));
