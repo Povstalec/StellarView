@@ -1,7 +1,5 @@
 package net.povstalec.stellarview.client.render.level.misc;
 
-import org.joml.Matrix4f;
-
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferUploader;
@@ -10,7 +8,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexBuffer;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.math.Axis;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Vector3f;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.GameRenderer;
@@ -68,12 +67,13 @@ public interface StellarViewSkyEffects
 		if(sunriseColor != null)
 		{
 			RenderSystem.setShader(GameRenderer::getPositionColorShader);
+			RenderSystem.disableTexture();
 			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 			stack.pushPose();
-			stack.mulPose(Axis.XP.rotationDegrees(90.0F));
+			stack.mulPose(Vector3f.XP.rotationDegrees(90.0F));
 			float sunAngle = Mth.sin(level.getSunAngle(partialTicks)) < 0.0F ? 180.0F : 0.0F;
-			stack.mulPose(Axis.ZP.rotationDegrees(sunAngle));
-			stack.mulPose(Axis.ZP.rotationDegrees(90.0F));
+			stack.mulPose(Vector3f.ZP.rotationDegrees(sunAngle));
+			stack.mulPose(Vector3f.ZP.rotationDegrees(90.0F));
 			float sunriseR = sunriseColor[0];
 			float sunriseG = sunriseColor[1];
 			float sunriseB = sunriseColor[2];

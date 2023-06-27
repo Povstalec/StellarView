@@ -1,7 +1,5 @@
 package net.povstalec.stellarview.client.render.level.misc;
 
-import org.joml.Matrix4f;
-
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -9,7 +7,8 @@ import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.math.Axis;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Vector3f;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -74,9 +73,9 @@ public class StellarViewSkybox
 	{
 		
 		stack.pushPose();
-        stack.mulPose(Axis.YP.rotationDegrees(skyXAngle));
-        stack.mulPose(Axis.ZP.rotationDegrees(skyYAngle));
-        stack.mulPose(Axis.XP.rotationDegrees(skyZAngle));
+        stack.mulPose(Vector3f.YP.rotationDegrees(skyXAngle));
+        stack.mulPose(Vector3f.ZP.rotationDegrees(skyYAngle));
+        stack.mulPose(Vector3f.XP.rotationDegrees(skyZAngle));
         
         Matrix4f lastMatrix = stack.last().pose();
         RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
@@ -86,13 +85,13 @@ public class StellarViewSkybox
         for(int i = 0; i < 6; i++)
         {
         	String path = texturePath.getPath() + ".png";
-        	boolean resourcePresent = minecraft.getResourceManager().getResource(texturePath.withPath(path)).isPresent();
+        	boolean resourcePresent = minecraft.getResourceManager().getResource(new ResourceLocation(texturePath.getNamespace(), path)).isPresent();
         	path = resourcePresent ? texturePath.getPath() : texturePath.getPath() + SUFFIXES[i];
         	path = path + ".png";
         	
         	float[] uv = resourcePresent ? UV[i] : FULL_UV;
         	
-        	this.renderFacade(bufferbuilder, lastMatrix, texturePath.withPath(path), THETA_PHI[i][0], THETA_PHI[i][1], uv);
+        	this.renderFacade(bufferbuilder, lastMatrix, new ResourceLocation(texturePath.getNamespace(), path), THETA_PHI[i][0], THETA_PHI[i][1], uv);
         }
         
 		/*this.renderFacade(bufferbuilder, lastMatrix, texturePath, 0.0F, 0.0F, UP_UV);

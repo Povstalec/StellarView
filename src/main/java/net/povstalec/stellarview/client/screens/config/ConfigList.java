@@ -43,7 +43,7 @@ public class ConfigList extends ObjectSelectionList<ConfigList.ConfigEntry>
 	    
 	    public ConfigEntry()
 	    {
-	    	this.resetToDefault = Button.builder(reset, (button) -> reset()).bounds(0, 0, 50, 20).build();
+	    	this.resetToDefault = new Button(0, 0, 50, 20, reset, onPress -> reset());
 	    }
 	    
 	    @Override
@@ -69,8 +69,8 @@ public class ConfigList extends ObjectSelectionList<ConfigList.ConfigEntry>
 		@Override
 		public void render(PoseStack stack, int i, int j, int k, int l, int m, int n, int o, boolean bl, float partialTick)
 		{
-			this.resetToDefault.setX(k + 210);
-	        this.resetToDefault.setY(j);
+			this.resetToDefault.x = k + 210;
+	        this.resetToDefault.y = j;
 	        this.resetToDefault.render(stack, n, o, partialTick);
 		}
 	}
@@ -114,8 +114,8 @@ public class ConfigList extends ObjectSelectionList<ConfigList.ConfigEntry>
 		@Override
 		public void render(PoseStack stack, int i, int j, int k, int l, int m, int n, int o, boolean bl, float partialTick)
 		{
-			this.cycleButton.setX(k);
-	        this.cycleButton.setY(j);
+			this.cycleButton.x = k;
+	        this.cycleButton.y = j;
 	        this.cycleButton.render(stack, n, o, partialTick);
 			super.render(stack, i, j, k, l, m, n, o, bl, partialTick);
 		}
@@ -188,8 +188,8 @@ public class ConfigList extends ObjectSelectionList<ConfigList.ConfigEntry>
 		@Override
 		public void render(PoseStack stack, int i, int j, int k, int l, int m, int n, int o, boolean bl, float partialTick)
 		{
-			this.sliderButton.setX(k);
-	        this.sliderButton.setY(j);
+			this.sliderButton.x = k;
+	        this.sliderButton.y = j;
 	        this.sliderButton.render(stack, n, o, partialTick);
 			super.render(stack, i, j, k, l, m, n, o, bl, partialTick);
 		}

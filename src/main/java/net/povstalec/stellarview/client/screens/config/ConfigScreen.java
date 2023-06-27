@@ -83,8 +83,16 @@ public class ConfigScreen extends Screen
 				this.width, StellarViewConfig.milky_way_gamma));
 		
 		this.addWidget(this.configList);
-
-		this.addRenderableWidget(Button.builder(CommonComponents.GUI_BACK, 
+		
+		this.addRenderableWidget(new Button((this.width - BACK_BUTTON_WIDTH) / 2, this.height - BACK_BUTTON_TOP_OFFSET, BACK_BUTTON_WIDTH, BACK_BUTTON_HEIGHT, 
+				CommonComponents.GUI_BACK, onPress ->
+			{
+				if(this.parentScreen != null)
+					this.minecraft.setScreen(this.parentScreen);
+				else
+					this.onClose();
+			}));
+		/*this.addRenderableWidget(Button.builder(CommonComponents.GUI_BACK, 
 				(button) ->
 				{
 					if(this.parentScreen != null)
@@ -92,7 +100,7 @@ public class ConfigScreen extends Screen
 					else
 						this.onClose();
 				})
-				.bounds((this.width - BACK_BUTTON_WIDTH) / 2, this.height - BACK_BUTTON_TOP_OFFSET, BACK_BUTTON_WIDTH, BACK_BUTTON_HEIGHT).build());
+				.bounds((this.width - BACK_BUTTON_WIDTH) / 2, this.height - BACK_BUTTON_TOP_OFFSET, BACK_BUTTON_WIDTH, BACK_BUTTON_HEIGHT).build());*/
     }
 	
 	@Override

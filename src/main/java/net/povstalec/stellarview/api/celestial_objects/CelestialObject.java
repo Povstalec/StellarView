@@ -1,7 +1,5 @@
 package net.povstalec.stellarview.api.celestial_objects;
 
-import org.joml.Matrix4f;
-
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -9,7 +7,8 @@ import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.math.Axis;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Vector3f;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
@@ -155,9 +154,9 @@ public class CelestialObject
 		float phi = (float) StellarCoordinates.sphericalPhi(coords[0], coords[1], coords[2]);
 		
 		stack.pushPose();
-        stack.mulPose(Axis.YP.rotationDegrees(playerYAngle));
-        stack.mulPose(Axis.ZP.rotationDegrees(playerZAngle));
-        stack.mulPose(Axis.XP.rotationDegrees(playerXAngle));
+        stack.mulPose(Vector3f.YP.rotationDegrees(playerYAngle));
+        stack.mulPose(Vector3f.ZP.rotationDegrees(playerZAngle));
+        stack.mulPose(Vector3f.XP.rotationDegrees(playerXAngle));
         Matrix4f lastMatrix = stack.last().pose();
 		
 		if(uv == null || uv.length < 4)
