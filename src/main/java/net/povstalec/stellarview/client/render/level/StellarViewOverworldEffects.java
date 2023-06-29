@@ -25,6 +25,7 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 		//this.vanillaMoon();
 		this.celestialObject(new Moon.DefaultMoon());
 		this.skybox(new ResourceLocation(StellarView.MODID, "textures/environment/overworld_skybox/overworld"));
+		this.milkyWay(0, 0, 16, Math.toRadians(90), Math.toRadians(18), Math.toRadians(0));
 	}
 	
 	@Override
@@ -32,9 +33,8 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
     {
 		if(StellarViewConfig.replace_vanilla.get())
 		{
-			// Milky Way is here because Players must have the option to use config, otherwise it would be in the constructor
-			this.milkyWay(StellarViewConfig.milky_way_x.get(), StellarViewConfig.milky_way_y.get(), StellarViewConfig.milky_way_z.get(),
-					Math.toRadians(StellarViewConfig.milky_way_alpha.get()), Math.toRadians(StellarViewConfig.milky_way_beta.get()), Math.toRadians(StellarViewConfig.milky_way_gamma.get()));
+			/*this.milkyWay(StellarViewConfig.milky_way_x.get(), StellarViewConfig.milky_way_y.get(), StellarViewConfig.milky_way_z.get(),
+					Math.toRadians(StellarViewConfig.milky_way_alpha.get()), Math.toRadians(StellarViewConfig.milky_way_beta.get()), Math.toRadians(StellarViewConfig.milky_way_gamma.get()));*/
 			super.renderSky(level, ticks, partialTick, poseStack, camera, projectionMatrix, isFoggy, setupFog);
 		}
 		

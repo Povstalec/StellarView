@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ConfigScreenHandler;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RegisterDimensionSpecialEffectsEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -28,6 +29,8 @@ public class StellarView
 	public static final String MODID = "stellarview";
     
     public static final Logger LOGGER = LogUtils.getLogger();
+    
+    public static StellarViewOverworldEffects overworld;
 
 	public StellarView()
 	{
@@ -52,7 +55,8 @@ public class StellarView
     	@SubscribeEvent
         public static void registerDimensionEffects(RegisterDimensionSpecialEffectsEvent event)
         {
-        	event.register(StellarViewOverworldEffects.OVERWORLD_EFFECTS, new StellarViewOverworldEffects());
+    		overworld = new StellarViewOverworldEffects();
+        	event.register(StellarViewOverworldEffects.OVERWORLD_EFFECTS, overworld);
         }
 
     	@SubscribeEvent
@@ -60,5 +64,21 @@ public class StellarView
         {
         	event.register(KeyBindings.OPEN_CONFIG_KEY);
         }
+    }
+    
+    @Mod.EventBusSubscriber(modid = StellarView.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
+    public static class ClientForgeEvents
+    {
+    	@SubscribeEvent
+        public static void playerLoggedIn(ClientPlayerNetworkEvent.LoggingIn event)
+        {
+    		updateMilkyWay();
+        }
+    }
+    
+    public static void updateMilkyWay()
+    {
+    	overworld.milkyWay(StellarViewConfig.milky_way_x.get(), StellarViewConfig.milky_way_y.get(), StellarViewConfig.milky_way_z.get(),
+				Math.toRadians(StellarViewConfig.milky_way_alpha.get()), Math.toRadians(StellarViewConfig.milky_way_beta.get()), Math.toRadians(StellarViewConfig.milky_way_gamma.get()));
     }
 }
