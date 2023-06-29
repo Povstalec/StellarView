@@ -11,6 +11,7 @@ import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.gui.widget.ForgeSlider;
+import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.common.config.StellarViewConfigValue;
 
 public class ConfigList extends ObjectSelectionList<ConfigList.ConfigEntry>
@@ -58,6 +59,12 @@ public class ConfigList extends ObjectSelectionList<ConfigList.ConfigEntry>
 	    protected void reset()
 	    {
 			this.resetToDefault.playDownSound(Minecraft.getInstance().getSoundManager());
+			update();
+	    }
+	    
+	    protected void update()
+	    {
+	    	StellarView.updateMilkyWay();
 	    }
 
 		@Override
@@ -107,6 +114,7 @@ public class ConfigList extends ObjectSelectionList<ConfigList.ConfigEntry>
 	    {
 	    	if(this.cycleButton.isMouseOver(mouseX, mouseY))
 	    		((AbstractButton) this.cycleButton).onPress();
+	    	update();
 	    	
 			return super.mouseClicked(mouseX, mouseY, key);
 	    }
@@ -145,6 +153,7 @@ public class ConfigList extends ObjectSelectionList<ConfigList.ConfigEntry>
 		protected void onChanged()
 		{
 	    	value.set((int) ((ForgeSlider) this.sliderButton).getValue());
+	    	update();
 		}
 	    
 	    @Override
