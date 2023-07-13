@@ -93,7 +93,7 @@ public abstract class AbstractStellarViewSky implements StellarViewSkyEffects, S
 		
 		if(starBrightness > 0.0F)
 		{
-			RenderSystem.setShaderColor(starBrightness, starBrightness, starBrightness, starBrightness);
+			RenderSystem.setShaderColor(1, 1, 1, starBrightness);
 			FogRenderer.setupNoFog();
 			
 			this.starBuffer.bind();
