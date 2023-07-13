@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexBuffer;
+import com.mojang.blaze3d.vertex.VertexBuffer.Usage;
 
 import net.minecraft.client.renderer.GameRenderer;
 
@@ -20,7 +21,7 @@ public class StellarViewGalaxy
 	public final static VertexBuffer createStars(Type type, long seed, int numberOfStars,
 			double xOffset, double yOffset, double zOffset, double alpha, double beta, double gamma)
 	{
-		VertexBuffer starBuffer = new VertexBuffer();
+		VertexBuffer starBuffer = new VertexBuffer(Usage.STATIC);
 		Tesselator tesselator = Tesselator.getInstance();
 		BufferBuilder bufferbuilder = tesselator.getBuilder();
 		RenderSystem.setShader(GameRenderer::getPositionShader);
@@ -51,7 +52,7 @@ public class StellarViewGalaxy
 	
 	public final static VertexBuffer createMilkyWay(double xOffset, double yOffset, double zOffset, double alpha, double beta, double gamma)
 	{
-		VertexBuffer starBuffer = new VertexBuffer();
+		VertexBuffer starBuffer = new VertexBuffer(Usage.STATIC);
 		Tesselator tesselator = Tesselator.getInstance();
 		BufferBuilder bufferbuilder = tesselator.getBuilder();
 		RenderSystem.setShader(GameRenderer::getPositionShader);

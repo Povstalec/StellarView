@@ -1,7 +1,10 @@
 {
 	"pack":
 	{
-		"description": "Stellar View resources",
+		"description":
+		{
+			"text": "Stellar View resources"
+		},
 		"pack_format": 12,
 		"forge:resource_pack_format": 12,
 		"forge:data_pack_format": 10
