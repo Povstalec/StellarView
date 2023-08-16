@@ -33,6 +33,10 @@ minecraft {
     // Default run configurations.
     // These can be tweaked, removed, or duplicated as needed.
     runs {
+        all {
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
+        }
         client {
             workingDirectory project.file('run')
 
@@ -123,6 +127,12 @@ repositories {
     // flatDir {
     //     dir 'libs'
     // }
+    maven {
+        url "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
 }
 
 dependencies {
@@ -140,6 +150,11 @@ dependencies {
     // For more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
+    
+    runtimeOnly fg.deobf("curse.maven:botarium-704113:4416456")
+    runtimeOnly fg.deobf("curse.maven:resourceful-lib-570073:4378849")
+    runtimeOnly fg.deobf("curse.maven:resourceful-config-714059:4394154")
+	runtimeOnly fg.deobf("curse.maven:ad-astra-635042:4390126")
 }
 
 // Example for how to get properties into the manifest for reading at runtime.

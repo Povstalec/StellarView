@@ -3,10 +3,10 @@ package net.povstalec.stellarview.api.celestial_objects;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.StellarView;
-import net.povstalec.stellarview.common.config.StellarViewConfig;
 
 public class Sun extends CelestialObject
 {
@@ -18,9 +18,10 @@ public class Sun extends CelestialObject
 	public Sun(ResourceLocation sunTexture, float size)
 	{
 		super(sunTexture, 100.0F, size);
+		this.visibleDuringDay();
 	}
 	
-	public static final class VanillaSun extends Sun
+	public static class VanillaSun extends Sun
 	{
 		public VanillaSun()
 		{
@@ -29,15 +30,15 @@ public class Sun extends CelestialObject
 		}
 		
 		@Override
-		public final void render(ClientLevel level, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder, float[] uv,
+		public final void render(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder, float[] uv,
 				float playerDistance, float playerXAngle, float playerYAngle, float playerZAngle)
 		{
-			if(!StellarViewConfig.disable_sun.get())
-				super.render(level, partialTicks, stack, bufferbuilder, uv, playerDistance, playerXAngle, playerYAngle, playerZAngle);
+			if(shouldRender())
+				super.render(level, camera, partialTicks, stack, bufferbuilder, uv, playerDistance, playerXAngle, playerYAngle, playerZAngle);
 		}
 	}
 	
-	public static final class DefaultSun extends Sun
+	public static class DefaultSun extends Sun
 	{
 		public DefaultSun()
 		{
@@ -46,11 +47,11 @@ public class Sun extends CelestialObject
 		}
 		
 		@Override
-		public final void render(ClientLevel level, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder, float[] uv,
+		public final void render(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder, float[] uv,
 				float playerDistance, float playerXAngle, float playerYAngle, float playerZAngle)
 		{
-			if(!StellarViewConfig.disable_sun.get())
-				super.render(level, partialTicks, stack, bufferbuilder, uv, playerDistance, playerXAngle, playerYAngle, playerZAngle);
+			if(shouldRender())
+				super.render(level, camera, partialTicks, stack, bufferbuilder, uv, playerDistance, playerXAngle, playerYAngle, playerZAngle);
 		}
 	}
 }
