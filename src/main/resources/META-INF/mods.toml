@@ -4,7 +4,7 @@ license="Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
 issueTrackerURL="https://github.com/Povstalec/StellarView/issues"
 [[mods]]
 modId="stellarview"
-version="0.1.4"
+version="0.1.5"
 displayName="Stellar View"
 #logoFile="stellarview_large.png"
 credits="-"
@@ -17,7 +17,7 @@ Enjoy a Stellar View of the Sky
 [[dependencies.stellarview]]
     modId="forge"
     mandatory=true
-    versionRange="[47,)"
+    versionRange="[44,)"
     ordering="NONE"
     side="CLIENT"
 [[dependencies.stellarview]]

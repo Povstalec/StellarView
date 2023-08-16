@@ -10,7 +10,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexBuffer;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.blaze3d.vertex.VertexBuffer.Usage;
 import com.mojang.math.Axis;
 
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -21,7 +20,7 @@ public interface StellarViewSkyEffects
 {
 	default VertexBuffer createDarkSky()
 	{
-		VertexBuffer darkBuffer = new VertexBuffer(Usage.STATIC);
+		VertexBuffer darkBuffer = new VertexBuffer(VertexBuffer.Usage.STATIC);
 		Tesselator tesselator = Tesselator.getInstance();
 		BufferBuilder bufferbuilder = tesselator.getBuilder();
 		
@@ -35,7 +34,7 @@ public interface StellarViewSkyEffects
 
 	default VertexBuffer createLightSky()
 	{
-		VertexBuffer skyBuffer = new VertexBuffer(Usage.STATIC);
+		VertexBuffer skyBuffer = new VertexBuffer(VertexBuffer.Usage.STATIC);
 		Tesselator tesselator = Tesselator.getInstance();
 		BufferBuilder bufferbuilder = tesselator.getBuilder();
 		
