@@ -64,7 +64,7 @@ public class ConfigList extends ObjectSelectionList<ConfigList.ConfigEntry>
 	    
 	    protected void update()
 	    {
-	    	StellarView.updateMilkyWay();
+	    	StellarView.updateGalaxies();
 	    }
 
 		@Override

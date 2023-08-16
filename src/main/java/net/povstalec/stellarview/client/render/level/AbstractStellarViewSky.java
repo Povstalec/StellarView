@@ -51,7 +51,7 @@ public abstract class AbstractStellarViewSky implements StellarViewSkyEffects, S
 	}
 	
 	// Ecliptic plane
-	protected void renderEcliptic(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, Matrix4f projectionMatrix, Runnable setupFog, BufferBuilder bufferbuilder, float rain)
+	protected void renderEcliptic(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, Matrix4f projectionMatrix, Runnable setupFog, BufferBuilder bufferbuilder)
 	{
 		double zPos = camera.getEntity().getPosition(partialTicks).z();
 		float zRotation = 2 * (float) Math.toDegrees(Math.atan(zPos / (100000 * StellarViewConfig.rotation_multiplier.get())));
@@ -60,7 +60,8 @@ public abstract class AbstractStellarViewSky implements StellarViewSkyEffects, S
         stack.mulPose(Axis.YP.rotationDegrees(-90.0F));
         stack.mulPose(Axis.ZP.rotationDegrees(zRotation));
         stack.mulPose(Axis.XP.rotationDegrees((level.getTimeOfDay(partialTicks) + (float) level.getDayTime() / 24000 / 96) * 360.0F));
-        
+
+		float rain = 1.0F - level.getRainLevel(partialTicks);
         if(!StellarViewConfig.disable_stars.get())
         	this.renderStars(level, camera, partialTicks, rain, stack, projectionMatrix, setupFog);
 
@@ -70,13 +71,11 @@ public abstract class AbstractStellarViewSky implements StellarViewSkyEffects, S
 		
 		if(skybox != null)
 			skybox.render(level, partialTicks, stack, bufferbuilder, 0, 0, 0);
-		
-        RenderSystem.setShaderColor(rain, rain, rain, rain);
         
         //TODO Render Celestial Bodies
         this.celestialObjects.stream().forEach(object ->
         {
-        	object.render(level, partialTicks, stack, bufferbuilder, FULL_UV,
+        	object.render(level, camera, partialTicks, stack, bufferbuilder, FULL_UV,
             		100.0F, 360 * level.getTimeOfDay(partialTicks), -90.0F, zRotation);
         });
 	}
@@ -128,8 +127,7 @@ public abstract class AbstractStellarViewSky implements StellarViewSkyEffects, S
 		
 		this.renderSunrise(level, partialTicks, stack, projectionMatrix, setupFog, bufferbuilder);
 		
-		float rain = 1.0F - level.getRainLevel(partialTicks);
-		this.renderEcliptic(level, camera, partialTicks, stack, projectionMatrix, setupFog, bufferbuilder, rain);
+		this.renderEcliptic(level, camera, partialTicks, stack, projectionMatrix, setupFog, bufferbuilder);
         
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.disableBlend();

@@ -1,5 +1,11 @@
 {
-	"gui.stellarview.config_stellarview": "Stellar View Config",
+	"gui.stellarview.config": "Stellar View Config",
+	"gui.stellarview.config.general": "Stellar View - General Config",
+	"gui.stellarview.config.overworld": "Stellar View - Overworld Config",
+	"gui.stellarview.config.alpha": "Stellar View - Alpha Config",
+	"gui.stellarview.config.beta": "Stellar View - Beta Config",
+	"gui.stellarview.config.gamma": "Stellar View - Gamma Config",
+	
 	"gui.stellarview.replace_vanilla": "Replace Vanilla",
 	"gui.stellarview.disable_sun": "Disable Sun",
 	"gui.stellarview.disable_moon": "Disable Moon",
@@ -10,13 +16,24 @@
 	
 	"gui.stellarview.rotation_multiplier": "Sky Rotation Multiplier: ",
 	
+	"gui.stellarview.meteor_shower_chance": "Meteor Shower Chance: ",
+	"gui.stellarview.shooting_star_chance": "Shooting Star Chance: ",
+	
 	"gui.stellarview.milky_way_x": "Milky Way X-Offset: ",
 	"gui.stellarview.milky_way_y": "Milky Way Y-Offset: ",
 	"gui.stellarview.milky_way_z": "Milky Way Z-Offset: ",
 	
+	"gui.stellarview.galaxy_x": "Galaxy X-Offset: ",
+	"gui.stellarview.galaxy_y": "Galaxy Y-Offset: ",
+	"gui.stellarview.galaxy_z": "Galaxy Z-Offset: ",
+	
 	"gui.stellarview.milky_way_alpha": "Milky Way X-Rotation: ",
 	"gui.stellarview.milky_way_beta": "Milky Way Z-Rotation: ",
 	"gui.stellarview.milky_way_gamma": "Milky Way Y-Rotation: ",
+	
+	"gui.stellarview.galaxy_alpha": "Galaxy X-Rotation: ",
+	"gui.stellarview.galaxy_beta": "Galaxy Z-Rotation: ",
+	"gui.stellarview.galaxy_gamma": "Galaxy Y-Rotation: ",
 	
 	"key.category.stellarview.config_screen": "Stellar View Config Screen",
 	"key.stellarview.open_config_screen": "Open Config Screen",

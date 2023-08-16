@@ -16,25 +16,12 @@ public class StellarViewConfig
 	public static final ForgeConfigSpec CLIENT_CONFIG;
 	
 	public static StellarViewConfigValue.BooleanValue replace_vanilla;
-
-	public static StellarViewConfigValue.BooleanValue disable_sun;
-
-	public static StellarViewConfigValue.BooleanValue disable_moon;
-	public static StellarViewConfigValue.BooleanValue disable_moon_phases;
 	
 	public static StellarViewConfigValue.BooleanValue disable_stars;
 	public static StellarViewConfigValue.BooleanValue day_stars;
 	public static StellarViewConfigValue.BooleanValue bright_stars;
 	
 	public static StellarViewConfigValue.IntValue rotation_multiplier;
-	
-	public static StellarViewConfigValue.IntValue milky_way_x;
-	public static StellarViewConfigValue.IntValue milky_way_y;
-	public static StellarViewConfigValue.IntValue milky_way_z;
-	
-	public static StellarViewConfigValue.IntValue milky_way_alpha;
-	public static StellarViewConfigValue.IntValue milky_way_beta;
-	public static StellarViewConfigValue.IntValue milky_way_gamma;
 	
 	static
 	{
@@ -62,17 +49,6 @@ public class StellarViewConfig
 				true, 
 				"Replaces the Vanilla Overworld sky with Stellar View sky");
 		
-		disable_sun = new StellarViewConfigValue.BooleanValue(client, "client.disable_sun", 
-				false, 
-				"Disables the Sun");
-		
-		disable_moon = new StellarViewConfigValue.BooleanValue(client, "client.disable_moon", 
-				false, 
-				"Disables the Moon");
-		disable_moon_phases = new StellarViewConfigValue.BooleanValue(client, "client.disable_moon_phases", 
-				false, 
-				"Disables Moon phases");
-		
 		disable_stars = new StellarViewConfigValue.BooleanValue(client, "client.disable_stars", 
 				false, 
 				"Removes Stars");
@@ -86,25 +62,10 @@ public class StellarViewConfig
 		rotation_multiplier = new StellarViewConfigValue.IntValue(client, "client.rotation_multiplier", 
 				300, 1, 300, 
 				"Controls how much the sky rotates when moving");
-
-		milky_way_x = new StellarViewConfigValue.IntValue(client, "client.milky_way_x", 
-				0, -30, 30, 
-				"Specifies Milky Way X position");
-		milky_way_y = new StellarViewConfigValue.IntValue(client, "client.milky_way_y", 
-				0, -30, 30, 
-				"Specifies Milky Way Y position");
-		milky_way_z = new StellarViewConfigValue.IntValue(client, "client.milky_way_z", 
-				16, -30, 30, 
-				"Specifies Milky Way Z position");
-
-		milky_way_alpha = new StellarViewConfigValue.IntValue(client, "client.milky_way_alpha", 
-				90, 0, 360, 
-				"Specifies Milky Way Alpha rotation");
-		milky_way_beta = new StellarViewConfigValue.IntValue(client, "client.milky_way_beta", 
-				18, 0, 360, 
-				"Specifies Milky Way Beta rotation");
-		milky_way_gamma = new StellarViewConfigValue.IntValue(client, "client.milky_way_gamma", 
-				0, 0, 360, 
-				"Specifies Milky Way Gamma rotation");
+		
+		OverworldConfig.init(client);
+		AlphaConfig.init(client);
+		BetaConfig.init(client);
+		GammaConfig.init(client);
 	}
 }
