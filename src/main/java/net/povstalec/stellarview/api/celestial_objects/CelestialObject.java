@@ -10,9 +10,11 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 
+import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.client.render.level.misc.StellarCoordinates;
+import net.povstalec.stellarview.common.config.StellarViewConfig;
 
 public class CelestialObject
 {
@@ -28,12 +30,12 @@ public class CelestialObject
 	protected boolean hasHalo = false;
 
 	protected boolean blends = false;
-	//protected float distanceOffset = 0;
+	protected boolean blendsDuringDay = false;
+	protected boolean visibleDuringDay = false;
+	
 	protected float initialTheta = 0;
 	protected float initialPhi = 0;
-	//protected float alpha = 0;
-	//protected float beta = 0;
-	//protected float gamma = 0;
+	protected float rotation = 0;
 	
 	public enum Motion
 	{
@@ -55,6 +57,20 @@ public class CelestialObject
 	public CelestialObject blends()
 	{
 		this.blends = true;
+		return this;
+	}
+	
+	public CelestialObject blendsDuringDay()
+	{
+		this.blendsDuringDay = true;
+		
+		return this;
+	}
+	
+	public CelestialObject visibleDuringDay()
+	{
+		this.visibleDuringDay = true;
+		
 		return this;
 	}
 	
@@ -133,6 +149,11 @@ public class CelestialObject
 		return new double[] {helioX, helioY, helioZ};
 	}
 	
+	protected boolean shouldRender()
+	{
+		return true;
+	}
+	
 	/**
 	 * 
 	 * @param level
@@ -145,7 +166,7 @@ public class CelestialObject
 	 * @param playerYAngle
 	 * @param playerZAngle
 	 */
-	public void render(ClientLevel level, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder, float[] uv,
+	public void render(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder, float[] uv,
 			float playerDistance, float playerXAngle, float playerYAngle, float playerZAngle)
 	{
 		double[] coords = helioCentricMovement(playerDistance, Math.toRadians(playerXAngle), Math.toRadians((float) level.getDayTime() / 24000 / 8));
@@ -162,9 +183,32 @@ public class CelestialObject
 		if(uv == null || uv.length < 4)
 			uv = FULL_UV;
 		
+		float brightness;
+		
+		if(visibleDuringDay)
+		{
+			if(blendsDuringDay)
+			{
+				brightness = level.getStarBrightness(partialTicks) * 2;
+				brightness = brightness < 0.25F ? 0.25F : brightness;
+				brightness = brightness * (1.0F - level.getRainLevel(partialTicks));
+			}
+			else
+				brightness = 1.0F - level.getRainLevel(partialTicks);
+		}
+		else
+		{
+			brightness = level.getStarBrightness(partialTicks);
+			brightness = StellarViewConfig.day_stars.get() && brightness < 0.5F ? 
+					0.5F : brightness;
+			if(StellarViewConfig.bright_stars.get())
+				brightness = brightness * (1 + ((float) (15 - level.getLightEngine().getRawBrightness(camera.getEntity().getOnPos().above(), 15)) / 15));
+			brightness = brightness * (1.0F - level.getRainLevel(partialTicks));
+		}
+		
 		if(this.hasHalo)
-			this.renderHalo(bufferbuilder, lastMatrix, theta, phi, uv);
-		this.renderBody(bufferbuilder, lastMatrix, theta, phi, uv);
+			this.renderHalo(bufferbuilder, lastMatrix, theta, phi, uv, brightness);
+		this.renderBody(bufferbuilder, lastMatrix, theta, phi, uv, brightness);
 
 		RenderSystem.defaultBlendFunc();
         
@@ -172,36 +216,41 @@ public class CelestialObject
 	}
 	
 	protected void renderObject(BufferBuilder bufferbuilder, Matrix4f lastMatrix, ResourceLocation texture,
-			float size, float theta, float phi, float[] uv)
+			float size, float theta, float phi, float[] uv, float brightness)
 	{
-		float[] corner00 = StellarCoordinates.placeOnSphere(-size, -size, DEFAULT_DISTANCE, theta, phi);
-		float[] corner10 = StellarCoordinates.placeOnSphere(size, -size, DEFAULT_DISTANCE, theta, phi);
-		float[] corner11 = StellarCoordinates.placeOnSphere(size, size, DEFAULT_DISTANCE, theta, phi);
-		float[] corner01 = StellarCoordinates.placeOnSphere(-size, size, DEFAULT_DISTANCE, theta, phi);
+		float[] corner00 = StellarCoordinates.placeOnSphere(-size, -size, DEFAULT_DISTANCE, theta, phi, rotation);
+		float[] corner10 = StellarCoordinates.placeOnSphere(size, -size, DEFAULT_DISTANCE, theta, phi, rotation);
+		float[] corner11 = StellarCoordinates.placeOnSphere(size, size, DEFAULT_DISTANCE, theta, phi, rotation);
+		float[] corner01 = StellarCoordinates.placeOnSphere(-size, size, DEFAULT_DISTANCE, theta, phi, rotation);
 		
-		RenderSystem.setShaderTexture(0, texture);
-        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        bufferbuilder.vertex(lastMatrix, corner00[0], corner00[1], corner00[2]).uv(uv[0], uv[1]).endVertex();
-        bufferbuilder.vertex(lastMatrix, corner10[0], corner10[1], corner10[2]).uv(uv[2], uv[1]).endVertex();
-        bufferbuilder.vertex(lastMatrix, corner11[0], corner11[1], corner11[2]).uv(uv[2], uv[3]).endVertex();
-        bufferbuilder.vertex(lastMatrix, corner01[0], corner01[1], corner01[2]).uv(uv[0], uv[3]).endVertex();
-        BufferUploader.drawWithShader(bufferbuilder.end());
+		if(brightness > 0.0F)
+		{
+			RenderSystem.setShaderColor(1, 1, 1, brightness);
+			
+			RenderSystem.setShaderTexture(0, texture);
+	        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+	        bufferbuilder.vertex(lastMatrix, corner00[0], corner00[1], corner00[2]).uv(uv[0], uv[1]).endVertex();
+	        bufferbuilder.vertex(lastMatrix, corner10[0], corner10[1], corner10[2]).uv(uv[2], uv[1]).endVertex();
+	        bufferbuilder.vertex(lastMatrix, corner11[0], corner11[1], corner11[2]).uv(uv[2], uv[3]).endVertex();
+	        bufferbuilder.vertex(lastMatrix, corner01[0], corner01[1], corner01[2]).uv(uv[0], uv[3]).endVertex();
+	        BufferUploader.drawWithShader(bufferbuilder.end());
+		}
 	}
 	
 	protected void renderHalo(BufferBuilder bufferbuilder, Matrix4f lastMatrix,
-			float theta, float phi, float[] uv)
+			float theta, float phi, float[] uv, float brightness)
 	{
 		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-		renderObject(bufferbuilder, lastMatrix, this.haloTexture, this.haloSize, theta, phi, uv);
+		renderObject(bufferbuilder, lastMatrix, this.haloTexture, this.haloSize, theta, phi, uv, brightness);
 	}
 	
 	protected void renderBody(BufferBuilder bufferbuilder, Matrix4f lastMatrix,
-			float theta, float phi, float[] uv)
+			float theta, float phi, float[] uv, float brightness)
 	{
 		if(this.blends)
 			RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 		else
 			RenderSystem.defaultBlendFunc();
-		renderObject(bufferbuilder, lastMatrix, this.texture, this.size, theta, phi, uv);
+		renderObject(bufferbuilder, lastMatrix, this.texture, this.size, theta, phi, uv, brightness);
 	}
 }

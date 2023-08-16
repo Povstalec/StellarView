@@ -111,10 +111,10 @@ public class StellarViewSkybox
 		if(!minecraft.getResourceManager().getResource(texture).isPresent())
 			return;
 		
-		float[] corner00 = StellarCoordinates.placeOnSphere(-DEFAULT_DISTANCE, -DEFAULT_DISTANCE, DEFAULT_DISTANCE, theta, phi);
-		float[] corner10 = StellarCoordinates.placeOnSphere(DEFAULT_DISTANCE, -DEFAULT_DISTANCE, DEFAULT_DISTANCE, theta, phi);
-		float[] corner11 = StellarCoordinates.placeOnSphere(DEFAULT_DISTANCE, DEFAULT_DISTANCE, DEFAULT_DISTANCE, theta, phi);
-		float[] corner01 = StellarCoordinates.placeOnSphere(-DEFAULT_DISTANCE, DEFAULT_DISTANCE, DEFAULT_DISTANCE, theta, phi);
+		float[] corner00 = StellarCoordinates.placeOnSphere(-DEFAULT_DISTANCE, -DEFAULT_DISTANCE, DEFAULT_DISTANCE, theta, phi, 0);
+		float[] corner10 = StellarCoordinates.placeOnSphere(DEFAULT_DISTANCE, -DEFAULT_DISTANCE, DEFAULT_DISTANCE, theta, phi, 0);
+		float[] corner11 = StellarCoordinates.placeOnSphere(DEFAULT_DISTANCE, DEFAULT_DISTANCE, DEFAULT_DISTANCE, theta, phi, 0);
+		float[] corner01 = StellarCoordinates.placeOnSphere(-DEFAULT_DISTANCE, DEFAULT_DISTANCE, DEFAULT_DISTANCE, theta, phi, 0);
 		
 		RenderSystem.setShaderTexture(0, texture);
         bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);

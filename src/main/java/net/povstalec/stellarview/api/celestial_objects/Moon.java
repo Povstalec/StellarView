@@ -3,10 +3,10 @@ package net.povstalec.stellarview.api.celestial_objects;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.StellarView;
-import net.povstalec.stellarview.common.config.StellarViewConfig;
 
 public class Moon extends CelestialObject
 {
@@ -18,12 +18,19 @@ public class Moon extends CelestialObject
 	public Moon(ResourceLocation sunTexture, float size)
 	{
 		super(sunTexture, 100.0F, size);
+		this.visibleDuringDay();
+		this.blendsDuringDay();
 		this.initialTheta((float) Math.toRadians(180));
 		this.initialPhi((float) Math.toRadians(180));
 	}
 	
+	protected boolean hasPhases()
+	{
+		return true;
+	}
+	
 	@Override
-	public void render(ClientLevel level, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder, float[] uv,
+	public void render(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder, float[] uv,
 			float playerDistance, float playerXAngle, float playerYAngle, float playerZAngle)
 	{
 		int phase = level.getMoonPhase();
@@ -34,12 +41,12 @@ public class Moon extends CelestialObject
         float xEnd = (float)(x + 1) / 4.0F;
         float yEnd = (float)(y + 1) / 2.0F;
         
-        uv = StellarViewConfig.disable_moon_phases.get() ? new float[] {0.0F, 0.0F, 0.25F, 0.5F} : new float[] {xStart, yStart, xEnd, yEnd};
+        uv = hasPhases() ? new float[] {xStart, yStart, xEnd, yEnd} : new float[] {0.0F, 0.0F, 0.25F, 0.5F};
 		
-		super.render(level, partialTicks, stack, bufferbuilder, uv, playerDistance, playerXAngle + 360.0F * ((float) level.getDayTime() / 24000 / 8), playerYAngle, playerZAngle);
+		super.render(level, camera, partialTicks, stack, bufferbuilder, uv, playerDistance, playerXAngle + 360.0F * ((float) level.getDayTime() / 24000 / 8), playerYAngle, playerZAngle);
 	}
 	
-	public static final class VanillaMoon extends Moon
+	public static class VanillaMoon extends Moon
 	{
 		public VanillaMoon()
 		{
@@ -48,15 +55,15 @@ public class Moon extends CelestialObject
 		}
 		
 		@Override
-		public final void render(ClientLevel level, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder, float[] uv,
+		public final void render(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder, float[] uv,
 				float playerDistance, float playerXAngle, float playerYAngle, float playerZAngle)
 		{
-			if(!StellarViewConfig.disable_moon.get())
-				super.render(level, partialTicks, stack, bufferbuilder, uv, playerDistance, playerXAngle, playerYAngle, playerZAngle);
+			if(shouldRender())
+				super.render(level, camera, partialTicks, stack, bufferbuilder, uv, playerDistance, playerXAngle, playerYAngle, playerZAngle);
 		}
 	}
 	
-	public static final class DefaultMoon extends Moon
+	public static class DefaultMoon extends Moon
 	{
 		public DefaultMoon()
 		{
@@ -65,11 +72,11 @@ public class Moon extends CelestialObject
 		}
 		
 		@Override
-		public final void render(ClientLevel level, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder, float[] uv,
+		public final void render(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder, float[] uv,
 				float playerDistance, float playerXAngle, float playerYAngle, float playerZAngle)
 		{
-			if(!StellarViewConfig.disable_moon.get())
-				super.render(level, partialTicks, stack, bufferbuilder, uv, playerDistance, playerXAngle, playerYAngle, playerZAngle);
+			if(shouldRender())
+				super.render(level, camera, partialTicks, stack, bufferbuilder, uv, playerDistance, playerXAngle, playerYAngle, playerZAngle);
 		}
 	}
 }

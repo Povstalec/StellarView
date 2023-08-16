@@ -8,27 +8,19 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.povstalec.stellarview.client.screens.config.ConfigList.BooleanConfigEntry;
-import net.povstalec.stellarview.client.screens.config.ConfigList.SliderConfigEntry;
-import net.povstalec.stellarview.common.config.StellarViewConfig;
 
 public class ConfigScreen extends Screen
 {
 	private final Screen parentScreen;
-	private ConfigList configList;
 
     private static final int BACK_BUTTON_WIDTH = 200;
     private static final int BACK_BUTTON_HEIGHT = 20;
     private static final int BACK_BUTTON_TOP_OFFSET = 26;
-    
-    private static final int OPTIONS_LIST_TOP_HEIGHT = 24;
-    private static final int OPTIONS_LIST_BOTTOM_OFFSET = 32;
-    private static final int OPTIONS_LIST_ITEM_HEIGHT = 25;
 
 	
 	public ConfigScreen(@Nullable Screen parentScreen)
 	{
-		super(Component.translatable("gui.stellarview.config_stellarview"));
+		super(Component.translatable("gui.stellarview.config"));
 		this.parentScreen = parentScreen;
 	}
 
@@ -36,78 +28,33 @@ public class ConfigScreen extends Screen
 	@Override
     public void init()
     {
+		int l = this.height / 4;
+		
 		super.init();
+		this.addRenderableWidget(new Button(this.width / 2 - 100, l, 200, 20, Component.translatable("gui.stellarview.config.general"), 
+				(button) -> this.minecraft.setScreen(new GeneralConfigScreen(this))));
 		
-		this.configList = new ConfigList(minecraft, this.width, this.height, 
-				OPTIONS_LIST_TOP_HEIGHT, this.height - OPTIONS_LIST_BOTTOM_OFFSET, OPTIONS_LIST_ITEM_HEIGHT);
-		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.replace_vanilla"), 
-				this.width, StellarViewConfig.replace_vanilla));
+		this.addRenderableWidget(new Button(this.width / 2 - 100, l + 24, 200, 20, Component.translatable("gui.stellarview.config.overworld"),
+				(button) -> this.minecraft.setScreen(new OverworldConfigScreen(this))));
 		
-		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.disable_sun"), 
-				this.width, StellarViewConfig.disable_sun));
+		this.addRenderableWidget(new Button(this.width / 2 - 100, l + 48, 200, 20, Component.translatable("gui.stellarview.config.alpha"),
+				(button) -> this.minecraft.setScreen(new AlphaConfigScreen(this))));
 		
-		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.disable_moon"), 
-				this.width, StellarViewConfig.disable_moon));
-		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.disable_moon_phases"), 
-				this.width, StellarViewConfig.disable_moon_phases));
+		this.addRenderableWidget(new Button(this.width / 2 - 100, l + 72, 200, 20, Component.translatable("gui.stellarview.config.beta"),
+				(button) -> this.minecraft.setScreen(new BetaConfigScreen(this))));
 		
-		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.disable_stars"), 
-				this.width, StellarViewConfig.disable_stars));
-		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.day_stars"), 
-				this.width, StellarViewConfig.day_stars));
-		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.bright_stars"), 
-				this.width, StellarViewConfig.bright_stars));
+		this.addRenderableWidget(new Button(this.width / 2 - 100, l + 96, 200, 20, Component.translatable("gui.stellarview.config.gamma"),
+				(button) -> this.minecraft.setScreen(new GammaConfigScreen(this))));
 
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.rotation_multiplier"),
-				Component.empty(),
-				this.width, StellarViewConfig.rotation_multiplier));
-
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_x"),
-				Component.empty(),
-				this.width, StellarViewConfig.milky_way_x));
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_y"),
-				Component.empty(),
-				this.width, StellarViewConfig.milky_way_y));
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_z"),
-				Component.empty(),
-				this.width, StellarViewConfig.milky_way_z));
-
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_alpha"),
-				Component.literal("\u00b0"),
-				this.width, StellarViewConfig.milky_way_alpha));
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_beta"),
-				Component.literal("\u00b0"),
-				this.width, StellarViewConfig.milky_way_beta));
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_gamma"),
-				Component.literal("\u00b0"),
-				this.width, StellarViewConfig.milky_way_gamma));
-		
-		this.addWidget(this.configList);
-		
 		this.addRenderableWidget(new Button((this.width - BACK_BUTTON_WIDTH) / 2, this.height - BACK_BUTTON_TOP_OFFSET, BACK_BUTTON_WIDTH, BACK_BUTTON_HEIGHT, 
-				CommonComponents.GUI_BACK, onPress ->
-			{
-				if(this.parentScreen != null)
-					this.minecraft.setScreen(this.parentScreen);
-				else
-					this.onClose();
-			}));
-		/*this.addRenderableWidget(Button.builder(CommonComponents.GUI_BACK, 
-				(button) ->
-				{
-					if(this.parentScreen != null)
-						this.minecraft.setScreen(this.parentScreen);
-					else
-						this.onClose();
-				})
-				.bounds((this.width - BACK_BUTTON_WIDTH) / 2, this.height - BACK_BUTTON_TOP_OFFSET, BACK_BUTTON_WIDTH, BACK_BUTTON_HEIGHT).build());*/
+				CommonComponents.GUI_BACK, 
+				(button) -> this.minecraft.setScreen(this.parentScreen)));
     }
 	
 	@Override
     public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick)
     {
         this.renderBackground(poseStack);
-        this.configList.render(poseStack, mouseX, mouseY, partialTick);
         drawCenteredString(poseStack, this.font, this.title, this.width / 2, 8, 16777215);
         super.render(poseStack, mouseX, mouseY, partialTick);
     }
