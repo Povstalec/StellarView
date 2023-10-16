@@ -1,63 +1,106 @@
 package net.povstalec.stellarview.client.render.level;
 
-import net.minecraft.resources.ResourceLocation;
-import net.povstalec.stellarview.api.celestial_objects.CelestialObject;
-import net.povstalec.stellarview.api.celestial_objects.Moon;
-import net.povstalec.stellarview.api.celestial_objects.Sun;
-import net.povstalec.stellarview.client.render.level.misc.StellarViewGalaxy;
-import net.povstalec.stellarview.client.render.level.misc.StellarViewSkybox;
+import javax.annotation.Nullable;
 
-public class StellarViewSky extends AbstractStellarViewSky
+import org.joml.Matrix4f;
+
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexBuffer;
+import com.mojang.math.Axis;
+
+import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.FogRenderer;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.ShaderInstance;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec3;
+import net.povstalec.stellarview.api.celestials.SolarSystem;
+import net.povstalec.stellarview.api.celestials.StarField;
+import net.povstalec.stellarview.api.sky_effects.MeteorShower;
+import net.povstalec.stellarview.api.sky_effects.ShootingStar;
+import net.povstalec.stellarview.client.render.level.misc.StellarViewFogEffects;
+import net.povstalec.stellarview.client.render.level.misc.StellarViewSkyEffects;
+import net.povstalec.stellarview.client.render.level.misc.StellarViewSkybox;
+import net.povstalec.stellarview.common.config.StellarViewConfig;
+
+public class StellarViewSky implements StellarViewSkyEffects, StellarViewFogEffects
 {
-	public StellarViewSky(){}
+	protected Minecraft minecraft = Minecraft.getInstance();
+	@Nullable
+	protected SolarSystem solarSystem;
+	@Nullable
+	protected StarField starField;
+	protected float starFieldRotationX = 0;
+	protected float starFieldRotationY = 0;
+	protected float starFieldRotationZ = 0;
+	@Nullable
+	protected VertexBuffer skyBuffer;
+	@Nullable
+	protected VertexBuffer darkBuffer;
 	
-	public final StellarViewSky vanilla()
+	protected ShootingStar shootingStar;
+	protected MeteorShower meteorShower;
+	
+	protected StellarViewSkybox skybox = null;
+	
+	public StellarViewSky(SolarSystem solarSystem)
 	{
-		this.starBuffer = StellarViewGalaxy.createStars(
-				StellarViewGalaxy.Type.VANILLA, 0, 0,
-				0, 0, 0, 0, 0, 0);
+		this.solarSystem = solarSystem;
+		
+		this.skyBuffer = createLightSky();
+		this.darkBuffer = createDarkSky();
+	}
+	
+	public final StellarViewSky starField(StarField starField)
+	{
+		if(starField != null)
+			this.starField = starField.setStarBuffer(solarSystem.getX(), solarSystem.getY(), solarSystem.getZ(),
+				starFieldRotationX, starFieldRotationY, starFieldRotationZ);
 		return this;
 	}
 	
-	public final StellarViewSky milkyWay(double xOffset, double yOffset, double zOffset, double alpha, double beta, double gamma)
+	public final StellarViewSky shootingStar(ShootingStar shootingStar)
 	{
-		this.starBuffer = StellarViewGalaxy.createMilkyWay(xOffset, yOffset, zOffset, alpha, beta, gamma);
+		this.shootingStar = shootingStar;
+		
 		return this;
 	}
 	
-	public final StellarViewSky spiralGalaxy4Arms(long seed, int numberOfStars,
-			double xOffset, double yOffset, double zOffset, double alpha, double beta, double gamma)
+	public final StellarViewSky meteorShower(MeteorShower meteorShower)
 	{
-		this.starBuffer = StellarViewGalaxy.createStars(
-				StellarViewGalaxy.Type.SPIRAL_GALAXY_4_ARMS, seed, numberOfStars,
-				xOffset, yOffset, zOffset, alpha, beta, gamma);
+		this.meteorShower = meteorShower;
+		
 		return this;
 	}
 	
-	public final StellarViewSky spiralGalaxy2Arms(long seed, int numberOfStars,
-			double xOffset, double yOffset, double zOffset, double alpha, double beta, double gamma)
+	public final StellarViewSky setStarFieldOffsetAndRotation(float xOffset, float yOffset, float zOffset,
+			float xAxisRotation, float yAxisRotation, float zAxisRotation)
 	{
-		this.starBuffer = StellarViewGalaxy.createStars(
-				StellarViewGalaxy.Type.SPIRAL_GALAXY_2_ARMS, seed, numberOfStars,
-				xOffset, yOffset, zOffset, alpha, beta, gamma);
+		if(this.starField != null)
+			this.starField.setStarBuffer(xOffset, yOffset, zOffset, xAxisRotation, yAxisRotation, zAxisRotation);
 		return this;
 	}
 	
-	public final StellarViewSky celestialObject(CelestialObject object)
+	public final StellarViewSky setStarFieldOffset(float xOffset, float yOffset, float zOffset)
 	{
-		this.celestialObjects.add(object);
+		float xAxisRotation = starField.getXRotation();
+		float yAxisRotation = starField.getYRotation();
+		float zAxisRotation = starField.getZRotation();
+		
+		this.setStarFieldOffsetAndRotation(xOffset, yOffset, zOffset, xAxisRotation, yAxisRotation, zAxisRotation);
 		return this;
 	}
 	
-	public final StellarViewSky vanillaSun()
+	public final StellarViewSky setSkyRotation(float starFieldRotationX, float starFieldRotationY, float starFieldRotationZ)
 	{
-		this.celestialObjects.add(new Sun.VanillaSun());
-		return this;
-	}
-	
-	public final StellarViewSky vanillaMoon()
-	{
-		this.celestialObjects.add(new Moon.VanillaMoon());
+		this.starFieldRotationX = starFieldRotationX;
+		this.starFieldRotationY = starFieldRotationY;
+		this.starFieldRotationZ = starFieldRotationZ;
 		return this;
 	}
 	
@@ -65,5 +108,100 @@ public class StellarViewSky extends AbstractStellarViewSky
 	{
 		this.skybox = new StellarViewSkybox(texture);
 		return this;
+	}
+	
+	
+	
+	//============================================================================================
+	//******************************************Rendering*****************************************
+	//============================================================================================
+	
+	// Ecliptic plane
+	protected void renderEcliptic(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, Matrix4f projectionMatrix, Runnable setupFog, BufferBuilder bufferbuilder)
+	{
+		double zPos = camera.getEntity().getPosition(partialTicks).z();
+		float zRotation = 2 * (float) Math.toDegrees(Math.atan(zPos / (100000 * StellarViewConfig.rotation_multiplier.get())));
+		
+		stack.pushPose();
+        stack.mulPose(Axis.YP.rotationDegrees(-90.0F));
+        stack.mulPose(Axis.ZP.rotationDegrees(zRotation));
+        stack.mulPose(Axis.XP.rotationDegrees((level.getTimeOfDay(partialTicks) + (float) level.getDayTime() / 24000 / 96) * 360.0F));
+
+		float rain = 1.0F - level.getRainLevel(partialTicks);
+        if(!StellarViewConfig.disable_stars.get())
+        	starField.render(level, camera, partialTicks, rain, stack, projectionMatrix, setupFog, bufferbuilder, (float) Math.toRadians(18), (float) Math.toRadians(0), (float) Math.toRadians(90));
+
+        stack.popPose();
+        
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		
+		if(skybox != null)
+			skybox.render(level, partialTicks, stack, bufferbuilder, 0, 0, 0);
+        
+        this.solarSystem.render(level, camera, partialTicks, stack, projectionMatrix, setupFog, bufferbuilder, 360 * level.getTimeOfDay(partialTicks), -90.0F, zRotation);
+        
+        if(this.shootingStar != null)
+        	this.shootingStar.render(level, camera, partialTicks, stack, bufferbuilder);
+        if(this.meteorShower != null)
+        	this.meteorShower.render(level, camera, partialTicks, stack, bufferbuilder);
+	}
+	
+	public void renderSkyEvents(ClientLevel level, float partialTicks, PoseStack stack, Camera camera, Matrix4f projectionMatrix, Runnable setupFog)
+	{
+		
+	}
+	
+	public void renderSky(ClientLevel level, float partialTicks, PoseStack stack, Camera camera, Matrix4f projectionMatrix, Runnable setupFog)
+	{
+		setupFog.run();
+		
+		if(this.isFoggy(this.minecraft, camera))
+			return;
+		
+		RenderSystem.disableTexture();
+		Vec3 skyColor = level.getSkyColor(this.minecraft.gameRenderer.getMainCamera().getPosition(), partialTicks);
+		float skyX = (float)skyColor.x;
+        float skyY = (float)skyColor.y;
+        float skyZ = (float)skyColor.z;
+        FogRenderer.levelFogColor();
+		BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
+		RenderSystem.depthMask(false);
+		RenderSystem.setShaderColor(skyX, skyY, skyZ, 1.0F);
+		ShaderInstance shaderinstance = RenderSystem.getShader();
+		this.skyBuffer.bind();
+		this.skyBuffer.drawWithShader(stack.last().pose(), projectionMatrix, shaderinstance);
+		VertexBuffer.unbind();
+		RenderSystem.enableBlend();
+		RenderSystem.defaultBlendFunc();
+		
+		this.renderSunrise(level, partialTicks, stack, projectionMatrix, setupFog, bufferbuilder);
+		
+		RenderSystem.enableTexture();
+		
+		this.renderEcliptic(level, camera, partialTicks, stack, projectionMatrix, setupFog, bufferbuilder);
+        
+        RenderSystem.disableTexture();
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.disableBlend();
+        
+        RenderSystem.setShaderColor(0.0F, 0.0F, 0.0F, 1.0F);
+        double height = this.minecraft.player.getEyePosition(partialTicks).y - level.getLevelData().getHorizonHeight(level);
+        if(height < 0.0D)
+        {
+        	stack.pushPose();
+        	stack.translate(0.0F, 12.0F, 0.0F);
+        	this.darkBuffer.bind();
+        	this.darkBuffer.drawWithShader(stack.last().pose(), projectionMatrix, shaderinstance);
+        	VertexBuffer.unbind();
+        	stack.popPose();
+        }
+        
+        if(level.effects().hasGround())
+        	RenderSystem.setShaderColor(skyX * 0.2F + 0.04F, skyY * 0.2F + 0.04F, skyZ * 0.6F + 0.1F, 1.0F);
+        else
+        	RenderSystem.setShaderColor(skyX, skyY, skyZ, 1.0F);
+        
+        RenderSystem.enableTexture();
+        RenderSystem.depthMask(true);
 	}
 }

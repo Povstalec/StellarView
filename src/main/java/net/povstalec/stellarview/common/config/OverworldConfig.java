@@ -53,10 +53,10 @@ public class OverworldConfig
 				"Specifies Milky Way Z position");
 
 		milky_way_alpha = new StellarViewConfigValue.IntValue(client, PREFIX + "milky_way_alpha", 
-				90, 0, 360, 
+				0, 0, 360, 
 				"Specifies Milky Way Alpha rotation");
 		milky_way_beta = new StellarViewConfigValue.IntValue(client, PREFIX + "milky_way_beta", 
-				18, 0, 360, 
+				0, 0, 360, 
 				"Specifies Milky Way Beta rotation");
 		milky_way_gamma = new StellarViewConfigValue.IntValue(client, PREFIX + "milky_way_gamma", 
 				0, 0, 360, 

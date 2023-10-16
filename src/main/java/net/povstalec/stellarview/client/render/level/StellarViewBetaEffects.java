@@ -10,13 +10,8 @@ import net.minecraft.client.renderer.DimensionSpecialEffects;
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.api.StellarViewSpecialEffects;
-import net.povstalec.stellarview.api.celestial_objects.CelestialObject;
-import net.povstalec.stellarview.api.celestial_objects.MeteorShower;
-import net.povstalec.stellarview.api.celestial_objects.Moon;
-import net.povstalec.stellarview.api.celestial_objects.ShootingStar;
-import net.povstalec.stellarview.api.celestial_objects.Sun;
-import net.povstalec.stellarview.api.celestial_objects.Supernova;
-import net.povstalec.stellarview.common.config.BetaConfig;
+import net.povstalec.stellarview.api.init.SolarSystemInit;
+import net.povstalec.stellarview.api.init.StarFieldInit;
 
 public class StellarViewBetaEffects extends StellarViewSpecialEffects
 {
@@ -24,42 +19,8 @@ public class StellarViewBetaEffects extends StellarViewSpecialEffects
 	
 	public StellarViewBetaEffects()
 	{
-		super(192.0F, true, DimensionSpecialEffects.SkyType.NORMAL, false, false);
-		
-		this.celestialObject(new Sun.VanillaSun()
-				{
-					@Override
-					protected boolean shouldRender()
-					{
-						return !BetaConfig.disable_sun.get();
-					}
-				});
-		this.celestialObject(new Moon.DefaultMoon()
-				{
-					@Override
-					protected boolean shouldRender()
-					{
-						return !BetaConfig.disable_moon.get();
-					}
-					
-
-					@Override
-					protected boolean hasPhases()
-					{
-						return !BetaConfig.disable_moon_phases.get();
-					}
-				});
-		
-		CelestialObject supernova = new Supernova(10.0F, 18000, 48000);
-		supernova.blends();
-		supernova.initialPhi((float) Math.toRadians(165));
-		supernova.initialTheta((float) Math.toRadians(275));
-		
-		this.celestialObject(supernova);
-		this.celestialObject(new ShootingStar().setRarityValue(BetaConfig.shooting_star_chance));
-		this.celestialObject(new MeteorShower().setRarityValue(BetaConfig.meteor_shower_chance));
-		this.skybox(new ResourceLocation(StellarView.MODID, "textures/environment/overworld_skybox/overworld"));
-		this.milkyWay(0, 0, 16, Math.toRadians(90), Math.toRadians(18), Math.toRadians(0));
+		super(new StellarViewSky(SolarSystemInit.SOL_SYSTEM).starField(StarFieldInit.MILKY_WAY),
+				192.0F, true, DimensionSpecialEffects.SkyType.NORMAL, false, false);
 	}
 	
 	@Override
@@ -69,13 +30,4 @@ public class StellarViewBetaEffects extends StellarViewSpecialEffects
 		
         return true;
     }
-	
-	//TODO Use this again
-	/*public double starWidthFunction(double aLocation, double bLocation, double sinRandom, double cosRandom, double sinTheta, double cosTheta, double sinPhi, double cosPhi)
-	{
-		if(StellarViewConfig.enable_black_hole.get())
-			return cosPhi  > 0.0 ? cosPhi * 8 *(bLocation * cosRandom + aLocation * sinRandom) : bLocation * cosRandom + aLocation * sinRandom;
-		
-		return bLocation * cosRandom + aLocation * sinRandom;
-	}*/
 }

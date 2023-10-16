@@ -82,4 +82,9 @@ public class StellarCoordinates
 	{
 		return r * (phi + beta);
 	}
+	
+	public static double elipticalR(double a, double b, double phi)
+	{
+		return (a * b) / (Math.sqrt(b * Math.pow(Math.cos(phi), 2) + a * Math.pow(Math.sin(phi), 2)));
+	}
 }
