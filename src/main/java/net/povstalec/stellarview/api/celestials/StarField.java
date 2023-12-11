@@ -28,7 +28,7 @@ public abstract class StarField
 	@Nullable
 	protected VertexBuffer starBuffer;
 	
-	private List<GalacticObject> galacticObjects = new ArrayList<GalacticObject>();
+	private List<StellarObject> galacticObjects = new ArrayList<StellarObject>();
 	
 	protected long seed;
 	
@@ -75,7 +75,7 @@ public abstract class StarField
 		return this;
 	}
 	
-	public final StarField addGalacticObject(GalacticObject object, float x, float y, float z)
+	public final StarField addGalacticObject(StellarObject object, float x, float y, float z)
 	{
 		this.galacticObjects.add(object.setGalacticPosition(x, y, z));
 		return this;

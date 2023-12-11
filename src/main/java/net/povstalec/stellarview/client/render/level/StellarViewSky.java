@@ -19,8 +19,8 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
-import net.povstalec.stellarview.api.celestials.SolarSystem;
 import net.povstalec.stellarview.api.celestials.StarField;
+import net.povstalec.stellarview.api.celestials.orbiting.OrbitingCelestialObject;
 import net.povstalec.stellarview.api.sky_effects.MeteorShower;
 import net.povstalec.stellarview.api.sky_effects.ShootingStar;
 import net.povstalec.stellarview.client.render.level.misc.StellarViewFogEffects;
@@ -32,7 +32,7 @@ public class StellarViewSky implements StellarViewSkyEffects, StellarViewFogEffe
 {
 	protected Minecraft minecraft = Minecraft.getInstance();
 	@Nullable
-	protected SolarSystem solarSystem;
+	protected OrbitingCelestialObject center;
 	@Nullable
 	protected StarField starField;
 	protected float starFieldRotationX = 0;
@@ -48,9 +48,9 @@ public class StellarViewSky implements StellarViewSkyEffects, StellarViewFogEffe
 	
 	protected StellarViewSkybox skybox = null;
 	
-	public StellarViewSky(SolarSystem solarSystem)
+	public StellarViewSky(OrbitingCelestialObject center)
 	{
-		this.solarSystem = solarSystem;
+		this.center = center;
 		
 		this.skyBuffer = createLightSky();
 		this.darkBuffer = createDarkSky();
@@ -58,8 +58,9 @@ public class StellarViewSky implements StellarViewSkyEffects, StellarViewFogEffe
 	
 	public final StellarViewSky starField(StarField starField)
 	{
+		//TODO Return this
 		if(starField != null)
-			this.starField = starField.setStarBuffer(solarSystem.getX(), solarSystem.getY(), solarSystem.getZ(),
+			this.starField = starField.setStarBuffer(center.getX(), center.getY(), center.getZ(),
 				starFieldRotationX, starFieldRotationY, starFieldRotationZ);
 		return this;
 	}
@@ -138,17 +139,17 @@ public class StellarViewSky implements StellarViewSkyEffects, StellarViewFogEffe
 		if(skybox != null)
 			skybox.render(level, partialTicks, stack, bufferbuilder, 0, 0, 0);
         
-        this.solarSystem.render(level, camera, partialTicks, stack, projectionMatrix, setupFog, bufferbuilder, 360 * level.getTimeOfDay(partialTicks), -90.0F, zRotation);
+        this.center.renderFromHere(level, camera, partialTicks, stack, bufferbuilder, 360 * level.getTimeOfDay(partialTicks), -90.0F, zRotation);
         
-        if(this.shootingStar != null)
+        renderSkyEvents(level, partialTicks, stack, camera, projectionMatrix, setupFog, bufferbuilder);
+	}
+	
+	public void renderSkyEvents(ClientLevel level, float partialTicks, PoseStack stack, Camera camera, Matrix4f projectionMatrix, Runnable setupFog, BufferBuilder bufferbuilder)
+	{
+		if(this.shootingStar != null)
         	this.shootingStar.render(level, camera, partialTicks, stack, bufferbuilder);
         if(this.meteorShower != null)
         	this.meteorShower.render(level, camera, partialTicks, stack, bufferbuilder);
-	}
-	
-	public void renderSkyEvents(ClientLevel level, float partialTicks, PoseStack stack, Camera camera, Matrix4f projectionMatrix, Runnable setupFog)
-	{
-		
 	}
 	
 	public void renderSky(ClientLevel level, float partialTicks, PoseStack stack, Camera camera, Matrix4f projectionMatrix, Runnable setupFog)

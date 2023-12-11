@@ -4,8 +4,9 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.StellarView;
+import net.povstalec.stellarview.api.celestials.orbiting.Sun;
 
-public class Supernova extends GalacticObject
+public class Supernova extends Sun
 {
 	public static final ResourceLocation SUPERNOVA_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/supernova.png");
 

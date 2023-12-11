@@ -1,75 +1,35 @@
 package net.povstalec.stellarview.api.celestials.orbiting;
 
-import org.joml.Matrix4f;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
-import net.povstalec.stellarview.api.celestials.CelestialObject;
+import net.povstalec.stellarview.StellarView;
+import net.povstalec.stellarview.api.celestials.StellarObject;
 
-public class OrbitingCelestialObject extends CelestialObject
+public class OrbitingCelestialObject extends StellarObject
 {
-	protected float distance;
-	protected float size;
-
-	protected ResourceLocation haloTexture;
-	protected float haloSize;
-	protected boolean hasHalo = false;
-
-	protected boolean blends = false;
-	protected boolean blendsDuringDay = false;
-	protected boolean visibleDuringDay = false;
+	//protected float mass;
+	protected float angularVelocity = 0;
+	protected float distance = 0;
 	
 	protected float initialTheta = 0;
 	protected float initialPhi = 0;
 	protected float rotation = 0;
 	
+	private Optional<StellarObject> primaryBody = Optional.empty();
+	private List<OrbitingCelestialObject> orbitingObjects = new ArrayList<OrbitingCelestialObject>();
+	
 	public OrbitingCelestialObject(ResourceLocation texture, float size)
 	{
-		super(texture);
-		this.size = size;
-	}
-	
-	/**
-	 * Forces the Celestial Object to blend with the background
-	 * @return self
-	 */
-	public OrbitingCelestialObject blends()
-	{
-		this.blends = true;
-		return this;
-	}
-	
-	public OrbitingCelestialObject blendsDuringDay()
-	{
-		this.blendsDuringDay = true;
-		
-		return this;
-	}
-	
-	public OrbitingCelestialObject visibleDuringDay()
-	{
-		this.visibleDuringDay = true;
-		
-		return this;
-	}
-	
-	/**
-	 * Creates a Halo around the Celestial Object
-	 * @param haloTexture Texture used for the Halo
-	 * @param haloSize Size of the Halo
-	 * @return self
-	 */
-	public OrbitingCelestialObject halo(ResourceLocation haloTexture, float haloSize)
-	{
-		this.haloTexture = haloTexture;
-		this.haloSize = haloSize;
-		this.hasHalo = true;
-		return this;
+		super(texture, size);
+		//this.mass = mass;
 	}
 	
 	/**
@@ -93,30 +53,6 @@ public class OrbitingCelestialObject extends CelestialObject
 		this.initialPhi = initialPhi;
 		return this;
 	}
-	
-	@Override
-	protected boolean shouldRender(ClientLevel level, Camera camera)
-	{
-		return true;
-	}
-	
-	@Override
-	protected boolean shouldBlend(ClientLevel level, Camera camera)
-	{
-		return this.blends;
-	}
-	
-	@Override
-	protected boolean isVisibleDuringDay(ClientLevel level, Camera camera)
-	{
-		return this.visibleDuringDay;
-	}
-	
-	@Override
-	protected boolean shouldBlendDuringDay(ClientLevel level, Camera camera)
-	{
-		return this.blendsDuringDay;
-	}
 
 	@Override
 	protected float getTheta(ClientLevel level, float partialTicks)
@@ -127,7 +63,7 @@ public class OrbitingCelestialObject extends CelestialObject
 	@Override
 	protected float getPhi(ClientLevel level, float partialTicks)
 	{
-		return this.initialTheta;
+		return this.initialPhi - (float) Math.toRadians(angularVelocity * ((float) level.getDayTime() / 24000));
 	}
 
 	@Override
@@ -136,20 +72,58 @@ public class OrbitingCelestialObject extends CelestialObject
 		return this.size;
 	}
 	
-	protected void renderHalo(BufferBuilder bufferbuilder, Matrix4f lastMatrix, float[] uv, float rotation, 
-			float theta, float phi, float brightness)
+	//TODO
+	/*protected float getMass(ClientLevel level, float partialTicks)
 	{
-		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-		super.renderObject(bufferbuilder, lastMatrix, this.haloTexture, uv, this.haloSize, rotation, theta, phi, brightness);
-		RenderSystem.defaultBlendFunc();
+		return this.mass;
 	}
 	
-	@Override
-	protected void renderObject(BufferBuilder bufferbuilder, Matrix4f lastMatrix, ResourceLocation texture, float[] uv,
-			float size, float rotation, float theta, float phi, float brightness)
+	protected float getVelocity(ClientLevel level, float partialTicks, float parentMass)
 	{
-		if(this.hasHalo)
-			this.renderHalo(bufferbuilder, lastMatrix, uv, rotation, theta, phi,  brightness);
-		super.renderObject(bufferbuilder, lastMatrix, texture, uv, size, rotation, theta, phi, brightness);
+		return (float) Math.sqrt(G * parentMass / distance);
+	}
+	
+	protected float getAngularVelocity(ClientLevel level, float partialTicks, float parentMass)
+	{
+		return getVelocity(level, partialTicks, parentMass) / distance;
+	}*/
+	
+	public final OrbitingCelestialObject addOrbitingObject(OrbitingCelestialObject object, float distance, float angularVelocity)
+	{
+		if(object.primaryBody.isPresent())
+		{
+			StellarView.LOGGER.error("Object is already orbiting a primary body");
+			return this;
+		}
+		
+		object.primaryBody = Optional.of(this);
+		object.distance = distance;
+		object.angularVelocity = angularVelocity;
+		
+		this.orbitingObjects.add(object);
+		
+		return this;
+	}
+	
+	public void render(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder,
+			float xRotation, float yRotation, float zRotation)
+	{
+		super.render(level, camera, partialTicks, stack, bufferbuilder, xRotation, yRotation, zRotation);
+		
+		this.orbitingObjects.stream().forEach(orbitingObject ->
+		{
+			orbitingObject.render(level, camera, partialTicks, stack, bufferbuilder, xRotation, yRotation, zRotation);
+		});
+	}
+	
+	//TODO
+	public void renderFromHere(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder,
+			float xRotation, float yRotation, float zRotation)
+	{
+		if(primaryBody.isPresent() && primaryBody.get() instanceof OrbitingCelestialObject parent)
+			parent.renderFromHere(level, camera, partialTicks, stack, bufferbuilder, xRotation, yRotation, zRotation);
+		else
+			this.render(level, camera, partialTicks, stack, bufferbuilder, xRotation, yRotation, zRotation);
+		
 	}
 }

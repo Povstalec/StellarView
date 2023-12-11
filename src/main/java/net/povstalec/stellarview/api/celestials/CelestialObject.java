@@ -19,10 +19,23 @@ import net.povstalec.stellarview.common.config.StellarViewConfig;
 
 public abstract class CelestialObject
 {
+	/**
+	 * Gravitational Constant
+	 */
+	public static final float G = 6.673e-11F;
+	
 	public static final float[] FULL_UV = new float[] {0.0F, 0.0F, 1.0F, 1.0F};
 	public static final float DEFAULT_DISTANCE = 100.0F;
 
 	protected ResourceLocation texture;
+
+	protected ResourceLocation haloTexture;
+	protected float haloSize;
+	protected boolean hasHalo = false;
+
+	protected boolean blends = false;
+	protected boolean blendsDuringDay = false;
+	protected boolean visibleDuringDay = false;
 	
 	protected float rotation = 0; // Rotation around the axis facing the Player
 	
@@ -30,6 +43,48 @@ public abstract class CelestialObject
 	{
 		this.texture = texture;
 	}
+	
+	/**
+	 * Creates a Halo around the Celestial Object
+	 * @param haloTexture Texture used for the Halo
+	 * @param haloSize Size of the Halo
+	 * @return self
+	 */
+	public CelestialObject halo(ResourceLocation haloTexture, float haloSize)
+	{
+		this.haloTexture = haloTexture;
+		this.haloSize = haloSize;
+		this.hasHalo = true;
+		return this;
+	}
+	
+	/**
+	 * Forces the Celestial Object to blend with the background
+	 * @return self
+	 */
+	public CelestialObject blends()
+	{
+		this.blends = true;
+		return this;
+	}
+	
+	public CelestialObject blendsDuringDay()
+	{
+		this.blendsDuringDay = true;
+		
+		return this;
+	}
+	
+	public CelestialObject visibleDuringDay()
+	{
+		this.visibleDuringDay = true;
+		
+		return this;
+	}
+	
+	//============================================================================================
+	//******************************************Getters*******************************************
+	//============================================================================================
 	
 	protected ResourceLocation getTexture(ClientLevel level, Camera camera, float partialTicks)
 	{
@@ -48,17 +103,17 @@ public abstract class CelestialObject
 	
 	protected boolean shouldBlend(ClientLevel level, Camera camera)
 	{
-		return true;
+		return this.blends;
 	}
 	
 	protected boolean isVisibleDuringDay(ClientLevel level, Camera camera)
 	{
-		return false;
+		return this.visibleDuringDay;
 	}
 	
 	protected boolean shouldBlendDuringDay(ClientLevel level, Camera camera)
 	{
-		return true;
+		return this.blendsDuringDay;
 	}
 	
 	protected float getBrightness(ClientLevel level, Camera camera, float partialTicks)
@@ -86,6 +141,7 @@ public abstract class CelestialObject
 		}
 	}
 	
+	//TODO Rename these 3
 	protected abstract float getTheta(ClientLevel level, float partialTicks);
 	
 	protected abstract float getPhi(ClientLevel level, float partialTicks);
@@ -122,6 +178,14 @@ public abstract class CelestialObject
 		}
 	}
 	
+	protected void renderHalo(BufferBuilder bufferbuilder, Matrix4f lastMatrix, float[] uv, float rotation, 
+			float theta, float phi, float brightness)
+	{
+		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+		this.renderObject(bufferbuilder, lastMatrix, this.haloTexture, uv, this.haloSize, rotation, theta, phi, brightness);
+		RenderSystem.defaultBlendFunc();
+	}
+	
 	public void render(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder,
 			float xRotation, float yRotation, float zRotation)
 	{
@@ -141,7 +205,15 @@ public abstract class CelestialObject
 		else
 			RenderSystem.defaultBlendFunc();
 		
-		renderObject(bufferbuilder, stack.last().pose(), getTexture(level, camera, partialTicks), getUV(level, camera, partialTicks), getSize(level, partialTicks), getRotation(level, partialTicks), getTheta(level, partialTicks), getPhi(level, partialTicks), brightness);
+		Matrix4f lastMatrix = stack.last().pose();
+		float[] uv = getUV(level, camera, partialTicks);
+		float rotation = getRotation(level, partialTicks);
+		float theta = getTheta(level, partialTicks);
+		float phi = getPhi(level, partialTicks);
+		
+		if(this.hasHalo)
+			this.renderHalo(bufferbuilder, lastMatrix, uv, rotation, theta, phi, brightness);
+		renderObject(bufferbuilder, lastMatrix, getTexture(level, camera, partialTicks), uv, getSize(level, partialTicks), rotation, theta, phi, brightness);
 
 		RenderSystem.defaultBlendFunc();
 		stack.popPose();

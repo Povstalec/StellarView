@@ -58,6 +58,7 @@ public class ShootingStar extends SkyEffect
 	        stack.mulPose(Axis.ZP.rotationDegrees(zRotation));
 	        stack.mulPose(Axis.XP.rotationDegrees(xRotation));
 			
+	        //TODO Add random colors to shooting stars
 			this.renderEffect(bufferbuilder, stack.last().pose(), SHOOTING_STAR_TEXTURE, FULL_UV, size, rotation, 0, 0, getBrightness(level, camera, partialTicks));
 			stack.popPose();
 		}

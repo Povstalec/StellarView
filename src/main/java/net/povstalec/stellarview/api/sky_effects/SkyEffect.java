@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.joml.Matrix4f;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferUploader;
@@ -75,6 +76,7 @@ public abstract class SkyEffect
 		
 		if(brightness > 0.0F)
 		{
+			RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 			RenderSystem.setShaderColor(1, 1, 1, brightness);
 			
 			RenderSystem.setShaderTexture(0, texture);
@@ -84,6 +86,7 @@ public abstract class SkyEffect
 	        bufferbuilder.vertex(lastMatrix, corner11[0], corner11[1], corner11[2]).uv(uv[2], uv[3]).endVertex();
 	        bufferbuilder.vertex(lastMatrix, corner01[0], corner01[1], corner01[2]).uv(uv[0], uv[3]).endVertex();
 	        BufferUploader.drawWithShader(bufferbuilder.end());
+			RenderSystem.defaultBlendFunc();
 		}
 	}
 	
