@@ -17,8 +17,6 @@ public class Moon extends Planet
 		super(sunTexture, size);
 		this.visibleDuringDay();
 		this.blendsDuringDay();
-		this.initialTheta((float) Math.toRadians(180));
-		this.initialPhi((float) Math.toRadians(180));
 	}
 	
 	protected boolean hasPhases()

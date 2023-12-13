@@ -21,9 +21,10 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 
-public abstract class StarField
+public abstract class StarField extends StellarObject
 {
 	@Nullable
 	protected VertexBuffer starBuffer;
@@ -42,8 +43,10 @@ public abstract class StarField
 	protected float yAxisRotation = 0;
 	protected float zAxisRotation = 0;
 	
-	public StarField(long seed, short numberOfStars)
+	public StarField(ResourceLocation texture, float size, long seed, short numberOfStars)
 	{
+		super(texture, size);
+		
 		this.seed = seed;
 		
 		this.numberOfStars = numberOfStars;
@@ -149,20 +152,20 @@ public abstract class StarField
         
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		
-		this.galacticObjects.stream().forEach(galacticObject ->
+		/*this.galacticObjects.stream().forEach(galacticObject ->
 		{
 			galacticObject.setOffset(xOffset, yOffset, zOffset);
 			galacticObject.render(level, camera, partialTicks, stack, bufferbuilder, xAxisRotation, yAxisRotation, zAxisRotation);
-		});
+		});*/
 	}
 	
 	
 	
 	public static class VanillaStarField extends StarField
 	{
-		public VanillaStarField(long seed, short numberOfStars)
+		public VanillaStarField(ResourceLocation texture, float size, long seed, short numberOfStars)
 		{
-			super(seed, numberOfStars);
+			super(texture, size, seed, numberOfStars);
 		}
 
 		@Override

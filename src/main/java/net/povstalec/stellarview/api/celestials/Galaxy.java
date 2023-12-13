@@ -5,25 +5,29 @@ import com.mojang.blaze3d.vertex.BufferBuilder.RenderedBuffer;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
+import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.client.render.level.misc.StellarCoordinates;
 
 public abstract class Galaxy extends StarField
 {
-	protected Galaxy(long seed, short numberOfStars)
+	protected Galaxy(ResourceLocation texture, float size, long seed, short numberOfStars)
 	{
-		super(seed, numberOfStars);
+		super(texture, size, seed, numberOfStars);
 	}
 	
 	
 	
-	public static class SpiralGalaxy extends StarField
+	public static class SpiralGalaxy extends Galaxy
 	{
-		byte numberOfArms;
+		public static final ResourceLocation SPIRAL_GALAXY_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/venus.png");
 		
-		public SpiralGalaxy(long seed, byte numberOfArms, short numberOfStars)
+		private byte numberOfArms;
+		
+		public SpiralGalaxy(float size, long seed, byte numberOfArms, short numberOfStars)
 		{
-			super(seed, numberOfStars);
+			super(SPIRAL_GALAXY_TEXTURE, size, seed, numberOfStars);
 			this.numberOfArms = numberOfArms;
 		}
 
@@ -79,11 +83,11 @@ public abstract class Galaxy extends StarField
 		}
 	}
 	
-	public static class LenticularGalaxy extends StarField
+	public static class LenticularGalaxy extends Galaxy
 	{
-		public LenticularGalaxy(long seed, short numberOfStars)
+		public LenticularGalaxy(ResourceLocation texture, float size, long seed, short numberOfStars)
 		{
-			super(seed, numberOfStars);
+			super(texture, size, seed, numberOfStars);
 		}
 
 		@Override

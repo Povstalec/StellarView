@@ -1,6 +1,7 @@
 package net.povstalec.stellarview.api.celestials;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -14,6 +15,7 @@ import com.mojang.math.Axis;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
+import net.povstalec.stellarview.api.celestials.orbiting.OrbitingCelestialObject;
 import net.povstalec.stellarview.client.render.level.misc.StellarCoordinates;
 import net.povstalec.stellarview.common.config.StellarViewConfig;
 
@@ -23,6 +25,7 @@ public abstract class CelestialObject
 	 * Gravitational Constant
 	 */
 	public static final float G = 6.673e-11F;
+	public static final int TICKS_PER_DAY = 24000;
 	
 	public static final float[] FULL_UV = new float[] {0.0F, 0.0F, 1.0F, 1.0F};
 	public static final float DEFAULT_DISTANCE = 100.0F;
@@ -186,17 +189,17 @@ public abstract class CelestialObject
 		RenderSystem.defaultBlendFunc();
 	}
 	
-	public void render(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder,
-			float xRotation, float yRotation, float zRotation)
+	public void render(OrbitingCelestialObject viewCenter, Vector3f vievCenterCoords, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder,
+			Vector3f skyAxisRotation, Vector3f coords, boolean renderChildren)
 	{
-		if(!shouldRender(level, camera))
+		if(!shouldRender(level, camera) || this == viewCenter)
 			return;
 		
 		stack.pushPose();
 		
-		stack.mulPose(Axis.YP.rotationDegrees(yRotation));
-        stack.mulPose(Axis.ZP.rotationDegrees(zRotation));
-        stack.mulPose(Axis.XP.rotationDegrees(xRotation));
+		stack.mulPose(Axis.YP.rotationDegrees(skyAxisRotation.y));
+        stack.mulPose(Axis.ZP.rotationDegrees(skyAxisRotation.z));
+        stack.mulPose(Axis.XP.rotationDegrees(skyAxisRotation.x));
 		
 		float brightness = getBrightness(level, camera, partialTicks);
 		
@@ -208,8 +211,12 @@ public abstract class CelestialObject
 		Matrix4f lastMatrix = stack.last().pose();
 		float[] uv = getUV(level, camera, partialTicks);
 		float rotation = getRotation(level, partialTicks);
-		float theta = getTheta(level, partialTicks);
-		float phi = getPhi(level, partialTicks);
+		
+		Vector3f relative = StellarCoordinates.relativeVector(coords, vievCenterCoords);
+		
+		Vector3f sphericalCoords = StellarCoordinates.cartesianToSpherical(relative);
+		float theta = sphericalCoords.y;
+		float phi = sphericalCoords.z;
 		
 		if(this.hasHalo)
 			this.renderHalo(bufferbuilder, lastMatrix, uv, rotation, theta, phi, brightness);

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.joml.Vector3f;
+
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 
@@ -12,6 +14,8 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.api.celestials.StellarObject;
+import net.povstalec.stellarview.client.render.level.misc.StellarCoordinates;
+import net.povstalec.stellarview.common.config.StellarViewConfig;
 
 public class OrbitingCelestialObject extends StellarObject
 {
@@ -23,35 +27,12 @@ public class OrbitingCelestialObject extends StellarObject
 	protected float initialPhi = 0;
 	protected float rotation = 0;
 	
-	private Optional<StellarObject> primaryBody = Optional.empty();
-	private List<OrbitingCelestialObject> orbitingObjects = new ArrayList<OrbitingCelestialObject>();
+	protected List<OrbitingCelestialObject> orbitingObjects = new ArrayList<OrbitingCelestialObject>();
 	
 	public OrbitingCelestialObject(ResourceLocation texture, float size)
 	{
 		super(texture, size);
 		//this.mass = mass;
-	}
-	
-	/**
-	 * Initial Theta for Spherical Coordinates
-	 * @param initialTheta Initial Theta
-	 * @return self
-	 */
-	public OrbitingCelestialObject initialTheta(float initialTheta)
-	{
-		this.initialTheta = initialTheta;
-		return this;
-	}
-
-	/**
-	 * Initial Phi for Spherical Coordinates
-	 * @param initialPhi Initial Phi
-	 * @return self
-	 */
-	public OrbitingCelestialObject initialPhi(float initialPhi)
-	{
-		this.initialPhi = initialPhi;
-		return this;
 	}
 
 	@Override
@@ -63,7 +44,7 @@ public class OrbitingCelestialObject extends StellarObject
 	@Override
 	protected float getPhi(ClientLevel level, float partialTicks)
 	{
-		return this.initialPhi - (float) Math.toRadians(angularVelocity * ((float) level.getDayTime() / 24000));
+		return this.initialPhi + (float) Math.toRadians(angularVelocity * ((float) level.getDayTime() / 24000));
 	}
 
 	@Override
@@ -88,7 +69,7 @@ public class OrbitingCelestialObject extends StellarObject
 		return getVelocity(level, partialTicks, parentMass) / distance;
 	}*/
 	
-	public final OrbitingCelestialObject addOrbitingObject(OrbitingCelestialObject object, float distance, float angularVelocity)
+	public final OrbitingCelestialObject addOrbitingObject(OrbitingCelestialObject object, float distance, float angularVelocity, float initialPhi)
 	{
 		if(object.primaryBody.isPresent())
 		{
@@ -99,31 +80,56 @@ public class OrbitingCelestialObject extends StellarObject
 		object.primaryBody = Optional.of(this);
 		object.distance = distance;
 		object.angularVelocity = angularVelocity;
+		object.initialPhi = initialPhi;
 		
 		this.orbitingObjects.add(object);
 		
 		return this;
 	}
 	
-	public void render(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder,
-			float xRotation, float yRotation, float zRotation)
+	public Vector3f getRelativeCartesianCoordinates(ClientLevel level, float partialTicks)
 	{
-		super.render(level, camera, partialTicks, stack, bufferbuilder, xRotation, yRotation, zRotation);
+		return StellarCoordinates.sphericalToCartesian(new Vector3f(distance, getTheta(level, partialTicks), getPhi(level, partialTicks)));
+	}
+	
+	@Override
+	public void render(OrbitingCelestialObject viewCenter, Vector3f vievCenterCoords, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder,
+			Vector3f skyAxisRotation, Vector3f parentCoords, boolean renderChildren)
+	{
+		Vector3f relativeCoords = getRelativeCartesianCoordinates(level, partialTicks);
+		Vector3f absoluteCoords = StellarCoordinates.absoluteVector(parentCoords, relativeCoords);
+		super.render(viewCenter, vievCenterCoords, level, camera, partialTicks, stack, bufferbuilder, skyAxisRotation, absoluteCoords, renderChildren);
 		
-		this.orbitingObjects.stream().forEach(orbitingObject ->
+		if(renderChildren)
 		{
-			orbitingObject.render(level, camera, partialTicks, stack, bufferbuilder, xRotation, yRotation, zRotation);
-		});
+			this.orbitingObjects.stream().forEach(orbitingObject ->
+			{
+				orbitingObject.render(viewCenter, vievCenterCoords, level, camera, partialTicks, stack, bufferbuilder, skyAxisRotation, absoluteCoords, true);
+			});
+		}
 	}
 	
 	//TODO
-	public void renderFromHere(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder,
-			float xRotation, float yRotation, float zRotation)
+	public void renderFrom(OrbitingCelestialObject viewCenter, Vector3f viewCenterCoords, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder,
+			Vector3f skyAxisRotation)
 	{
-		if(primaryBody.isPresent() && primaryBody.get() instanceof OrbitingCelestialObject parent)
-			parent.renderFromHere(level, camera, partialTicks, stack, bufferbuilder, xRotation, yRotation, zRotation);
+		Vector3f absoluteCoords = StellarCoordinates.absoluteVector(viewCenterCoords, getRelativeCartesianCoordinates(level, partialTicks));
+		if(primaryBody.isPresent())
+		{
+			if(primaryBody.get() instanceof OrbitingCelestialObject parent)
+			{
+				parent.renderFrom(viewCenter, absoluteCoords, level, camera, partialTicks, stack, bufferbuilder, skyAxisRotation);
+			}
+			//else if(primaryBody.get() instanceof StarField starField)
+			//	starField.render(level, camera, partialTicks, partialTicks, stack, null, null, bufferbuilder, xRotation, yRotation, zRotation);
+		}
 		else
-			this.render(level, camera, partialTicks, stack, bufferbuilder, xRotation, yRotation, zRotation);
+			this.render(viewCenter, absoluteCoords, level, camera, partialTicks, stack, bufferbuilder, skyAxisRotation, new Vector3f(0, 0, 0), true);
 		
+	}
+	
+	public void renderLocalSky(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder)
+	{
+		this.renderFrom(this, new Vector3f(0, 0, 0), level, camera, partialTicks, stack, bufferbuilder, new Vector3f(0, 0, 0));
 	}
 }

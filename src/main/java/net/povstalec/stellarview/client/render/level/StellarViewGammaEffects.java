@@ -10,7 +10,6 @@ import net.minecraft.client.renderer.DimensionSpecialEffects;
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.api.StellarViewSpecialEffects;
-import net.povstalec.stellarview.api.init.StarFieldInit;
 import net.povstalec.stellarview.api.init.StellarViewInit;
 
 public class StellarViewGammaEffects extends StellarViewSpecialEffects
@@ -19,7 +18,7 @@ public class StellarViewGammaEffects extends StellarViewSpecialEffects
 	
 	public StellarViewGammaEffects()
 	{
-		super(new StellarViewSky(StellarViewInit.EARTH).starField(StarFieldInit.MILKY_WAY),
+		super(new StellarViewSky(StellarViewInit.EARTH).starField(StellarViewInit.MILKY_WAY),
 				192.0F, true, DimensionSpecialEffects.SkyType.NORMAL, false, false);
 	}
 	

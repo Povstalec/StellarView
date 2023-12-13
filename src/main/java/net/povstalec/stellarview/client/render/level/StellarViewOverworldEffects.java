@@ -10,11 +10,7 @@ import net.minecraft.client.renderer.DimensionSpecialEffects;
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.api.StellarViewSpecialEffects;
-import net.povstalec.stellarview.api.init.StarFieldInit;
 import net.povstalec.stellarview.api.init.StellarViewInit;
-import net.povstalec.stellarview.api.sky_effects.MeteorShower;
-import net.povstalec.stellarview.api.sky_effects.ShootingStar;
-import net.povstalec.stellarview.common.config.OverworldConfig;
 import net.povstalec.stellarview.common.config.StellarViewConfig;
 
 public class StellarViewOverworldEffects extends StellarViewSpecialEffects
@@ -26,10 +22,8 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 	public StellarViewOverworldEffects()
 	{
 		super(new StellarViewSky(StellarViewInit.EARTH)
-				.starField(StarFieldInit.MILKY_WAY)
-				.skybox(OVERWORLD_SKYBOX)
-				.shootingStar((ShootingStar) new ShootingStar().setRarityValue(OverworldConfig.shooting_star_chance))
-				.meteorShower((MeteorShower) new MeteorShower().setRarityValue(OverworldConfig.meteor_shower_chance)),
+				.starField(StellarViewInit.MILKY_WAY)
+				.skybox(OVERWORLD_SKYBOX),
 				192.0F, true, DimensionSpecialEffects.SkyType.NORMAL, false, false);
 	}
 	
