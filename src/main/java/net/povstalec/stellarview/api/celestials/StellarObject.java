@@ -4,8 +4,13 @@ import java.util.Optional;
 
 import org.joml.Vector3f;
 
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+
+import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
+import net.povstalec.stellarview.api.celestials.orbiting.OrbitingCelestialObject;
 import net.povstalec.stellarview.client.render.level.misc.StellarCoordinates;
 
 public abstract class StellarObject extends CelestialObject
@@ -13,14 +18,11 @@ public abstract class StellarObject extends CelestialObject
 	protected float size;
 	
 	protected Vector3f coordinates = new Vector3f(0, 0, 0);
+	protected Vector3f axisRotation = new Vector3f(0, 0, 0);
 	
 	protected float xOffset = 0;
 	protected float yOffset = 0;
 	protected float zOffset = 0;
-	
-	private float xAxisRotation;
-	private float yAxisRotation;
-	private float zAxisRotation;
 
 	protected Optional<StellarObject> primaryBody = Optional.empty();
 	
@@ -87,6 +89,15 @@ public abstract class StellarObject extends CelestialObject
 		return this;
 	}
 	
+	public StellarObject setRotation(float xRotation, float yRotation, float zRotation)
+	{
+		this.axisRotation.x = xRotation;
+		this.axisRotation.y = yRotation;
+		this.axisRotation.z = zRotation;
+		
+		return this;
+	}
+	
 	public float getX()
 	{
 		return this.coordinates.x;
@@ -104,16 +115,31 @@ public abstract class StellarObject extends CelestialObject
 	
 	public float getXAxisRotation()
 	{
-		return this.xAxisRotation;
+		return this.axisRotation.x;
 	}
 	
 	public float getYAxisRotation()
 	{
-		return this.yAxisRotation;
+		return this.axisRotation.y;
 	}
 	
 	public float getZAxisRotation()
 	{
-		return this.zAxisRotation;
+		return this.axisRotation.z;
+	}
+	
+	public Vector3f getRelativeCartesianCoordinates(ClientLevel level, float partialTicks)
+	{
+		return this.coordinates;
+	}
+	
+	@Override
+	public void render(OrbitingCelestialObject viewCenter, Vector3f vievCenterCoords, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder,
+			Vector3f skyAxisRotation, Vector3f parentCoords)
+	{
+		Vector3f relativeCoords = getRelativeCartesianCoordinates(level, partialTicks);
+		Vector3f absoluteCoords = StellarCoordinates.absoluteVector(parentCoords, relativeCoords);
+		
+		super.render(viewCenter, vievCenterCoords, level, camera, partialTicks, stack, bufferbuilder, skyAxisRotation, absoluteCoords);
 	}
 }

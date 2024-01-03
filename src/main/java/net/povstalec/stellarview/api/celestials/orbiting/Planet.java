@@ -2,6 +2,7 @@ package net.povstalec.stellarview.api.celestials.orbiting;
 
 import java.util.Optional;
 
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -75,7 +76,8 @@ public class Planet extends OrbitingCelestialObject
 	}
 	
 	@Override
-	public void renderLocalSky(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder)
+	public void renderLocalSky(ClientLevel level, Camera camera, float partialTicks,
+			PoseStack stack, Matrix4f projectionMatrix, Runnable setupFog, BufferBuilder bufferbuilder)
 	{
 		if(atmosphere.isPresent())
 			this.atmosphere.get().renderAtmosphere(level, camera, partialTicks, stack, bufferbuilder);
@@ -95,7 +97,7 @@ public class Planet extends OrbitingCelestialObject
 		else
 			skyAxisRotation = new Vector3f(0, 0, 0);
 		
-		this.renderFrom(this, new Vector3f(0, 0, 0), level, camera, partialTicks, stack, bufferbuilder, skyAxisRotation);
+		this.renderFrom(this, new Vector3f(0, 0, 0), level, camera, partialTicks, stack, projectionMatrix, setupFog, bufferbuilder, skyAxisRotation, new Vector3f(0, 0, 0));
 	}
 	
 	public static class Atmosphere implements StellarViewSkyEffects, StellarViewFogEffects

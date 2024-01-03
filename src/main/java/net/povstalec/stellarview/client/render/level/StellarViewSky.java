@@ -109,9 +109,9 @@ public class StellarViewSky implements StellarViewSkyEffects, StellarViewFogEffe
         stack.mulPose(Axis.ZP.rotationDegrees(zRotation));
         stack.mulPose(Axis.XP.rotationDegrees((level.getTimeOfDay(partialTicks) + (float) level.getDayTime() / 24000 / 96) * 360.0F));
 
-		float rain = 1.0F - level.getRainLevel(partialTicks);
-        if(!StellarViewConfig.disable_stars.get())
-        	starField.render(level, camera, partialTicks, rain, stack, projectionMatrix, setupFog, bufferbuilder, (float) Math.toRadians(18), (float) Math.toRadians(0), (float) Math.toRadians(90));
+		//float rain = 1.0F - level.getRainLevel(partialTicks);
+        //if(!StellarViewConfig.disable_stars.get())
+        //	starField.render(level, camera, partialTicks, rain, stack, projectionMatrix, setupFog, bufferbuilder, (float) Math.toRadians(18), (float) Math.toRadians(0), (float) Math.toRadians(90));
 
         stack.popPose();
         
@@ -120,7 +120,7 @@ public class StellarViewSky implements StellarViewSkyEffects, StellarViewFogEffe
 		if(skybox != null)
 			skybox.render(level, partialTicks, stack, bufferbuilder, 0, 0, 0);
 		
-        this.center.renderLocalSky(level, camera, partialTicks, stack, bufferbuilder);
+        this.center.renderLocalSky(level, camera, partialTicks, stack, projectionMatrix, setupFog, bufferbuilder);
 	}
 	
 	public void renderSky(ClientLevel level, float partialTicks, PoseStack stack, Camera camera, Matrix4f projectionMatrix, Runnable setupFog)

@@ -113,8 +113,13 @@ public class StellarCoordinates
 		return new Vector3f(vector1.x - vector2.x, vector1.y - vector2.y, vector1.z - vector2.z);
 	}
 	
-	public static Vector3f absoluteVector(Vector3f vector1, Vector3f vector2)
+	public static Vector3f addVectors(Vector3f vector1, Vector3f vector2)
 	{
 		return new Vector3f(vector1.x + vector2.x, vector1.y + vector2.y, vector1.z + vector2.z);
+	}
+	
+	public static Vector3f absoluteVector(Vector3f vector1, Vector3f vector2)
+	{
+		return addVectors(vector1, vector2);
 	}
 }

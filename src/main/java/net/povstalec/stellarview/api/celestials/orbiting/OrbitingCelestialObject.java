@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -13,8 +14,10 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.StellarView;
+import net.povstalec.stellarview.api.celestials.StarField;
 import net.povstalec.stellarview.api.celestials.StellarObject;
 import net.povstalec.stellarview.client.render.level.misc.StellarCoordinates;
+import net.povstalec.stellarview.common.config.StellarViewConfig;
 
 public class OrbitingCelestialObject extends StellarObject
 {
@@ -86,6 +89,7 @@ public class OrbitingCelestialObject extends StellarObject
 		return this;
 	}
 	
+	@Override
 	public Vector3f getRelativeCartesianCoordinates(ClientLevel level, float partialTicks)
 	{
 		return StellarCoordinates.sphericalToCartesian(new Vector3f(distance, getTheta(level, partialTicks), getPhi(level, partialTicks)));
@@ -124,27 +128,34 @@ public class OrbitingCelestialObject extends StellarObject
 		});
 	}
 	
-	//TODO
-	public void renderFrom(OrbitingCelestialObject viewCenter, Vector3f viewCenterCoords, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder,
-			Vector3f skyAxisRotation)
+	public void renderFrom(OrbitingCelestialObject viewCenter, Vector3f viewCenterCoords, ClientLevel level, Camera camera, float partialTicks,
+			PoseStack stack, Matrix4f projectionMatrix, Runnable setupFog, BufferBuilder bufferbuilder,
+			Vector3f skyAxisRotation, Vector3f axisRotation)
 	{
 		Vector3f absoluteCoords = StellarCoordinates.absoluteVector(viewCenterCoords, getRelativeCartesianCoordinates(level, partialTicks));
 		if(primaryBody.isPresent())
 		{
 			if(primaryBody.get() instanceof OrbitingCelestialObject parent)
 			{
-				parent.renderFrom(viewCenter, absoluteCoords, level, camera, partialTicks, stack, bufferbuilder, skyAxisRotation);
+				parent.renderFrom(viewCenter, absoluteCoords, level, camera, partialTicks, stack, projectionMatrix, setupFog, bufferbuilder, skyAxisRotation, StellarCoordinates.addVectors(this.axisRotation, axisRotation));
 			}
-			//else if(primaryBody.get() instanceof StarField starField)
-			//	starField.render(level, camera, partialTicks, partialTicks, stack, null, null, bufferbuilder, xRotation, yRotation, zRotation);
+			else if(primaryBody.get() instanceof StarField starField)
+			{
+				if(!StellarViewConfig.disable_stars.get())
+				{
+					float rain = 1.0F - level.getRainLevel(partialTicks);
+		        	starField.render(viewCenter, viewCenterCoords, level, camera, partialTicks, rain, stack, projectionMatrix, setupFog, bufferbuilder, skyAxisRotation, StellarCoordinates.addVectors(this.axisRotation, axisRotation), new Vector3f(0, 0, 0));
+				}
+			}
 		}
 		else
 			this.render(viewCenter, absoluteCoords, level, camera, partialTicks, stack, bufferbuilder, skyAxisRotation, new Vector3f(0, 0, 0));
 		
 	}
 	
-	public void renderLocalSky(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder)
+	public void renderLocalSky(ClientLevel level, Camera camera, float partialTicks,
+			PoseStack stack, Matrix4f projectionMatrix, Runnable setupFog, BufferBuilder bufferbuilder)
 	{
-		this.renderFrom(this, new Vector3f(0, 0, 0), level, camera, partialTicks, stack, bufferbuilder, new Vector3f(0, 0, 0));
+		this.renderFrom(this, new Vector3f(0, 0, 0), level, camera, partialTicks, stack, projectionMatrix, setupFog, bufferbuilder, new Vector3f(0, 0, 0), new Vector3f(0, 0, 0));
 	}
 }

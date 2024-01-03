@@ -2,10 +2,12 @@ package net.povstalec.stellarview.api.celestials;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.Nullable;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -23,6 +25,7 @@ import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
+import net.povstalec.stellarview.api.celestials.orbiting.OrbitingCelestialObject;
 
 public abstract class StarField extends StellarObject
 {
@@ -35,13 +38,7 @@ public abstract class StarField extends StellarObject
 	
 	protected short numberOfStars;
 	
-	protected float xOffset = 0;
-	protected float yOffset = 0;
-	protected float zOffset = 0;
-
-	protected float xAxisRotation = 0;
-	protected float yAxisRotation = 0;
-	protected float zAxisRotation = 0;
+	protected Vector3f offset = new Vector3f(0, 0, 0);
 	
 	public StarField(ResourceLocation texture, float size, long seed, short numberOfStars)
 	{
@@ -65,9 +62,9 @@ public abstract class StarField extends StellarObject
 		this.yOffset = yOffset;
 		this.zOffset = zOffset;
 		
-		this.xAxisRotation = xAxisRotation;
-		this.yAxisRotation = yAxisRotation;
-		this.zAxisRotation = zAxisRotation;
+		this.axisRotation.x = xAxisRotation;
+		this.axisRotation.y = yAxisRotation;
+		this.axisRotation.z = zAxisRotation;
 		
 		bufferbuilder$renderedbuffer = getStarBuffer(bufferBuilder, xOffset, yOffset, zOffset, xAxisRotation, yAxisRotation, zAxisRotation);
 		
@@ -78,9 +75,19 @@ public abstract class StarField extends StellarObject
 		return this;
 	}
 	
-	public final StarField addGalacticObject(StellarObject object, float x, float y, float z)
+	public final StarField addGalacticObject(StellarObject object,
+			float x, float y, float z)
 	{
-		this.galacticObjects.add(object.setGalacticPosition(x, y, z));
+		this.addGalacticObject(object, x, y, z, 0, 0, 0);
+		return this;
+	}
+	
+	public final StarField addGalacticObject(StellarObject object,
+			float x, float y, float z,
+			float xRotation, float yRotation, float zRotation)
+	{
+		this.galacticObjects.add(object.setGalacticPosition(x, y, z).setRotation(xRotation, yRotation, zRotation));
+		object.primaryBody = Optional.of(this);
 		return this;
 	}
 	
@@ -107,33 +114,38 @@ public abstract class StarField extends StellarObject
 	
 	public float getXRotation()
 	{
-		return this.xAxisRotation;
+		return this.axisRotation.x;
 	}
 	
 	public float getYRotation()
 	{
-		return this.yAxisRotation;
+		return this.axisRotation.y;
 	}
 	
 	public float getZRotation()
 	{
-		return this.zAxisRotation;
+		return this.axisRotation.z;
 	}
 	
 	protected void renderStars(ClientLevel level, Camera camera, float partialTicks, float rain, PoseStack stack, Matrix4f projectionMatrix, Runnable setupFog,
-			float xAxisRotation, float yAxisRotation, float zAxisRotation)
+			Vector3f skyAxisRotation, Vector3f axisRotation)
 	{
 		float starBrightness = Star.getStarBrightness(level, camera, partialTicks);
 		
 		if(starBrightness > 0.0F)
 		{
+			stack.pushPose();
 			RenderSystem.setShaderColor(1, 1, 1, starBrightness);
 			//RenderSystem.setShaderTexture(0, new ResourceLocation("textures/environment/sun.png"));
 			FogRenderer.setupNoFog();
 			
-			stack.mulPose(Axis.XP.rotation(xAxisRotation));
-			stack.mulPose(Axis.YP.rotation(yAxisRotation));
-			stack.mulPose(Axis.ZP.rotation(zAxisRotation));
+			stack.mulPose(Axis.YP.rotationDegrees(skyAxisRotation.y));
+	        stack.mulPose(Axis.ZP.rotationDegrees(skyAxisRotation.z));
+	        stack.mulPose(Axis.XP.rotationDegrees(skyAxisRotation.x));
+	        
+	        stack.mulPose(Axis.YP.rotationDegrees(axisRotation.y));
+	        stack.mulPose(Axis.ZP.rotationDegrees(axisRotation.z));
+	        stack.mulPose(Axis.XP.rotationDegrees(axisRotation.x));
 			
 			this.starBuffer.bind();
 			this.starBuffer.drawWithShader(stack.last().pose(), projectionMatrix, GameRenderer.getPositionColorShader());
@@ -141,22 +153,30 @@ public abstract class StarField extends StellarObject
 			VertexBuffer.unbind();
 			
 			setupFog.run();
+			stack.popPose();
 		}
 	}
 	
-	public void render(ClientLevel level, Camera camera, float partialTicks, float rain, PoseStack stack, Matrix4f projectionMatrix, Runnable setupFog, BufferBuilder bufferbuilder,
-			float xAxisRotation, float yAxisRotation, float zAxisRotation)
+	/*@Override
+	public void render(OrbitingCelestialObject viewCenter, Vector3f vievCenterCoords, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder,
+			Vector3f skyAxisRotation, Vector3f coords)
+	{
+		
+	}*/
+	
+	public void render(OrbitingCelestialObject viewCenter, Vector3f viewCenterCoords, ClientLevel level, Camera camera, float partialTicks, float rain, PoseStack stack, Matrix4f projectionMatrix, Runnable setupFog, BufferBuilder bufferbuilder,
+			Vector3f skyAxisRotation, Vector3f axisRotation, Vector3f coords)
 	{
 		if(this.starBuffer != null)
-			renderStars(level, camera, partialTicks, rain, stack, projectionMatrix, setupFog, xAxisRotation, yAxisRotation, zAxisRotation);
+			renderStars(level, camera, partialTicks, rain, stack, projectionMatrix, setupFog, skyAxisRotation, axisRotation);
         
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		
-		/*this.galacticObjects.stream().forEach(galacticObject ->
+		this.galacticObjects.stream().forEach(galacticObject ->
 		{
-			galacticObject.setOffset(xOffset, yOffset, zOffset);
-			galacticObject.render(level, camera, partialTicks, stack, bufferbuilder, xAxisRotation, yAxisRotation, zAxisRotation);
-		});*/
+			//galacticObject.setOffset(xOffset, yOffset, zOffset);
+			galacticObject.render(viewCenter, viewCenterCoords, level, camera, partialTicks, stack, bufferbuilder, skyAxisRotation, coords);
+		});
 	}
 	
 	

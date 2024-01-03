@@ -70,7 +70,8 @@ public class StellarViewInit
 	
 	// Galaxies
 	public static final SpiralGalaxy MILKY_WAY = (SpiralGalaxy) new Galaxy.SpiralGalaxy(100, 10842L, (byte) 4, (short) 1500)
-			.addGalacticObject(new Supernova(10.0F, 15 * CelestialObject.TICKS_PER_DAY + 18000, 5 * CelestialObject.TICKS_PER_DAY), 10, -3, 2);
+			.addGalacticObject(new Supernova(10.0F, 15 * CelestialObject.TICKS_PER_DAY + 18000, 5 * CelestialObject.TICKS_PER_DAY), 10, -3, 2)
+			.addGalacticObject(SOL, 0, 0, 16, 18, 0, 90);
 	
 	//public static final StarField SPINDLE_GALAXY = new Galaxy.LenticularGalaxy(10842L, (short) 6000);
 }

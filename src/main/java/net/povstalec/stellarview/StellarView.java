@@ -18,9 +18,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
-import net.povstalec.stellarview.client.render.level.StellarViewAlphaEffects;
-import net.povstalec.stellarview.client.render.level.StellarViewBetaEffects;
-import net.povstalec.stellarview.client.render.level.StellarViewGammaEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewOverworldEffects;
 import net.povstalec.stellarview.client.screens.config.ConfigScreen;
 import net.povstalec.stellarview.common.config.OverworldConfig;
@@ -35,9 +32,6 @@ public class StellarView
     public static final Logger LOGGER = LogUtils.getLogger();
     
     public static StellarViewOverworldEffects overworld;
-    public static StellarViewAlphaEffects alpha;
-    public static StellarViewBetaEffects beta;
-    public static StellarViewGammaEffects gamma;
 
 	public StellarView()
 	{
