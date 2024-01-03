@@ -118,7 +118,7 @@ public class StellarViewSky implements StellarViewSkyEffects, StellarViewFogEffe
 		
 		if(skybox != null)
 			skybox.render(level, partialTicks, stack, bufferbuilder, 0, 0, 0);
-        
+		
         this.center.renderLocalSky(level, camera, partialTicks, stack, bufferbuilder);
 	}
 	

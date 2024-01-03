@@ -7,6 +7,7 @@ import net.povstalec.stellarview.api.celestials.Galaxy;
 import net.povstalec.stellarview.api.celestials.Galaxy.SpiralGalaxy;
 import net.povstalec.stellarview.api.celestials.Supernova;
 import net.povstalec.stellarview.api.celestials.orbiting.Moon;
+import net.povstalec.stellarview.api.celestials.orbiting.Moon.DefaultMoon;
 import net.povstalec.stellarview.api.celestials.orbiting.Planet;
 import net.povstalec.stellarview.api.celestials.orbiting.Sun;
 import net.povstalec.stellarview.api.sky_effects.MeteorShower;
@@ -31,12 +32,13 @@ public class StellarViewInit
 		}
 	};
 
-	public static final Moon GANYMEDE = new Moon(Moon.DEFAULT_MOON_TEXTURE, 0.5F);
+	public static final Moon GANYMEDE = new DefaultMoon(0.25F);
 	
 	
 	
 	// Planets
-	public static final Planet VENUS = (Planet) new Planet(Planet.VENUS_TEXTURE, 1);
+	public static final Planet VENUS = (Planet) new Planet(Planet.VENUS_TEXTURE, 1)
+			.halo(Planet.VENUS_HALO_TEXTURE, 1);
 	
 	public static final Planet EARTH = (Planet) new Planet(Planet.EARTH_TEXTURE, 30, Planet.EARTH_DAY_LENGTH)
 			.addAtmosphere(new Planet.Atmosphere(
@@ -48,16 +50,19 @@ public class StellarViewInit
 			.halo(Planet.MARS_HALO_TEXTURE, 1);
 	
 	public static final Planet JUPITER = (Planet) new Planet(Planet.JUPITER_TEXTURE, 1)
-			.addOrbitingObject(GANYMEDE, 1070000, 360F / 7, 0);
+			.addOrbitingObject(GANYMEDE, 10 * 1070000, 360F / 7, 0)
+			.halo(Planet.JUPITER_HALO_TEXTURE, 1);
 	
 	
 	
 	// Stars
 	public static final Sun SOL = (Sun) new Sun.VanillaSun()
 			.addOrbitingObject(VENUS, 107540000, 360F / 59, (float) Math.toRadians(241))
-			.addOrbitingObject(EARTH, 147280000, 360F / 96, 0)
 			.addOrbitingObject(MARS, 226380000, 360F / 180, (float) Math.toRadians(139))
-			.addOrbitingObject(JUPITER, 745010000, 360F / 1152, (float) Math.toRadians(71));
+			.addOrbitingObject(JUPITER, 745010000, 360F / 1152, (float) Math.toRadians(71))
+			.addOrbitingObject(EARTH, 147280000, 360F / 96, 0);
+	//Earth added last because planets kept rendering over the Moon
+	//TODO Add a built-in way of ordering the planets by distance
 	
 	// Clusters
 	//public static final StarField VANILLA = new StarField.VanillaStarField(10, 10842L, (short) 1500);

@@ -48,10 +48,15 @@ public class Moon extends Planet
 	
 	public static class DefaultMoon extends Moon
 	{
+		public DefaultMoon(float size)
+		{
+			super(DEFAULT_MOON_TEXTURE, size);
+			this.halo(DEFAULT_MOON_HALO_TEXTURE, size);
+		}
+		
 		public DefaultMoon()
 		{
-			super(DEFAULT_MOON_TEXTURE, 20.0F);
-			this.halo(DEFAULT_MOON_HALO_TEXTURE, 20.0F);
+			this(20.0F);
 		}
 	}
 }

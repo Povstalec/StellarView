@@ -27,10 +27,15 @@ public class Sun extends OrbitingCelestialObject
 	
 	public static class DefaultSun extends Sun
 	{
+		public DefaultSun(float size)
+		{
+			super(DEFAULT_SUN_TEXTURE, size);
+			this.halo(DEFAULT_SUN_HALO_TEXTURE, size);
+		}
+		
 		public DefaultSun()
 		{
-			super(DEFAULT_SUN_TEXTURE, 30.0F);
-			this.halo(DEFAULT_SUN_HALO_TEXTURE, 30.0F);
+			this(30.0F);
 		}
 	}
 }

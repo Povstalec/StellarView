@@ -15,7 +15,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.api.celestials.StellarObject;
 import net.povstalec.stellarview.client.render.level.misc.StellarCoordinates;
-import net.povstalec.stellarview.common.config.StellarViewConfig;
 
 public class OrbitingCelestialObject extends StellarObject
 {
@@ -92,21 +91,37 @@ public class OrbitingCelestialObject extends StellarObject
 		return StellarCoordinates.sphericalToCartesian(new Vector3f(distance, getTheta(level, partialTicks), getPhi(level, partialTicks)));
 	}
 	
-	@Override
-	public void render(OrbitingCelestialObject viewCenter, Vector3f vievCenterCoords, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder,
-			Vector3f skyAxisRotation, Vector3f parentCoords, boolean renderChildren)
+	public float getDistanceSquaredFromViewCenter(Vector3f vievCenterCoords, Vector3f parentCoords, ClientLevel level, float partialTicks)
 	{
 		Vector3f relativeCoords = getRelativeCartesianCoordinates(level, partialTicks);
 		Vector3f absoluteCoords = StellarCoordinates.absoluteVector(parentCoords, relativeCoords);
-		super.render(viewCenter, vievCenterCoords, level, camera, partialTicks, stack, bufferbuilder, skyAxisRotation, absoluteCoords, renderChildren);
 		
-		if(renderChildren)
+		return StellarCoordinates.relativeVector(vievCenterCoords, absoluteCoords).lengthSquared();
+	}
+	
+	@Override
+	public void render(OrbitingCelestialObject viewCenter, Vector3f vievCenterCoords, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder,
+			Vector3f skyAxisRotation, Vector3f parentCoords)
+	{
+		Vector3f relativeCoords = getRelativeCartesianCoordinates(level, partialTicks);
+		Vector3f absoluteCoords = StellarCoordinates.absoluteVector(parentCoords, relativeCoords);
+		float distanceSquared = StellarCoordinates.relativeVector(absoluteCoords, vievCenterCoords).lengthSquared();
+		
+		// Renders objects behind it
+		this.orbitingObjects.stream().forEach(orbitingObject ->
 		{
-			this.orbitingObjects.stream().forEach(orbitingObject ->
-			{
-				orbitingObject.render(viewCenter, vievCenterCoords, level, camera, partialTicks, stack, bufferbuilder, skyAxisRotation, absoluteCoords, true);
-			});
-		}
+			if(getDistanceSquaredFromViewCenter(vievCenterCoords, absoluteCoords, level, partialTicks) > distanceSquared)
+				orbitingObject.render(viewCenter, vievCenterCoords, level, camera, partialTicks, stack, bufferbuilder, skyAxisRotation, absoluteCoords);
+		});
+		
+		super.render(viewCenter, vievCenterCoords, level, camera, partialTicks, stack, bufferbuilder, skyAxisRotation, absoluteCoords);
+
+		// Renders objects in front of it
+		this.orbitingObjects.stream().forEach(orbitingObject ->
+		{
+			if(getDistanceSquaredFromViewCenter(vievCenterCoords, absoluteCoords, level, partialTicks) <= distanceSquared)
+				orbitingObject.render(viewCenter, vievCenterCoords, level, camera, partialTicks, stack, bufferbuilder, skyAxisRotation, absoluteCoords);
+		});
 	}
 	
 	//TODO
@@ -124,7 +139,7 @@ public class OrbitingCelestialObject extends StellarObject
 			//	starField.render(level, camera, partialTicks, partialTicks, stack, null, null, bufferbuilder, xRotation, yRotation, zRotation);
 		}
 		else
-			this.render(viewCenter, absoluteCoords, level, camera, partialTicks, stack, bufferbuilder, skyAxisRotation, new Vector3f(0, 0, 0), true);
+			this.render(viewCenter, absoluteCoords, level, camera, partialTicks, stack, bufferbuilder, skyAxisRotation, new Vector3f(0, 0, 0));
 		
 	}
 	

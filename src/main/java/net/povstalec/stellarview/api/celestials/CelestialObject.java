@@ -190,7 +190,7 @@ public abstract class CelestialObject
 	}
 	
 	public void render(OrbitingCelestialObject viewCenter, Vector3f vievCenterCoords, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder,
-			Vector3f skyAxisRotation, Vector3f coords, boolean renderChildren)
+			Vector3f skyAxisRotation, Vector3f coords)
 	{
 		if(!shouldRender(level, camera) || this == viewCenter)
 			return;
