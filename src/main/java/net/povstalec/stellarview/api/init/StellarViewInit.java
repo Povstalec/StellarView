@@ -44,7 +44,8 @@ public class StellarViewInit
 			.addAtmosphere(new Planet.Atmosphere(
 							(ShootingStar) new ShootingStar().setRarityValue(OverworldConfig.shooting_star_chance),
 							(MeteorShower) new MeteorShower().setRarityValue(OverworldConfig.meteor_shower_chance)))
-			.addOrbitingObject(LUNA, 384400F, 360F / 8, 0);
+			.addOrbitingObject(LUNA, 384400F, 360F / 8, 0)
+			.setGalacticPosition(0, 0, 75);
 
 	public static final Planet MARS = (Planet) new Planet(Planet.MARS_TEXTURE, 1)
 			.halo(Planet.MARS_HALO_TEXTURE, 1);

@@ -23,9 +23,6 @@ import net.povstalec.stellarview.client.render.level.StellarViewBetaEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewGammaEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewOverworldEffects;
 import net.povstalec.stellarview.client.screens.config.ConfigScreen;
-import net.povstalec.stellarview.common.config.AlphaConfig;
-import net.povstalec.stellarview.common.config.BetaConfig;
-import net.povstalec.stellarview.common.config.GammaConfig;
 import net.povstalec.stellarview.common.config.OverworldConfig;
 import net.povstalec.stellarview.common.config.StellarViewConfig;
 import net.povstalec.stellarview.common.util.KeyBindings;
@@ -66,14 +63,8 @@ public class StellarView
         public static void registerDimensionEffects(RegisterDimensionSpecialEffectsEvent event)
         {
     		overworld = new StellarViewOverworldEffects();
-    		alpha = new StellarViewAlphaEffects();
-    		beta = new StellarViewBetaEffects();
-    		gamma = new StellarViewGammaEffects();
     		
         	event.register(StellarViewOverworldEffects.OVERWORLD_EFFECTS, overworld);
-        	event.register(StellarViewAlphaEffects.ALPHA_EFFECTS, alpha);
-        	event.register(StellarViewBetaEffects.BETA_EFFECTS, beta);
-        	event.register(StellarViewGammaEffects.GAMMA_EFFECTS, gamma);
         }
 
     	@SubscribeEvent
@@ -97,14 +88,5 @@ public class StellarView
     {
     	overworld.setStarFieldOffset(OverworldConfig.milky_way_x.get(), OverworldConfig.milky_way_y.get(), OverworldConfig.milky_way_z.get());
     	overworld.setSkyRotation((float) Math.toRadians(OverworldConfig.milky_way_alpha.get()), (float) Math.toRadians(OverworldConfig.milky_way_beta.get()), (float) Math.toRadians(OverworldConfig.milky_way_gamma.get()));
-    	
-    	alpha.setStarFieldOffset(AlphaConfig.milky_way_x.get(), AlphaConfig.milky_way_y.get(), AlphaConfig.milky_way_z.get());
-    	alpha.setSkyRotation((float) Math.toRadians(AlphaConfig.milky_way_alpha.get()), (float) Math.toRadians(AlphaConfig.milky_way_beta.get()), (float) Math.toRadians(AlphaConfig.milky_way_gamma.get()));
-    	
-    	beta.setStarFieldOffset(BetaConfig.milky_way_x.get(), BetaConfig.milky_way_y.get(), BetaConfig.milky_way_z.get());
-    	beta.setSkyRotation((float) Math.toRadians(BetaConfig.milky_way_alpha.get()), (float) Math.toRadians(BetaConfig.milky_way_beta.get()), (float) Math.toRadians(BetaConfig.milky_way_gamma.get()));
-    	
-    	gamma.setStarFieldOffset(GammaConfig.milky_way_x.get(), GammaConfig.milky_way_y.get(), GammaConfig.milky_way_z.get());
-    	gamma.setSkyRotation((float) Math.toRadians(GammaConfig.milky_way_alpha.get()), (float) Math.toRadians(GammaConfig.milky_way_beta.get()), (float) Math.toRadians(GammaConfig.milky_way_gamma.get()));
     }
 }

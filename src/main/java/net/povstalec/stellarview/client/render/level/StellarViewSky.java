@@ -64,6 +64,7 @@ public class StellarViewSky implements StellarViewSkyEffects, StellarViewFogEffe
 	{
 		if(this.starField != null)
 			this.starField.setStarBuffer(xOffset, yOffset, zOffset, xAxisRotation, yAxisRotation, zAxisRotation);
+		
 		return this;
 	}
 	
