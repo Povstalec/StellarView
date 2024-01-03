@@ -22,7 +22,6 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 	public StellarViewOverworldEffects()
 	{
 		super(new StellarViewSky(StellarViewInit.EARTH)
-				.starField(StellarViewInit.MILKY_WAY)
 				.skybox(OVERWORLD_SKYBOX),
 				192.0F, true, DimensionSpecialEffects.SkyType.NORMAL, false, false);
 	}

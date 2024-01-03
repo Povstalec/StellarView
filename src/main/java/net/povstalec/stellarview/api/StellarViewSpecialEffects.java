@@ -23,16 +23,6 @@ public class StellarViewSpecialEffects extends DimensionSpecialEffects
 		this.skyRenderer = skyRenderer;
 	}
 	
-	public final void setStarFieldOffset(float xOffset, float yOffset, float zOffset)
-	{
-		skyRenderer.setStarFieldOffset(xOffset, yOffset, zOffset);
-	}
-	
-	public final void setSkyRotation(float xAxisRotation, float yAxisRotation, float zAxisRotation)
-	{
-		skyRenderer.setSkyRotation(xAxisRotation, yAxisRotation, zAxisRotation);
-	}
-	
 	
 	
 	@Override

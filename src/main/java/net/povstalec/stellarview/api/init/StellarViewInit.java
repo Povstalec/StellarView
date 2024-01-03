@@ -1,5 +1,7 @@
 package net.povstalec.stellarview.api.init;
 
+import org.joml.Vector3f;
+
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.povstalec.stellarview.api.celestials.CelestialObject;
@@ -58,6 +60,13 @@ public class StellarViewInit
 	
 	// Stars
 	public static final Sun SOL = (Sun) new Sun.VanillaSun()
+			{
+				@Override
+				public Vector3f getAxisRotation()
+				{
+					return new Vector3f((float) OverworldConfig.milky_way_x_axis_rotation.get(), (float) OverworldConfig.milky_way_y_axis_rotation.get(), (float) OverworldConfig.milky_way_z_axis_rotation.get());
+				}
+			}
 			.addOrbitingObject(VENUS, 107540000, 360F / 59, (float) Math.toRadians(241))
 			.addOrbitingObject(MARS, 226380000, 360F / 180, (float) Math.toRadians(139))
 			.addOrbitingObject(JUPITER, 745010000, 360F / 1152, (float) Math.toRadians(71))

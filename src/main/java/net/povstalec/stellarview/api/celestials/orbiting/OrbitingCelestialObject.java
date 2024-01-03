@@ -137,14 +137,14 @@ public class OrbitingCelestialObject extends StellarObject
 		{
 			if(primaryBody.get() instanceof OrbitingCelestialObject parent)
 			{
-				parent.renderFrom(viewCenter, absoluteCoords, level, camera, partialTicks, stack, projectionMatrix, setupFog, bufferbuilder, skyAxisRotation, StellarCoordinates.addVectors(this.axisRotation, axisRotation));
+				parent.renderFrom(viewCenter, absoluteCoords, level, camera, partialTicks, stack, projectionMatrix, setupFog, bufferbuilder, skyAxisRotation, StellarCoordinates.addVectors(getAxisRotation(), axisRotation));
 			}
 			else if(primaryBody.get() instanceof StarField starField)
 			{
 				if(!StellarViewConfig.disable_stars.get())
 				{
 					float rain = 1.0F - level.getRainLevel(partialTicks);
-		        	starField.render(viewCenter, viewCenterCoords, level, camera, partialTicks, rain, stack, projectionMatrix, setupFog, bufferbuilder, skyAxisRotation, StellarCoordinates.addVectors(this.axisRotation, axisRotation), new Vector3f(0, 0, 0));
+		        	starField.render(viewCenter, viewCenterCoords, level, camera, partialTicks, rain, stack, projectionMatrix, setupFog, bufferbuilder, skyAxisRotation, StellarCoordinates.addVectors(getAxisRotation(), axisRotation), new Vector3f(0, 0, 0));
 				}
 			}
 		}

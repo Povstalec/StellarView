@@ -18,6 +18,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.povstalec.stellarview.api.init.StellarViewInit;
 import net.povstalec.stellarview.client.render.level.StellarViewOverworldEffects;
 import net.povstalec.stellarview.client.screens.config.ConfigScreen;
 import net.povstalec.stellarview.common.config.OverworldConfig;
@@ -80,7 +81,8 @@ public class StellarView
     
     public static void updateGalaxies()
     {
-    	overworld.setStarFieldOffset(OverworldConfig.milky_way_x.get(), OverworldConfig.milky_way_y.get(), OverworldConfig.milky_way_z.get());
-    	overworld.setSkyRotation((float) Math.toRadians(OverworldConfig.milky_way_alpha.get()), (float) Math.toRadians(OverworldConfig.milky_way_beta.get()), (float) Math.toRadians(OverworldConfig.milky_way_gamma.get()));
+    	StellarViewInit.MILKY_WAY.setStarBuffer(OverworldConfig.milky_way_x.get(), OverworldConfig.milky_way_y.get(), OverworldConfig.milky_way_z.get(), 0, 0, 0);
+    	//overworld.setStarFieldOffset(OverworldConfig.milky_way_x.get(), OverworldConfig.milky_way_y.get(), OverworldConfig.milky_way_z.get());
+    	//overworld.setSkyRotation((float) Math.toRadians(OverworldConfig.milky_way_alpha.get()), (float) Math.toRadians(OverworldConfig.milky_way_beta.get()), (float) Math.toRadians(OverworldConfig.milky_way_gamma.get()));
     }
 }

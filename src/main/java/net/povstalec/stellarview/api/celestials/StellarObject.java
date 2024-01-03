@@ -113,21 +113,12 @@ public abstract class StellarObject extends CelestialObject
 		return this.coordinates.z;
 	}
 	
-	public float getXAxisRotation()
+	public Vector3f getAxisRotation()
 	{
-		return this.axisRotation.x;
+		return this.axisRotation;
 	}
 	
-	public float getYAxisRotation()
-	{
-		return this.axisRotation.y;
-	}
-	
-	public float getZAxisRotation()
-	{
-		return this.axisRotation.z;
-	}
-	
+	//TODO Is this even useful at this point?
 	public Vector3f getRelativeCartesianCoordinates(ClientLevel level, float partialTicks)
 	{
 		return this.coordinates;

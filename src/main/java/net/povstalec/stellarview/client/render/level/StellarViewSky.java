@@ -9,7 +9,6 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexBuffer;
-import com.mojang.math.Axis;
 
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -19,23 +18,16 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
-import net.povstalec.stellarview.api.celestials.StarField;
 import net.povstalec.stellarview.api.celestials.orbiting.OrbitingCelestialObject;
 import net.povstalec.stellarview.client.render.level.misc.StellarViewFogEffects;
 import net.povstalec.stellarview.client.render.level.misc.StellarViewSkyEffects;
 import net.povstalec.stellarview.client.render.level.misc.StellarViewSkybox;
-import net.povstalec.stellarview.common.config.StellarViewConfig;
 
 public class StellarViewSky implements StellarViewSkyEffects, StellarViewFogEffects
 {
 	protected Minecraft minecraft = Minecraft.getInstance();
 	@Nullable
 	protected OrbitingCelestialObject center;
-	@Nullable
-	protected StarField starField;
-	protected float starFieldRotationX = 0;
-	protected float starFieldRotationY = 0;
-	protected float starFieldRotationZ = 0;
 	@Nullable
 	protected VertexBuffer skyBuffer;
 	@Nullable
@@ -49,41 +41,6 @@ public class StellarViewSky implements StellarViewSkyEffects, StellarViewFogEffe
 		
 		this.skyBuffer = createLightSky();
 		this.darkBuffer = createDarkSky();
-	}
-	
-	public final StellarViewSky starField(StarField starField)
-	{
-		if(starField != null)
-			this.starField = starField.setStarBuffer(center.getX(), center.getY(), center.getZ(),
-				starFieldRotationX, starFieldRotationY, starFieldRotationZ);
-		return this;
-	}
-	
-	public final StellarViewSky setStarFieldOffsetAndRotation(float xOffset, float yOffset, float zOffset,
-			float xAxisRotation, float yAxisRotation, float zAxisRotation)
-	{
-		if(this.starField != null)
-			this.starField.setStarBuffer(xOffset, yOffset, zOffset, xAxisRotation, yAxisRotation, zAxisRotation);
-		
-		return this;
-	}
-	
-	public final StellarViewSky setStarFieldOffset(float xOffset, float yOffset, float zOffset)
-	{
-		float xAxisRotation = starField.getXRotation();
-		float yAxisRotation = starField.getYRotation();
-		float zAxisRotation = starField.getZRotation();
-		
-		this.setStarFieldOffsetAndRotation(xOffset, yOffset, zOffset, xAxisRotation, yAxisRotation, zAxisRotation);
-		return this;
-	}
-	
-	public final StellarViewSky setSkyRotation(float starFieldRotationX, float starFieldRotationY, float starFieldRotationZ)
-	{
-		this.starFieldRotationX = starFieldRotationX;
-		this.starFieldRotationY = starFieldRotationY;
-		this.starFieldRotationZ = starFieldRotationZ;
-		return this;
 	}
 	
 	public final StellarViewSky skybox(ResourceLocation texture)
@@ -101,7 +58,7 @@ public class StellarViewSky implements StellarViewSkyEffects, StellarViewFogEffe
 	// Ecliptic plane
 	protected void renderEcliptic(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, Matrix4f projectionMatrix, Runnable setupFog, BufferBuilder bufferbuilder)
 	{
-		double zPos = camera.getEntity().getPosition(partialTicks).z();
+		/*double zPos = camera.getEntity().getPosition(partialTicks).z();
 		float zRotation = 2 * (float) Math.toDegrees(Math.atan(zPos / (100000 * StellarViewConfig.rotation_multiplier.get())));
 		
 		stack.pushPose();
@@ -113,7 +70,7 @@ public class StellarViewSky implements StellarViewSkyEffects, StellarViewFogEffe
         //if(!StellarViewConfig.disable_stars.get())
         //	starField.render(level, camera, partialTicks, rain, stack, projectionMatrix, setupFog, bufferbuilder, (float) Math.toRadians(18), (float) Math.toRadians(0), (float) Math.toRadians(90));
 
-        stack.popPose();
+        stack.popPose();*/
         
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		
