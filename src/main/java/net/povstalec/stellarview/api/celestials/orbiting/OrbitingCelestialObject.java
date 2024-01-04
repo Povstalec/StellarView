@@ -149,7 +149,7 @@ public class OrbitingCelestialObject extends StellarObject
 				if(!StellarViewConfig.disable_stars.get())
 				{
 					float rain = 1.0F - level.getRainLevel(partialTicks);
-		        	starField.render(viewCenter, viewCenterCoords, level, camera, partialTicks, rain, stack, projectionMatrix, setupFog, bufferbuilder, skyAxisRotation, StellarCoordinates.addVectors(getAxisRotation(), axisRotation), new Vector3f(0, 0, 0));
+		        	starField.render(this, viewCenter, viewCenterCoords, level, camera, partialTicks, rain, stack, projectionMatrix, setupFog, bufferbuilder, skyAxisRotation, StellarCoordinates.addVectors(getAxisRotation(), axisRotation), new Vector3f(0, 0, 0));
 				}
 			}
 		}

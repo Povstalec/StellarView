@@ -66,9 +66,7 @@ public abstract class StarField extends StellarObject
 		this.offsetCoords.y = yOffset;
 		this.offsetCoords.z = zOffset;
 		
-		this.axisRotation.x = xAxisRotation;
-		this.axisRotation.y = yAxisRotation;
-		this.axisRotation.z = zAxisRotation;
+		this.setRotation(xAxisRotation, yAxisRotation, zAxisRotation);
 		
 		bufferbuilder$renderedbuffer = getStarBuffer(bufferBuilder, xOffset, yOffset, zOffset, xAxisRotation, yAxisRotation, zAxisRotation);
 		
@@ -101,21 +99,6 @@ public abstract class StarField extends StellarObject
 			float xOffset, float yOffset, float zOffset,
 			float xAxisRotation, float yAxisRotation, float zAxisRotation);
 	
-	public float getXRotation()
-	{
-		return this.axisRotation.x;
-	}
-	
-	public float getYRotation()
-	{
-		return this.axisRotation.y;
-	}
-	
-	public float getZRotation()
-	{
-		return this.axisRotation.z;
-	}
-	
 	protected void renderStars(ClientLevel level, Camera camera, float partialTicks, float rain, PoseStack stack, Matrix4f projectionMatrix, Runnable setupFog,
 			Vector3f skyAxisRotation, Vector3f axisRotation)
 	{
@@ -146,7 +129,7 @@ public abstract class StarField extends StellarObject
 		}
 	}
 	
-	public void render(OrbitingCelestialObject viewCenter, Vector3f viewCenterCoords, ClientLevel level, Camera camera, float partialTicks, float rain, PoseStack stack, Matrix4f projectionMatrix, Runnable setupFog, BufferBuilder bufferbuilder,
+	public void render(OrbitingCelestialObject viewCenterParent, OrbitingCelestialObject viewCenter, Vector3f viewCenterCoords, ClientLevel level, Camera camera, float partialTicks, float rain, PoseStack stack, Matrix4f projectionMatrix, Runnable setupFog, BufferBuilder bufferbuilder,
 			Vector3f skyAxisRotation, Vector3f axisRotation, Vector3f coords)
 	{
 		if(this.starBuffer != null)
@@ -156,7 +139,10 @@ public abstract class StarField extends StellarObject
 		
 		this.galacticObjects.stream().forEach(galacticObject ->
 		{
-			galacticObject.setRotation(axisRotation);
+			if(!galacticObject.equals(viewCenterParent))
+				galacticObject.setRotation(axisRotation);
+			else
+				galacticObject.setRotation(new Vector3f(0, 0, 0));
 			galacticObject.render(viewCenter, viewCenterCoords, level, camera, partialTicks, stack, bufferbuilder, skyAxisRotation, StellarCoordinates.subtractVectors(StellarCoordinates.addVectors(offsetCoords, coords), galacticObject.coordinates));
 		});
 	}
