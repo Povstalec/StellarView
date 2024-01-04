@@ -147,11 +147,11 @@ public abstract class StarField extends StellarObject
 		});
 	}
 	
+
 	
-	
-	public static class VanillaStarField extends StarField
+	public static class GlobularCluster extends StarField
 	{
-		public VanillaStarField(ResourceLocation texture, float size, long seed, short numberOfStars)
+		public GlobularCluster(ResourceLocation texture, float size, long seed, short numberOfStars)
 		{
 			super(texture, size, seed, numberOfStars);
 		}
@@ -178,21 +178,13 @@ public abstract class StarField extends StellarObject
 			}
 			return bufferBuilder.end();
 		}
-		
 	}
 	
-	/*public static class GlobularCluster extends StarField //TODO
+	public static class VanillaStarField extends GlobularCluster
 	{
-		public GlobularCluster(long seed, short numberOfStars,
-			float xAxisRotation, float yAxisRotation, float zAxisRotation)
+		public VanillaStarField(ResourceLocation texture, float size)
 		{
-			super(seed, numberOfStars, xAxisRotation, yAxisRotation, zAxisRotation);
+			super(texture, size, 10842L, (short) 1500);
 		}
-
-		@Override
-		protected RenderedBuffer getStarBuffer(BufferBuilder bufferBuilder, float xOffset, float yOffset, float zOffset)
-		{
-			
-		}
-	}*/
+	}
 }

@@ -224,7 +224,6 @@ public abstract class CelestialObject
 		float rotation = getRotation(level, partialTicks);
 		
 		Vector3f relative = findRelative(vievCenterCoords, coords);
-		//System.out.println(texture.toString() + " " + relative);
 		
 		Vector3f sphericalCoords = StellarCoordinates.cartesianToSpherical(relative);
 		float theta = sphericalCoords.y;
