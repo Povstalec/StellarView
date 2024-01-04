@@ -1,12 +1,35 @@
-package net.povstalec.stellarview.client.render.level.misc;
+package net.povstalec.stellarview.api.celestials;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
 
+import net.minecraft.client.Camera;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.povstalec.stellarview.common.config.StellarViewConfig;
 
-public class StellarViewStar
+public class Star
 {
-	public static final float DEFAULT_DISTANCE = 100.0F;
+	private static final float DEFAULT_DISTANCE = 100.0F;
+	
+	/**
+	 * Returns the brightness of stars in the current Player location
+	 * @param level The Level the Player is currently in
+	 * @param camera Player Camera
+	 * @param partialTicks
+	 * @return
+	 */
+	public static float getStarBrightness(ClientLevel level, Camera camera, float partialTicks)
+	{
+		float rain = 1.0F - level.getRainLevel(partialTicks);
+		float starBrightness = level.getStarBrightness(partialTicks);
+		starBrightness = StellarViewConfig.day_stars.get() && starBrightness < 0.5F ? 0.5F : starBrightness;
+		if(StellarViewConfig.bright_stars.get())
+			starBrightness = starBrightness * (1 + ((float) (15 - level.getLightEngine().getRawBrightness(camera.getEntity().getOnPos().above(), 15)) / 15));
+		starBrightness = starBrightness * rain;
+		
+		return starBrightness;
+	}
 	
 	public static void createStar(BufferBuilder builder, RandomSource randomsource, 
 			double x, double y, double z, double starSize, double distance, int[] starColor, double heightDeformation, double widthDeformation)
@@ -86,8 +109,8 @@ public class StellarViewStar
 			 * Which corresponds to:
 			 * UV:	00	01	11	10
 			 */
-			double aLocation = (double) ((j & 2) - 1) * starSize;
-			double bLocation = (double) ((j + 1 & 2) - 1) * starSize;
+			double aLocation = (double) ((j & 2) - 1) * Mth.clamp(starSize * 20 * distance, 0.1, 0.25); //starSize;
+			double bLocation = (double) ((j + 1 & 2) - 1) * Mth.clamp(starSize * 20 * distance, 0.1, 0.25); //starSize;
 			
 			/* These are the values for cos(random) = sin(random)
 			 * (random is simply there to randomize the star rotation)

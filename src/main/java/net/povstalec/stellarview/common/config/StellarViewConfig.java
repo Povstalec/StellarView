@@ -64,8 +64,5 @@ public class StellarViewConfig
 				"Controls how much the sky rotates when moving");
 		
 		OverworldConfig.init(client);
-		AlphaConfig.init(client);
-		BetaConfig.init(client);
-		GammaConfig.init(client);
 	}
 }

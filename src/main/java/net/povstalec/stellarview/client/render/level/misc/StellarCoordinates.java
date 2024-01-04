@@ -1,5 +1,7 @@
 package net.povstalec.stellarview.client.render.level.misc;
 
+import org.joml.Vector3f;
+
 public class StellarCoordinates
 {
 	//============================================================================================
@@ -22,6 +24,15 @@ public class StellarCoordinates
 		return Math.atan2(xzLength, y);
 	}
 	
+	public static Vector3f cartesianToSpherical(Vector3f cartesianCoordinates)
+	{
+		float x = cartesianCoordinates.x;
+		float y = cartesianCoordinates.y;
+		float z = cartesianCoordinates.z;
+		
+		return new Vector3f((float) sphericalR(x, y, z), (float) sphericalTheta(x, y, z), (float) sphericalPhi(x, y, z));
+	}
+	
 	//============================================================================================
 	//***********************************Spherical to Cartesian***********************************
 	//============================================================================================
@@ -39,6 +50,15 @@ public class StellarCoordinates
 	public static double cartesianZ(double r, double theta, double phi)
 	{
 		return r * Math.sin(phi) * Math.cos(theta);
+	}
+	
+	public static Vector3f sphericalToCartesian(Vector3f sphericalCoordinates)
+	{
+		float r = sphericalCoordinates.x;
+		float theta = sphericalCoordinates.y;
+		float phi = sphericalCoordinates.z;
+		
+		return new Vector3f((float) cartesianX(r, theta, phi), (float) cartesianY(r, theta, phi), (float) cartesianZ(r, theta, phi));
 	}
 	
 	//============================================================================================
@@ -81,5 +101,30 @@ public class StellarCoordinates
 	public static double spiralR(double r, double phi, double beta)
 	{
 		return r * (phi + beta);
+	}
+	
+	public static double elipticalR(double a, double b, double phi)
+	{
+		return (a * b) / (Math.sqrt(b * Math.pow(Math.cos(phi), 2) + a * Math.pow(Math.sin(phi), 2)));
+	}
+	
+	public static Vector3f addVectors(Vector3f vector1, Vector3f vector2)
+	{
+		return new Vector3f(vector1.x + vector2.x, vector1.y + vector2.y, vector1.z + vector2.z);
+	}
+	
+	public static Vector3f subtractVectors(Vector3f vector1, Vector3f vector2)
+	{
+		return new Vector3f(vector1.x - vector2.x, vector1.y - vector2.y, vector1.z - vector2.z);
+	}
+	
+	public static Vector3f relativeVector(Vector3f vector1, Vector3f vector2)
+	{
+		return subtractVectors(vector1, vector2);
+	}
+	
+	public static Vector3f absoluteVector(Vector3f vector1, Vector3f vector2)
+	{
+		return addVectors(vector1, vector2);
 	}
 }
