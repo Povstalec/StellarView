@@ -18,9 +18,9 @@ public class OverworldConfig
 	public static StellarViewConfigValue.IntValue milky_way_y;
 	public static StellarViewConfigValue.IntValue milky_way_z;
 	
-	public static StellarViewConfigValue.IntValue milky_way_alpha;
-	public static StellarViewConfigValue.IntValue milky_way_beta;
-	public static StellarViewConfigValue.IntValue milky_way_gamma;
+	public static StellarViewConfigValue.IntValue milky_way_x_axis_rotation;
+	public static StellarViewConfigValue.IntValue milky_way_y_axis_rotation;
+	public static StellarViewConfigValue.IntValue milky_way_z_axis_rotation;
 	
 	public static void init(ForgeConfigSpec.Builder client)
 	{
@@ -52,14 +52,14 @@ public class OverworldConfig
 				16, -45, 45, 
 				"Specifies Milky Way Z position");
 
-		milky_way_alpha = new StellarViewConfigValue.IntValue(client, PREFIX + "milky_way_alpha", 
-				90, 0, 360, 
-				"Specifies Milky Way Alpha rotation");
-		milky_way_beta = new StellarViewConfigValue.IntValue(client, PREFIX + "milky_way_beta", 
+		milky_way_x_axis_rotation = new StellarViewConfigValue.IntValue(client, PREFIX + "milky_way_x_axis_rotation", 
 				18, 0, 360, 
-				"Specifies Milky Way Beta rotation");
-		milky_way_gamma = new StellarViewConfigValue.IntValue(client, PREFIX + "milky_way_gamma", 
+				"Specifies Milky Way Alpha rotation");
+		milky_way_y_axis_rotation = new StellarViewConfigValue.IntValue(client, PREFIX + "milky_way_y_axis_rotation", 
 				0, 0, 360, 
+				"Specifies Milky Way Beta rotation");
+		milky_way_z_axis_rotation = new StellarViewConfigValue.IntValue(client, PREFIX + "milky_way_z_axis_rotation", 
+				90, 0, 360, 
 				"Specifies Milky Way Gamma rotation");
 	}
 }

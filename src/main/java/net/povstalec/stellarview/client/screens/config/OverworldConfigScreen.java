@@ -70,13 +70,13 @@ public class OverworldConfigScreen extends Screen
 
 		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_alpha"),
 				Component.literal("\u00b0"),
-				this.width, OverworldConfig.milky_way_alpha));
+				this.width, OverworldConfig.milky_way_x_axis_rotation));
 		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_beta"),
 				Component.literal("\u00b0"),
-				this.width, OverworldConfig.milky_way_beta));
+				this.width, OverworldConfig.milky_way_y_axis_rotation));
 		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_gamma"),
 				Component.literal("\u00b0"),
-				this.width, OverworldConfig.milky_way_gamma));
+				this.width, OverworldConfig.milky_way_z_axis_rotation));
 		
 		this.addWidget(this.configList);
 
