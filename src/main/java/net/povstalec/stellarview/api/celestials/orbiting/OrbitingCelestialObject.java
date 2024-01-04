@@ -21,20 +21,17 @@ import net.povstalec.stellarview.common.config.StellarViewConfig;
 
 public class OrbitingCelestialObject extends StellarObject
 {
-	//protected float mass;
 	protected float angularVelocity = 0;
 	protected float distance = 0;
 	
 	protected float initialTetha = 0;
 	protected float initialPhi = 0;
-	protected float rotation = 0;
 	
 	protected List<OrbitingCelestialObject> orbitingObjects = new ArrayList<OrbitingCelestialObject>();
 	
 	public OrbitingCelestialObject(ResourceLocation texture, float size)
 	{
 		super(texture, size);
-		//this.mass = mass;
 	}
 
 	@Override
@@ -55,23 +52,7 @@ public class OrbitingCelestialObject extends StellarObject
 		return this.size;
 	}
 	
-	//TODO
-	/*protected float getMass(ClientLevel level, float partialTicks)
-	{
-		return this.mass;
-	}
-	
-	protected float getVelocity(ClientLevel level, float partialTicks, float parentMass)
-	{
-		return (float) Math.sqrt(G * parentMass / distance);
-	}
-	
-	protected float getAngularVelocity(ClientLevel level, float partialTicks, float parentMass)
-	{
-		return getVelocity(level, partialTicks, parentMass) / distance;
-	}*/
-	
-	public final OrbitingCelestialObject addOrbitingObject(OrbitingCelestialObject object, float distance, float angularVelocity, float initialPhi, float initialTetha)
+	public final OrbitingCelestialObject addOrbitingObject(OrbitingCelestialObject object, float distance, float angularVelocity, float initialPhi, float initialTetha, float rotation)
 	{
 		if(object.primaryBody.isPresent())
 		{
@@ -84,6 +65,7 @@ public class OrbitingCelestialObject extends StellarObject
 		object.angularVelocity = angularVelocity;
 		object.initialPhi = initialPhi;
 		object.initialTetha = initialTetha;
+		this.rotation = rotation;
 		
 		this.orbitingObjects.add(object);
 		

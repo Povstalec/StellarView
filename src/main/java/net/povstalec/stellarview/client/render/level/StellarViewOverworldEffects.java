@@ -31,7 +31,7 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 	public static final ResourceLocation OVERWORLD_SKYBOX = new ResourceLocation(StellarView.MODID, "textures/environment/overworld_skybox/overworld");
 	
 	// Moons
-		public static final Moon LUNA = new Moon.DefaultMoon()
+	private static final Moon LUNA = new Moon.DefaultMoon()
 		{
 			@Override
 			protected boolean shouldRender(ClientLevel level, Camera camera)
@@ -46,32 +46,48 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 			}
 		};
 
-		public static final Moon GANYMEDE = new DefaultMoon(0.25F);
+		//TODO Add custom textures to these
+		private static final Moon GANYMEDE = new DefaultMoon(0.25F);
+
+		private static final Moon TITAN = new DefaultMoon(0.25F);
 		
 		
 		
 		// Planets
-		public static final Planet VENUS = (Planet) new Planet(Planet.VENUS_TEXTURE, 1)
-				.halo(Planet.VENUS_HALO_TEXTURE, 1);
+		private static final Planet MERCURY = (Planet) new Planet(Planet.MERCURY_TEXTURE, 0.7F)
+				.halo(Planet.MERCURY_HALO_TEXTURE, 0.7F);
 		
-		public static final Planet EARTH = (Planet) new Planet(Planet.EARTH_TEXTURE, 30, Planet.EARTH_DAY_LENGTH)
+		private static final Planet VENUS = (Planet) new Planet(Planet.VENUS_TEXTURE, 0.9F)
+				.halo(Planet.VENUS_HALO_TEXTURE, 0.9F);
+		
+		private static final Planet EARTH = (Planet) new Planet(Planet.EARTH_TEXTURE, 30, Planet.EARTH_DAY_LENGTH)
 				.addAtmosphere(new Planet.Atmosphere(
 								(ShootingStar) new ShootingStar().setRarityValue(OverworldConfig.shooting_star_chance),
 								(MeteorShower) new MeteorShower().setRarityValue(OverworldConfig.meteor_shower_chance)))
-				.addOrbitingObject(LUNA, 384400F, 360F / 8, (float) Math.toRadians(45), (float) Math.toRadians(-5.145))
+				.addOrbitingObject(LUNA, 384400F, 360F / 8, (float) Math.toRadians(45), (float) Math.toRadians(-5.145), 0)
 				.setGalacticPosition(0, 0, 75);
 
-		public static final Planet MARS = (Planet) new Planet(Planet.MARS_TEXTURE, 1)
-				.halo(Planet.MARS_HALO_TEXTURE, 1);
+		private static final Planet MARS = (Planet) new Planet(Planet.MARS_TEXTURE, 0.8F)
+				.halo(Planet.MARS_HALO_TEXTURE, 0.8F);
 		
-		public static final Planet JUPITER = (Planet) new Planet(Planet.JUPITER_TEXTURE, 1)
-				.addOrbitingObject(GANYMEDE, 10 * 1070000, 360F / 7, 0, (float) Math.toRadians(2.214))
-				.halo(Planet.JUPITER_HALO_TEXTURE, 1);
+		private static final Planet JUPITER = (Planet) new Planet(Planet.JUPITER_TEXTURE, 1.5F)
+				.addOrbitingObject(GANYMEDE, 10 * 1070000, 360F / 7, 0, (float) Math.toRadians(2.214), (float) Math.toRadians(13))
+				.halo(Planet.JUPITER_HALO_TEXTURE, 1.5F);
+		
+		private static final Planet SATURN = (Planet) new Planet(Planet.SATURN_TEXTURE, 1F)
+				.addOrbitingObject(TITAN, 10 * 1200000, 360F / 4, 0, (float) Math.toRadians(2.214), (float) Math.toRadians(24))
+				.halo(Planet.SATURN_HALO_TEXTURE, 1F);
+		
+		private static final Planet URANUS = (Planet) new Planet(Planet.URANUS_TEXTURE, 0.5F)
+				.halo(Planet.URANUS_HALO_TEXTURE, 0.5F);
+		
+		private static final Planet NEPTUNE = (Planet) new Planet(Planet.NEPTUNE_TEXTURE, 0.3F)
+				.halo(Planet.NEPTUNE_HALO_TEXTURE, 0.3F);
 		
 		
 		
 		// Stars
-		public static final Sun SOL = (Sun) new Sun.VanillaSun()
+		private static final Sun SOL = (Sun) new Sun.VanillaSun()
 				{
 					protected boolean shouldRender(ClientLevel level, Camera camera)
 					{
@@ -84,10 +100,14 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 						return new Vector3f((float) OverworldConfig.milky_way_x_axis_rotation.get(), (float) OverworldConfig.milky_way_y_axis_rotation.get(), (float) OverworldConfig.milky_way_z_axis_rotation.get());
 					}
 				}
-				.addOrbitingObject(VENUS, 107540000, 360F / 59, (float) Math.toRadians(241), (float) Math.toRadians(1.85))
-				.addOrbitingObject(MARS, 226380000, 360F / 180, (float) Math.toRadians(139), (float) Math.toRadians(3.39))
-				.addOrbitingObject(JUPITER, 745010000, 360F / 1152, (float) Math.toRadians(71), (float) Math.toRadians(1.31))
-				.addOrbitingObject(EARTH, 147280000, 360F / 96, 0, 0);
+				.addOrbitingObject(MERCURY, 54207000F, 360F / 23, (float) Math.toRadians(52), (float) Math.toRadians(7), (float) Math.toRadians(113))
+				.addOrbitingObject(VENUS, 107540000F, 360F / 59, (float) Math.toRadians(241), (float) Math.toRadians(1.85), (float) Math.toRadians(123))
+				.addOrbitingObject(MARS, 226380000F, 360F / 180, (float) Math.toRadians(139), (float) Math.toRadians(3.39), (float) Math.toRadians(79))
+				.addOrbitingObject(JUPITER, 745010000F, 360F / 1152, (float) Math.toRadians(71), (float) Math.toRadians(1.31), (float) Math.toRadians(62))
+				.addOrbitingObject(SATURN, 1455200000F, 360F / 2822, (float) Math.toRadians(190), (float) Math.toRadians(2.48), (float) Math.toRadians(93))
+				.addOrbitingObject(URANUS, 2932900000F, 360F / 8064, (float) Math.toRadians(270), (float) Math.toRadians(1), (float) Math.toRadians(36))
+				.addOrbitingObject(NEPTUNE, 4472500000F, 360F / 15840, (float) Math.toRadians(311), (float) Math.toRadians(1.77), (float) Math.toRadians(1))
+				.addOrbitingObject(EARTH, 147280000, 360F / 96, 0, 0, 0);
 		//Earth added last because planets kept rendering over the Moon
 		//TODO Add a built-in way of ordering the planets by distance
 		
