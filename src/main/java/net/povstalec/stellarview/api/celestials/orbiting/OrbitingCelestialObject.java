@@ -40,7 +40,7 @@ public class OrbitingCelestialObject extends StellarObject
 	@Override
 	protected float getTetha(ClientLevel level, float partialTicks)
 	{
-		return this.initialTetha;
+		return this.initialTetha * (float) Math.sin(Math.toRadians(angularVelocity * ((float) level.getDayTime() / 24000)));
 	}
 
 	@Override
@@ -71,7 +71,7 @@ public class OrbitingCelestialObject extends StellarObject
 		return getVelocity(level, partialTicks, parentMass) / distance;
 	}*/
 	
-	public final OrbitingCelestialObject addOrbitingObject(OrbitingCelestialObject object, float distance, float angularVelocity, float initialPhi)
+	public final OrbitingCelestialObject addOrbitingObject(OrbitingCelestialObject object, float distance, float angularVelocity, float initialPhi, float initialTetha)
 	{
 		if(object.primaryBody.isPresent())
 		{
@@ -83,6 +83,7 @@ public class OrbitingCelestialObject extends StellarObject
 		object.distance = distance;
 		object.angularVelocity = angularVelocity;
 		object.initialPhi = initialPhi;
+		object.initialTetha = initialTetha;
 		
 		this.orbitingObjects.add(object);
 		
