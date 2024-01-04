@@ -18,11 +18,7 @@ public abstract class StellarObject extends CelestialObject
 	protected float size;
 	
 	protected Vector3f coordinates = new Vector3f(0, 0, 0);
-	protected Vector3f axisRotation = new Vector3f(0, 0, 0);
-	
-	protected float xOffset = 0;
-	protected float yOffset = 0;
-	protected float zOffset = 0;
+	protected Vector3f offsetCoords = new Vector3f(0, 0, 0);
 
 	protected Optional<StellarObject> primaryBody = Optional.empty();
 	
@@ -38,34 +34,36 @@ public abstract class StellarObject extends CelestialObject
 	}
 
 	@Override
-	protected float getTheta(ClientLevel level, float partialTicks)
+	protected float getTetha(ClientLevel level, float partialTicks)
 	{
-		float x = -coordinates.x + xOffset;
-		float y = -coordinates.y + yOffset;
-		float z = -coordinates.z + zOffset;
+		float x = -coordinates.x + offsetCoords.x;
+		float y = -coordinates.y + offsetCoords.y;
+		float z = -coordinates.z + offsetCoords.z;
 		
 		return (float) StellarCoordinates.sphericalTheta(x, y, z);
 	}
-	
+
+	@Override
 	protected float getPhi(ClientLevel level, float partialTicks)
 	{
-		float x = -coordinates.x + xOffset;
-		float y = -coordinates.y + yOffset;
-		float z = -coordinates.z + zOffset;
+		float x = -coordinates.x + offsetCoords.x;
+		float y = -coordinates.y + offsetCoords.y;
+		float z = -coordinates.z + offsetCoords.z;
 
 		return (float) StellarCoordinates.sphericalPhi(x, y, z);
 	}
 	
 	protected float distanceSize(float size)
 	{
-		float x = -coordinates.x + xOffset;
-		float y = -coordinates.y + yOffset;
-		float z = -coordinates.z + zOffset;
+		float x = -coordinates.x + offsetCoords.x;
+		float y = -coordinates.y + offsetCoords.y;
+		float z = -coordinates.z + offsetCoords.z;
 		float distance = x * x + y * y + z * z;
 		
 		return size * (1.0F / (float) Math.sqrt(distance));
 	}
-	
+
+	@Override
 	protected float getSize(ClientLevel level, float partialTicks)
 	{
 		return distanceSize(size);
@@ -82,9 +80,9 @@ public abstract class StellarObject extends CelestialObject
 	
 	public StellarObject setOffset(float xOffset, float yOffset, float zOffset)
 	{
-		this.xOffset = xOffset;
-		this.yOffset = yOffset;
-		this.zOffset = zOffset;
+		this.offsetCoords.x = xOffset;
+		this.offsetCoords.y = yOffset;
+		this.offsetCoords.z = zOffset;
 		
 		return this;
 	}
@@ -94,6 +92,15 @@ public abstract class StellarObject extends CelestialObject
 		this.axisRotation.x = xRotation;
 		this.axisRotation.y = yRotation;
 		this.axisRotation.z = zRotation;
+		
+		return this;
+	}
+	
+	public StellarObject setRotation(Vector3f rotation)
+	{
+		this.axisRotation.x = rotation.x;
+		this.axisRotation.y = rotation.y;
+		this.axisRotation.z = rotation.z;
 		
 		return this;
 	}
@@ -118,13 +125,7 @@ public abstract class StellarObject extends CelestialObject
 		return this.axisRotation;
 	}
 	
-	//TODO Is this even useful at this point?
-	public Vector3f getRelativeCartesianCoordinates(ClientLevel level, float partialTicks)
-	{
-		return this.coordinates;
-	}
-	
-	@Override
+	/*@Override
 	public void render(OrbitingCelestialObject viewCenter, Vector3f vievCenterCoords, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder,
 			Vector3f skyAxisRotation, Vector3f parentCoords)
 	{
@@ -132,5 +133,5 @@ public abstract class StellarObject extends CelestialObject
 		Vector3f absoluteCoords = StellarCoordinates.absoluteVector(parentCoords, relativeCoords);
 		
 		super.render(viewCenter, vievCenterCoords, level, camera, partialTicks, stack, bufferbuilder, skyAxisRotation, absoluteCoords);
-	}
+	}*/
 }

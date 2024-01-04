@@ -61,6 +61,11 @@ public class StellarViewInit
 	// Stars
 	public static final Sun SOL = (Sun) new Sun.VanillaSun()
 			{
+				protected boolean shouldRender(ClientLevel level, Camera camera)
+				{
+					return !OverworldConfig.disable_sun.get();
+				}
+				
 				@Override
 				public Vector3f getAxisRotation()
 				{

@@ -25,7 +25,7 @@ public class OrbitingCelestialObject extends StellarObject
 	protected float angularVelocity = 0;
 	protected float distance = 0;
 	
-	protected float initialTheta = 0;
+	protected float initialTetha = 0;
 	protected float initialPhi = 0;
 	protected float rotation = 0;
 	
@@ -38,9 +38,9 @@ public class OrbitingCelestialObject extends StellarObject
 	}
 
 	@Override
-	protected float getTheta(ClientLevel level, float partialTicks)
+	protected float getTetha(ClientLevel level, float partialTicks)
 	{
-		return this.initialTheta;
+		return this.initialTetha;
 	}
 
 	@Override
@@ -89,10 +89,9 @@ public class OrbitingCelestialObject extends StellarObject
 		return this;
 	}
 	
-	@Override
 	public Vector3f getRelativeCartesianCoordinates(ClientLevel level, float partialTicks)
 	{
-		return StellarCoordinates.sphericalToCartesian(new Vector3f(distance, getTheta(level, partialTicks), getPhi(level, partialTicks)));
+		return StellarCoordinates.sphericalToCartesian(new Vector3f(distance, getTetha(level, partialTicks), getPhi(level, partialTicks)));
 	}
 	
 	public float getDistanceSquaredFromViewCenter(Vector3f vievCenterCoords, Vector3f parentCoords, ClientLevel level, float partialTicks)
@@ -101,6 +100,12 @@ public class OrbitingCelestialObject extends StellarObject
 		Vector3f absoluteCoords = StellarCoordinates.absoluteVector(parentCoords, relativeCoords);
 		
 		return StellarCoordinates.relativeVector(vievCenterCoords, absoluteCoords).lengthSquared();
+	}
+	
+	@Override
+	protected Vector3f findRelative(Vector3f vievCenterCoords, Vector3f coords)
+	{
+		return StellarCoordinates.relativeVector(coords, vievCenterCoords);
 	}
 	
 	@Override

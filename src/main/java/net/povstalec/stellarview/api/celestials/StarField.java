@@ -26,6 +26,7 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.povstalec.stellarview.api.celestials.orbiting.OrbitingCelestialObject;
+import net.povstalec.stellarview.client.render.level.misc.StellarCoordinates;
 
 public abstract class StarField extends StellarObject
 {
@@ -52,15 +53,18 @@ public abstract class StarField extends StellarObject
 	public StarField setStarBuffer(float xOffset, float yOffset, float zOffset,
 			float xAxisRotation, float yAxisRotation, float zAxisRotation)
 	{
+		if(starBuffer != null)
+			starBuffer.close();
+		
 		starBuffer = new VertexBuffer();
 		Tesselator tesselator = Tesselator.getInstance();
 		BufferBuilder bufferBuilder = tesselator.getBuilder();
 		RenderSystem.setShader(GameRenderer::getPositionShader);
 		BufferBuilder.RenderedBuffer bufferbuilder$renderedbuffer;
 		
-		this.xOffset = xOffset;
-		this.yOffset = yOffset;
-		this.zOffset = zOffset;
+		this.offsetCoords.x = xOffset;
+		this.offsetCoords.y = yOffset;
+		this.offsetCoords.z = zOffset;
 		
 		this.axisRotation.x = xAxisRotation;
 		this.axisRotation.y = yAxisRotation;
@@ -96,21 +100,6 @@ public abstract class StarField extends StellarObject
 	protected abstract BufferBuilder.RenderedBuffer getStarBuffer(BufferBuilder bufferBuilder,
 			float xOffset, float yOffset, float zOffset,
 			float xAxisRotation, float yAxisRotation, float zAxisRotation);
-	
-	public float getXOffset()
-	{
-		return this.xOffset;
-	}
-	
-	public float getYOffset()
-	{
-		return this.yOffset;
-	}
-	
-	public float getZOffset()
-	{
-		return this.zOffset;
-	}
 	
 	public float getXRotation()
 	{
@@ -157,13 +146,6 @@ public abstract class StarField extends StellarObject
 		}
 	}
 	
-	/*@Override
-	public void render(OrbitingCelestialObject viewCenter, Vector3f vievCenterCoords, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder,
-			Vector3f skyAxisRotation, Vector3f coords)
-	{
-		
-	}*/
-	
 	public void render(OrbitingCelestialObject viewCenter, Vector3f viewCenterCoords, ClientLevel level, Camera camera, float partialTicks, float rain, PoseStack stack, Matrix4f projectionMatrix, Runnable setupFog, BufferBuilder bufferbuilder,
 			Vector3f skyAxisRotation, Vector3f axisRotation, Vector3f coords)
 	{
@@ -174,8 +156,8 @@ public abstract class StarField extends StellarObject
 		
 		this.galacticObjects.stream().forEach(galacticObject ->
 		{
-			//galacticObject.setOffset(xOffset, yOffset, zOffset);
-			galacticObject.render(viewCenter, viewCenterCoords, level, camera, partialTicks, stack, bufferbuilder, skyAxisRotation, coords);
+			galacticObject.setRotation(axisRotation);
+			galacticObject.render(viewCenter, viewCenterCoords, level, camera, partialTicks, stack, bufferbuilder, skyAxisRotation, StellarCoordinates.subtractVectors(StellarCoordinates.addVectors(offsetCoords, coords), galacticObject.coordinates));
 		});
 	}
 	

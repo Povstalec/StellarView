@@ -42,6 +42,8 @@ public abstract class CelestialObject
 	
 	protected float rotation = 0; // Rotation around the axis facing the Player
 	
+	protected Vector3f axisRotation = new Vector3f(0, 0, 0);
+	
 	public CelestialObject(ResourceLocation texture)
 	{
 		this.texture = texture;
@@ -145,7 +147,7 @@ public abstract class CelestialObject
 	}
 	
 	//TODO Rename these 3
-	protected abstract float getTheta(ClientLevel level, float partialTicks);
+	protected abstract float getTetha(ClientLevel level, float partialTicks);
 	
 	protected abstract float getPhi(ClientLevel level, float partialTicks);
 	
@@ -189,6 +191,11 @@ public abstract class CelestialObject
 		RenderSystem.defaultBlendFunc();
 	}
 	
+	protected Vector3f findRelative(Vector3f vievCenterCoords, Vector3f coords)
+	{
+		return coords;
+	}
+	
 	public void render(OrbitingCelestialObject viewCenter, Vector3f vievCenterCoords, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder,
 			Vector3f skyAxisRotation, Vector3f coords)
 	{
@@ -201,6 +208,10 @@ public abstract class CelestialObject
         stack.mulPose(Axis.ZP.rotationDegrees(skyAxisRotation.z));
         stack.mulPose(Axis.XP.rotationDegrees(skyAxisRotation.x));
 		
+		stack.mulPose(Axis.YP.rotationDegrees(axisRotation.y));
+        stack.mulPose(Axis.ZP.rotationDegrees(axisRotation.z));
+        stack.mulPose(Axis.XP.rotationDegrees(axisRotation.x));
+		
 		float brightness = getBrightness(level, camera, partialTicks);
 		
 		if(shouldBlend(level, camera))
@@ -212,7 +223,8 @@ public abstract class CelestialObject
 		float[] uv = getUV(level, camera, partialTicks);
 		float rotation = getRotation(level, partialTicks);
 		
-		Vector3f relative = StellarCoordinates.relativeVector(coords, vievCenterCoords);
+		Vector3f relative = findRelative(vievCenterCoords, coords);
+		//System.out.println(texture.toString() + " " + relative);
 		
 		Vector3f sphericalCoords = StellarCoordinates.cartesianToSpherical(relative);
 		float theta = sphericalCoords.y;
