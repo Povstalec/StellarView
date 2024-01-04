@@ -4,13 +4,8 @@ import java.util.Optional;
 
 import org.joml.Vector3f;
 
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.PoseStack;
-
-import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
-import net.povstalec.stellarview.api.celestials.orbiting.OrbitingCelestialObject;
 import net.povstalec.stellarview.client.render.level.misc.StellarCoordinates;
 
 public abstract class StellarObject extends CelestialObject
