@@ -73,7 +73,6 @@ public class StellarViewSky implements StellarViewSkyEffects, StellarViewFogEffe
 		if(this.isFoggy(this.minecraft, camera))
 			return;
 		
-		RenderSystem.disableTexture();
 		Vec3 skyColor = level.getSkyColor(this.minecraft.gameRenderer.getMainCamera().getPosition(), partialTicks);
 		float skyX = (float)skyColor.x;
         float skyY = (float)skyColor.y;
@@ -91,11 +90,8 @@ public class StellarViewSky implements StellarViewSkyEffects, StellarViewFogEffe
 		
 		this.renderSunrise(level, partialTicks, stack, projectionMatrix, bufferbuilder);
 		
-		RenderSystem.enableTexture();
-		
 		this.renderEcliptic(level, camera, partialTicks, stack, projectionMatrix, setupFog, bufferbuilder);
         
-        RenderSystem.disableTexture();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.disableBlend();
         
@@ -115,8 +111,8 @@ public class StellarViewSky implements StellarViewSkyEffects, StellarViewFogEffe
         	RenderSystem.setShaderColor(skyX * 0.2F + 0.04F, skyY * 0.2F + 0.04F, skyZ * 0.6F + 0.1F, 1.0F);
         else
         	RenderSystem.setShaderColor(skyX, skyY, skyZ, 1.0F);
-        
-        RenderSystem.enableTexture();
+
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.depthMask(true);
 	}
 }

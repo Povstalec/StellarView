@@ -56,7 +56,7 @@ public abstract class StarField extends StellarObject
 		if(starBuffer != null)
 			starBuffer.close();
 		
-		starBuffer = new VertexBuffer();
+		starBuffer = new VertexBuffer(VertexBuffer.Usage.STATIC);
 		Tesselator tesselator = Tesselator.getInstance();
 		BufferBuilder bufferBuilder = tesselator.getBuilder();
 		RenderSystem.setShader(GameRenderer::getPositionShader);
