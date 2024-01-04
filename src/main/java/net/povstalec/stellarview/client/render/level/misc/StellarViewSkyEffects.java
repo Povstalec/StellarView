@@ -11,9 +11,12 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
 
 public interface StellarViewSkyEffects
 {
@@ -54,14 +57,15 @@ public interface StellarViewSkyEffects
 		builder.begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION);
 		builder.vertex(0.0D, (double)scale, 0.0D).endVertex();
 		
-		for(int i = -180; i <= 180; i += 45) {
+		for(int i = -180; i <= 180; i += 45)
+		{
 			builder.vertex((double)(f1 * Mth.cos((float)i * ((float)Math.PI / 180F))), (double)scale, (double)(512.0F * Mth.sin((float)i * ((float)Math.PI / 180F)))).endVertex();
 		}
 		
 		return builder.end();
 	}
 	
-	default void renderSunrise(ClientLevel level, float partialTicks, PoseStack stack, Matrix4f projectionMatrix, Runnable setupFog, BufferBuilder bufferbuilder)
+	default void renderSunrise(ClientLevel level, float partialTicks, PoseStack stack, Matrix4f projectionMatrix, BufferBuilder bufferbuilder)
 	{
 		float[] sunriseColor = level.effects().getSunriseColor(level.getTimeOfDay(partialTicks), partialTicks);
 		if(sunriseColor != null)
@@ -84,15 +88,55 @@ public interface StellarViewSkyEffects
 			
 			for(int i = 0; i <= 16; ++i)
 			{
-				//TODO Find out what these do
-				float f7 = (float)i * ((float)Math.PI * 2F) / 16.0F;
-				float f8 = Mth.sin(f7);
-				float f9 = Mth.cos(f7);
-				bufferbuilder.vertex(sunriseMatrix, f8 * 120.0F, f9 * 120.0F, -f9 * 40.0F * sunriseA).color(sunriseR, sunriseG, sunriseB, 0.0F).endVertex();
+				// Thanks to tehgreatdoge for finding out what these do
+				// Create a circle to act as the slanted portion of the sunrise
+				float rotation = (float)i * ((float)Math.PI * 2F) / 16.0F;
+				float x = Mth.sin(rotation);
+				float y = Mth.cos(rotation);
+				// The Z coordinate is multiplied by -y to make the circle angle upwards towards the sun
+				bufferbuilder.vertex(sunriseMatrix, x * 120.0F, y * 120.0F, -y * 40.0F * sunriseA).color(sunriseR, sunriseG, sunriseB, 0.0F).endVertex();
 			}
 			
 			BufferUploader.drawWithShader(bufferbuilder.end());
 			stack.popPose();
 		}
+	}
+	
+	default void renderSky(Minecraft minecraft, VertexBuffer skyBuffer, ClientLevel level, float partialTicks,
+			PoseStack stack, Matrix4f projectionMatrix, ShaderInstance shaderinstance)
+	{
+		skyBuffer.bind();
+		skyBuffer.drawWithShader(stack.last().pose(), projectionMatrix, shaderinstance);
+	}
+	
+	default void renderDark(Minecraft minecraft, VertexBuffer darkBuffer, ClientLevel level, float partialTicks,
+			PoseStack stack, Matrix4f projectionMatrix, ShaderInstance shaderinstance, Vec3 skyColor)
+	{
+		float skyX = (float)skyColor.x;
+        float skyY = (float)skyColor.y;
+        float skyZ = (float)skyColor.z;
+        
+		RenderSystem.disableTexture();
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.disableBlend();
+        
+        RenderSystem.setShaderColor(0.0F, 0.0F, 0.0F, 1.0F);
+        double height = minecraft.player.getEyePosition(partialTicks).y - level.getLevelData().getHorizonHeight(level);
+        if(height < 0.0D)
+        {
+        	stack.pushPose();
+        	stack.translate(0.0F, 12.0F, 0.0F);
+        	darkBuffer.bind();
+        	darkBuffer.drawWithShader(stack.last().pose(), projectionMatrix, shaderinstance);
+        	VertexBuffer.unbind();
+        	stack.popPose();
+        }
+        
+        if(level.effects().hasGround())
+        	RenderSystem.setShaderColor(skyX * 0.2F + 0.04F, skyY * 0.2F + 0.04F, skyZ * 0.6F + 0.1F, 1.0F);
+        else
+        	RenderSystem.setShaderColor(skyX, skyY, skyZ, 1.0F);
+        
+        RenderSystem.enableTexture();
 	}
 }
