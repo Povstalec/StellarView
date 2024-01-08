@@ -24,8 +24,8 @@ public abstract class SkyEffect
 	public static final float[] FULL_UV = new float[] {0.0F, 0.0F, 1.0F, 1.0F};
 	public static final float DEFAULT_DISTANCE = 100.0F;
 	
-	protected Optional<StellarViewConfigValue.IntValue> value;
-	protected int defaultRarity;
+	protected Optional<StellarViewConfigValue.IntValue> value = Optional.empty();
+	protected int defaultRarity = 0;
 	
 	public SkyEffect(int defaultRarity)
 	{
