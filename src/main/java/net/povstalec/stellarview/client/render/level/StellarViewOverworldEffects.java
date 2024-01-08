@@ -47,7 +47,10 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 		};
 
 		//TODO Add custom textures to these
+		private static final Moon IO = new DefaultMoon(0.15F);
+		private static final Moon EUROPA = new DefaultMoon(0.125F);
 		private static final Moon GANYMEDE = new DefaultMoon(0.25F);
+		private static final Moon CALLISTO = new DefaultMoon(0.2F);
 
 		private static final Moon TITAN = new DefaultMoon(0.25F);
 		
@@ -64,14 +67,16 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 				.addAtmosphere(new Planet.Atmosphere(
 								(ShootingStar) new ShootingStar().setRarityValue(OverworldConfig.shooting_star_chance),
 								(MeteorShower) new MeteorShower().setRarityValue(OverworldConfig.meteor_shower_chance)))
-				.addOrbitingObject(LUNA, 384400F, 360F / 8, (float) Math.toRadians(45), (float) Math.toRadians(-5.145), 0)
-				.setGalacticPosition(0, 0, 75);
+				.addOrbitingObject(LUNA, 384400F, 360F / 8, (float) Math.toRadians(45), (float) Math.toRadians(-5.145), 0);
 
 		private static final Planet MARS = (Planet) new Planet(Planet.MARS_TEXTURE, 0.8F)
 				.halo(Planet.MARS_HALO_TEXTURE, 0.8F);
 		
 		private static final Planet JUPITER = (Planet) new Planet(Planet.JUPITER_TEXTURE, 1.5F)
-				.addOrbitingObject(GANYMEDE, 10 * 1070000, 360F / 7, 0, (float) Math.toRadians(2.214), (float) Math.toRadians(13))
+				.addOrbitingObject(IO, 10 * 421700, 360F / 2, 0, (float) Math.toRadians(0.05), (float) Math.toRadians(47))
+				.addOrbitingObject(EUROPA, 10 * 671034, 360F / 4, 0, (float) Math.toRadians(0.47), (float) Math.toRadians(180))
+				.addOrbitingObject(GANYMEDE, 10 * 1070412, 360F / 7, 0, (float) Math.toRadians(0.2), (float) Math.toRadians(13))
+				.addOrbitingObject(CALLISTO, 10 * 1882709, 360F / 16, 0, (float) Math.toRadians(0.192), (float) Math.toRadians(213))
 				.halo(Planet.JUPITER_HALO_TEXTURE, 1.5F);
 		
 		private static final Planet SATURN = (Planet) new Planet(Planet.SATURN_TEXTURE, 1F)
