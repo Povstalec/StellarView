@@ -26,3 +26,9 @@ Enjoy a Stellar View of the Sky
     versionRange="[1.19.2,1.20)"
     ordering="NONE"
     side="BOTH"
+[[dependencies.stellarview]]
+    modId="enhancedcelestials"
+    mandatory=false
+    versionRange="[3.0.0.1,)"
+    ordering="AFTER"
+    side="BOTH"
