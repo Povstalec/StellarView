@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 
-import corgitaco.enhancedcelestials.client.ECWorldRenderer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.DimensionSpecialEffects;
@@ -50,7 +49,7 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 			protected float getSize(ClientLevel level, float partialTicks)
 			{
 				if(StellarView.isEnhancedCelestialsLoaded())
-					return ECWorldRenderer.getMoonSize(partialTicks);
+					return EnhancedCelestialsCompatibility.getMoonSize(partialTicks);
 				
 				return super.getSize(level, partialTicks);
 			}
