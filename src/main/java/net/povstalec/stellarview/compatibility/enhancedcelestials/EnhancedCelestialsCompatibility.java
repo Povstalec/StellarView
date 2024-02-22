@@ -6,6 +6,7 @@ import org.joml.Vector3fc;
 import corgitaco.enhancedcelestials.EnhancedCelestialsWorldData;
 import corgitaco.enhancedcelestials.api.client.ColorSettings;
 import corgitaco.enhancedcelestials.api.lunarevent.LunarEvent;
+import corgitaco.enhancedcelestials.client.ECWorldRenderer;
 import corgitaco.enhancedcelestials.core.EnhancedCelestialsContext;
 import corgitaco.enhancedcelestials.lunarevent.LunarForecast;
 import net.minecraft.client.Minecraft;
@@ -16,6 +17,11 @@ import net.povstalec.stellarview.api.StellarViewSpecialEffects;
 
 public class EnhancedCelestialsCompatibility
 {
+	public static final float getMoonSize(float partialTicks)
+	{
+		return ECWorldRenderer.getMoonSize(partialTicks);
+	}
+	
 	public static final float[] getMoonColor(ClientLevel level, float partialTicks)
 	{
 		/*

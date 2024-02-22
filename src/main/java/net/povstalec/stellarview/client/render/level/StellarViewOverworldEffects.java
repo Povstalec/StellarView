@@ -51,7 +51,7 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 			protected float getSize(ClientLevel level, float partialTicks)
 			{
 				if(StellarView.isEnhancedCelestialsLoaded())
-					return ECWorldRenderer.getMoonSize(partialTicks);
+					return EnhancedCelestialsCompatibility.getMoonSize(partialTicks);
 				
 				return super.getSize(level, partialTicks);
 			}
