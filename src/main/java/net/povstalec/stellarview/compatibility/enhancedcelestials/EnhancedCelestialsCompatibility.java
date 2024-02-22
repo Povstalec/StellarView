@@ -1,7 +1,5 @@
 package net.povstalec.stellarview.compatibility.enhancedcelestials;
 
-import org.joml.Vector3fc;
-
 import com.mojang.math.Vector3f;
 
 import corgitaco.enhancedcelestials.EnhancedCelestialsWorldData;
