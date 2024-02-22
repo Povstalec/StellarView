@@ -1,5 +1,6 @@
 package net.povstalec.stellarview;
 
+import java.util.Optional;
 import java.util.function.BiFunction;
 
 import org.slf4j.Logger;
@@ -15,12 +16,13 @@ import net.minecraftforge.client.event.RegisterDimensionSpecialEffectsEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.povstalec.stellarview.client.render.level.StellarViewEndEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewOverworldEffects;
 import net.povstalec.stellarview.client.screens.config.ConfigScreen;
-import net.povstalec.stellarview.common.config.OverworldConfig;
 import net.povstalec.stellarview.common.config.StellarViewConfig;
 import net.povstalec.stellarview.common.util.KeyBindings;
 
@@ -28,10 +30,15 @@ import net.povstalec.stellarview.common.util.KeyBindings;
 public class StellarView
 {
 	public static final String MODID = "stellarview";
+	
+	public static final String ENHANCED_CELESTIALS_MODID = "enhancedcelestials";
+    
+    private static Optional<Boolean> isEnhancedCelestialsLoaded = Optional.empty();
     
     public static final Logger LOGGER = LogUtils.getLogger();
     
     public static StellarViewOverworldEffects overworld;
+    public static StellarViewEndEffects end;
 
 	public StellarView()
 	{
@@ -57,8 +64,10 @@ public class StellarView
         public static void registerDimensionEffects(RegisterDimensionSpecialEffectsEvent event)
         {
     		overworld = new StellarViewOverworldEffects();
+    		end = new StellarViewEndEffects();
     		
         	event.register(StellarViewOverworldEffects.OVERWORLD_EFFECTS, overworld);
+        	//event.register(StellarViewEndEffects.END_EFFECTS, end);
         }
 
     	@SubscribeEvent
@@ -78,8 +87,17 @@ public class StellarView
         }
     }
     
+    public static boolean isEnhancedCelestialsLoaded()
+    {
+    	if(isEnhancedCelestialsLoaded.isEmpty())
+    		isEnhancedCelestialsLoaded = Optional.of(ModList.get().isLoaded(ENHANCED_CELESTIALS_MODID));
+    	
+    	return isEnhancedCelestialsLoaded.get();	
+    }
+    
     public static void updateGalaxies()
     {
-    	overworld.MILKY_WAY.setStarBuffer(OverworldConfig.milky_way_x.get(), OverworldConfig.milky_way_y.get(), OverworldConfig.milky_way_z.get(), 0, 0, 0);
+    	overworld.setupGalaxy();
+    	end.setupGalaxy();
     }
 }

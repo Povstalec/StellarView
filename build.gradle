@@ -5,7 +5,7 @@ plugins {
 }
 
 version = "${mod_version}"
-group = 'net.povstalec.sgjourney' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = 'net.povstalec.stellarview' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "${mod_name}-${mc_version}"
 
 // Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
@@ -133,6 +133,10 @@ repositories {
             includeGroup "curse.maven"
         }
     }
+    maven {
+        name = "Illusive Soulworks maven"
+        url = "https://maven.theillusivec4.top/"
+    }
 }
 
 dependencies {
@@ -150,6 +154,9 @@ dependencies {
     // For more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
+    
+    runtimeOnly fg.deobf("curse.maven:corgilib-693313:4581378")
+    runtimeOnly fg.deobf("curse.maven:enhanced-celestials-438447:4598335")
 }
 
 // Example for how to get properties into the manifest for reading at runtime.
