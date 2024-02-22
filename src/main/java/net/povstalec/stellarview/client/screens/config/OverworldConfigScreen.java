@@ -41,8 +41,8 @@ public class OverworldConfigScreen extends Screen
 		
 		this.configList = new ConfigList(minecraft, this.width, this.height, 
 				OPTIONS_LIST_TOP_HEIGHT, this.height - OPTIONS_LIST_BOTTOM_OFFSET, OPTIONS_LIST_ITEM_HEIGHT);
-		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.replace_vanilla"), 
-				this.width, StellarViewConfig.replace_vanilla));
+		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.replace_overworld"), 
+				this.width, StellarViewConfig.replace_overworld));
 		
 		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.disable_sun"), 
 				this.width, OverworldConfig.disable_sun));

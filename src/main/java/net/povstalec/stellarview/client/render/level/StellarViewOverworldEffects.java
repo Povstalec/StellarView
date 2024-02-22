@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 
+import corgitaco.enhancedcelestials.client.ECWorldRenderer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.DimensionSpecialEffects;
@@ -22,6 +23,7 @@ import net.povstalec.stellarview.api.sky_effects.MeteorShower;
 import net.povstalec.stellarview.api.sky_effects.ShootingStar;
 import net.povstalec.stellarview.common.config.OverworldConfig;
 import net.povstalec.stellarview.common.config.StellarViewConfig;
+import net.povstalec.stellarview.compatibility.enhancedcelestials.EnhancedCelestialsCompatibility;
 
 public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 {
@@ -42,6 +44,24 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 			protected boolean hasPhases()
 			{
 				return !OverworldConfig.disable_moon_phases.get();
+			}
+			
+			@Override
+			protected float getSize(ClientLevel level, float partialTicks)
+			{
+				if(StellarView.isEnhancedCelestialsLoaded())
+					return ECWorldRenderer.getMoonSize(partialTicks);
+				
+				return super.getSize(level, partialTicks);
+			}
+			
+			@Override
+			protected float[] getColor(ClientLevel level, float partialTicks)
+			{
+				if(!StellarView.isEnhancedCelestialsLoaded())
+					return super.getColor(level, partialTicks);
+				
+				return EnhancedCelestialsCompatibility.getMoonColor(level, partialTicks);
 			}
 		};
 
@@ -119,7 +139,7 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 		//public static final StarField VANILLA = new StarField.VanillaStarField(10, 10842L, (short) 1500);
 		
 		// Galaxies
-		public final SpiralGalaxy MILKY_WAY = (SpiralGalaxy) new Galaxy.SpiralGalaxy(100, 10842L, (byte) 4, (short) 1500)
+		public static final SpiralGalaxy MILKY_WAY = (SpiralGalaxy) new Galaxy.SpiralGalaxy(100, 10842L, (byte) 4, (short) 1500)
 				.addGalacticObject(new Supernova(10.0F, 15 * CelestialObject.TICKS_PER_DAY + 18000, 5 * CelestialObject.TICKS_PER_DAY), 10, -3, 2)
 				.addGalacticObject(SOL, 0, 0, 16, 18, 0, 90);
 	
@@ -130,14 +150,31 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 				192.0F, true, DimensionSpecialEffects.SkyType.NORMAL, false, false);
 	}
 	
+	public void setupGalaxy()
+	{
+		MILKY_WAY.setStarBuffer(OverworldConfig.milky_way_x.get(), OverworldConfig.milky_way_y.get(), OverworldConfig.milky_way_z.get(), 0, 0, 0);
+	}
+	
 	@Override
 	public boolean renderSky(ClientLevel level, int ticks, float partialTick, PoseStack poseStack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
     {
-		if(StellarViewConfig.replace_vanilla.get())
+		if(StellarViewConfig.replace_overworld.get())
 			super.renderSky(level, ticks, partialTick, poseStack, camera, projectionMatrix, isFoggy, setupFog);
 		
-        return StellarViewConfig.replace_vanilla.get();
+        return StellarViewConfig.replace_overworld.get();
     }
+	
+	@Override
+	public void adjustLightmapColors(ClientLevel level, float partialTicks, float skyDarken, float skyLight, float blockLight, int pixelX, int pixelY, Vector3f colors)
+    {
+		if(StellarViewConfig.replace_overworld.get())
+		{
+			super.adjustLightmapColors(level, partialTicks, skyDarken, skyLight, blockLight, pixelX, pixelY, colors);
+			
+			if(StellarView.isEnhancedCelestialsLoaded())
+				EnhancedCelestialsCompatibility.adjustLightmapColors(level, partialTicks, skyDarken, skyLight, blockLight, pixelX, pixelY, colors);
+		}
+	}
 	
 	//TODO Use this again
 	/*public double starWidthFunction(double aLocation, double bLocation, double sinRandom, double cosRandom, double sinTheta, double cosTheta, double sinPhi, double cosPhi)

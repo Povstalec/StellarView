@@ -6,7 +6,8 @@
 	"gui.stellarview.config.beta": "Stellar View - Beta Config",
 	"gui.stellarview.config.gamma": "Stellar View - Gamma Config",
 	
-	"gui.stellarview.replace_vanilla": "Replace Vanilla",
+	"gui.stellarview.replace_overworld": "Replace Overworld",
+	"gui.stellarview.replace_end": "Replace End",
 	"gui.stellarview.disable_sun": "Disable Sun",
 	"gui.stellarview.disable_moon": "Disable Moon",
 	"gui.stellarview.disable_moon_phases": "Disable Moon Phases",

@@ -156,8 +156,13 @@ public abstract class CelestialObject
 		return this.rotation;
 	}
 	
-	protected void renderObject(BufferBuilder bufferbuilder, Matrix4f lastMatrix, ResourceLocation texture, float[] uv,
-			float size, float rotation, float theta, float phi, float brightness)
+	protected float[] getColor(ClientLevel level, float partialTicks)
+	{
+		return new float[] {1, 1, 1};
+	}
+	
+	private void renderObject(BufferBuilder bufferbuilder, Matrix4f lastMatrix, ResourceLocation texture, float[] uv,
+			float size, float rotation, float theta, float phi, float brightness, float[] color)
 	{
 		if(uv == null || uv.length < 4)
 			uv = FULL_UV;
@@ -169,7 +174,7 @@ public abstract class CelestialObject
 		
 		if(brightness > 0.0F)
 		{
-			RenderSystem.setShaderColor(1, 1, 1, brightness);
+			RenderSystem.setShaderColor(color[0], color[1], color[2], brightness);
 			
 			RenderSystem.setShaderTexture(0, texture);
 	        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
@@ -182,10 +187,10 @@ public abstract class CelestialObject
 	}
 	
 	protected void renderHalo(BufferBuilder bufferbuilder, Matrix4f lastMatrix, float[] uv, float rotation, 
-			float theta, float phi, float brightness)
+			float theta, float phi, float brightness, float[] color)
 	{
 		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-		this.renderObject(bufferbuilder, lastMatrix, this.haloTexture, uv, this.haloSize, rotation, theta, phi, brightness);
+		this.renderObject(bufferbuilder, lastMatrix, this.haloTexture, uv, this.haloSize, rotation, theta, phi, brightness, color);
 		RenderSystem.defaultBlendFunc();
 	}
 	
@@ -227,9 +232,14 @@ public abstract class CelestialObject
 		float theta = sphericalCoords.y();
 		float phi = sphericalCoords.z();
 		
+		float[] shaderColor = getColor(level, partialTicks);
+		
+		if(shaderColor.length < 3)
+			shaderColor = new float[] {1, 1, 1};
+		
 		if(this.hasHalo)
-			this.renderHalo(bufferbuilder, lastMatrix, uv, rotation, theta, phi, brightness);
-		renderObject(bufferbuilder, lastMatrix, getTexture(level, camera, partialTicks), uv, getSize(level, partialTicks), rotation, theta, phi, brightness);
+			this.renderHalo(bufferbuilder, lastMatrix, uv, rotation, theta, phi, brightness, shaderColor);
+		renderObject(bufferbuilder, lastMatrix, getTexture(level, camera, partialTicks), uv, getSize(level, partialTicks), rotation, theta, phi, brightness, shaderColor);
 
 		RenderSystem.defaultBlendFunc();
 		stack.popPose();
