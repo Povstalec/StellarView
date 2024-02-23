@@ -58,6 +58,10 @@ minecraft {
     // Default run configurations.
     // These can be tweaked, removed, or duplicated as needed.
     runs {
+    	all {
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
+        }
         // applies to all the run configs below
         configureEach {
             workingDirectory project.file('run')
@@ -120,6 +124,13 @@ repositories {
     // flatDir {
     //     dir 'libs'
     // }
+    maven {
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven"
+        content {
+            includeGroup "maven.modrinth"
+        }
+    }
 }
 
 dependencies {
@@ -144,6 +155,9 @@ dependencies {
     // For more info:
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
+    
+    runtimeOnly fg.deobf("maven.modrinth:corgilib:${minecraft_version}-${corgilib_version}-forge")
+    runtimeOnly fg.deobf("maven.modrinth:enhanced-celestials:${minecraft_version}-${enhanced_celestials_version}-forge")
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
