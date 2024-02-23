@@ -152,7 +152,10 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
     
+    compileOnly fg.deobf("maven.modrinth:corgilib:${mc_version}-${corgilib_version}-forge")
     runtimeOnly fg.deobf("maven.modrinth:corgilib:${mc_version}-${corgilib_version}-forge")
+    
+    compileOnly fg.deobf("maven.modrinth:enhanced-celestials:${mc_version}-${enhanced_celestials_version}-forge")
     runtimeOnly fg.deobf("maven.modrinth:enhanced-celestials:${mc_version}-${enhanced_celestials_version}-forge")
 }
 
