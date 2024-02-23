@@ -154,8 +154,8 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
     
-    runtimeOnly fg.deobf("maven.modrinth:corgilib:1.19.2-1.0.0.22-forge")
-    runtimeOnly fg.deobf("curse.maven:enhanced-celestials-438447:4598311")
+    runtimeOnly fg.deobf("maven.modrinth:corgilib:${mc_version}-${corgilib_version}-forge")
+    runtimeOnly fg.deobf("maven.modrinth:enhanced-celestials:${mc_version}-${enhanced_celestials_version}-forge")
 }
 
 // Example for how to get properties into the manifest for reading at runtime.
