@@ -30,5 +30,5 @@ Enjoy a Stellar View of the Sky
     modId="enhancedcelestials"
     mandatory=false
     versionRange="[2.1.0.6,)"
-    ordering="AFTER"
+    ordering="BEFORE"
     side="BOTH"

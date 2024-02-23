@@ -128,14 +128,11 @@ repositories {
     //     dir 'libs'
     // }
     maven {
-        url "https://cursemaven.com"
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven"
         content {
-            includeGroup "curse.maven"
+            includeGroup "maven.modrinth"
         }
-    }
-    maven {
-        name = "Illusive Soulworks maven"
-        url = "https://maven.theillusivec4.top/"
     }
 }
 
@@ -157,7 +154,7 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
     
-    runtimeOnly fg.deobf("curse.maven:corgilib-693313:4554112")
+    runtimeOnly fg.deobf("maven.modrinth:corgilib:1.19.2-1.0.0.22-forge")
     runtimeOnly fg.deobf("curse.maven:enhanced-celestials-438447:4598311")
 }
 
