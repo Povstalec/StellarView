@@ -5,7 +5,7 @@ plugins {
 }
 
 version = "${mod_version}"
-group = 'net.povstalec.sgjourney' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = 'net.povstalec.stellarview' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "${mod_name}-${mc_version}"
 
 // Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
@@ -128,9 +128,10 @@ repositories {
     //     dir 'libs'
     // }
     maven {
-        url "https://cursemaven.com"
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven"
         content {
-            includeGroup "curse.maven"
+            includeGroup "maven.modrinth"
         }
     }
 }
@@ -150,6 +151,9 @@ dependencies {
     // For more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
+    
+    runtimeOnly fg.deobf("maven.modrinth:corgilib:${mc_version}-${corgilib_version}-forge")
+    runtimeOnly fg.deobf("maven.modrinth:enhanced-celestials:${mc_version}-${enhanced_celestials_version}-forge")
 }
 
 // Example for how to get properties into the manifest for reading at runtime.

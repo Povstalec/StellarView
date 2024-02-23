@@ -29,6 +29,12 @@ public class Supernova extends StellarObject
 	{
 		this(SUPERNOVA_TEXTURE, maxSize, start, duration);
 	}
+	
+	protected boolean isExploding(ClientLevel level)
+	{
+		long gameTime = level.getDayTime();
+		return gameTime > start;
+	}
 
 	@Override
 	protected boolean shouldBlend(ClientLevel level, Camera camera)
@@ -39,7 +45,7 @@ public class Supernova extends StellarObject
 	@Override
 	protected boolean isVisibleDuringDay(ClientLevel level, Camera camera)
 	{
-		return true;
+		return isExploding(level);
 	}
 
 	@Override
@@ -56,7 +62,7 @@ public class Supernova extends StellarObject
 		long lifeTime = gameTime - start;
 		float superNovaSize = (float) (maxSize * Math.sin(Math.PI * lifeTime / duration));
 		
-		float visualSize = gameTime > start && ((superNovaSize >= size) || lifeTime > duration / 2) ? superNovaSize : size;
+		float visualSize = isExploding(level) && ((superNovaSize >= size) || lifeTime > duration / 2) ? superNovaSize : size;
 		
 		return distanceSize(visualSize) * 10;
 	}

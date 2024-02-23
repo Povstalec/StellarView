@@ -4,7 +4,7 @@ license="Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
 issueTrackerURL="https://github.com/Povstalec/StellarView/issues"
 [[mods]]
 modId="stellarview"
-version="0.2.1"
+version="0.2.2"
 displayName="Stellar View"
 #logoFile="stellarview_large.png"
 credits="-"
@@ -25,4 +25,10 @@ Enjoy a Stellar View of the Sky
     mandatory=true
     versionRange="[1.19.4,1.20)"
     ordering="NONE"
+    side="BOTH"
+[[dependencies.stellarview]]
+    modId="enhancedcelestials"
+    mandatory=false
+    versionRange="[4.0.0.1,)"
+    ordering="BEFORE"
     side="BOTH"

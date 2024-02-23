@@ -15,7 +15,8 @@ public class StellarViewConfig
 	private static final ForgeConfigSpec.Builder CLIENT_BUILDER = new ForgeConfigSpec.Builder();
 	public static final ForgeConfigSpec CLIENT_CONFIG;
 	
-	public static StellarViewConfigValue.BooleanValue replace_vanilla;
+	public static StellarViewConfigValue.BooleanValue replace_overworld;
+	public static StellarViewConfigValue.BooleanValue replace_end;
 	
 	public static StellarViewConfigValue.BooleanValue disable_stars;
 	public static StellarViewConfigValue.BooleanValue day_stars;
@@ -45,9 +46,13 @@ public class StellarViewConfig
 	
 	private static void generalClientConfig(ForgeConfigSpec.Builder client)
 	{
-		replace_vanilla = new StellarViewConfigValue.BooleanValue(client, "client.replace_vanilla", 
+		replace_overworld = new StellarViewConfigValue.BooleanValue(client, "client.replace_overworld", 
 				true, 
 				"Replaces the Vanilla Overworld sky with Stellar View sky");
+		
+		replace_end = new StellarViewConfigValue.BooleanValue(client, "client.replace_end", 
+				false, 
+				"Replaces the Vanilla End sky with Stellar View sky");
 		
 		disable_stars = new StellarViewConfigValue.BooleanValue(client, "client.disable_stars", 
 				false, 
