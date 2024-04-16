@@ -146,4 +146,31 @@ public class OrbitingCelestialObject extends StellarObject
 	{
 		this.renderFrom(this, new Vector3f(0, 0, 0), level, camera, partialTicks, stack, projectionMatrix, setupFog, bufferbuilder, new Vector3f(0, 0, 0), new Vector3f(0, 0, 0));
 	}
+
+	/**
+	 * Approximate E (Eccentric Anomaly) for a given
+	 * e (eccentricity) and M (Mean Anomaly)
+	 * where e < 1 and E and M are given in radians
+	 * 
+	 * This is performed by finding the root of the
+	 * function f(E) = E - e*sin(E) - M(t)
+	 * via Newton's method, where the derivative of
+	 * f(E) with respect to E is 
+	 * f'(E) = 1 - e*cos(E)
+	 * 
+	 * @param eccentricity
+	 * @param meanAnomaly
+	 * @return
+	 */
+	public static double approximateEccentricAnomaly(double eccentricity, double meanAnomaly) {
+		double E = meanAnomaly;
+		// Perform 12 iterations
+		// No clue what would be an appropriate amount in practice
+		for (int i=0;i<12;i++) {
+			E = E - 
+				(E - eccentricity * Math.sin(E) - meanAnomaly) /
+				(1 - eccentricity * Math.cos(E));
+		}
+		return E;
+	}
 }
