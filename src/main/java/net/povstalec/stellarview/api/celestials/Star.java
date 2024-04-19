@@ -32,8 +32,21 @@ public class Star
 	}
 	
 	public static void createStar(BufferBuilder builder, RandomSource randomsource, 
-			double x, double y, double z, double starSize, double distance, int[] starColor, double heightDeformation, double widthDeformation)
+			double x, double y, double z, double distance, int[] starColor, double heightDeformation, double widthDeformation)
 	{
+		int alpha = randomsource.nextInt(0xAA, 0xFF); // 0xAA is the default
+		int minAlpha = (alpha - 0xAA) * 2 / 3;
+
+		double starSize = (double) (0.15F + randomsource.nextFloat() * 0.1F); // This randomizes the Star size
+		double maxStarSize = 0.2 + starSize * 1 / 5;
+		double minStarSize = starSize * 3 / 5;
+		
+		if(distance > 40)
+			alpha -= 2 * (int) Math.round(distance);
+		
+		if(alpha < minAlpha)
+			alpha = minAlpha;
+		
 		distance = 1.0D / Math.sqrt(distance);
 		x *= distance;
 		y *= distance;
@@ -109,8 +122,8 @@ public class Star
 			 * Which corresponds to:
 			 * UV:	00	01	11	10
 			 */
-			double aLocation = (double) ((j & 2) - 1) * Mth.clamp(starSize * 20 * distance, 0.1, 0.25); //starSize;
-			double bLocation = (double) ((j + 1 & 2) - 1) * Mth.clamp(starSize * 20 * distance, 0.1, 0.25); //starSize;
+			double aLocation = (double) ((j & 2) - 1) * Mth.clamp(starSize * 20 * distance, minStarSize, maxStarSize); //starSize;
+			double bLocation = (double) ((j + 1 & 2) - 1) * Mth.clamp(starSize * 20 * distance, minStarSize, maxStarSize); //starSize;
 			
 			/* These are the values for cos(random) = sin(random)
 			 * (random is simply there to randomize the star rotation)
@@ -151,20 +164,20 @@ public class Star
 			double projectedX = heightProjectionXZ * sinTheta - width * cosTheta;
 			double projectedZ = width * sinTheta + heightProjectionXZ * cosTheta;
 			
-			builder.vertex(starX + projectedX, starY + heightProjectionY, starZ + projectedZ).color(starColor[0], starColor[1], starColor[2], 0xAA).endVertex();
+			builder.vertex(starX + projectedX, starY + heightProjectionY, starZ + projectedZ).color(starColor[0], starColor[1], starColor[2], alpha).endVertex();
 		}
 	}
 	
 	public static void createStar(BufferBuilder builder, RandomSource randomsource, 
-			double x, double y, double z, double starSize, double distance, int[] starColor)
+			double x, double y, double z, double distance, int[] starColor)
 	{
-			createStar(builder, randomsource, x, y, z, starSize, distance, starColor, 1.0, 1.0);
+			createStar(builder, randomsource, x, y, z, distance, starColor, 1.0, 1.0);
 	}
 	
 	public static void createVanillaStar(BufferBuilder builder, RandomSource randomsource, 
 			double x, double y, double z, double starSize, double distance, int[] starColor)
 	{
 		if(distance < 1.0D && distance > 0.01D)
-			createStar(builder, randomsource, x, y, z, starSize, distance, starColor);
+			createStar(builder, randomsource, x, y, z, distance, starColor);
 	}
 }
