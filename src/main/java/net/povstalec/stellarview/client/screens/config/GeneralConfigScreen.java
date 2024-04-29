@@ -47,6 +47,15 @@ public class GeneralConfigScreen extends Screen
 		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.bright_stars"), 
 				this.width, StellarViewConfig.bright_stars));
 
+		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.distance_star_size"), 
+				this.width, StellarViewConfig.distance_star_size));
+		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.uniform_star_brightness"), 
+				this.width, StellarViewConfig.uniform_star_brightness));
+		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.equal_spectral_types"), 
+				this.width, StellarViewConfig.equal_spectral_types));
+		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.uniform_star_color"), 
+				this.width, StellarViewConfig.uniform_star_color));
+
 		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.rotation_multiplier"),
 				Component.empty(),
 				this.width, StellarViewConfig.rotation_multiplier));

@@ -17,13 +17,13 @@ public class Star
 	
 	public enum SpectralType
 	{
-		O(255 - (CONTRAST * 6), 255 - (CONTRAST * 6), 255),
-		B(255 - (CONTRAST * 4), 255 - (CONTRAST * 4), 255),
-		A(255 - (CONTRAST * 2), 255 - (CONTRAST * 2), 255),
-		F(255, 255, 255),
-		G(255, 255, 255 - (CONTRAST * 4)),
-		K(255, 255 - (CONTRAST * 2), 255 - (CONTRAST * 4)),
-		M(255, 255 - (CONTRAST * 4), 255 - (CONTRAST * 4));
+		O(255 - (CONTRAST * 6), 255 - (CONTRAST * 6), 255), // 0.00003%
+		B(255 - (CONTRAST * 4), 255 - (CONTRAST * 4), 255), // 0.12%
+		A(255 - (CONTRAST * 2), 255 - (CONTRAST * 2), 255), // 0.61%
+		F(255, 255, 255), // 3.0%
+		G(255, 255, 255 - (CONTRAST * 4)), // 7.6%
+		K(255, 255 - (CONTRAST * 2), 255 - (CONTRAST * 4)), // 12%
+		M(255, 255 - (CONTRAST * 4), 255 - (CONTRAST * 4)); // 76%
 		
 		private final int red;
 		private final int green;
@@ -54,9 +54,30 @@ public class Star
 		public static SpectralType randomSpectralType(long seed)
 		{
 			Random random = new Random(seed);
-			SpectralType[] spectralTypes = SpectralType.values();
 			
-			return spectralTypes[random.nextInt(0, spectralTypes.length)];
+			if(StellarViewConfig.equal_spectral_types.get())
+			{
+				SpectralType[] spectralTypes = SpectralType.values();
+				return spectralTypes[random.nextInt(0, spectralTypes.length)];
+			}
+			
+			int value = random.nextInt(0, 100);
+			
+			// Slightly adjusted percentage values that can be in SpectralType comments
+			if(value < 74)
+				return M;
+			else if(value < (74 + 12))
+				return K;
+			else if(value < (74 + 12 + 7))
+				return G;
+			else if(value < (74 + 12 + 7 + 3))
+				return F;
+			else if(value < (74 + 12 + 7 + 3 + 1))
+				return A;
+			else if(value < (74 + 12 + 7 + 3 + 1 + 1))
+				return B;
+			
+			return O;
 		}
 	}
 	
@@ -79,37 +100,18 @@ public class Star
 		return starBrightness;
 	}
 	
-	/*public static int[] randomStarColor(long seed, int contrast)
-	{
-		// This chooses a random color for a star based on a few select presets.
-		RandomSource randomsource = RandomSource.create(seed);
-		
-		int[] starClassM = {255, 255-(contrast*4), 255-(contrast*4)};
-		int[] starClassK = {255, 255-(contrast*2), 255-(contrast*4)};
-		int[] starClassG = {255, 255, 255-(contrast*4)};
-		int[] starClassF = {255, 255, 255};
-		int[] starClassA = {255-(contrast*2), 255-(contrast*2), 255};
-		int[] starClassB = {255-(contrast*4), 255-(contrast*4), 255};
-		int[] starClassO = {255-(contrast*6), 255-(contrast*6), 255};
-		
-		int[][] starColors = {starClassM, starClassK, starClassG, starClassF, starClassA, starClassB, starClassO};
-		int[] starColor = starColors[randomsource.nextInt(starColors.length)];
-		
-		return starColor;
-	}*/
-	
 	public static void createStar(BufferBuilder builder, RandomSource randomsource, 
 			double x, double y, double z, double distance, double heightDeformation, double widthDeformation, long seed)
 	{
 		SpectralType spectralType = SpectralType.randomSpectralType(seed);
-		int[] starColor = new int[] {spectralType.red(), spectralType.green(), spectralType.blue()};
+		int[] starColor = StellarViewConfig.uniform_star_color.get() ? new int[] {255, 255, 255} : new int[] {spectralType.red(), spectralType.green(), spectralType.blue()};
 		
 		int alpha = randomsource.nextInt(0xAA, 0xFF); // 0xAA is the default
 		int minAlpha = (alpha - 0xAA) * 2 / 3;
 
 		double starSize = (double) (0.15F + randomsource.nextFloat() * 0.1F); // This randomizes the Star size
-		double maxStarSize = StellarViewConfig.distance_size.get() ? starSize : 0.2 + starSize * 1 / 5;
-		double minStarSize = StellarViewConfig.distance_size.get() ? starSize : starSize * 3 / 5;
+		double maxStarSize = StellarViewConfig.distance_star_size.get() ? starSize : 0.2 + starSize * 1 / 5;
+		double minStarSize = StellarViewConfig.distance_star_size.get() ? starSize : starSize * 3 / 5;
 		
 		if(distance > 40)
 			alpha -= 2 * (int) Math.round(distance);
@@ -161,7 +163,7 @@ public class Star
 		double sinRandom = Math.sin(random);
 		double cosRandom = Math.cos(random);
 		
-		if(starColor.length < 3 || StellarViewConfig.uniform_color.get())
+		if(starColor.length < 3)
 			starColor = new int[] {255, 255, 255};
 		
 		// This loop creates the 4 corners of a Star

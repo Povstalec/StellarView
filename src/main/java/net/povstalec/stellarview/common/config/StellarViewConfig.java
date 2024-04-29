@@ -22,9 +22,10 @@ public class StellarViewConfig
 	public static StellarViewConfigValue.BooleanValue day_stars;
 	public static StellarViewConfigValue.BooleanValue bright_stars;
 
-	public static StellarViewConfigValue.BooleanValue distance_size;
-	public static StellarViewConfigValue.BooleanValue uniform_brightness;
-	public static StellarViewConfigValue.BooleanValue uniform_color;
+	public static StellarViewConfigValue.BooleanValue distance_star_size;
+	public static StellarViewConfigValue.BooleanValue uniform_star_brightness;
+	public static StellarViewConfigValue.BooleanValue equal_spectral_types;
+	public static StellarViewConfigValue.BooleanValue uniform_star_color;
 	
 	public static StellarViewConfigValue.IntValue rotation_multiplier;
 	
@@ -68,13 +69,16 @@ public class StellarViewConfig
 				true, 
 				"Makes Stars brighter");
 		
-		distance_size = new StellarViewConfigValue.BooleanValue(client, "client.distance_size", 
+		distance_star_size = new StellarViewConfigValue.BooleanValue(client, "client.distance_star_size", 
 				false, 
 				"Stars will become smaller the further away they are");
-		uniform_brightness = new StellarViewConfigValue.BooleanValue(client, "client.uniform_brightness", 
+		uniform_star_brightness = new StellarViewConfigValue.BooleanValue(client, "client.uniform_star_brightness", 
 				false, 
 				"All stars will have the same brightness");
-		uniform_color = new StellarViewConfigValue.BooleanValue(client, "client.uniform_color", 
+		equal_spectral_types = new StellarViewConfigValue.BooleanValue(client, "client.equal_spectral_types", 
+				false, 
+				"All spectral types will be distributed equally, as opposed to a more realistic distribution (About 75% class M stars)");
+		uniform_star_color = new StellarViewConfigValue.BooleanValue(client, "client.uniform_star_color", 
 				false, 
 				"All stars will have the same color (White)");
 
