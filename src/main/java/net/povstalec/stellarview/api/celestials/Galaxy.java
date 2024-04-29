@@ -74,9 +74,8 @@ public abstract class Galaxy extends StarField
 					z = gammaZ + zOffset;
 					
 					double distance = x * x + y * y + z * z;
-					int[] starColor = Star.randomStarColor(seed*j+i, 8);
 					
-					Star.createStar(bufferBuilder, randomsource, x, y, z, distance, starColor);
+					Star.createStar(bufferBuilder, randomsource, x, y, z, distance, randomsource.nextLong());
 				}
 			}
 			return bufferBuilder.end();
@@ -130,10 +129,8 @@ public abstract class Galaxy extends StarField
 				z = gammaZ + zOffset;
 				
 				double distance = x * x + y * y + z * z;
-					
-				int[] starColor = Star.randomStarColor(seed*i, 8);
 				
-				Star.createStar(bufferBuilder, randomsource, x, y, z, distance, starColor);
+				Star.createStar(bufferBuilder, randomsource, x, y, z, distance, randomsource.nextLong());
 			}
 			return bufferBuilder.end();
 		}

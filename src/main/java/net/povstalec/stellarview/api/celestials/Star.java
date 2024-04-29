@@ -1,5 +1,7 @@
 package net.povstalec.stellarview.api.celestials;
 
+import java.util.Random;
+
 import com.mojang.blaze3d.vertex.BufferBuilder;
 
 import net.minecraft.client.Camera;
@@ -11,6 +13,52 @@ import net.povstalec.stellarview.common.config.StellarViewConfig;
 public class Star
 {
 	private static final float DEFAULT_DISTANCE = 100.0F;
+	private static final int CONTRAST = 8;
+	
+	public enum SpectralType
+	{
+		O(255 - (CONTRAST * 6), 255 - (CONTRAST * 6), 255),
+		B(255 - (CONTRAST * 4), 255 - (CONTRAST * 4), 255),
+		A(255 - (CONTRAST * 2), 255 - (CONTRAST * 2), 255),
+		F(255, 255, 255),
+		G(255, 255, 255 - (CONTRAST * 4)),
+		K(255, 255 - (CONTRAST * 2), 255 - (CONTRAST * 4)),
+		M(255, 255 - (CONTRAST * 4), 255 - (CONTRAST * 4));
+		
+		private final int red;
+		private final int green;
+		private final int blue;
+		
+		SpectralType(int red, int green, int blue)
+		{
+			this.red = red;
+			this.green = green;
+			this.blue = blue;
+		}
+		
+		public int red()
+		{
+			return red;
+		}
+		
+		public int green()
+		{
+			return green;
+		}
+		
+		public int blue()
+		{
+			return blue;
+		}
+		
+		public static SpectralType randomSpectralType(long seed)
+		{
+			Random random = new Random(seed);
+			SpectralType[] spectralTypes = SpectralType.values();
+			
+			return spectralTypes[random.nextInt(0, spectralTypes.length)];
+		}
+	}
 	
 	/**
 	 * Returns the brightness of stars in the current Player location
@@ -31,15 +79,37 @@ public class Star
 		return starBrightness;
 	}
 	
-	public static void createStar(BufferBuilder builder, RandomSource randomsource, 
-			double x, double y, double z, double distance, int[] starColor, double heightDeformation, double widthDeformation)
+	/*public static int[] randomStarColor(long seed, int contrast)
 	{
+		// This chooses a random color for a star based on a few select presets.
+		RandomSource randomsource = RandomSource.create(seed);
+		
+		int[] starClassM = {255, 255-(contrast*4), 255-(contrast*4)};
+		int[] starClassK = {255, 255-(contrast*2), 255-(contrast*4)};
+		int[] starClassG = {255, 255, 255-(contrast*4)};
+		int[] starClassF = {255, 255, 255};
+		int[] starClassA = {255-(contrast*2), 255-(contrast*2), 255};
+		int[] starClassB = {255-(contrast*4), 255-(contrast*4), 255};
+		int[] starClassO = {255-(contrast*6), 255-(contrast*6), 255};
+		
+		int[][] starColors = {starClassM, starClassK, starClassG, starClassF, starClassA, starClassB, starClassO};
+		int[] starColor = starColors[randomsource.nextInt(starColors.length)];
+		
+		return starColor;
+	}*/
+	
+	public static void createStar(BufferBuilder builder, RandomSource randomsource, 
+			double x, double y, double z, double distance, double heightDeformation, double widthDeformation, long seed)
+	{
+		SpectralType spectralType = SpectralType.randomSpectralType(seed);
+		int[] starColor = new int[] {spectralType.red(), spectralType.green(), spectralType.blue()};
+		
 		int alpha = randomsource.nextInt(0xAA, 0xFF); // 0xAA is the default
 		int minAlpha = (alpha - 0xAA) * 2 / 3;
 
 		double starSize = (double) (0.15F + randomsource.nextFloat() * 0.1F); // This randomizes the Star size
-		double maxStarSize = 0.2 + starSize * 1 / 5;
-		double minStarSize = starSize * 3 / 5;
+		double maxStarSize = StellarViewConfig.distance_size.get() ? starSize : 0.2 + starSize * 1 / 5;
+		double minStarSize = StellarViewConfig.distance_size.get() ? starSize : starSize * 3 / 5;
 		
 		if(distance > 40)
 			alpha -= 2 * (int) Math.round(distance);
@@ -91,7 +161,7 @@ public class Star
 		double sinRandom = Math.sin(random);
 		double cosRandom = Math.cos(random);
 		
-		if(starColor.length < 3)
+		if(starColor.length < 3 || StellarViewConfig.uniform_color.get())
 			starColor = new int[] {255, 255, 255};
 		
 		// This loop creates the 4 corners of a Star
@@ -133,15 +203,15 @@ public class Star
 			 * B:	-2	0	2	0
 			 * 
 			 * A and B are there to create a diamond effect on the Y-axis and X-axis respectively
-			 * (Pretend it's not as stretched as the slashes make it looked)
+			 * (Pretend it's not as stretched as the slashes make it look)
 			 * Where a coordinate is written as (B,A)
 			 * 
-			 * 			(0,2)
-			 * 			/\
-			 * 	 (-2,0)/  \(2,0)
-			 * 		   \  /
-			 * 			\/
-			 * 			(0,-2)
+			 *           (0,2)
+			 *          /\
+			 *   (-2,0)/  \(2,0)
+			 *         \  /
+			 *          \/
+			 *           (0,-2)
 			 * 
 			 */
 			double height = heightDeformation * (aLocation * cosRandom - bLocation * sinRandom);
@@ -168,35 +238,16 @@ public class Star
 		}
 	}
 	
-	public static int[] randomStarColor(long seed, int contrast)
-	{
-		// This chooses a random color for a star based on a few select presets.
-		RandomSource randomsource = RandomSource.create(seed);
-		
-		int[] starClassM = {255, 255-(contrast*4), 255-(contrast*4)};
-		int[] starClassK = {255, 255-(contrast*2), 255-(contrast*4)};
-		int[] starClassG = {255, 255, 255-(contrast*4)};
-		int[] starClassF = {255, 255, 255};
-		int[] starClassA = {255-(contrast*2), 255-(contrast*2), 255};
-		int[] starClassB = {255-(contrast*4), 255-(contrast*4), 255};
-		int[] starClassO = {255-(contrast*6), 255-(contrast*6), 255};
-		
-		int[][] starColors = {starClassM, starClassK, starClassG, starClassF, starClassA, starClassB, starClassO};
-		int[] starColor = starColors[randomsource.nextInt(starColors.length)];
-		
-		return starColor;
-	}
-	
 	public static void createStar(BufferBuilder builder, RandomSource randomsource, 
-			double x, double y, double z, double distance, int[] starColor)
+			double x, double y, double z, double distance, long seed)
 	{
-			createStar(builder, randomsource, x, y, z, distance, starColor, 1.0, 1.0);
+			createStar(builder, randomsource, x, y, z, distance, 1.0, 1.0, seed);
 	}
 	
 	public static void createVanillaStar(BufferBuilder builder, RandomSource randomsource, 
-			double x, double y, double z, double starSize, double distance, int[] starColor)
+			double x, double y, double z, double starSize, double distance, long seed)
 	{
 		if(distance < 1.0D && distance > 0.01D)
-			createStar(builder, randomsource, x, y, z, distance, starColor);
+			createStar(builder, randomsource, x, y, z, distance, seed);
 	}
 }
