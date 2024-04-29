@@ -155,6 +155,25 @@ public class Star
 		}
 	}
 	
+	public static int[] randomStarColor(long seed, int contrast)
+	{
+		// This chooses a random color for a star based on a few select presets.
+		RandomSource randomsource = RandomSource.create(seed);
+		
+		int[] starClassM = {255, 255-(contrast*4), 255-(contrast*4)};
+		int[] starClassK = {255, 255-(contrast*2), 255-(contrast*4)};
+		int[] starClassG = {255, 255, 255-(contrast*4)};
+		int[] starClassF = {255, 255, 255};
+		int[] starClassA = {255-(contrast*2), 255-(contrast*2), 255};
+		int[] starClassB = {255-(contrast*4), 255-(contrast*4), 255};
+		int[] starClassO = {255-(contrast*6), 255-(contrast*6), 255};
+		
+		int[][] starColors = {starClassM, starClassK, starClassG, starClassF, starClassA, starClassB, starClassO};
+		int[] starColor = starColors[randomsource.nextInt(starColors.length)];
+		
+		return starColor;
+	}
+	
 	public static void createStar(BufferBuilder builder, RandomSource randomsource, 
 			double x, double y, double z, double starSize, double distance, int[] starColor)
 	{
