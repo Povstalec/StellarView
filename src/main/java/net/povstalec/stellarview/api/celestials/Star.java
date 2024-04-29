@@ -15,25 +15,43 @@ public class Star
 	private static final float DEFAULT_DISTANCE = 100.0F;
 	private static final int CONTRAST = 8;
 	
+	private static final float MIN_STAR_SIZE = 0.15F;
+	private static final float MAX_STAR_SIZE = 0.25F;
+	
+	private static final int MIN_STAR_BRIGHTNESS = 170; // 0xAA
+	private static final int MAX_STAR_BRIGHTNESS = 255; // 0xFF
+	
 	public enum SpectralType
 	{
-		O(255 - (CONTRAST * 6), 255 - (CONTRAST * 6), 255), // 0.00003%
-		B(255 - (CONTRAST * 4), 255 - (CONTRAST * 4), 255), // 0.12%
-		A(255 - (CONTRAST * 2), 255 - (CONTRAST * 2), 255), // 0.61%
-		F(255, 255, 255), // 3.0%
-		G(255, 255, 255 - (CONTRAST * 4)), // 7.6%
-		K(255, 255 - (CONTRAST * 2), 255 - (CONTRAST * 4)), // 12%
-		M(255, 255 - (CONTRAST * 4), 255 - (CONTRAST * 4)); // 76%
+		O(255 - (CONTRAST * 6), 255 - (CONTRAST * 6), 255, MAX_STAR_SIZE, MAX_STAR_SIZE, MAX_STAR_BRIGHTNESS, MAX_STAR_BRIGHTNESS), // 0.00003%
+		B(255 - (CONTRAST * 4), 255 - (CONTRAST * 4), 255, MIN_STAR_SIZE + 0.09F, MAX_STAR_SIZE, MIN_STAR_BRIGHTNESS + 65, MAX_STAR_BRIGHTNESS), // 0.12%
+		A(255 - (CONTRAST * 2), 255 - (CONTRAST * 2), 255, MIN_STAR_SIZE + 0.05F, MIN_STAR_SIZE + 0.07F, MIN_STAR_BRIGHTNESS + 45, MIN_STAR_BRIGHTNESS + 65), // 0.61%
+		F(255, 255, 255, MIN_STAR_SIZE + 0.035F, MIN_STAR_SIZE + 0.05F, MIN_STAR_BRIGHTNESS + 30, MIN_STAR_BRIGHTNESS + 45), // 3.0%
+		G(255, 255, 255 - (CONTRAST * 4), MIN_STAR_SIZE + 0.02F, MIN_STAR_SIZE + 0.035F, MIN_STAR_BRIGHTNESS + 20, MIN_STAR_BRIGHTNESS + 30), // 7.6%
+		K(255, 255 - (CONTRAST * 2), 255 - (CONTRAST * 4), MIN_STAR_SIZE + 0.01F, MIN_STAR_SIZE + 0.02F, MIN_STAR_BRIGHTNESS + 10, MIN_STAR_BRIGHTNESS + 20), // 12%
+		M(255, 255 - (CONTRAST * 4), 255 - (CONTRAST * 4), MIN_STAR_SIZE, MIN_STAR_SIZE + 0.01F, MIN_STAR_BRIGHTNESS, MIN_STAR_BRIGHTNESS + 10); // 76%
 		
 		private final int red;
 		private final int green;
 		private final int blue;
+
+		private final float minSize;
+		private final float maxSize;
+
+		private final int minBrightness;
+		private final int maxBrightness;
 		
-		SpectralType(int red, int green, int blue)
+		SpectralType(int red, int green, int blue, float minSize, float maxSize, int minBrightness, int maxBrightness)
 		{
 			this.red = red;
 			this.green = green;
 			this.blue = blue;
+
+			this.minSize = minSize;
+			this.maxSize = maxSize;
+
+			this.minBrightness = minBrightness;
+			this.maxBrightness = maxBrightness;
 		}
 		
 		public int red()
@@ -51,6 +69,28 @@ public class Star
 			return blue;
 		}
 		
+		public float randomSize(long seed)
+		{
+			if(minSize == maxSize)
+				return maxSize;
+			
+			Random random = new Random(seed);
+			
+			return random.nextFloat(minSize, maxSize);
+		}
+		
+		public int randomBrightness(long seed)
+		{
+			if(minBrightness == maxBrightness)
+				return maxBrightness;
+			
+			Random random = new Random(seed);
+			
+			return random.nextInt(minBrightness, maxBrightness);
+		}
+		
+		
+		
 		public static SpectralType randomSpectralType(long seed)
 		{
 			Random random = new Random(seed);
@@ -63,7 +103,7 @@ public class Star
 			
 			int value = random.nextInt(0, 100);
 			
-			// Slightly adjusted percentage values that can be in SpectralType comments
+			// Slightly adjusted percentage values that can be found in SpectralType comments
 			if(value < 74)
 				return M;
 			else if(value < (74 + 12))
@@ -106,10 +146,10 @@ public class Star
 		SpectralType spectralType = SpectralType.randomSpectralType(seed);
 		int[] starColor = StellarViewConfig.uniform_star_color.get() ? new int[] {255, 255, 255} : new int[] {spectralType.red(), spectralType.green(), spectralType.blue()};
 		
-		int alpha = randomsource.nextInt(0xAA, 0xFF); // 0xAA is the default
+		int alpha = spectralType.randomBrightness(seed); //randomsource.nextInt(0xAA, 0xFF); // 0xAA is the default
 		int minAlpha = (alpha - 0xAA) * 2 / 3;
 
-		double starSize = (double) (0.15F + randomsource.nextFloat() * 0.1F); // This randomizes the Star size
+		double starSize = (double) spectralType.randomSize(seed);//(0.15F + randomsource.nextFloat() * 0.1F); // This randomizes the Star size
 		double maxStarSize = StellarViewConfig.distance_star_size.get() ? starSize : 0.2 + starSize * 1 / 5;
 		double minStarSize = StellarViewConfig.distance_star_size.get() ? starSize : starSize * 3 / 5;
 		
