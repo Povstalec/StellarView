@@ -64,13 +64,17 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 			}
 		};
 
-		//TODO Add custom textures to these
-		private static final Moon IO = new DefaultMoon(0.15F);
-		private static final Moon EUROPA = new DefaultMoon(0.125F);
-		private static final Moon GANYMEDE = new DefaultMoon(0.25F);
-		private static final Moon CALLISTO = new DefaultMoon(0.2F);
+		private static final Moon IO = (Moon) new Moon(Moon.IO_TEXTURE, 0.15F)
+				.halo(Moon.IO_HALO_TEXTURE, 0.15F);
+		private static final Moon EUROPA = (Moon) new Moon(Moon.EUROPA_TEXTURE, 0.125F)
+				.halo(Moon.EUROPA_HALO_TEXTURE, 0.125F);
+		private static final Moon GANYMEDE = (Moon) new Moon(Moon.GANYMEDE_TEXTURE, 0.25F)
+				.halo(Moon.GANYMEDE_HALO_TEXTURE, 0.25F);
+		private static final Moon CALLISTO = (Moon) new Moon(Moon.CALLISTO_TEXTURE, 0.2F)
+				.halo(Moon.CALLISTO_HALO_TEXTURE, 0.2F);
 
-		private static final Moon TITAN = new DefaultMoon(0.25F);
+		private static final Moon TITAN = (Moon) new Moon(Moon.TITAN_TEXTURE, 0.25F)
+				.halo(Moon.TITAN_HALO_TEXTURE, 0.25F);
 		
 		
 		
