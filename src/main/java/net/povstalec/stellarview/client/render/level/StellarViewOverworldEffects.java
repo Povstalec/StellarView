@@ -84,6 +84,20 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 				.halo(Moon.RHEA_HALO_TEXTURE, 0.15F);
 		private static final Moon TITAN = (Moon) new Moon(Moon.TITAN_TEXTURE, 0.25F)
 				.halo(Moon.TITAN_HALO_TEXTURE, 0.25F);
+		private static final Moon IAPETUS = (Moon) new Moon(Moon.IAPETUS_TEXTURE, 0.15F)
+				.halo(Moon.IAPETUS_HALO_TEXTURE, 0.15F);
+
+		private static final Moon ARIEL = (Moon) new Moon(Moon.ARIEL_TEXTURE, 0.075F)
+				.halo(Moon.ARIEL_HALO_TEXTURE, 0.075F);
+		private static final Moon UMBRIEL = (Moon) new Moon(Moon.UMBRIEL_TEXTURE, 0.075F)
+				.halo(Moon.UMBRIEL_HALO_TEXTURE, 0.075F);
+		private static final Moon TITANIA = (Moon) new Moon(Moon.TITANIA_TEXTURE, 0.075F)
+				.halo(Moon.TITANIA_HALO_TEXTURE, 0.075F);
+		private static final Moon OBERON = (Moon) new Moon(Moon.OBERON_TEXTURE, 0.075F)
+				.halo(Moon.OBERON_HALO_TEXTURE, 0.075F);
+
+		private static final Moon TRITON = (Moon) new Moon(Moon.TRITON_TEXTURE, 0.08F)
+				.halo(Moon.TRITON_HALO_TEXTURE, 0.08F);
 
 		private static final Moon PLUTO = (Moon) new Moon(Moon.PLUTO_TEXTURE, 0.15F)
 				.halo(Moon.PLUTO_HALO_TEXTURE, 0.1F);
@@ -108,42 +122,46 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 		private static final Planet MARS = (Planet) new Planet(Planet.MARS_TEXTURE, 0.8F)
 				.halo(Planet.MARS_HALO_TEXTURE, 0.8F);
 
-		private static final Planet VESTA = (Planet) new Planet(Planet.VESTA_TEXTURE, 0.3F)
-				.halo(Planet.VESTA_HALO_TEXTURE, 0.3F);
+		private static final Planet VESTA = (Planet) new Planet(Planet.VESTA_TEXTURE, 0.35F)
+				.halo(Planet.VESTA_HALO_TEXTURE, 0.35F);
 
 		private static final Planet CERES = (Planet) new Planet(Planet.CERES_TEXTURE, 0.4F)
 				.halo(Planet.CERES_HALO_TEXTURE, 0.4F);
 		
 		private static final Planet JUPITER = (Planet) new Planet(Planet.JUPITER_TEXTURE, 1.5F)
-				.addOrbitingObject(IO, 10 * 421700, 360F / 2, 0, (float) Math.toRadians(0.05), (float) Math.toRadians(47))
-				.addOrbitingObject(EUROPA, 10 * 671034, 360F / 4, 0, (float) Math.toRadians(0.47), (float) Math.toRadians(180))
-				.addOrbitingObject(GANYMEDE, 10 * 1070412, 360F / 7, 0, (float) Math.toRadians(0.2), (float) Math.toRadians(13))
-				.addOrbitingObject(CALLISTO, 10 * 1882709, 360F / 16, 0, (float) Math.toRadians(0.192), (float) Math.toRadians(213))
+				.addOrbitingObject(IO, 10 * 421700, 360F / 2, 1, (float) Math.toRadians(0.05), (float) Math.toRadians(47))
+				.addOrbitingObject(EUROPA, 10 * 671034, 360F / 4, 22, (float) Math.toRadians(0.47), (float) Math.toRadians(180))
+				.addOrbitingObject(GANYMEDE, 10 * 1070412, 360F / 7, 44, (float) Math.toRadians(0.2), (float) Math.toRadians(13))
+				.addOrbitingObject(CALLISTO, 10 * 1882709, 360F / 16, 88, (float) Math.toRadians(0.192), (float) Math.toRadians(213))
 				.halo(Planet.JUPITER_HALO_TEXTURE, 1.5F);
 
 		private static final Planet SATURN = (Planet) new Planet(Planet.SATURN_TEXTURE, 1F)
-				.addOrbitingObject(ENCELADUS, 25 * 238000, 360F / 0.361F, 0, (float) Math.toRadians(0.009), (float) Math.toRadians(176))
-				.addOrbitingObject(TETHYS, 25 * 294000, 360F / 0.497F, 0, (float) Math.toRadians(1.12), (float) Math.toRadians(19))
-				.addOrbitingObject(DIONE, 25 * 377000, 360F / 0.721F, 0, (float) Math.toRadians(0.02), (float) Math.toRadians(64))
-				.addOrbitingObject(RHEA, 25 * 527000, 360F / 1.189F, 0, (float) Math.toRadians(0.35), (float) Math.toRadians(110))
-				.addOrbitingObject(TITAN, 25 * 1200000, 360F / 4, 0, (float) Math.toRadians(0.348), (float) Math.toRadians(24))
+				.addOrbitingObject(ENCELADUS, 25 * 238000, 360F / 0.361F, 16, (float) Math.toRadians(0.009), (float) Math.toRadians(176))
+				.addOrbitingObject(TETHYS, 25 * 294000, 360F / 0.497F, 32, (float) Math.toRadians(1.12), (float) Math.toRadians(19))
+				.addOrbitingObject(DIONE, 25 * 377000, 360F / 0.721F, 64, (float) Math.toRadians(0.02), (float) Math.toRadians(64))
+				.addOrbitingObject(RHEA, 25 * 527000, 360F / 1.189F, 128, (float) Math.toRadians(0.35), (float) Math.toRadians(110))
+				.addOrbitingObject(TITAN, 25 * 1200000, 360F / 4, 256, (float) Math.toRadians(0.348), (float) Math.toRadians(99))
+				.addOrbitingObject(IAPETUS, 25 * 3560820, 360F / 21, 152, (float) Math.toRadians(15.47), (float) Math.toRadians(144))
 				.halo(Planet.SATURN_HALO_TEXTURE, 1F);
 		
 		private static final Planet URANUS = (Planet) new Planet(Planet.URANUS_TEXTURE, 0.5F)
+				.addOrbitingObject(ARIEL, 100 * 191020, 360F / 0.663F, 7, (float) Math.toRadians(98.041), (float) Math.toRadians(8))
+				.addOrbitingObject(UMBRIEL, 100 * 266300, 360F / 1.091F, 77, (float) Math.toRadians(98.128), (float) Math.toRadians(16))
+				.addOrbitingObject(TITANIA, 100 * 436300, 360F / 2.292F, 177, (float) Math.toRadians(98.079), (float) Math.toRadians(32))
+				.addOrbitingObject(OBERON, 100 * 583500, 360F / 3.542F, 277, (float) Math.toRadians(157.34), (float) Math.toRadians(64))
 				.halo(Planet.URANUS_HALO_TEXTURE, 0.5F);
 		
 		private static final Planet NEPTUNE = (Planet) new Planet(Planet.NEPTUNE_TEXTURE, 0.3F)
+				.addOrbitingObject(TRITON, 100 * 354800, 360F / 1.547F, 277, (float) Math.toRadians(98.058), (float) Math.toRadians(64))
 				.halo(Planet.NEPTUNE_HALO_TEXTURE, 0.3F);
 
 		// The barycenter is quite literally nothing, and exists just to give Pluto and Charon something to orbit around.
-		// I have no idea if I should even bother with a halo for the barycenter, as it is as blank as the barycenter's texture.
 		// I added this as a treat. Really hard to find, both due to size and ridiculous inclination putting it far from the ecliptic,
 		// and perhaps amongst the stars of the galactic disc.
 		// Those who find this will surely be very happy, if they recognize it for what it is.
 		private static final Planet PLUTO_CHARON_BARYCENTER = (Planet) new Planet(Planet.PLUTO_CHARON_BARYCENTER_TEXTURE, 0.2F)
-				.addOrbitingObject(PLUTO, 3000 * 1168, 360F / 1.681F, 0, (float) Math.toRadians(0.001), (float) Math.toRadians(69))
-				.addOrbitingObject(CHARON, 3000 * 19640, 360F / 1.681F, 180, (float) Math.toRadians(0.001), (float) Math.toRadians(96))
-				.halo(Planet.PLUTO_CHARON_BARYCENTER_TEXTURE, 0.2F);
+				.addOrbitingObject(PLUTO, 2500 * 1168, 360F / 1.681F, 0, (float) Math.toRadians(0.001), (float) Math.toRadians(69))
+				.addOrbitingObject(CHARON, 2500 * 19640, 360F / 1.681F, 180, (float) Math.toRadians(0.001), (float) Math.toRadians(96));
 		
 		
 		
