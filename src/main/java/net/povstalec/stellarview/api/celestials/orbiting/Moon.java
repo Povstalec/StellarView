@@ -34,7 +34,7 @@ public class Moon extends Planet
 	public static final ResourceLocation DIONE_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/dione_halo_phases.png");
 
 	public static final ResourceLocation RHEA_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/rhea_phases.png");
-	public static final ResourceLocation RHEA_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/rhea_halo_phases");
+	public static final ResourceLocation RHEA_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/rhea_halo_phases.png");
 	
 	public static final ResourceLocation TITAN_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/titan_phases.png");
 	public static final ResourceLocation TITAN_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/titan_halo_phases.png");
