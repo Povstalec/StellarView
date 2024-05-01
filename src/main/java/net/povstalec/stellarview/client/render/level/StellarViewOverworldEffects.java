@@ -85,6 +85,11 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 		private static final Moon TITAN = (Moon) new Moon(Moon.TITAN_TEXTURE, 0.25F)
 				.halo(Moon.TITAN_HALO_TEXTURE, 0.25F);
 
+		private static final Moon PLUTO = (Moon) new Moon(Moon.PLUTO_TEXTURE, 0.15F)
+				.halo(Moon.PLUTO_HALO_TEXTURE, 0.1F);
+		private static final Moon CHARON = (Moon) new Moon(Moon.CHARON_TEXTURE, 0.1F)
+				.halo(Moon.CHARON_HALO_TEXTURE, 0.06F);
+
 		
 		
 		// Planets
@@ -122,13 +127,23 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 				.addOrbitingObject(DIONE, 25 * 377000, 360F / 0.721F, 0, (float) Math.toRadians(0.02), (float) Math.toRadians(64))
 				.addOrbitingObject(RHEA, 25 * 527000, 360F / 1.189F, 0, (float) Math.toRadians(0.35), (float) Math.toRadians(110))
 				.addOrbitingObject(TITAN, 25 * 1200000, 360F / 4, 0, (float) Math.toRadians(0.348), (float) Math.toRadians(24))
-				.halo(Planet.SATURN_HALO_TEXTURE, 0.5F);
+				.halo(Planet.SATURN_HALO_TEXTURE, 1F);
 		
 		private static final Planet URANUS = (Planet) new Planet(Planet.URANUS_TEXTURE, 0.5F)
-				.halo(Planet.URANUS_HALO_TEXTURE, 0.3F);
+				.halo(Planet.URANUS_HALO_TEXTURE, 0.5F);
 		
 		private static final Planet NEPTUNE = (Planet) new Planet(Planet.NEPTUNE_TEXTURE, 0.3F)
-				.halo(Planet.NEPTUNE_HALO_TEXTURE, 0.2F);
+				.halo(Planet.NEPTUNE_HALO_TEXTURE, 0.3F);
+
+		// The barycenter is quite literally nothing, and exists just to give Pluto and Charon something to orbit around.
+		// I have no idea if I should even bother with a halo for the barycenter, as it is as blank as the barycenter's texture.
+		// I added this as a treat. Really hard to find, both due to size and ridiculous inclination putting it far from the ecliptic,
+		// and perhaps amongst the stars of the galactic disc.
+		// Those who find this will surely be very happy, if they recognize it for what it is.
+		private static final Planet PLUTO_CHARON_BARYCENTER = (Planet) new Planet(Planet.PLUTO_CHARON_BARYCENTER_TEXTURE, 0.2F)
+				.addOrbitingObject(PLUTO, 3000 * 1168, 360F / 1.681F, 0, (float) Math.toRadians(0.001), (float) Math.toRadians(69))
+				.addOrbitingObject(CHARON, 3000 * 19640, 360F / 1.681F, 180, (float) Math.toRadians(0.001), (float) Math.toRadians(96))
+				.halo(Planet.PLUTO_CHARON_BARYCENTER_TEXTURE, 0.2F);
 		
 		
 		
@@ -156,6 +171,7 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 				.addOrbitingObject(SATURN, 1455200000F, 360F / 2822, (float) Math.toRadians(190), (float) Math.toRadians(2.48), (float) Math.toRadians(93))
 				.addOrbitingObject(URANUS, 2932900000F, 360F / 8064, (float) Math.toRadians(270), (float) Math.toRadians(1), (float) Math.toRadians(36))
 				.addOrbitingObject(NEPTUNE, 4472500000F, 360F / 15840, (float) Math.toRadians(311), (float) Math.toRadians(1.77), (float) Math.toRadians(1))
+				.addOrbitingObject(PLUTO_CHARON_BARYCENTER, 5900000000F, 360F / 23871, (float) Math.toRadians(80), (float) Math.toRadians(17.14), (float) Math.toRadians(0))
 				.addOrbitingObject(EARTH, 147280000, 360F / 96, 0, 0, 0);
 		//Earth added last because planets kept rendering over the Moon
 		//TODO Add a built-in way of ordering the planets by distance
