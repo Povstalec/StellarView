@@ -74,9 +74,17 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 		private static final Moon CALLISTO = (Moon) new Moon(Moon.CALLISTO_TEXTURE, 0.2F)
 				.halo(Moon.CALLISTO_HALO_TEXTURE, 0.2F);
 
-		private static final Moon TITAN = (Moon) new Moon(Moon.TITAN_TEXTURE, 0.25F)
-				.halo(Moon.TITAN_HALO_TEXTURE, 0.25F);
-		
+		private static final Moon ENCELADUS = (Moon) new Moon(Moon.ENCELADUS_TEXTURE, 0.04F)
+				.halo(Moon.ENCELADUS_HALO_TEXTURE, 0.04F);
+		private static final Moon TETHYS = (Moon) new Moon(Moon.TETHYS_TEXTURE, 0.05F)
+				.halo(Moon.TETHYS_HALO_TEXTURE, 0.05F);
+		private static final Moon DIONE = (Moon) new Moon(Moon.DIONE_TEXTURE, 0.05F)
+				.halo(Moon.DIONE_HALO_TEXTURE, 0.05F);
+		private static final Moon RHEA = (Moon) new Moon(Moon.RHEA_TEXTURE, 0.05F)
+				.halo(Moon.RHEA_HALO_TEXTURE, 0.05F);
+		private static final Moon TITAN = (Moon) new Moon(Moon.TITAN_TEXTURE, 0.1F)
+				.halo(Moon.TITAN_HALO_TEXTURE, 0.1F);
+
 		
 		
 		// Planets
@@ -94,23 +102,34 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 
 		private static final Planet MARS = (Planet) new Planet(Planet.MARS_TEXTURE, 0.8F)
 				.halo(Planet.MARS_HALO_TEXTURE, 0.8F);
+
+		private static final Planet VESTA = (Planet) new Planet(Planet.VESTA_TEXTURE, 0.3F)
+				.halo(Planet.VESTA_HALO_TEXTURE, 0.3F);
+
+		private static final Planet CERES = (Planet) new Planet(Planet.CERES_TEXTURE, 0.4F)
+				.halo(Planet.CERES_HALO_TEXTURE, 0.4F);
 		
-		private static final Planet JUPITER = (Planet) new Planet(Planet.JUPITER_TEXTURE, 1.5F)
+		private static final Planet JUPITER = (Planet) new Planet(Planet.JUPITER_TEXTURE, 1F)
 				.addOrbitingObject(IO, 10 * 421700, 360F / 2, 0, (float) Math.toRadians(0.05), (float) Math.toRadians(47))
 				.addOrbitingObject(EUROPA, 10 * 671034, 360F / 4, 0, (float) Math.toRadians(0.47), (float) Math.toRadians(180))
 				.addOrbitingObject(GANYMEDE, 10 * 1070412, 360F / 7, 0, (float) Math.toRadians(0.2), (float) Math.toRadians(13))
 				.addOrbitingObject(CALLISTO, 10 * 1882709, 360F / 16, 0, (float) Math.toRadians(0.192), (float) Math.toRadians(213))
-				.halo(Planet.JUPITER_HALO_TEXTURE, 1.5F);
+				.halo(Planet.JUPITER_HALO_TEXTURE, 1F);
 		
-		private static final Planet SATURN = (Planet) new Planet(Planet.SATURN_TEXTURE, 1F)
+		private static final Planet SATURN = (Planet) new Planet(Planet.SATURN_TEXTURE, 0.5F)
+				//TODO Fix Enceladus, Tethys, Dione, and Rhea's phi, tetha, and rotation variables
+				.addOrbitingObject(ENCELADUS, 10 * 238000, 360F / 0.361F, 0, (float) Math.toRadians(2.214), (float) Math.toRadians(24))
+				.addOrbitingObject(TETHYS, 10 * 294000, 360F / 0.497F, 0, (float) Math.toRadians(2.214), (float) Math.toRadians(24))
+				.addOrbitingObject(DIONE, 10 * 377000, 360F / 0.721F, 0, (float) Math.toRadians(2.214), (float) Math.toRadians(24))
+				.addOrbitingObject(RHEA, 10 * 527000, 360F / 1.189F, 0, (float) Math.toRadians(2.214), (float) Math.toRadians(24))
 				.addOrbitingObject(TITAN, 10 * 1200000, 360F / 4, 0, (float) Math.toRadians(2.214), (float) Math.toRadians(24))
-				.halo(Planet.SATURN_HALO_TEXTURE, 1F);
+				.halo(Planet.SATURN_HALO_TEXTURE, 0.5F);
 		
-		private static final Planet URANUS = (Planet) new Planet(Planet.URANUS_TEXTURE, 0.5F)
-				.halo(Planet.URANUS_HALO_TEXTURE, 0.5F);
+		private static final Planet URANUS = (Planet) new Planet(Planet.URANUS_TEXTURE, 0.3F)
+				.halo(Planet.URANUS_HALO_TEXTURE, 0.3F);
 		
-		private static final Planet NEPTUNE = (Planet) new Planet(Planet.NEPTUNE_TEXTURE, 0.3F)
-				.halo(Planet.NEPTUNE_HALO_TEXTURE, 0.3F);
+		private static final Planet NEPTUNE = (Planet) new Planet(Planet.NEPTUNE_TEXTURE, 0.2F)
+				.halo(Planet.NEPTUNE_HALO_TEXTURE, 0.2F);
 		
 		
 		
@@ -131,6 +150,9 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 				.addOrbitingObject(MERCURY, 54207000F, 360F / 23, (float) Math.toRadians(52), (float) Math.toRadians(7), (float) Math.toRadians(113))
 				.addOrbitingObject(VENUS, 107540000F, 360F / 59, (float) Math.toRadians(241), (float) Math.toRadians(1.85), (float) Math.toRadians(123))
 				.addOrbitingObject(MARS, 226380000F, 360F / 180, (float) Math.toRadians(139), (float) Math.toRadians(3.39), (float) Math.toRadians(79))
+				//TODO Fix Vesta and Ceres' phi, tetha, and rotation variables
+				.addOrbitingObject(VESTA, 356000000F, 360F / 349, (float) Math.toRadians(174), (float) Math.toRadians(7.1), (float) Math.toRadians(104))
+				.addOrbitingObject(CERES, 413000000F, 360F / 442, (float) Math.toRadians(81), (float) Math.toRadians(4), (float) Math.toRadians(80))
 				.addOrbitingObject(JUPITER, 745010000F, 360F / 1152, (float) Math.toRadians(71), (float) Math.toRadians(1.31), (float) Math.toRadians(62))
 				.addOrbitingObject(SATURN, 1455200000F, 360F / 2822, (float) Math.toRadians(190), (float) Math.toRadians(2.48), (float) Math.toRadians(93))
 				.addOrbitingObject(URANUS, 2932900000F, 360F / 8064, (float) Math.toRadians(270), (float) Math.toRadians(1), (float) Math.toRadians(36))

@@ -23,6 +23,18 @@ public class Moon extends Planet
 	
 	public static final ResourceLocation GANYMEDE_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/ganymede_phases.png");
 	public static final ResourceLocation GANYMEDE_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/ganymede_halo_phases.png");
+
+	public static final ResourceLocation ENCELADUS_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/enceladus_phases.png");
+	public static final ResourceLocation ENCELADUS_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/enceladus_halo_phases.png");
+
+	public static final ResourceLocation TETHYS_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/tethys_phases.png");
+	public static final ResourceLocation TETHYS_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/tethys_halo_phases.png");
+
+	public static final ResourceLocation DIONE_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/dione_phases.png");
+	public static final ResourceLocation DIONE_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/dione_halo_phases.png");
+
+	public static final ResourceLocation RHEA_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/rhea_phases.png");
+	public static final ResourceLocation RHEA_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/rhea_halo_phases");
 	
 	public static final ResourceLocation TITAN_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/titan_phases.png");
 	public static final ResourceLocation TITAN_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/titan_halo_phases.png");
@@ -33,11 +45,8 @@ public class Moon extends Planet
 		this.visibleDuringDay();
 		this.blendsDuringDay();
 	}
-	
-	protected boolean hasPhases()
-	{
-		return true;
-	}
+
+	protected boolean hasPhases() { return true; }
 	
 	protected float[] getUV(ClientLevel level, Camera camera, float partialTicks)
 	{
