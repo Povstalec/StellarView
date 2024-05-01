@@ -100,9 +100,9 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 				.halo(Moon.TRITON_HALO_TEXTURE, 0.08F);
 
 		private static final Moon PLUTO = (Moon) new Moon(Moon.PLUTO_TEXTURE, 0.15F)
-				.halo(Moon.PLUTO_HALO_TEXTURE, 0.1F);
+				.halo(Moon.PLUTO_HALO_TEXTURE, 0.15F);
 		private static final Moon CHARON = (Moon) new Moon(Moon.CHARON_TEXTURE, 0.1F)
-				.halo(Moon.CHARON_HALO_TEXTURE, 0.06F);
+				.halo(Moon.CHARON_HALO_TEXTURE, 0.1F);
 
 		
 		
