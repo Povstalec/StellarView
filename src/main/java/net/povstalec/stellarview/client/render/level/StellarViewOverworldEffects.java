@@ -182,7 +182,6 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 				.addOrbitingObject(MERCURY, 54207000F, 360F / 23, (float) Math.toRadians(52), (float) Math.toRadians(7), (float) Math.toRadians(113))
 				.addOrbitingObject(VENUS, 107540000F, 360F / 59, (float) Math.toRadians(241), (float) Math.toRadians(1.85), (float) Math.toRadians(123))
 				.addOrbitingObject(MARS, 226380000F, 360F / 180, (float) Math.toRadians(139), (float) Math.toRadians(3.39), (float) Math.toRadians(79))
-				//TODO Fix Vesta and Ceres' phi, tetha, and rotation variables
 				.addOrbitingObject(VESTA, 356000000F, 360F / 349, (float) Math.toRadians(174), (float) Math.toRadians(7.14), (float) Math.toRadians(104))
 				.addOrbitingObject(CERES, 413000000F, 360F / 442, (float) Math.toRadians(81), (float) Math.toRadians(10.59), (float) Math.toRadians(80))
 				.addOrbitingObject(JUPITER, 745010000F, 360F / 1152, (float) Math.toRadians(71), (float) Math.toRadians(1.31), (float) Math.toRadians(62))
