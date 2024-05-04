@@ -121,6 +121,16 @@ public class Star
 		}
 	}
 	
+	public static double starWidthFunction(double aLocation, double bLocation, double sinRandom, double cosRandom, double sinTheta, double cosTheta, double sinPhi, double cosPhi)
+	{
+		double width = bLocation * cosRandom + aLocation * sinRandom;
+		
+		if(true && cosPhi  > 0.0)
+			return cosPhi * 8 * width;
+		
+		return width;
+	}
+	
 	/**
 	 * Returns the brightness of stars in the current Player location
 	 * @param level The Level the Player is currently in
@@ -146,10 +156,10 @@ public class Star
 		SpectralType spectralType = SpectralType.randomSpectralType(seed);
 		int[] starColor = StellarViewConfig.uniform_star_color.get() ? new int[] {255, 255, 255} : new int[] {spectralType.red(), spectralType.green(), spectralType.blue()};
 		
-		int alpha = spectralType.randomBrightness(seed); //randomsource.nextInt(0xAA, 0xFF); // 0xAA is the default
+		int alpha = spectralType.randomBrightness(seed); // 0xAA is the default
 		int minAlpha = (alpha - 0xAA) * 2 / 3;
 
-		double starSize = (double) spectralType.randomSize(seed);//(0.15F + randomsource.nextFloat() * 0.1F); // This randomizes the Star size
+		double starSize = (double) spectralType.randomSize(seed); // This randomizes the Star size
 		double maxStarSize = StellarViewConfig.distance_star_size.get() ? starSize : 0.2 + starSize * 1 / 5;
 		double minStarSize = StellarViewConfig.distance_star_size.get() ? starSize : starSize * 3 / 5;
 		
