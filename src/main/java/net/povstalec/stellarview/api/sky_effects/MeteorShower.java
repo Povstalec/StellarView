@@ -14,8 +14,25 @@ import net.povstalec.stellarview.StellarView;
 
 public class MeteorShower extends SkyEffect
 {
-	public static final ResourceLocation SHOOTING_STAR_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/supernova.png");
-	
+
+	public static final ResourceLocation METEOR_WHITE_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/sky_effect/meteor/meteor_white.png");
+	public static final ResourceLocation METEOR_RED_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/sky_effect/meteor/meteor_red.png");
+	public static final ResourceLocation METEOR_ORANGE_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/sky_effect/meteor/meteor_orange.png");
+	public static final ResourceLocation METEOR_YELLOW_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/sky_effect/meteor/meteor_yellow.png");
+	public static final ResourceLocation METEOR_CYAN_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/sky_effect/meteor/meteor_cyan.png");
+	public static final ResourceLocation METEOR_BLUE_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/sky_effect/meteor/meteor_blue.png");
+	public static final ResourceLocation METEOR_VIOLET_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/sky_effect/meteor/meteor_violet.png");
+
+	ResourceLocation[] showerColors = {
+			METEOR_WHITE_TEXTURE,
+			METEOR_RED_TEXTURE,
+			METEOR_ORANGE_TEXTURE,
+			METEOR_YELLOW_TEXTURE,
+			METEOR_CYAN_TEXTURE,
+			METEOR_BLUE_TEXTURE,
+			METEOR_VIOLET_TEXTURE
+	};
+
 	protected static final int DAY_LENGTH = 24000;
 	protected static final int DURATION = 20;
 	
@@ -27,10 +44,12 @@ public class MeteorShower extends SkyEffect
 	@Override
 	public final void render(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder)
 	{
-		
+
 		long dailySeed = level.getDayTime() / DAY_LENGTH;
 
 		Random randomizer = new Random(dailySeed);
+
+		ResourceLocation showerColor = showerColors[randomizer.nextInt(showerColors.length)];
 		
 		int meteorShowerChance = randomizer.nextInt(1, 101);
 		
@@ -55,7 +74,7 @@ public class MeteorShower extends SkyEffect
 	        stack.mulPose(Axis.ZP.rotationDegrees(zRotation));
 	        stack.mulPose(Axis.XP.rotationDegrees(xRotation));
 			
-	        this.renderEffect(bufferbuilder, stack.last().pose(), SHOOTING_STAR_TEXTURE, FULL_UV, size, rotation, 0, 0, getBrightness(level, camera, partialTicks));
+	        this.renderEffect(bufferbuilder, stack.last().pose(), showerColor, FULL_UV, size, rotation, 0, 0, getBrightness(level, camera, partialTicks));
 			stack.popPose();
 		}
 	}

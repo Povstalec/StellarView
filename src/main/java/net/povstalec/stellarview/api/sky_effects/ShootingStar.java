@@ -14,8 +14,24 @@ import net.povstalec.stellarview.StellarView;
 
 public class ShootingStar extends SkyEffect
 {
-	public static final ResourceLocation SHOOTING_STAR_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/supernova.png");
-	
+	public static final ResourceLocation METEOR_WHITE_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/sky_effect/meteor/meteor_white.png");
+	public static final ResourceLocation METEOR_RED_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/sky_effect/meteor/meteor_red.png");
+	public static final ResourceLocation METEOR_ORANGE_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/sky_effect/meteor/meteor_orange.png");
+	public static final ResourceLocation METEOR_YELLOW_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/sky_effect/meteor/meteor_yellow.png");
+	public static final ResourceLocation METEOR_CYAN_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/sky_effect/meteor/meteor_cyan.png");
+	public static final ResourceLocation METEOR_BLUE_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/sky_effect/meteor/meteor_blue.png");
+	public static final ResourceLocation METEOR_VIOLET_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/sky_effect/meteor/meteor_violet.png");
+
+	ResourceLocation[] meteorColors = {
+			METEOR_WHITE_TEXTURE,
+			METEOR_RED_TEXTURE,
+			METEOR_ORANGE_TEXTURE,
+			METEOR_YELLOW_TEXTURE,
+			METEOR_CYAN_TEXTURE,
+			METEOR_BLUE_TEXTURE,
+			METEOR_VIOLET_TEXTURE
+	};
+
 	protected static final int TICKS = 1000;
 	protected static final float MAX_SIZE = 1;
 	protected static final int DURATION = 20;
@@ -44,6 +60,8 @@ public class ShootingStar extends SkyEffect
 			long shootingStarRandomizer = level.getDayTime() / DURATION;
 			
 			Random random = new Random(shootingStarRandomizer);
+
+			ResourceLocation meteorColor = meteorColors[randomizer.nextInt(meteorColors.length)];
 			
 			float xRotation = (float) (random.nextInt(0, 45) + Math.PI * Mth.lerp(partialTicks, position - 1, position));
 			float yRotation = random.nextInt(0, 360);
@@ -57,9 +75,8 @@ public class ShootingStar extends SkyEffect
 			stack.mulPose(Axis.YP.rotationDegrees(yRotation));
 	        stack.mulPose(Axis.ZP.rotationDegrees(zRotation));
 	        stack.mulPose(Axis.XP.rotationDegrees(xRotation));
-			
-	        //TODO Add random colors to shooting stars
-			this.renderEffect(bufferbuilder, stack.last().pose(), SHOOTING_STAR_TEXTURE, FULL_UV, size, rotation, 0, 0, getBrightness(level, camera, partialTicks));
+
+			this.renderEffect(bufferbuilder, stack.last().pose(), meteorColor, FULL_UV, size, rotation, 0, 0, getBrightness(level, camera, partialTicks));
 			stack.popPose();
 		}
 	}
