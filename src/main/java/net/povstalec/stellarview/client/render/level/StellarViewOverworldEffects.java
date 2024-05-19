@@ -90,7 +90,7 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 				.addAtmosphere(new Planet.Atmosphere(
 								(ShootingStar) new ShootingStar().setRarityValue(OverworldConfig.shooting_star_chance),
 								(MeteorShower) new MeteorShower().setRarityValue(OverworldConfig.meteor_shower_chance)))
-				.addOrbitingObject(LUNA, 384400F, 360F / 8, (float) Math.toRadians(45), (float) Math.toRadians(-5.145), 0);
+				.addOrbitingObject(LUNA, 384400F, 360F/8 + 360F/104, (float) Math.toRadians(337.5F), (float) Math.toRadians(-5.145), 0);
 
 		private static final Planet MARS = (Planet) new Planet(Planet.MARS_TEXTURE, 0.8F)
 				.halo(Planet.MARS_HALO_TEXTURE, 0.8F);
@@ -135,7 +135,7 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 				.addOrbitingObject(SATURN, 1455200000F, 360F / 2822, (float) Math.toRadians(190), (float) Math.toRadians(2.48), (float) Math.toRadians(93))
 				.addOrbitingObject(URANUS, 2932900000F, 360F / 8064, (float) Math.toRadians(270), (float) Math.toRadians(1), (float) Math.toRadians(36))
 				.addOrbitingObject(NEPTUNE, 4472500000F, 360F / 15840, (float) Math.toRadians(311), (float) Math.toRadians(1.77), (float) Math.toRadians(1))
-				.addOrbitingObject(EARTH, 147280000, 360F / 96, 0, 0, 0);
+				.addOrbitingObject(EARTH, 147280000, 360F / 104, 0, 0, 0);
 		//Earth added last because planets kept rendering over the Moon
 		//TODO Add a built-in way of ordering the planets by distance
 		
