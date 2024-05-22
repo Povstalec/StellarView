@@ -193,5 +193,5 @@ public abstract class Galaxy extends StarField
 		}
 	}
 	//TODO Irregular
-	//Perhaps this should be generated using Perlin noise. -NW
+	//Perhaps this should be generated using Perlin noise, smoothed with interpolation. -NW
 }
