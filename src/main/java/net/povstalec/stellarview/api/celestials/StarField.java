@@ -98,6 +98,9 @@ public abstract class StarField extends StellarObject
 	protected void renderStars(ClientLevel level, Camera camera, float partialTicks, float rain, PoseStack stack, Matrix4f projectionMatrix, Runnable setupFog,
 			Vector3f skyAxisRotation, Vector3f axisRotation)
 	{
+		//setStarBuffer(this.offsetCoords.x, this.offsetCoords.y, this.offsetCoords.z,
+		//		skyAxisRotation.x, skyAxisRotation.y, skyAxisRotation.z);
+		
 		float starBrightness = Star.getStarBrightness(level, camera, partialTicks);
 		
 		if(starBrightness > 0.0F)
@@ -170,7 +173,7 @@ public abstract class StarField extends StellarObject
 				double starSize = (double) (0.15F + randomsource.nextFloat() * 0.1F); // This randomizes the Star size
 				double distance = x * x + y * y + z * z;
 				
-				Star.createVanillaStar(bufferBuilder, randomsource, x, y, z, starSize, distance, new int[] {255, 255, 255});
+				Star.createVanillaStar(bufferBuilder, randomsource, x, y, z, starSize, distance, randomsource.nextLong());
 			}
 			return bufferBuilder.end();
 		}

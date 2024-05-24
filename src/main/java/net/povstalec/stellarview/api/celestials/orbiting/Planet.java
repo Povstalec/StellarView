@@ -15,7 +15,7 @@ import net.povstalec.stellarview.api.sky_effects.MeteorShower;
 import net.povstalec.stellarview.api.sky_effects.ShootingStar;
 import net.povstalec.stellarview.client.render.level.misc.StellarViewFogEffects;
 import net.povstalec.stellarview.client.render.level.misc.StellarViewSkyEffects;
-import net.povstalec.stellarview.common.config.StellarViewConfig;
+import net.povstalec.stellarview.common.config.OverworldConfig;
 
 public class Planet extends OrbitingCelestialObject
 {
@@ -30,7 +30,13 @@ public class Planet extends OrbitingCelestialObject
 	
 	public static final ResourceLocation MARS_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/mars.png");
 	public static final ResourceLocation MARS_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/mars_halo.png");
-	
+
+	public static final ResourceLocation VESTA_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/vesta.png");
+	public static final ResourceLocation VESTA_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/vesta_halo.png");
+
+	public static final ResourceLocation CERES_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/ceres.png");
+	public static final ResourceLocation CERES_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/ceres_halo.png");
+
 	public static final ResourceLocation JUPITER_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/jupiter.png");
 	public static final ResourceLocation JUPITER_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/jupiter_halo.png");
 	
@@ -86,10 +92,10 @@ public class Planet extends OrbitingCelestialObject
 		if(rotationPeriod.isPresent())
 		{
 			double zPos = camera.getEntity().getPosition(partialTicks).z();
-			float zRotation = 2 * (float) Math.toDegrees(Math.atan(zPos / (100000 * StellarViewConfig.rotation_multiplier.get())));
+			float zRotation = 2 * (float) Math.toDegrees(Math.atan(zPos / (10000 * OverworldConfig.overworld_z_rotation_multiplier.get())));
 			
 			float defaultYRotation = 360 * level.getTimeOfDay(partialTicks);
-			float subtractedYRotation = this.angularVelocity > 0 ? this.angularVelocity * ((float) level.getDayTime() / TICKS_PER_DAY) : 0;
+			float subtractedYRotation = getAngularVelocity(level, partialTicks) > 0 ? this.angularVelocity * ((float) level.getDayTime() / TICKS_PER_DAY) : 0;
 			
 			skyAxisRotation = new Vector3f(180 + defaultYRotation - subtractedYRotation, -90.0F, zRotation);
 		}

@@ -2,9 +2,13 @@
 	"gui.stellarview.config": "Stellar View Config",
 	"gui.stellarview.config.general": "Stellar View - General Config",
 	"gui.stellarview.config.overworld": "Stellar View - Overworld Config",
-	"gui.stellarview.config.alpha": "Stellar View - Alpha Config",
-	"gui.stellarview.config.beta": "Stellar View - Beta Config",
-	"gui.stellarview.config.gamma": "Stellar View - Gamma Config",
+
+	"gui.stellarview.distance_star_size": "Distance-based star size",
+	"gui.stellarview.distance_star_brightness": "Distance-based star brightness",
+
+	"gui.stellarview.uniform_star_brightness": "Uniform star brightness",
+	"gui.stellarview.equal_spectral_types": "Equal star spectral types",
+	"gui.stellarview.uniform_star_color": "Uniform star color",
 	
 	"gui.stellarview.replace_overworld": "Replace Overworld",
 	"gui.stellarview.replace_end": "Replace End",
@@ -15,7 +19,9 @@
 	"gui.stellarview.day_stars": "Stars During Day",
 	"gui.stellarview.bright_stars": "Bright Stars",
 	
-	"gui.stellarview.rotation_multiplier": "Sky Rotation Multiplier: ",
+	"gui.stellarview.overworld_year_length": "Year length: ",
+	"gui.stellarview.days": " days",
+	"gui.stellarview.overworld_z_rotation_multiplier": "Sky Rotation Multiplier: ",
 	
 	"gui.stellarview.meteor_shower_chance": "Meteor Shower Chance: ",
 	"gui.stellarview.shooting_star_chance": "Shooting Star Chance: ",

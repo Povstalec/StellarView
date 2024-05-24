@@ -47,19 +47,25 @@ public interface StellarViewSkyEffects
 		
 		return skyBuffer;
 	}
-
+	// Create the dark blue or black shading in the sky / the black circle below the horizon when in the void or below ground
 	public static BufferBuilder.RenderedBuffer buildSkyDisc(BufferBuilder builder, float scale)
 	{
-		//TODO Find out what this does
-		float f = 512.0F;
-		float f1 = Math.signum(scale) * f;
+		// invert the base radius based on the sign of scale to ensure the faces are facing the correct way.
+		float baseRadius = 512.0F;
+		float invertibleBaseRadius = Math.signum(scale) * baseRadius;
 		RenderSystem.setShader(GameRenderer::getPositionShader);
+		// Create a circle with it's vertex centered by the player
+		// the circle is further above / below the horizon depending on the scale
 		builder.begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION);
 		builder.vertex(0.0D, (double)scale, 0.0D).endVertex();
-		
+		// Create the circle
 		for(int i = -180; i <= 180; i += 45)
 		{
-			builder.vertex((double)(f1 * Mth.cos((float)i * ((float)Math.PI / 180F))), (double)scale, (double)(512.0F * Mth.sin((float)i * ((float)Math.PI / 180F)))).endVertex();
+			float radians = (float) Math.toRadians(i);
+			
+			builder.vertex(invertibleBaseRadius * Mth.cos(radians), 
+					scale, 
+					baseRadius * Mth.sin(radians)).endVertex();
 		}
 		
 		return builder.end();
@@ -83,17 +89,17 @@ public interface StellarViewSkyEffects
 			float sunriseB = sunriseColor[2];
 			float sunriseA = sunriseColor[2];
 			Matrix4f sunriseMatrix = stack.last().pose();
+			// Thanks to tehgreatdoge for finding out what these do
+			// Create a cone with the vertex near the sun to act as the slanted part of the sunrise
 			bufferbuilder.begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR);
 			bufferbuilder.vertex(sunriseMatrix, 0.0F, 100.0F, 0.0F).color(sunriseR, sunriseG, sunriseB, sunriseA).endVertex();
-			
+			// Make the base be around the player
 			for(int i = 0; i <= 16; ++i)
 			{
-				// Thanks to tehgreatdoge for finding out what these do
-				// Create a circle to act as the slanted portion of the sunrise
 				float rotation = (float)i * ((float)Math.PI * 2F) / 16.0F;
 				float x = Mth.sin(rotation);
 				float y = Mth.cos(rotation);
-				// The Z coordinate is multiplied by -y to make the circle angle upwards towards the sun
+				// The Z coordinate is multiplied by -y to make the base angle upwards towards the sun
 				bufferbuilder.vertex(sunriseMatrix, x * 120.0F, y * 120.0F, -y * 40.0F * sunriseA).color(sunriseR, sunriseG, sunriseB, 0.0F).endVertex();
 			}
 			
