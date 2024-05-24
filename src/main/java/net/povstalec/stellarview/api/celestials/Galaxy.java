@@ -96,6 +96,11 @@ public abstract class Galaxy extends StarField
 		{
 			super(texture, size, seed, numberOfStars);
 		}
+		
+		public LenticularGalaxy(float size, long seed, short numberOfStars)
+		{
+			this(LENTICULAR_GALAXY_TEXTURE, size, seed, numberOfStars);
+		}
 
 		@Override
 		protected RenderedBuffer getStarBuffer(BufferBuilder bufferBuilder,
@@ -150,6 +155,11 @@ public abstract class Galaxy extends StarField
 		public EllipticalGalaxy(ResourceLocation texture, float size, long seed, short numberOfStars)
 		{
 			super(texture, size, seed, numberOfStars);
+		}
+		
+		public EllipticalGalaxy(float size, long seed, short numberOfStars)
+		{
+			super(ELLIPTICAL_GALAXY_TEXTURE, size, seed, numberOfStars);
 		}
 
 		@Override
