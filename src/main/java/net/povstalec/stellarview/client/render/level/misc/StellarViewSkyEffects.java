@@ -60,9 +60,13 @@ public interface StellarViewSkyEffects
 		builder.begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION);
 		builder.vertex(0.0D, (double)scale, 0.0D).endVertex();
 		// Create the circle
-		for(float i = 0; i <= Math.PI * 2F; i += Math.PI / 4F)
+		for(int i = -180; i <= 180; i += 45)
 		{
-			builder.vertex((double)(invertibleBaseRadius * Mth.cos(i)), (double)scale, (double)(baseRadius * Mth.sin(i))).endVertex();
+			float radians = (float) Math.toRadians(i);
+			
+			builder.vertex(invertibleBaseRadius * Mth.cos(radians), 
+					scale, 
+					baseRadius * Mth.sin(radians)).endVertex();
 		}
 		
 		return builder.end();
