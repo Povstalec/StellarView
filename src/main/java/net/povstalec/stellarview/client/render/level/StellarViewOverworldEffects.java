@@ -16,7 +16,6 @@ import net.povstalec.stellarview.api.celestials.Galaxy;
 import net.povstalec.stellarview.api.celestials.Galaxy.SpiralGalaxy;
 import net.povstalec.stellarview.api.celestials.Supernova;
 import net.povstalec.stellarview.api.celestials.orbiting.Moon;
-import net.povstalec.stellarview.api.celestials.orbiting.Moon.DefaultMoon;
 import net.povstalec.stellarview.api.celestials.orbiting.Planet;
 import net.povstalec.stellarview.api.celestials.orbiting.Sun;
 import net.povstalec.stellarview.api.sky_effects.MeteorShower;
