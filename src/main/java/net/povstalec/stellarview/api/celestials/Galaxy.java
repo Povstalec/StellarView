@@ -32,6 +32,11 @@ public abstract class Galaxy extends StarField
 			super(texture, size, seed, numberOfStars);
 			this.numberOfArms = numberOfArms;
 		}
+		
+		public SpiralGalaxy(float size, long seed, byte numberOfArms, short numberOfStars)
+		{
+			this(SPIRAL_GALAXY_TEXTURE, size, seed, numberOfArms, numberOfStars);
+		}
 
 		@Override
 		protected RenderedBuffer getStarBuffer(BufferBuilder bufferBuilder,
