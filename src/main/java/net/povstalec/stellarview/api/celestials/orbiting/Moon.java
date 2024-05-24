@@ -62,6 +62,8 @@ public class Moon extends Planet
 
 	public static final ResourceLocation CHARON_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/charon_phases.png");
 	public static final ResourceLocation CHARON_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/charon_halo_phases.png");
+
+	public static final int LUNA_ORBIT_DAYS = 8;
 	
 	public Moon(ResourceLocation sunTexture, float size)
 	{

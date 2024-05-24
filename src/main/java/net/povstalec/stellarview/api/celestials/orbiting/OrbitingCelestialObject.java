@@ -33,17 +33,22 @@ public class OrbitingCelestialObject extends StellarObject
 	{
 		super(texture, size);
 	}
+	
+	protected float getAngularVelocity(ClientLevel level, float partialTicks)
+	{
+		return this.angularVelocity;
+	}
 
 	@Override
 	protected float getTetha(ClientLevel level, float partialTicks)
 	{
-		return this.initialTetha * (float) Math.sin(Math.toRadians(angularVelocity * ((float) level.getDayTime() / 24000)));
+		return this.initialTetha * (float) Math.sin(Math.toRadians(getAngularVelocity(level, partialTicks) * ((float) level.getDayTime() / 24000)));
 	}
 
 	@Override
 	protected float getPhi(ClientLevel level, float partialTicks)
 	{
-		return this.initialPhi + (float) Math.toRadians(angularVelocity * ((float) level.getDayTime() / 24000));
+		return this.initialPhi + (float) Math.toRadians(getAngularVelocity(level, partialTicks) * ((float) level.getDayTime() / 24000));
 	}
 
 	@Override

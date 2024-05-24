@@ -31,9 +31,17 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 	
 	public static final ResourceLocation OVERWORLD_SKYBOX = new ResourceLocation(StellarView.MODID, "textures/environment/overworld_skybox/overworld");
 	
+	public static final int EARTH_YEAR_DAYS = 96;
+	
 	// Moons
 	private static final Moon LUNA = new Moon.DefaultMoon()
 		{
+			@Override
+			protected float getAngularVelocity(ClientLevel level, float partialTicks)
+			{
+				return 360F / Moon.LUNA_ORBIT_DAYS + 360F / OverworldConfig.earth_year_length.get();
+			}
+			
 			@Override
 			protected boolean shouldRender(ClientLevel level, Camera camera)
 			{
@@ -114,6 +122,13 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 				.halo(Planet.VENUS_HALO_TEXTURE, 0.9F);
 		
 		private static final Planet EARTH = (Planet) new Planet(Planet.EARTH_TEXTURE, 30, Planet.EARTH_DAY_LENGTH)
+				{
+					@Override
+					protected float getAngularVelocity(ClientLevel level, float partialTicks)
+					{
+						return 360F / OverworldConfig.earth_year_length.get();
+					}
+				}
 				.addAtmosphere(new Planet.Atmosphere(
 								(ShootingStar) new ShootingStar().setRarityValue(OverworldConfig.shooting_star_chance),
 								(MeteorShower) new MeteorShower().setRarityValue(OverworldConfig.meteor_shower_chance)))

@@ -59,6 +59,10 @@ public class OverworldConfigScreen extends Screen
 				Component.literal("\u0025"),
 				this.width, OverworldConfig.shooting_star_chance));
 
+		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.earth_year_length"),
+				Component.empty(),
+				this.width, OverworldConfig.earth_year_length));
+
 		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_x"),
 				Component.empty(),
 				this.width, OverworldConfig.milky_way_x));
