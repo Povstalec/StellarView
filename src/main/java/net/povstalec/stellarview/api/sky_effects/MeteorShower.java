@@ -11,6 +11,8 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.povstalec.stellarview.StellarView;
+import net.povstalec.stellarview.api.celestials.Star.SpectralType;
+import net.povstalec.stellarview.common.config.StellarViewConfig;
 
 public class MeteorShower extends SkyEffect
 {
@@ -22,16 +24,58 @@ public class MeteorShower extends SkyEffect
 	public static final ResourceLocation METEOR_CYAN_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/sky_effect/meteor/meteor_cyan.png");
 	public static final ResourceLocation METEOR_BLUE_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/sky_effect/meteor/meteor_blue.png");
 	public static final ResourceLocation METEOR_VIOLET_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/sky_effect/meteor/meteor_violet.png");
-
-	ResourceLocation[] showerColors = {
-			METEOR_WHITE_TEXTURE,
-			METEOR_RED_TEXTURE,
-			METEOR_ORANGE_TEXTURE,
-			METEOR_YELLOW_TEXTURE,
-			METEOR_CYAN_TEXTURE,
-			METEOR_BLUE_TEXTURE,
-			METEOR_VIOLET_TEXTURE
-	};
+	
+	public enum MeteorType
+	{
+		WHITE(METEOR_WHITE_TEXTURE),
+		RED(METEOR_RED_TEXTURE),
+		ORANGE(METEOR_ORANGE_TEXTURE),
+		YELLOW(METEOR_YELLOW_TEXTURE),
+		CYAN(METEOR_CYAN_TEXTURE),
+		BLUE(METEOR_BLUE_TEXTURE),
+		VIOLET(METEOR_VIOLET_TEXTURE);
+		
+		private ResourceLocation texture;
+		
+		MeteorType(ResourceLocation texture)
+		{
+			this.texture = texture;
+		}
+		
+		public ResourceLocation getTexture()
+		{
+			return this.texture;
+		}
+		
+		public static MeteorType randomMeteorType(long seed)
+		{
+			Random random = new Random(seed);
+			
+			if(StellarViewConfig.equal_spectral_types.get())
+			{
+				MeteorType[] meteorTypes = MeteorType.values();
+				return meteorTypes[random.nextInt(0, meteorTypes.length)];
+			}
+			
+			int value = random.nextInt(0, 100);
+			
+			// Slightly adjusted percentage values that can be found in SpectralType comments
+			if(value < 40)
+				return WHITE;
+			else if(value < (40 + 10))
+				return RED;
+			else if(value < (40 + 20 + 15))
+				return ORANGE;
+			else if(value < (40 + 20 + 15 + 10))
+				return YELLOW;
+			else if(value < (40 + 20 + 15 + 10 + 5))
+				return CYAN;
+			else if(value < (40 + 20 + 15 + 10 + 5 + 5))
+				return BLUE;
+			
+			return VIOLET;
+		}
+	}
 
 	protected static final int DAY_LENGTH = 24000;
 	protected static final int DURATION = 20;
@@ -44,12 +88,10 @@ public class MeteorShower extends SkyEffect
 	@Override
 	public final void render(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder)
 	{
-
 		long dailySeed = level.getDayTime() / DAY_LENGTH;
-
+		
+		ResourceLocation showerColor = MeteorType.randomMeteorType(dailySeed).getTexture();
 		Random randomizer = new Random(dailySeed);
-
-		ResourceLocation showerColor = showerColors[randomizer.nextInt(showerColors.length)];
 		
 		int meteorShowerChance = randomizer.nextInt(1, 101);
 		
