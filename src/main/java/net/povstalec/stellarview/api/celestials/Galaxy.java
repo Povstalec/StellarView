@@ -27,9 +27,9 @@ public abstract class Galaxy extends StarField
 		
 		private byte numberOfArms;
 		
-		public SpiralGalaxy(float size, long seed, byte numberOfArms, short numberOfStars)
+		public SpiralGalaxy(ResourceLocation texture, float size, long seed, byte numberOfArms, short numberOfStars)
 		{
-			super(SPIRAL_GALAXY_TEXTURE, size, seed, numberOfStars);
+			super(texture, size, seed, numberOfStars);
 			this.numberOfArms = numberOfArms;
 		}
 
@@ -87,9 +87,9 @@ public abstract class Galaxy extends StarField
 	
 	public static class LenticularGalaxy extends Galaxy
 	{
-		public LenticularGalaxy(float size, long seed, short numberOfStars)
+		public LenticularGalaxy(ResourceLocation texture, float size, long seed, short numberOfStars)
 		{
-			super(LENTICULAR_GALAXY_TEXTURE, size, seed, numberOfStars);
+			super(texture, size, seed, numberOfStars);
 		}
 
 		@Override
@@ -140,9 +140,11 @@ public abstract class Galaxy extends StarField
 		}
 	}
 
-	public static class EllipticalGalaxy extends Galaxy {
-		public EllipticalGalaxy(float size, long seed, short numberOfStars) {
-			super(ELLIPTICAL_GALAXY_TEXTURE, size, seed, numberOfStars);
+	public static class EllipticalGalaxy extends Galaxy
+	{
+		public EllipticalGalaxy(ResourceLocation texture, float size, long seed, short numberOfStars)
+		{
+			super(texture, size, seed, numberOfStars);
 		}
 
 		@Override
