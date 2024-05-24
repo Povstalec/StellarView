@@ -23,9 +23,47 @@ public class Moon extends Planet
 	
 	public static final ResourceLocation GANYMEDE_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/ganymede_phases.png");
 	public static final ResourceLocation GANYMEDE_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/ganymede_halo_phases.png");
+
+	public static final ResourceLocation ENCELADUS_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/enceladus_phases.png");
+	public static final ResourceLocation ENCELADUS_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/enceladus_halo_phases.png");
+
+	public static final ResourceLocation TETHYS_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/tethys_phases.png");
+	public static final ResourceLocation TETHYS_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/tethys_halo_phases.png");
+
+	public static final ResourceLocation DIONE_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/dione_phases.png");
+	public static final ResourceLocation DIONE_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/dione_halo_phases.png");
+
+	public static final ResourceLocation RHEA_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/rhea_phases.png");
+	public static final ResourceLocation RHEA_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/rhea_halo_phases.png");
 	
 	public static final ResourceLocation TITAN_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/titan_phases.png");
 	public static final ResourceLocation TITAN_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/titan_halo_phases.png");
+
+	public static final ResourceLocation IAPETUS_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/iapetus_phases.png");
+	public static final ResourceLocation IAPETUS_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/iapetus_halo_phases.png");
+
+	public static final ResourceLocation ARIEL_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/ariel_phases.png");
+	public static final ResourceLocation ARIEL_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/ariel_halo_phases.png");
+
+	public static final ResourceLocation UMBRIEL_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/umbriel_phases.png");
+	public static final ResourceLocation UMBRIEL_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/umbriel_halo_phases.png");
+
+	public static final ResourceLocation TITANIA_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/titania_phases.png");
+	public static final ResourceLocation TITANIA_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/titania_halo_phases.png");
+
+	public static final ResourceLocation OBERON_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/oberon_phases.png");
+	public static final ResourceLocation OBERON_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/oberon_halo_phases.png");
+
+	public static final ResourceLocation TRITON_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/triton_phases.png");
+	public static final ResourceLocation TRITON_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/triton_halo_phases.png");
+
+	public static final ResourceLocation PLUTO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/pluto_phases.png");
+	public static final ResourceLocation PLUTO_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/pluto_halo_phases.png");
+
+	public static final ResourceLocation CHARON_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/charon_phases.png");
+	public static final ResourceLocation CHARON_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/moon_phases/charon_halo_phases.png");
+
+	public static final int LUNA_ORBIT_DAYS = 8;
 	
 	public Moon(ResourceLocation sunTexture, float size)
 	{
@@ -33,11 +71,8 @@ public class Moon extends Planet
 		this.visibleDuringDay();
 		this.blendsDuringDay();
 	}
-	
-	protected boolean hasPhases()
-	{
-		return true;
-	}
+
+	protected boolean hasPhases() { return true; }
 	
 	protected float[] getUV(ClientLevel level, Camera camera, float partialTicks)
 	{

@@ -33,17 +33,22 @@ public class OrbitingCelestialObject extends StellarObject
 	{
 		super(texture, size);
 	}
+	
+	protected float getAngularVelocity(ClientLevel level, float partialTicks)
+	{
+		return this.angularVelocity;
+	}
 
 	@Override
 	protected float getTetha(ClientLevel level, float partialTicks)
 	{
-		return this.initialTetha * (float) Math.sin(Math.toRadians(angularVelocity * ((float) level.getDayTime() / 24000)));
+		return this.initialTetha * (float) Math.sin(Math.toRadians(getAngularVelocity(level, partialTicks) * ((float) level.getDayTime() / 24000)));
 	}
 
 	@Override
 	protected float getPhi(ClientLevel level, float partialTicks)
 	{
-		return this.initialPhi + (float) Math.toRadians(angularVelocity * ((float) level.getDayTime() / 24000));
+		return this.initialPhi + (float) Math.toRadians(getAngularVelocity(level, partialTicks) * ((float) level.getDayTime() / 24000));
 	}
 
 	@Override
@@ -129,6 +134,10 @@ public class OrbitingCelestialObject extends StellarObject
 			}
 			else if(primaryBody.get() instanceof StarField starField)
 			{
+				//TODO
+				//this.setGalacticPosition(this.getX()-0.001F, this.getY(), this.getZ());
+				//starField.setStarBuffer(this.getX()-0.001F, this.getY(), this.getZ(), this.axisRotation.x, this.axisRotation.y, this.axisRotation.z);
+				
 				if(!StellarViewConfig.disable_stars.get())
 				{
 					float rain = 1.0F - level.getRainLevel(partialTicks);

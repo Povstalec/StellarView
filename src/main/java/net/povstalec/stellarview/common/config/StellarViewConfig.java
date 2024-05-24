@@ -21,8 +21,13 @@ public class StellarViewConfig
 	public static StellarViewConfigValue.BooleanValue disable_stars;
 	public static StellarViewConfigValue.BooleanValue day_stars;
 	public static StellarViewConfigValue.BooleanValue bright_stars;
+
+	public static StellarViewConfigValue.BooleanValue distance_star_size;
+	public static StellarViewConfigValue.BooleanValue distance_star_brightness;
 	
-	public static StellarViewConfigValue.IntValue rotation_multiplier;
+	public static StellarViewConfigValue.BooleanValue uniform_star_brightness;
+	public static StellarViewConfigValue.BooleanValue equal_spectral_types;
+	public static StellarViewConfigValue.BooleanValue uniform_star_color;
 	
 	static
 	{
@@ -63,10 +68,23 @@ public class StellarViewConfig
 		bright_stars = new StellarViewConfigValue.BooleanValue(client, "client.bright_stars", 
 				true, 
 				"Makes Stars brighter");
-
-		rotation_multiplier = new StellarViewConfigValue.IntValue(client, "client.rotation_multiplier", 
-				300, 1, 300, 
-				"Controls how much the sky rotates when moving");
+		
+		distance_star_size = new StellarViewConfigValue.BooleanValue(client, "client.distance_star_size", 
+				true, 
+				"Stars will become smaller the further away they are");
+		distance_star_brightness = new StellarViewConfigValue.BooleanValue(client, "client.distance_star_brightness", 
+				true, 
+				"Stars will become less bright the further away they are");
+		
+		uniform_star_brightness = new StellarViewConfigValue.BooleanValue(client, "client.uniform_star_brightness", 
+				false, 
+				"All stars will have the same brightness");
+		equal_spectral_types = new StellarViewConfigValue.BooleanValue(client, "client.equal_spectral_types", 
+				false, 
+				"All spectral types will be distributed equally, as opposed to a more realistic distribution (About 75% class M stars)");
+		uniform_star_color = new StellarViewConfigValue.BooleanValue(client, "client.uniform_star_color", 
+				false, 
+				"All stars will have the same color (White)");
 		
 		OverworldConfig.init(client);
 	}
