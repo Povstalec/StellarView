@@ -15,6 +15,7 @@ import net.povstalec.stellarview.api.celestials.CelestialObject;
 import net.povstalec.stellarview.api.celestials.Galaxy;
 import net.povstalec.stellarview.api.celestials.Galaxy.SpiralGalaxy;
 import net.povstalec.stellarview.api.celestials.Supernova;
+import net.povstalec.stellarview.api.celestials.orbiting.Barycenter;
 import net.povstalec.stellarview.api.celestials.orbiting.Moon;
 import net.povstalec.stellarview.api.celestials.orbiting.Planet;
 import net.povstalec.stellarview.api.celestials.orbiting.Sun;
@@ -158,7 +159,7 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 		// I added this as a treat. Really hard to find, both due to size and ridiculous inclination putting it far from the ecliptic,
 		// and perhaps amongst the stars of the galactic disc.
 		// Those who find this will surely be very happy, if they recognize it for what it is.
-		private static final Planet PLUTO_CHARON_BARYCENTER = (Planet) new Planet(Planet.PLUTO_CHARON_BARYCENTER_TEXTURE, 0.2F)
+		private static final Barycenter PLUTO_CHARON_BARYCENTER = (Barycenter) new Barycenter()
 				.addOrbitingObject(PLUTO, 2500 * 1168, 360F / 1.681F, 0, (float) Math.toRadians(0.001), (float) Math.toRadians(69))
 				.addOrbitingObject(CHARON, 2500 * 19640, 360F / 1.681F, 180, (float) Math.toRadians(0.001), (float) Math.toRadians(96));
 		

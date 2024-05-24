@@ -49,8 +49,6 @@ public class Planet extends OrbitingCelestialObject
 	
 	public static final ResourceLocation NEPTUNE_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/neptune.png");
 	public static final ResourceLocation NEPTUNE_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/neptune_halo.png");
-
-	public static final ResourceLocation PLUTO_CHARON_BARYCENTER_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/pluto_charon_barycenter.png");
 	
 	private static final int TICKS_PER_DAY = 24000;
 	
