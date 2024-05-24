@@ -95,9 +95,9 @@ public class Planet extends OrbitingCelestialObject
 			float zRotation = 2 * (float) Math.toDegrees(Math.atan(zPos / (10000 * OverworldConfig.overworld_z_rotation_multiplier.get())));
 			
 			float defaultYRotation = 360 * level.getTimeOfDay(partialTicks);
-			float subtractedYRotation = getAngularVelocity(level, partialTicks) > 0 ? this.angularVelocity * ((float) level.getDayTime() / TICKS_PER_DAY) : 0;
+			float subtractedYRotation = getAngularVelocity(level, partialTicks) > 0 ?  getAngularVelocity(level, partialTicks) * ((float) level.getDayTime() / TICKS_PER_DAY) : 0;
 			
-			skyAxisRotation = new Vector3f(180 + defaultYRotation - subtractedYRotation, -90.0F, zRotation);
+			skyAxisRotation = new Vector3f(180 + defaultYRotation + subtractedYRotation, -90.0F, zRotation);
 		}
 		else
 			skyAxisRotation = new Vector3f(0, 0, 0);
