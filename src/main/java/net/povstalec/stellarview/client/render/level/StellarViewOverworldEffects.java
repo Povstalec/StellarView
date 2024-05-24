@@ -115,10 +115,10 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 		
 		
 		// Planets
-		private static final Moon MERCURY = (Moon) new Moon(Planet.MERCURY_TEXTURE, 0.7F)
+		private static final Moon MERCURY = (Moon) new Moon(Planet.MERCURY_TEXTURE, 0.7F, 90740,-182488)
 				.halo(Planet.MERCURY_HALO_TEXTURE, 0.7F);
 		
-		private static final Moon VENUS = (Moon) new Moon(Planet.VENUS_TEXTURE, 0.9F)
+		private static final Moon VENUS = (Moon) new Moon(Planet.VENUS_TEXTURE, 0.9F, 459243, -1025643)
 				.halo(Planet.VENUS_HALO_TEXTURE, 0.9F);
 		
 		private static final Planet EARTH = (Planet) new Planet(Planet.EARTH_TEXTURE, 30, Planet.EARTH_DAY_LENGTH)
