@@ -73,52 +73,52 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 			}
 		};
 
-		private static final Moon IO = (Moon) new Moon(Moon.IO_TEXTURE, 0.15F)
-				.halo(Moon.IO_HALO_TEXTURE, 0.15F);
-		private static final Moon EUROPA = (Moon) new Moon(Moon.EUROPA_TEXTURE, 0.125F)
-				.halo(Moon.EUROPA_HALO_TEXTURE, 0.125F);
-		private static final Moon GANYMEDE = (Moon) new Moon(Moon.GANYMEDE_TEXTURE, 0.25F)
-				.halo(Moon.GANYMEDE_HALO_TEXTURE, 0.25F);
-		private static final Moon CALLISTO = (Moon) new Moon(Moon.CALLISTO_TEXTURE, 0.2F)
-				.halo(Moon.CALLISTO_HALO_TEXTURE, 0.2F);
+		private static final Planet IO = (Planet) new Planet(Planet.IO_TEXTURE, 0.15F)
+				.halo(Planet.IO_HALO_TEXTURE, 0.15F);
+		private static final Planet EUROPA = (Planet) new Planet(Planet.EUROPA_TEXTURE, 0.125F)
+				.halo(Planet.EUROPA_HALO_TEXTURE, 0.125F);
+		private static final Planet GANYMEDE = (Planet) new Planet(Planet.GANYMEDE_TEXTURE, 0.25F)
+				.halo(Planet.GANYMEDE_HALO_TEXTURE, 0.25F);
+		private static final Planet CALLISTO = (Planet) new Planet(Planet.CALLISTO_TEXTURE, 0.2F)
+				.halo(Planet.CALLISTO_HALO_TEXTURE, 0.2F);
 
-		private static final Moon ENCELADUS = (Moon) new Moon(Moon.ENCELADUS_TEXTURE, 0.1F)
-				.halo(Moon.ENCELADUS_HALO_TEXTURE, 0.1F);
-		private static final Moon TETHYS = (Moon) new Moon(Moon.TETHYS_TEXTURE, 0.15F)
-				.halo(Moon.TETHYS_HALO_TEXTURE, 0.15F);
-		private static final Moon DIONE = (Moon) new Moon(Moon.DIONE_TEXTURE, 0.15F)
-				.halo(Moon.DIONE_HALO_TEXTURE, 0.15F);
-		private static final Moon RHEA = (Moon) new Moon(Moon.RHEA_TEXTURE, 0.15F)
-				.halo(Moon.RHEA_HALO_TEXTURE, 0.15F);
-		private static final Moon TITAN = (Moon) new Moon(Moon.TITAN_TEXTURE, 0.25F)
-				.halo(Moon.TITAN_HALO_TEXTURE, 0.25F);
-		private static final Moon IAPETUS = (Moon) new Moon(Moon.IAPETUS_TEXTURE, 0.15F)
-				.halo(Moon.IAPETUS_HALO_TEXTURE, 0.15F);
+		private static final Planet ENCELADUS = (Planet) new Planet(Planet.ENCELADUS_TEXTURE, 0.1F)
+				.halo(Planet.ENCELADUS_HALO_TEXTURE, 0.1F);
+		private static final Planet TETHYS = (Planet) new Planet(Planet.TETHYS_TEXTURE, 0.15F)
+				.halo(Planet.TETHYS_HALO_TEXTURE, 0.15F);
+		private static final Planet DIONE = (Planet) new Planet(Planet.DIONE_TEXTURE, 0.15F)
+				.halo(Planet.DIONE_HALO_TEXTURE, 0.15F);
+		private static final Planet RHEA = (Planet) new Planet(Planet.RHEA_TEXTURE, 0.15F)
+				.halo(Planet.RHEA_HALO_TEXTURE, 0.15F);
+		private static final Planet TITAN = (Planet) new Planet(Planet.TITAN_TEXTURE, 0.25F)
+				.halo(Planet.TITAN_HALO_TEXTURE, 0.25F);
+		private static final Planet IAPETUS = (Planet) new Planet(Planet.IAPETUS_TEXTURE, 0.15F)
+				.halo(Planet.IAPETUS_HALO_TEXTURE, 0.15F);
 
-		private static final Moon ARIEL = (Moon) new Moon(Moon.ARIEL_TEXTURE, 0.075F)
-				.halo(Moon.ARIEL_HALO_TEXTURE, 0.075F);
-		private static final Moon UMBRIEL = (Moon) new Moon(Moon.UMBRIEL_TEXTURE, 0.075F)
-				.halo(Moon.UMBRIEL_HALO_TEXTURE, 0.075F);
-		private static final Moon TITANIA = (Moon) new Moon(Moon.TITANIA_TEXTURE, 0.075F)
-				.halo(Moon.TITANIA_HALO_TEXTURE, 0.075F);
-		private static final Moon OBERON = (Moon) new Moon(Moon.OBERON_TEXTURE, 0.075F)
-				.halo(Moon.OBERON_HALO_TEXTURE, 0.075F);
+		private static final Planet ARIEL = (Planet) new Planet(Planet.ARIEL_TEXTURE, 0.075F)
+				.halo(Planet.ARIEL_HALO_TEXTURE, 0.075F);
+		private static final Planet UMBRIEL = (Planet) new Planet(Planet.UMBRIEL_TEXTURE, 0.075F)
+				.halo(Planet.UMBRIEL_HALO_TEXTURE, 0.075F);
+		private static final Planet TITANIA = (Planet) new Planet(Planet.TITANIA_TEXTURE, 0.075F)
+				.halo(Planet.TITANIA_HALO_TEXTURE, 0.075F);
+		private static final Planet OBERON = (Planet) new Planet(Planet.OBERON_TEXTURE, 0.075F)
+				.halo(Planet.OBERON_HALO_TEXTURE, 0.075F);
 
-		private static final Moon TRITON = (Moon) new Moon(Moon.TRITON_TEXTURE, 0.08F)
-				.halo(Moon.TRITON_HALO_TEXTURE, 0.08F);
+		private static final Planet TRITON = (Planet) new Planet(Planet.TRITON_TEXTURE, 0.08F)
+				.halo(Planet.TRITON_HALO_TEXTURE, 0.08F);
 
-		private static final Moon PLUTO = (Moon) new Moon(Moon.PLUTO_TEXTURE, 0.15F)
-				.halo(Moon.PLUTO_HALO_TEXTURE, 0.15F);
-		private static final Moon CHARON = (Moon) new Moon(Moon.CHARON_TEXTURE, 0.1F)
-				.halo(Moon.CHARON_HALO_TEXTURE, 0.1F);
+		private static final Planet PLUTO = (Planet) new Planet(Planet.PLUTO_TEXTURE, 0.15F)
+				.halo(Planet.PLUTO_HALO_TEXTURE, 0.15F);
+		private static final Planet CHARON = (Planet) new Planet(Planet.CHARON_TEXTURE, 0.1F)
+				.halo(Planet.CHARON_HALO_TEXTURE, 0.1F);
 
 		
 		
 		// Planets
-		private static final Planet MERCURY = (Planet) new Planet(Planet.MERCURY_TEXTURE, 0.7F)
+		private static final Moon MERCURY = (Moon) new Moon(Planet.MERCURY_TEXTURE, 0.7F)
 				.halo(Planet.MERCURY_HALO_TEXTURE, 0.7F);
 		
-		private static final Planet VENUS = (Planet) new Planet(Planet.VENUS_TEXTURE, 0.9F)
+		private static final Moon VENUS = (Moon) new Moon(Planet.VENUS_TEXTURE, 0.9F)
 				.halo(Planet.VENUS_HALO_TEXTURE, 0.9F);
 		
 		private static final Planet EARTH = (Planet) new Planet(Planet.EARTH_TEXTURE, 30, Planet.EARTH_DAY_LENGTH)

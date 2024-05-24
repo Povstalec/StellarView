@@ -20,35 +20,97 @@ import net.povstalec.stellarview.common.config.OverworldConfig;
 
 public class Planet extends OrbitingCelestialObject
 {
-	public static final ResourceLocation MERCURY_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/mercury.png");
-	public static final ResourceLocation MERCURY_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/mercury_halo.png");
+	public static final ResourceLocation MERCURY_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/mercury.png");
+	public static final ResourceLocation MERCURY_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/mercury_halo.png");
 	
-	public static final ResourceLocation VENUS_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/venus.png");
-	public static final ResourceLocation VENUS_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/venus_halo.png");
-	
-	public static final ResourceLocation EARTH_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/earth.png");
-	public static final ResourceLocation EARTH_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/earth_halo.png");
-	
-	public static final ResourceLocation MARS_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/mars.png");
-	public static final ResourceLocation MARS_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/mars_halo.png");
+	public static final ResourceLocation VENUS_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/venus.png");
+	public static final ResourceLocation VENUS_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/venus_halo.png");
 
-	public static final ResourceLocation VESTA_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/vesta.png");
-	public static final ResourceLocation VESTA_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/vesta_halo.png");
+	
+	public static final ResourceLocation EARTH_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/earth.png");
+	public static final ResourceLocation EARTH_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/earth_halo.png");
 
-	public static final ResourceLocation CERES_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/ceres.png");
-	public static final ResourceLocation CERES_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/ceres_halo.png");
+	public static final ResourceLocation DEFAULT_MOON_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/moon_phases.png");
+	public static final ResourceLocation DEFAULT_MOON_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/moon_halo_phases.png");
 
-	public static final ResourceLocation JUPITER_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/jupiter.png");
-	public static final ResourceLocation JUPITER_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/jupiter_halo.png");
 	
-	public static final ResourceLocation SATURN_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/saturn.png");
-	public static final ResourceLocation SATURN_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/saturn_halo.png");
+	public static final ResourceLocation MARS_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/mars.png");
+	public static final ResourceLocation MARS_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/mars_halo.png");
+
+
+	public static final ResourceLocation VESTA_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/vesta.png");
+	public static final ResourceLocation VESTA_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/vesta_halo.png");
+
+	public static final ResourceLocation CERES_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/ceres.png");
+	public static final ResourceLocation CERES_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/ceres_halo.png");
+
+
+	public static final ResourceLocation JUPITER_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/jupiter.png");
+	public static final ResourceLocation JUPITER_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/jupiter_halo.png");
+
+	public static final ResourceLocation IO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/io_phases.png");
+	public static final ResourceLocation IO_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/io_halo_phases.png");
+
+	public static final ResourceLocation EUROPA_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/europa_phases.png");
+	public static final ResourceLocation EUROPA_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/europa_halo_phases.png");
+
+	public static final ResourceLocation CALLISTO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/callisto_phases.png");
+	public static final ResourceLocation CALLISTO_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/callisto_halo_phases.png");
+
+	public static final ResourceLocation GANYMEDE_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/ganymede_phases.png");
+	public static final ResourceLocation GANYMEDE_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/ganymede_halo_phases.png");
+
 	
-	public static final ResourceLocation URANUS_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/uranus.png");
-	public static final ResourceLocation URANUS_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/uranus_halo.png");
+	public static final ResourceLocation SATURN_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/saturn.png");
+	public static final ResourceLocation SATURN_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/saturn_halo.png");
+
+	public static final ResourceLocation ENCELADUS_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/enceladus_phases.png");
+	public static final ResourceLocation ENCELADUS_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/enceladus_halo_phases.png");
+
+	public static final ResourceLocation TETHYS_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/tethys_phases.png");
+	public static final ResourceLocation TETHYS_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/tethys_halo_phases.png");
+
+	public static final ResourceLocation DIONE_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/dione_phases.png");
+	public static final ResourceLocation DIONE_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/dione_halo_phases.png");
+
+	public static final ResourceLocation RHEA_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/rhea_phases.png");
+	public static final ResourceLocation RHEA_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/rhea_halo_phases.png");
+
+	public static final ResourceLocation TITAN_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/titan_phases.png");
+	public static final ResourceLocation TITAN_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/titan_halo_phases.png");
+
+	public static final ResourceLocation IAPETUS_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/iapetus_phases.png");
+	public static final ResourceLocation IAPETUS_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/iapetus_halo_phases.png");
+
 	
-	public static final ResourceLocation NEPTUNE_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/neptune.png");
-	public static final ResourceLocation NEPTUNE_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/neptune_halo.png");
+	public static final ResourceLocation URANUS_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/uranus.png");
+	public static final ResourceLocation URANUS_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/uranus_halo.png");
+
+	public static final ResourceLocation ARIEL_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/ariel_phases.png");
+	public static final ResourceLocation ARIEL_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/ariel_halo_phases.png");
+
+	public static final ResourceLocation UMBRIEL_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/umbriel_phases.png");
+	public static final ResourceLocation UMBRIEL_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/umbriel_halo_phases.png");
+
+	public static final ResourceLocation TITANIA_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/titania_phases.png");
+	public static final ResourceLocation TITANIA_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/titania_halo_phases.png");
+
+	public static final ResourceLocation OBERON_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/oberon_phases.png");
+	public static final ResourceLocation OBERON_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/oberon_halo_phases.png");
+
+	
+	public static final ResourceLocation NEPTUNE_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/neptune.png");
+	public static final ResourceLocation NEPTUNE_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/neptune_halo.png");
+
+	public static final ResourceLocation TRITON_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/triton_phases.png");
+	public static final ResourceLocation TRITON_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/triton_halo_phases.png");
+
+
+	public static final ResourceLocation PLUTO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/pluto_phases.png");
+	public static final ResourceLocation PLUTO_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/pluto_halo_phases.png");
+
+	public static final ResourceLocation CHARON_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/charon_phases.png");
+	public static final ResourceLocation CHARON_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/charon_halo_phases.png");
 	
 	private static final int TICKS_PER_DAY = 24000;
 	
@@ -67,6 +129,13 @@ public class Planet extends OrbitingCelestialObject
 		super(texture, size);
 		if(rotationPeriod > 0)
 			this.rotationPeriod = Optional.of(rotationPeriod);
+	}
+
+	@Override
+	protected float[] getUV(ClientLevel level, Camera camera, float partialTicks)
+	{
+		//Exists to disable phases. Will do more work later. -NW
+		return new float[] {0.0F, 0.0F, 0.25F, 0.5F};
 	}
 	
 	public Planet addAtmosphere(Atmosphere atmosphere)
