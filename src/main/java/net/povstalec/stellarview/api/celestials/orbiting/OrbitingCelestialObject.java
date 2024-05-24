@@ -33,17 +33,22 @@ public class OrbitingCelestialObject extends StellarObject
 	{
 		super(texture, size);
 	}
+	
+	protected float getAngularVelocity(ClientLevel level, float partialTicks)
+	{
+		return this.angularVelocity;
+	}
 
 	@Override
 	protected float getTetha(ClientLevel level, float partialTicks)
 	{
-		return this.initialTetha * (float) Math.sin(Math.toRadians(angularVelocity * ((float) level.getDayTime() / 24000)));
+		return this.initialTetha * (float) Math.sin(Math.toRadians(getAngularVelocity(level, partialTicks) * ((float) level.getDayTime() / 24000)));
 	}
 
 	@Override
 	protected float getPhi(ClientLevel level, float partialTicks)
 	{
-		return this.initialPhi + (float) Math.toRadians(angularVelocity * ((float) level.getDayTime() / 24000));
+		return this.initialPhi + (float) Math.toRadians(getAngularVelocity(level, partialTicks) * ((float) level.getDayTime() / 24000));
 	}
 
 	@Override
@@ -129,6 +134,10 @@ public class OrbitingCelestialObject extends StellarObject
 			}
 			else if(primaryBody.get() instanceof StarField starField)
 			{
+				//TODO
+				//this.setGalacticPosition(this.getX()-0.001F, this.getY(), this.getZ());
+				//starField.setStarBuffer(this.getX()-0.001F, this.getY(), this.getZ(), this.axisRotation.x, this.axisRotation.y, this.axisRotation.z);
+				
 				if(!StellarViewConfig.disable_stars.get())
 				{
 					float rain = 1.0F - level.getRainLevel(partialTicks);
@@ -145,5 +154,32 @@ public class OrbitingCelestialObject extends StellarObject
 			PoseStack stack, Matrix4f projectionMatrix, Runnable setupFog, BufferBuilder bufferbuilder)
 	{
 		this.renderFrom(this, new Vector3f(0, 0, 0), level, camera, partialTicks, stack, projectionMatrix, setupFog, bufferbuilder, new Vector3f(0, 0, 0), new Vector3f(0, 0, 0));
+	}
+
+	/**
+	 * Approximate E (Eccentric Anomaly) for a given
+	 * e (eccentricity) and M (Mean Anomaly)
+	 * where e < 1 and E and M are given in radians
+	 * 
+	 * This is performed by finding the root of the
+	 * function f(E) = E - e*sin(E) - M(t)
+	 * via Newton's method, where the derivative of
+	 * f(E) with respect to E is 
+	 * f'(E) = 1 - e*cos(E)
+	 * 
+	 * @param eccentricity
+	 * @param meanAnomaly
+	 * @return
+	 */
+	public static double approximateEccentricAnomaly(double eccentricity, double meanAnomaly) {
+		double E = meanAnomaly;
+		// Perform 12 iterations
+		// No clue what would be an appropriate amount in practice
+		for (int i=0;i<12;i++) {
+			E = E - 
+				(E - eccentricity * Math.sin(E) - meanAnomaly) /
+				(1 - eccentricity * Math.cos(E));
+		}
+		return E;
 	}
 }
