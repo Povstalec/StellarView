@@ -1,7 +1,5 @@
 package net.povstalec.stellarview.client.render.level;
 
-import java.util.Optional;
-
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -41,7 +39,7 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 			@Override
 			protected float getAngularVelocity(ClientLevel level, float partialTicks)
 			{
-				return 360F / Moon.LUNA_ORBIT_DAYS + 360F / OverworldConfig.earth_year_length.get();
+				return 360F / Moon.LUNA_ORBIT_DAYS + 360F / OverworldConfig.overworld_year_length.get();
 			}
 			
 			@Override
@@ -128,7 +126,7 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 					@Override
 					protected float getAngularVelocity(ClientLevel level, float partialTicks)
 					{
-						return 360F / OverworldConfig.earth_year_length.get();
+						return 360F / OverworldConfig.overworld_year_length.get();
 					}
 				}
 				.addAtmosphere(new Planet.Atmosphere(

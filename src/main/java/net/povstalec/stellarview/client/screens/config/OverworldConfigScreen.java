@@ -59,9 +59,13 @@ public class OverworldConfigScreen extends Screen
 				Component.literal("\u0025"),
 				this.width, OverworldConfig.shooting_star_chance));
 
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.earth_year_length"),
+		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.overworld_year_length"),
+				Component.translatable("gui.stellarview.days"),
+				this.width, OverworldConfig.overworld_year_length));
+
+		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.overworld_z_rotation_multiplier"),
 				Component.empty(),
-				this.width, OverworldConfig.earth_year_length));
+				this.width, OverworldConfig.overworld_z_rotation_multiplier));
 
 		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_x"),
 				Component.empty(),

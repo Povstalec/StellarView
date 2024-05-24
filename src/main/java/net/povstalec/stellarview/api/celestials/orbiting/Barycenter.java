@@ -8,7 +8,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 
-public class Barycenter extends OrbitingCelestialObject
+public final class Barycenter extends OrbitingCelestialObject
 {
 	public Barycenter()
 	{

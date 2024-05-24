@@ -154,20 +154,26 @@ public class Star
 			double x, double y, double z, double distance, double heightDeformation, double widthDeformation, long seed)
 	{
 		SpectralType spectralType = SpectralType.randomSpectralType(seed);
-		int[] starColor = StellarViewConfig.uniform_star_color.get() ? new int[] {255, 255, 255} : new int[] {spectralType.red(), spectralType.green(), spectralType.blue()};
-		
-		int alpha = spectralType.randomBrightness(seed); // 0xAA is the default
-		int minAlpha = (alpha - 0xAA) * 2 / 3;
+		int[] starColor = StellarViewConfig.uniform_star_color.get() ? new int[] {255, 255, 255} : 
+			new int[] {spectralType.red(), spectralType.green(), spectralType.blue()};
 
 		double starSize = (double) spectralType.randomSize(seed); // This randomizes the Star size
 		double maxStarSize = StellarViewConfig.distance_star_size.get() ? starSize : 0.2 + starSize * 1 / 5;
 		double minStarSize = StellarViewConfig.distance_star_size.get() ? starSize : starSize * 3 / 5;
 		
-		if(distance > 40)
-			alpha -= 2 * (int) Math.round(distance);
+		int alpha = spectralType.randomBrightness(seed); // 0xAA is the default
 		
-		if(alpha < minAlpha)
-			alpha = minAlpha;
+		// Makes stars less bright the further away they are
+		if(StellarViewConfig.distance_star_brightness.get())
+		{
+			int minAlpha = (alpha - 0xAA) * 2 / 3;
+			
+			if(distance > 40)
+				alpha -= 2 * (int) Math.round(distance);
+			
+			if(alpha < minAlpha)
+				alpha = minAlpha;
+		}
 		
 		distance = 1.0D / Math.sqrt(distance);
 		x *= distance;

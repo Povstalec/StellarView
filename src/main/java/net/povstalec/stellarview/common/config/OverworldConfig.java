@@ -18,7 +18,9 @@ public class OverworldConfig
 	public static StellarViewConfigValue.IntValue milky_way_y;
 	public static StellarViewConfigValue.IntValue milky_way_z;
 
-	public static StellarViewConfigValue.IntValue earth_year_length;
+	public static StellarViewConfigValue.IntValue overworld_year_length;
+	
+	public static StellarViewConfigValue.IntValue overworld_z_rotation_multiplier;
 	
 	public static StellarViewConfigValue.IntValue milky_way_x_axis_rotation;
 	public static StellarViewConfigValue.IntValue milky_way_y_axis_rotation;
@@ -48,9 +50,13 @@ public class OverworldConfig
 		
 		
 		
-		earth_year_length = new StellarViewConfigValue.IntValue(client, PREFIX + "earth_year_length", 
+		overworld_year_length = new StellarViewConfigValue.IntValue(client, PREFIX + "overworld_year_length", 
 				96, 1, 512, 
 				"Specifies the number of days it takes for the Earth to complete one orbit around the Sun");
+
+		overworld_z_rotation_multiplier = new StellarViewConfigValue.IntValue(client, "client.overworld_z_rotation_multiplier", 
+				3000, 1, 3000, 
+				"Controls how much the Overworld sky rotates when moving along the Z-axis");
 		
 		
 		

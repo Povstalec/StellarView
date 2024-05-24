@@ -16,7 +16,7 @@ import net.povstalec.stellarview.api.sky_effects.MeteorShower;
 import net.povstalec.stellarview.api.sky_effects.ShootingStar;
 import net.povstalec.stellarview.client.render.level.misc.StellarViewFogEffects;
 import net.povstalec.stellarview.client.render.level.misc.StellarViewSkyEffects;
-import net.povstalec.stellarview.common.config.StellarViewConfig;
+import net.povstalec.stellarview.common.config.OverworldConfig;
 
 public class Planet extends OrbitingCelestialObject
 {
@@ -93,7 +93,7 @@ public class Planet extends OrbitingCelestialObject
 		if(rotationPeriod.isPresent())
 		{
 			double zPos = camera.getEntity().getPosition(partialTicks).z();
-			float zRotation = 2 * (float) Math.toDegrees(Math.atan(zPos / (100000 * StellarViewConfig.rotation_multiplier.get())));
+			float zRotation = 2 * (float) Math.toDegrees(Math.atan(zPos / (10000 * OverworldConfig.overworld_z_rotation_multiplier.get())));
 			
 			float defaultYRotation = 360 * level.getTimeOfDay(partialTicks);
 			float subtractedYRotation = getAngularVelocity(level, partialTicks) > 0 ? this.angularVelocity * ((float) level.getDayTime() / TICKS_PER_DAY) : 0;
