@@ -132,7 +132,7 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 				.addAtmosphere(new Planet.Atmosphere(
 								(ShootingStar) new ShootingStar().setRarityValue(OverworldConfig.shooting_star_chance),
 								(MeteorShower) new MeteorShower().setRarityValue(OverworldConfig.meteor_shower_chance)))
-				.addOrbitingObject(LUNA, 384400F, 360F / 8, (float) Math.toRadians(45), (float) Math.toRadians(-5.145), 0);
+				.addOrbitingObject(LUNA, 384400F, 360F / 8 + 360F / OverworldConfig.overworld_year_length.get(), (float) Math.toRadians(337.5F), (float) Math.toRadians(-5.145), 0);
 
 		private static final Planet MARS = (Planet) new Planet(Planet.MARS_TEXTURE, 0.8F)
 				.halo(Planet.MARS_HALO_TEXTURE, 0.8F);
