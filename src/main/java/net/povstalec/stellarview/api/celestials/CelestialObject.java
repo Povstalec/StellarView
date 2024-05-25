@@ -96,7 +96,22 @@ public abstract class CelestialObject
 		return this.texture;
 	}
 	
-	protected float[] getUV(ClientLevel level, Camera camera, float partialTicks)
+	/**
+	 * Returns the current UV the texture should use.
+	 * In case you want to know the coordinates of the sun, it's always (0, 0, 0).
+	 * @param viewCenter Object from which you're looking at the sky
+	 * @param vievCenterCoords Absolute coordinates of the viewCenterObject
+	 * @param level Level in which the Player currently is
+	 * @param camera Camera of the Player
+	 * @param partialTicks Partial Ticks
+	 * @param stack Currently used PoseStack
+	 * @param bufferbuilder Currently used Buffer Builder
+	 * @param skyAxisRotation Rotation of the sky
+	 * @param coords Absolute coordinates of this object
+	 * @return
+	 */
+	protected float[] getUV(OrbitingCelestialObject viewCenter, Vector3f vievCenterCoords, ClientLevel level, Camera camera,
+			float partialTicks, PoseStack stack, BufferBuilder bufferbuilder, Vector3f skyAxisRotation, Vector3f coords)
 	{
 		return FULL_UV;
 	}
@@ -201,8 +216,8 @@ public abstract class CelestialObject
 		return coords;
 	}
 	
-	public void render(OrbitingCelestialObject viewCenter, Vector3f vievCenterCoords, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder,
-			Vector3f skyAxisRotation, Vector3f coords)
+	public void render(OrbitingCelestialObject viewCenter, Vector3f vievCenterCoords, ClientLevel level, Camera camera,
+			float partialTicks, PoseStack stack, BufferBuilder bufferbuilder, Vector3f skyAxisRotation, Vector3f coords)
 	{
 		if(!shouldRender(level, camera) || this == viewCenter)
 			return;
@@ -225,7 +240,7 @@ public abstract class CelestialObject
 			RenderSystem.defaultBlendFunc();
 		
 		Matrix4f lastMatrix = stack.last().pose();
-		float[] uv = getUV(level, camera, partialTicks);
+		float[] uv = getUV(viewCenter, vievCenterCoords, level, camera, partialTicks, stack, bufferbuilder, skyAxisRotation, coords);
 		float rotation = getRotation(level, partialTicks);
 		
 		Vector3f relative = findRelative(vievCenterCoords, coords);

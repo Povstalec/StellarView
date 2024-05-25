@@ -137,6 +137,7 @@ public class OrbitingCelestialObject extends StellarObject
 				//TODO
 				//this.setGalacticPosition(this.getX()-0.001F, this.getY(), this.getZ());
 				//starField.setStarBuffer(this.getX()-0.001F, this.getY(), this.getZ(), this.axisRotation.x, this.axisRotation.y, this.axisRotation.z);
+				//starField.setStarBuffer(this.getX(), this.getY(), this.getZ(), skyAxisRotation.x, skyAxisRotation.y, skyAxisRotation.z); // This kinda makes it spin a lot
 				
 				if(!StellarViewConfig.disable_stars.get())
 				{
