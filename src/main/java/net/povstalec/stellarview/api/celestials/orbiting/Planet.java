@@ -131,11 +131,56 @@ public class Planet extends OrbitingCelestialObject
 			this.rotationPeriod = Optional.of(rotationPeriod);
 	}
 
-	@Override
-	protected float[] getUV(ClientLevel level, Camera camera, float partialTicks)
+	protected boolean hasPhases()
 	{
-		//Exists to disable phases. Will do more work later. -NW
-		return new float[] {0.0F, 0.0F, 0.25F, 0.5F};
+		return true;
+	}
+
+	public int getPhase(Vector3f vievCenterCoords, Vector3f coords)
+	{
+		// Coordinates of the primary light source (e.g., the Sun)
+		Vector3f lightSourceCoords = new Vector3f(0, 0, 0);
+
+		// Calculate distances
+		float distanceAS = vievCenterCoords.distance(lightSourceCoords);
+		float distanceAB = vievCenterCoords.distance(coords);
+		float distanceBS = coords.distance(lightSourceCoords);
+
+		// Calculate phase angle using the cosine formula
+		float cosAngleB = (float) Math.toDegrees(Math.acos((distanceBS * distanceBS + distanceAB * distanceAB - distanceAS * distanceAS) / (2 * distanceBS * distanceAB)));
+		int phase = (int) (90 - cosAngleB - 22.5F) / 8;
+
+		return phase;
+	}
+
+	@Override
+	/**
+	 * Returns the current UV the texture should use.
+	 * In case you want to know the coordinates of the sun, it's always (0, 0, 0).
+	 * @param viewCenter Object from which you're looking at the sky
+	 * @param vievCenterCoords Absolute coordinates of the viewCenterObject
+	 * @param level Level in which the Player currently is
+	 * @param camera Camera of the Player
+	 * @param partialTicks Partial Ticks
+	 * @param stack Currently used PoseStack
+	 * @param bufferbuilder Currently used Buffer Builder
+	 * @param skyAxisRotation Rotation of the sky
+	 * @param coords Absolute coordinates of this object
+	 * @return
+	 */
+	protected float[] getUV(OrbitingCelestialObject viewCenter, Vector3f vievCenterCoords, ClientLevel level, Camera camera,
+							float partialTicks, PoseStack stack, BufferBuilder bufferbuilder, Vector3f skyAxisRotation, Vector3f coords)
+	{
+		int phase = this.getPhase(vievCenterCoords, coords);
+
+		int x = phase % 4;
+		int y = phase / 4 % 2;
+		float xStart = (float)(x + 0) / 4.0F;
+		float yStart = (float)(y + 0) / 2.0F;
+		float xEnd = (float)(x + 1) / 4.0F;
+		float yEnd = (float)(y + 1) / 2.0F;
+
+		return hasPhases() ? new float[] {xStart, yStart, xEnd, yEnd} : new float[] {0.0F, 0.0F, 0.25F, 0.5F};
 	}
 	
 	public Planet addAtmosphere(Atmosphere atmosphere)
