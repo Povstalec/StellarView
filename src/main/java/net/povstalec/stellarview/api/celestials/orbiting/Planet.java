@@ -147,8 +147,13 @@ public class Planet extends OrbitingCelestialObject
 		float distanceBS = coords.distance(lightSourceCoords);
 
 		// Calculate phase angle using the cosine formula
-		float cosAngleB = (float) Math.toDegrees(Math.acos((distanceBS * distanceBS + distanceAB * distanceAB - distanceAS * distanceAS) / (2 * distanceBS * distanceAB)));
-		int phase = (int) (90 - cosAngleB - 22.5F) / 8;
+		float cosAngle = (float) Math.toDegrees(Math.acos((distanceBS * distanceBS + distanceAB * distanceAB - distanceAS * distanceAS) / (2 * distanceBS * distanceAB)));
+
+		//TODO figure out sign from rotation, then apply it to cosAngle
+
+		// Determine phase
+		int phase = (int) (cosAngle / 45) % 8;
+		//TODO possibly fudge phase so full starts at -22.5°
 
 		return phase;
 	}
