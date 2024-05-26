@@ -108,9 +108,9 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 				.halo(Planet.TRITON_HALO_TEXTURE, 0.08F);
 
 		private static final Planet PLUTO = (Planet) new Planet(Planet.PLUTO_TEXTURE, 0.15F)
-				.halo(Planet.PLUTO_HALO_TEXTURE, 0.15F);
+				.halo(Planet.PLUTO_HALO_TEXTURE, 0.3F);
 		private static final Planet CHARON = (Planet) new Planet(Planet.CHARON_TEXTURE, 0.1F)
-				.halo(Planet.CHARON_HALO_TEXTURE, 0.1F);
+				.halo(Planet.CHARON_HALO_TEXTURE, 0.2F);
 
 		
 		
@@ -194,7 +194,7 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 						return new Vector3f((float) OverworldConfig.milky_way_x_axis_rotation.get(), (float) OverworldConfig.milky_way_y_axis_rotation.get(), (float) OverworldConfig.milky_way_z_axis_rotation.get());
 					}
 				}
-				.addOrbitingObject(MERCURY, 54207000F, 360F / 23, (float) Math.toRadians(52), (float) Math.toRadians(7), (float) Math.toRadians(0.034F))
+				.addOrbitingObject(MERCURY, 54207000F, 360F / 0.01F, (float) Math.toRadians(52), (float) Math.toRadians(7), (float) Math.toRadians(0.034F))
 				.addOrbitingObject(VENUS, 107540000F, 360F / 59, (float) Math.toRadians(241), (float) Math.toRadians(1.85), (float) Math.toRadians(2.6F))
 				.addOrbitingObject(MARS, 226380000F, 360F / 180, (float) Math.toRadians(139), (float) Math.toRadians(3.39), (float) Math.toRadians(25.19F))
 				.addOrbitingObject(VESTA, 356000000F, 360F / 349, (float) Math.toRadians(174), (float) Math.toRadians(7.14), (float) Math.toRadians(29))

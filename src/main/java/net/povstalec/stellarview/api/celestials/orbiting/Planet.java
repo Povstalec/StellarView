@@ -115,7 +115,7 @@ public class Planet extends OrbitingCelestialObject
 	private static final int TICKS_PER_DAY = 24000;
 	
 	public static final int EARTH_DAY_LENGTH = TICKS_PER_DAY;
-	
+
 	private Optional<Integer> rotationPeriod = Optional.empty();
 	private Optional<Atmosphere> atmosphere = Optional.empty();
 	
@@ -138,7 +138,7 @@ public class Planet extends OrbitingCelestialObject
 
 	public int getPhase(Vector3f vievCenterCoords, Vector3f coords)
 	{
-		// Coordinates of the primary light source (e.g., the Sun)
+		// Coordinates of the primary light source
 		Vector3f lightSourceCoords = new Vector3f(0, 0, 0);
 
 		// Calculate distances
@@ -147,9 +147,18 @@ public class Planet extends OrbitingCelestialObject
 		float distanceBS = coords.distance(lightSourceCoords);
 
 		// Calculate phase angle using the cosine formula
-		float cosAngle = (float) Math.toDegrees(Math.acos((distanceBS * distanceBS + distanceAB * distanceAB - distanceAS * distanceAS) / (2 * distanceBS * distanceAB)));
+		float cosAngle = (float) Math.acos((distanceBS * distanceBS + distanceAB * distanceAB - distanceAS * distanceAS) / (2 * distanceBS * distanceAB));
 
-		//TODO figure out sign from rotation, then apply it to cosAngle
+		// Simulate rotating everything, then set the sign of the angle based on the target's Z position
+		// If both the observer and the target have orbital inclinations of 90°, and if this means they spend their
+		//   whole orbits on the XY plane, such that their Z coordinates are always 0°, this will not function!
+		// Additionally, this may stop functioning for single ticks if the Z coordinates of both bodies are symmetrical.
+		float dz = coords.z + vievCenterCoords.z;
+
+		int sign = (dz >= 0) ? 1 : -1;
+
+		// Apply the sign to the angle
+		cosAngle *= sign;
 
 		// Determine phase
 		int phase = (int) (cosAngle / 45) % 8;
