@@ -35,6 +35,8 @@ public abstract class CelestialObject
 	protected ResourceLocation haloTexture;
 	protected float haloSize;
 	protected boolean hasHalo = false;
+	
+	protected boolean flipUV = false;
 
 	protected boolean blends = false;
 	protected boolean blendsDuringDay = false;
@@ -60,6 +62,12 @@ public abstract class CelestialObject
 		this.haloTexture = haloTexture;
 		this.haloSize = haloSize;
 		this.hasHalo = true;
+		return this;
+	}
+	
+	public CelestialObject flipUV()
+	{
+		this.flipUV = true;
 		return this;
 	}
 	
@@ -195,10 +203,22 @@ public abstract class CelestialObject
 			
 			RenderSystem.setShaderTexture(0, texture);
 	        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-	        bufferbuilder.vertex(lastMatrix, corner00[0], corner00[1], corner00[2]).uv(uv[0], uv[1]).endVertex();
-	        bufferbuilder.vertex(lastMatrix, corner10[0], corner10[1], corner10[2]).uv(uv[2], uv[1]).endVertex();
-	        bufferbuilder.vertex(lastMatrix, corner11[0], corner11[1], corner11[2]).uv(uv[2], uv[3]).endVertex();
-	        bufferbuilder.vertex(lastMatrix, corner01[0], corner01[1], corner01[2]).uv(uv[0], uv[3]).endVertex();
+	        
+	        if(flipUV)
+	        {
+		        bufferbuilder.vertex(lastMatrix, corner00[0], corner00[1], corner00[2]).uv(uv[0], uv[1]).endVertex();
+		        bufferbuilder.vertex(lastMatrix, corner10[0], corner10[1], corner10[2]).uv(uv[2], uv[1]).endVertex();
+		        bufferbuilder.vertex(lastMatrix, corner11[0], corner11[1], corner11[2]).uv(uv[2], uv[3]).endVertex();
+		        bufferbuilder.vertex(lastMatrix, corner01[0], corner01[1], corner01[2]).uv(uv[0], uv[3]).endVertex();
+	        }
+	        else
+	        {
+		        bufferbuilder.vertex(lastMatrix, corner00[0], corner00[1], corner00[2]).uv(uv[2], uv[1]).endVertex();
+		        bufferbuilder.vertex(lastMatrix, corner10[0], corner10[1], corner10[2]).uv(uv[0], uv[1]).endVertex();
+		        bufferbuilder.vertex(lastMatrix, corner11[0], corner11[1], corner11[2]).uv(uv[0], uv[3]).endVertex();
+		        bufferbuilder.vertex(lastMatrix, corner01[0], corner01[1], corner01[2]).uv(uv[2], uv[3]).endVertex();
+	        }
+	        
 	        BufferUploader.drawWithShader(bufferbuilder.end());
 		}
 	}
