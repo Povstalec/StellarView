@@ -23,7 +23,7 @@ public class Barycenter extends OrbitingCelestialObject
 	{
 		Vector3f relativeCoords = getRelativeCartesianCoordinates(level, partialTicks);
 		Vector3f absoluteCoords = StellarCoordinates.absoluteVector(parentCoords, relativeCoords);
-		float distanceSquared = StellarCoordinates.relativeVector(absoluteCoords, vievCenterCoords).lengthSquared();
+		float distanceSquared = StellarCoordinates.lengthSquared(StellarCoordinates.relativeVector(absoluteCoords, vievCenterCoords));
 		
 		// Renders objects behind it
 		this.orbitingObjects.stream().forEach(orbitingObject ->
@@ -31,7 +31,7 @@ public class Barycenter extends OrbitingCelestialObject
 			if(getDistanceSquaredFromViewCenter(vievCenterCoords, absoluteCoords, level, partialTicks) > distanceSquared)
 				orbitingObject.render(viewCenter, vievCenterCoords, level, camera, partialTicks, stack, bufferbuilder, skyAxisRotation, absoluteCoords);
 		});
-		
+
 		// Renders objects in front of it
 		this.orbitingObjects.stream().forEach(orbitingObject ->
 		{

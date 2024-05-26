@@ -1,9 +1,8 @@
 package net.povstalec.stellarview.api.celestials.orbiting;
 
-import org.joml.Vector3f;
-
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Vector3f;
 
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
