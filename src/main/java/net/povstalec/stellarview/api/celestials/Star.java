@@ -274,6 +274,7 @@ public class Star
 			 */
 			double height = heightDeformation * (aLocation * cosRandom - bLocation * sinRandom);
 			double width = widthDeformation * (bLocation * cosRandom + aLocation * sinRandom);
+			//double width = starWidthFunction(aLocation, bLocation, sinRandom, cosRandom, sinTheta, cosTheta, sinPhi, cosPhi);
 			
 			double heightProjectionY = height * sinPhi; // Y projection of the Star's height
 			

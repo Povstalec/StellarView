@@ -1,5 +1,10 @@
 package net.povstalec.stellarview.api.celestials.orbiting;
 
+import org.joml.Vector3f;
+
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
@@ -90,7 +95,8 @@ public class Moon extends Planet
 	}
 
 	@Override
-	protected float[] getUV(ClientLevel level, Camera camera, float partialTicks)
+	protected float[] getUV(OrbitingCelestialObject viewCenter, Vector3f vievCenterCoords, ClientLevel level, Camera camera,
+			float partialTicks, PoseStack stack, BufferBuilder bufferbuilder, Vector3f skyAxisRotation, Vector3f coords)
 	{
 		long ticks = level.getDayTime() + phaseTickOffset;
 		
@@ -111,10 +117,12 @@ public class Moon extends Planet
 		{
 			super(VANILLA_MOON_TEXTURE, 20.0F);
 			this.blends();
+			this.flipUV();
 		}
 
 		@Override
-		protected float[] getUV(ClientLevel level, Camera camera, float partialTicks)
+		protected float[] getUV(OrbitingCelestialObject viewCenter, Vector3f vievCenterCoords, ClientLevel level, Camera camera,
+				float partialTicks, PoseStack stack, BufferBuilder bufferbuilder, Vector3f skyAxisRotation, Vector3f coords)
 		{
 			int phase = level.getMoonPhase();
 			int x = phase % 4;
@@ -134,10 +142,12 @@ public class Moon extends Planet
 		{
 			super(DEFAULT_MOON_TEXTURE, size);
 			this.halo(DEFAULT_MOON_HALO_TEXTURE, size);
+			this.flipUV();
 		}
 		
 		@Override
-		protected float[] getUV(ClientLevel level, Camera camera, float partialTicks)
+		protected float[] getUV(OrbitingCelestialObject viewCenter, Vector3f vievCenterCoords, ClientLevel level, Camera camera,
+				float partialTicks, PoseStack stack, BufferBuilder bufferbuilder, Vector3f skyAxisRotation, Vector3f coords)
 		{
 			int phase = level.getMoonPhase();
 			int x = phase % 4;

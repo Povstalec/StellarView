@@ -33,6 +33,8 @@ public abstract class CelestialObject
 	protected ResourceLocation haloTexture;
 	protected float haloSize;
 	protected boolean hasHalo = false;
+	
+	protected boolean flipUV = false;
 
 	protected boolean blends = false;
 	protected boolean blendsDuringDay = false;
@@ -58,6 +60,12 @@ public abstract class CelestialObject
 		this.haloTexture = haloTexture;
 		this.haloSize = haloSize;
 		this.hasHalo = true;
+		return this;
+	}
+	
+	public CelestialObject flipUV()
+	{
+		this.flipUV = true;
 		return this;
 	}
 	
@@ -94,7 +102,22 @@ public abstract class CelestialObject
 		return this.texture;
 	}
 	
-	protected float[] getUV(ClientLevel level, Camera camera, float partialTicks)
+	/**
+	 * Returns the current UV the texture should use.
+	 * In case you want to know the coordinates of the sun, it's always (0, 0, 0).
+	 * @param viewCenter Object from which you're looking at the sky
+	 * @param vievCenterCoords Absolute coordinates of the viewCenterObject
+	 * @param level Level in which the Player currently is
+	 * @param camera Camera of the Player
+	 * @param partialTicks Partial Ticks
+	 * @param stack Currently used PoseStack
+	 * @param bufferbuilder Currently used Buffer Builder
+	 * @param skyAxisRotation Rotation of the sky
+	 * @param coords Absolute coordinates of this object
+	 * @return
+	 */
+	protected float[] getUV(OrbitingCelestialObject viewCenter, Vector3f vievCenterCoords, ClientLevel level, Camera camera,
+			float partialTicks, PoseStack stack, BufferBuilder bufferbuilder, Vector3f skyAxisRotation, Vector3f coords)
 	{
 		return FULL_UV;
 	}
@@ -178,10 +201,22 @@ public abstract class CelestialObject
 			
 			RenderSystem.setShaderTexture(0, texture);
 	        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-	        bufferbuilder.vertex(lastMatrix, corner00[0], corner00[1], corner00[2]).uv(uv[0], uv[1]).endVertex();
-	        bufferbuilder.vertex(lastMatrix, corner10[0], corner10[1], corner10[2]).uv(uv[2], uv[1]).endVertex();
-	        bufferbuilder.vertex(lastMatrix, corner11[0], corner11[1], corner11[2]).uv(uv[2], uv[3]).endVertex();
-	        bufferbuilder.vertex(lastMatrix, corner01[0], corner01[1], corner01[2]).uv(uv[0], uv[3]).endVertex();
+	        
+	        if(flipUV)
+	        {
+		        bufferbuilder.vertex(lastMatrix, corner00[0], corner00[1], corner00[2]).uv(uv[0], uv[1]).endVertex();
+		        bufferbuilder.vertex(lastMatrix, corner10[0], corner10[1], corner10[2]).uv(uv[2], uv[1]).endVertex();
+		        bufferbuilder.vertex(lastMatrix, corner11[0], corner11[1], corner11[2]).uv(uv[2], uv[3]).endVertex();
+		        bufferbuilder.vertex(lastMatrix, corner01[0], corner01[1], corner01[2]).uv(uv[0], uv[3]).endVertex();
+	        }
+	        else
+	        {
+		        bufferbuilder.vertex(lastMatrix, corner00[0], corner00[1], corner00[2]).uv(uv[2], uv[1]).endVertex();
+		        bufferbuilder.vertex(lastMatrix, corner10[0], corner10[1], corner10[2]).uv(uv[0], uv[1]).endVertex();
+		        bufferbuilder.vertex(lastMatrix, corner11[0], corner11[1], corner11[2]).uv(uv[0], uv[3]).endVertex();
+		        bufferbuilder.vertex(lastMatrix, corner01[0], corner01[1], corner01[2]).uv(uv[2], uv[3]).endVertex();
+	        }
+	        
 	        BufferUploader.drawWithShader(bufferbuilder.end());
 		}
 	}
@@ -199,8 +234,8 @@ public abstract class CelestialObject
 		return coords;
 	}
 	
-	public void render(OrbitingCelestialObject viewCenter, Vector3f vievCenterCoords, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder,
-			Vector3f skyAxisRotation, Vector3f coords)
+	public void render(OrbitingCelestialObject viewCenter, Vector3f vievCenterCoords, ClientLevel level, Camera camera,
+			float partialTicks, PoseStack stack, BufferBuilder bufferbuilder, Vector3f skyAxisRotation, Vector3f coords)
 	{
 		if(!shouldRender(level, camera) || this == viewCenter)
 			return;
@@ -223,7 +258,7 @@ public abstract class CelestialObject
 			RenderSystem.defaultBlendFunc();
 		
 		Matrix4f lastMatrix = stack.last().pose();
-		float[] uv = getUV(level, camera, partialTicks);
+		float[] uv = getUV(viewCenter, vievCenterCoords, level, camera, partialTicks, stack, bufferbuilder, skyAxisRotation, coords);
 		float rotation = getRotation(level, partialTicks);
 		
 		Vector3f relative = findRelative(vievCenterCoords, coords);

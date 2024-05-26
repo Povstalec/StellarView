@@ -131,7 +131,7 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 				.addAtmosphere(new Planet.Atmosphere(
 								(ShootingStar) new ShootingStar().setRarityValue(OverworldConfig.shooting_star_chance),
 								(MeteorShower) new MeteorShower().setRarityValue(OverworldConfig.meteor_shower_chance)))
-				.addOrbitingObject(LUNA, 384400F, 360F / 8, (float) Math.toRadians(45), (float) Math.toRadians(-5.145), 0);
+				.addOrbitingObject(LUNA, 384400F, 360F / 8, (float) Math.toRadians(-22.5), (float) Math.toRadians(-5.145), 0);
 
 		private static final Planet MARS = (Planet) new Planet(Planet.MARS_TEXTURE, 0.8F)
 				.halo(Planet.MARS_HALO_TEXTURE, 0.8F);
@@ -173,7 +173,7 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 		// I added this as a treat. Really hard to find, both due to size and ridiculous inclination putting it far from the ecliptic,
 		// and perhaps amongst the stars of the galactic disc.
 		// Those who find this will surely be very happy, if they recognize it for what it is.
-		private static final Barycenter PLUTO_CHARON_BARYCENTER = (Barycenter) new Barycenter()
+		private static final Barycenter PLUTO_CHARON_BARYCENTER = (Barycenter) new Barycenter(Moon.PLUTO_TEXTURE, 30)
 				.addOrbitingObject(PLUTO, 2500 * 1168, 360F / 1.681F, 0, (float) Math.toRadians(0.001), (float) Math.toRadians(69))
 				.addOrbitingObject(CHARON, 2500 * 19640, 360F / 1.681F, 180, (float) Math.toRadians(0.001), (float) Math.toRadians(96));
 		
