@@ -138,15 +138,21 @@ public class Planet extends OrbitingCelestialObject
 
 	public int getPhase(Vector3f vievCenterCoords, Vector3f coords)
 	{
-		// Coordinates of the primary light source
+		//Vector3f lightSourceCoords = light source coords
+		//Vector3f vievCenterCoords = the observer's coords
+		//Vector3f coords = the target's coords, or the coords of this object
 		Vector3f lightSourceCoords = new Vector3f(0, 0, 0);
 
 		// Calculate distances
+		//   the distance from the observer to the light source
+		//   the distance from the observer to the target
+		//   the distance from the target to the light source
 		float distanceAS = vievCenterCoords.distance(lightSourceCoords);
 		float distanceAB = vievCenterCoords.distance(coords);
 		float distanceBS = coords.distance(lightSourceCoords);
 
 		// Calculate phase angle using the cosine formula
+		//   this outputs angle in degrees from 0° to 180°
 		float cosAngle = (float) Math.acos((distanceBS * distanceBS + distanceAB * distanceAB - distanceAS * distanceAS) / (2 * distanceBS * distanceAB));
 
 		// Simulate rotating everything, then set the sign of the angle based on the target's Z position
@@ -155,15 +161,15 @@ public class Planet extends OrbitingCelestialObject
 		// Additionally, this may stop functioning for single ticks if the Z coordinates of both bodies are symmetrical.
 		float dz = coords.z + vievCenterCoords.z;
 
-		int sign = (dz >= 0) ? 1 : -1;
+		// Angle range increased to -180° to 180°
+		cosAngle *= Math.signum(dz);
 
-		// Apply the sign to the angle
-		cosAngle *= sign;
-
-		// Determine phase
+		// cosAngle / 45 lowers the bounds from -180, 180 to -4, 4
+		// the result of that, % 8, sets the bounds to 0, 7
 		int phase = (int) (cosAngle / 45) % 8;
 		//TODO possibly fudge phase so full starts at -22.5°
 
+		// the bounds 0, 7 are used to index the phase.png file
 		return phase;
 	}
 
@@ -185,6 +191,8 @@ public class Planet extends OrbitingCelestialObject
 	protected float[] getUV(OrbitingCelestialObject viewCenter, Vector3f vievCenterCoords, ClientLevel level, Camera camera,
 							float partialTicks, PoseStack stack, BufferBuilder bufferbuilder, Vector3f skyAxisRotation, Vector3f coords)
 	{
+		//this is functionally identical to Moon.getUV(), except we get the source of phase from triangle math
+		// instead of from level
 		int phase = this.getPhase(vievCenterCoords, coords);
 
 		int x = phase % 4;
