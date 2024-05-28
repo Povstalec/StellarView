@@ -65,6 +65,7 @@ public class Moon extends Planet
 			super(VANILLA_MOON_TEXTURE, 20.0F);
 			this.halo(VANILLA_MOON_HALO_TEXTURE, 20.0F);
 			this.blends();
+			this.flipUV();
 		}
 
 		@Override
@@ -89,6 +90,7 @@ public class Moon extends Planet
 		{
 			super(DEFAULT_MOON_TEXTURE, size);
 			this.halo(DEFAULT_MOON_HALO_TEXTURE, size);
+			this.flipUV();
 		}
 		
 		@Override
