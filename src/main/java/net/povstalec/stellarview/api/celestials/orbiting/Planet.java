@@ -138,6 +138,7 @@ public class Planet extends OrbitingCelestialObject
 
 	public int getPhase(Vector3f vievCenterCoords, Vector3f coords)
 	{
+		/**
 		//Vector3f lightSourceCoords = light source coords
 		//Vector3f vievCenterCoords = the observer's coords
 		//Vector3f coords = the target's coords, or the coords of this object
@@ -167,10 +168,14 @@ public class Planet extends OrbitingCelestialObject
 		// cosAngle / 45 lowers the bounds from -180, 180 to -4, 4
 		// the result of that, % 8, sets the bounds to 0, 7
 		int phase = (int) (cosAngle / 45) % 8;
-		//TODO possibly fudge phase so full starts at -22.5°
 
 		// the bounds 0, 7 are used to index the phase.png file
 		return phase;
+		 */
+		// TODO rewrite this method so it actually works.
+		// I have simply found myself over my head with this shit. I'm bad a trig, and can't get it to work.
+		// This is the last thing that needs to be finished for planets to get phases, as far as I can tell.
+		return 0; //this line makes everything act as if nothing was changed.
 	}
 
 	@Override
