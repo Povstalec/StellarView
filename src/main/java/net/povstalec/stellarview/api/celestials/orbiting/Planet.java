@@ -20,40 +20,102 @@ import net.povstalec.stellarview.common.config.OverworldConfig;
 
 public class Planet extends OrbitingCelestialObject
 {
-	public static final ResourceLocation MERCURY_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/mercury.png");
-	public static final ResourceLocation MERCURY_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/mercury_halo.png");
+	public static final ResourceLocation MERCURY_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/mercury_phases.png");
+	public static final ResourceLocation MERCURY_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/mercury_halo_phases.png");
 	
-	public static final ResourceLocation VENUS_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/venus.png");
-	public static final ResourceLocation VENUS_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/venus_halo.png");
-	
-	public static final ResourceLocation EARTH_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/earth.png");
-	public static final ResourceLocation EARTH_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/earth_halo.png");
-	
-	public static final ResourceLocation MARS_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/mars.png");
-	public static final ResourceLocation MARS_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/mars_halo.png");
+	public static final ResourceLocation VENUS_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/venus_phases.png");
+	public static final ResourceLocation VENUS_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/venus_halo_phases.png");
 
-	public static final ResourceLocation VESTA_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/vesta.png");
-	public static final ResourceLocation VESTA_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/vesta_halo.png");
+	
+	public static final ResourceLocation EARTH_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/earth_phases.png");
+	public static final ResourceLocation EARTH_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/earth_halo_phases.png");
 
-	public static final ResourceLocation CERES_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/ceres.png");
-	public static final ResourceLocation CERES_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/ceres_halo.png");
+	public static final ResourceLocation DEFAULT_MOON_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/moon_phases.png");
+	public static final ResourceLocation DEFAULT_MOON_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/moon_halo_phases.png");
 
-	public static final ResourceLocation JUPITER_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/jupiter.png");
-	public static final ResourceLocation JUPITER_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/jupiter_halo.png");
 	
-	public static final ResourceLocation SATURN_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/saturn.png");
-	public static final ResourceLocation SATURN_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/saturn_halo.png");
+	public static final ResourceLocation MARS_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/mars_phases.png");
+	public static final ResourceLocation MARS_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/mars_halo_phases.png");
+
+
+	public static final ResourceLocation VESTA_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/vesta_phases.png");
+	public static final ResourceLocation VESTA_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/vesta_halo_phases.png");
+
+	public static final ResourceLocation CERES_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/ceres_phases.png");
+	public static final ResourceLocation CERES_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/ceres_halo_phases.png");
+
+
+	public static final ResourceLocation JUPITER_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/jupiter_phases.png");
+	public static final ResourceLocation JUPITER_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/jupiter_halo_phases.png");
+
+	public static final ResourceLocation IO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/io_phases.png");
+	public static final ResourceLocation IO_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/io_halo_phases.png");
+
+	public static final ResourceLocation EUROPA_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/europa_phases.png");
+	public static final ResourceLocation EUROPA_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/europa_halo_phases.png");
+
+	public static final ResourceLocation CALLISTO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/callisto_phases.png");
+	public static final ResourceLocation CALLISTO_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/callisto_halo_phases.png");
+
+	public static final ResourceLocation GANYMEDE_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/ganymede_phases.png");
+	public static final ResourceLocation GANYMEDE_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/ganymede_halo_phases.png");
+
 	
-	public static final ResourceLocation URANUS_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/uranus.png");
-	public static final ResourceLocation URANUS_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/uranus_halo.png");
+	public static final ResourceLocation SATURN_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/saturn_phases.png");
+	public static final ResourceLocation SATURN_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/saturn_halo_phases.png");
+
+	public static final ResourceLocation ENCELADUS_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/enceladus_phases.png");
+	public static final ResourceLocation ENCELADUS_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/enceladus_halo_phases.png");
+
+	public static final ResourceLocation TETHYS_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/tethys_phases.png");
+	public static final ResourceLocation TETHYS_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/tethys_halo_phases.png");
+
+	public static final ResourceLocation DIONE_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/dione_phases.png");
+	public static final ResourceLocation DIONE_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/dione_halo_phases.png");
+
+	public static final ResourceLocation RHEA_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/rhea_phases.png");
+	public static final ResourceLocation RHEA_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/rhea_halo_phases.png");
+
+	public static final ResourceLocation TITAN_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/titan_phases.png");
+	public static final ResourceLocation TITAN_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/titan_halo_phases.png");
+
+	public static final ResourceLocation IAPETUS_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/iapetus_phases.png");
+	public static final ResourceLocation IAPETUS_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/iapetus_halo_phases.png");
+
 	
-	public static final ResourceLocation NEPTUNE_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/neptune.png");
-	public static final ResourceLocation NEPTUNE_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet/neptune_halo.png");
+	public static final ResourceLocation URANUS_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/uranus_phases.png");
+	public static final ResourceLocation URANUS_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/uranus_halo_phases.png");
+
+	public static final ResourceLocation ARIEL_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/ariel_phases.png");
+	public static final ResourceLocation ARIEL_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/ariel_halo_phases.png");
+
+	public static final ResourceLocation UMBRIEL_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/umbriel_phases.png");
+	public static final ResourceLocation UMBRIEL_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/umbriel_halo_phases.png");
+
+	public static final ResourceLocation TITANIA_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/titania_phases.png");
+	public static final ResourceLocation TITANIA_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/titania_halo_phases.png");
+
+	public static final ResourceLocation OBERON_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/oberon_phases.png");
+	public static final ResourceLocation OBERON_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/oberon_halo_phases.png");
+
+	
+	public static final ResourceLocation NEPTUNE_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/neptune_phases.png");
+	public static final ResourceLocation NEPTUNE_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/neptune_halo_phases.png");
+
+	public static final ResourceLocation TRITON_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/triton_phases.png");
+	public static final ResourceLocation TRITON_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/triton_halo_phases.png");
+
+
+	public static final ResourceLocation PLUTO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/pluto_phases.png");
+	public static final ResourceLocation PLUTO_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/pluto_halo_phases.png");
+
+	public static final ResourceLocation CHARON_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/charon_phases.png");
+	public static final ResourceLocation CHARON_HALO_TEXTURE = new ResourceLocation(StellarView.MODID, "textures/environment/planet_phases/charon_halo_phases.png");
 	
 	private static final int TICKS_PER_DAY = 24000;
 	
 	public static final int EARTH_DAY_LENGTH = TICKS_PER_DAY;
-	
+
 	private Optional<Integer> rotationPeriod = Optional.empty();
 	private Optional<Atmosphere> atmosphere = Optional.empty();
 	
@@ -67,6 +129,85 @@ public class Planet extends OrbitingCelestialObject
 		super(texture, size);
 		if(rotationPeriod > 0)
 			this.rotationPeriod = Optional.of(rotationPeriod);
+	}
+
+	protected boolean hasPhases()
+	{
+		return true;
+	}
+
+	public int getPhase(Vector3f vievCenterCoords, Vector3f coords)
+	{
+		/**
+		//Vector3f lightSourceCoords = light source coords
+		//Vector3f vievCenterCoords = the observer's coords
+		//Vector3f coords = the target's coords, or the coords of this object
+		Vector3f lightSourceCoords = new Vector3f(0, 0, 0);
+
+		// Calculate distances
+		//   the distance from the observer to the light source
+		//   the distance from the observer to the target
+		//   the distance from the target to the light source
+		float distanceAS = vievCenterCoords.distance(lightSourceCoords);
+		float distanceAB = vievCenterCoords.distance(coords);
+		float distanceBS = coords.distance(lightSourceCoords);
+
+		// Calculate phase angle using the cosine formula
+		//   this outputs angle in degrees from 0° to 180°
+		float cosAngle = (float) Math.acos((distanceBS * distanceBS + distanceAB * distanceAB - distanceAS * distanceAS) / (2 * distanceBS * distanceAB));
+
+		// Simulate rotating everything, then set the sign of the angle based on the target's Z position
+		// If both the observer and the target have orbital inclinations of 90°, and if this means they spend their
+		//   whole orbits on the XY plane, such that their Z coordinates are always 0°, this will not function!
+		// Additionally, this may stop functioning for single ticks if the Z coordinates of both bodies are symmetrical.
+		float dz = coords.z + vievCenterCoords.z;
+
+		// Angle range increased to -180° to 180°
+		cosAngle *= Math.signum(dz);
+
+		// cosAngle / 45 lowers the bounds from -180, 180 to -4, 4
+		// the result of that, % 8, sets the bounds to 0, 7
+		int phase = (int) (cosAngle / 45) % 8;
+
+		// the bounds 0, 7 are used to index the phase.png file
+		return phase;
+		 */
+		// TODO rewrite this method so it actually works.
+		// I have simply found myself over my head with this shit. I'm bad a trig, and can't get it to work.
+		// This is the last thing that needs to be finished for planets to get phases, as far as I can tell.
+		return 0; //this line makes everything act as if nothing was changed.
+	}
+
+	@Override
+	/**
+	 * Returns the current UV the texture should use.
+	 * In case you want to know the coordinates of the sun, it's always (0, 0, 0).
+	 * @param viewCenter Object from which you're looking at the sky
+	 * @param vievCenterCoords Absolute coordinates of the viewCenterObject
+	 * @param level Level in which the Player currently is
+	 * @param camera Camera of the Player
+	 * @param partialTicks Partial Ticks
+	 * @param stack Currently used PoseStack
+	 * @param bufferbuilder Currently used Buffer Builder
+	 * @param skyAxisRotation Rotation of the sky
+	 * @param coords Absolute coordinates of this object
+	 * @return
+	 */
+	protected float[] getUV(OrbitingCelestialObject viewCenter, Vector3f vievCenterCoords, ClientLevel level, Camera camera,
+							float partialTicks, PoseStack stack, BufferBuilder bufferbuilder, Vector3f skyAxisRotation, Vector3f coords)
+	{
+		//this is functionally identical to Moon.getUV(), except we get the source of phase from triangle math
+		// instead of from level
+		int phase = this.getPhase(vievCenterCoords, coords);
+
+		int x = phase % 4;
+		int y = phase / 4 % 2;
+		float xStart = (float)(x + 0) / 4.0F;
+		float yStart = (float)(y + 0) / 2.0F;
+		float xEnd = (float)(x + 1) / 4.0F;
+		float yEnd = (float)(y + 1) / 2.0F;
+
+		return hasPhases() ? new float[] {xStart, yStart, xEnd, yEnd} : new float[] {0.0F, 0.0F, 0.25F, 0.5F};
 	}
 	
 	public Planet addAtmosphere(Atmosphere atmosphere)
