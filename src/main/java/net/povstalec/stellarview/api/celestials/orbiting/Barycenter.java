@@ -16,11 +16,11 @@ public class Barycenter extends OrbitingCelestialObject
 	{
 		super(texture, size);
 	}
-	
+
 	// Barycenter is invisible, no point in rendering it
 	@Override
 	public void render(OrbitingCelestialObject viewCenter, Vector3f vievCenterCoords, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder,
-			Vector3f skyAxisRotation, Vector3f parentCoords)
+					   Vector3f skyAxisRotation, Vector3f parentCoords)
 	{
 		Vector3f relativeCoords = getRelativeCartesianCoordinates(level, partialTicks);
 		Vector3f absoluteCoords = StellarCoordinates.absoluteVector(parentCoords, relativeCoords);
