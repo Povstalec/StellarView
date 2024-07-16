@@ -59,8 +59,7 @@ public class StellarViewEndEffects extends StellarViewSpecialEffects
 	
 	public StellarViewEndEffects()
 	{
-		super(new StellarViewSky(END)
-				.skybox(END_SKYBOX),
+		super(new StellarViewSky(END),
 				Float.NaN, false, DimensionSpecialEffects.SkyType.END, true, false);
 	}
 

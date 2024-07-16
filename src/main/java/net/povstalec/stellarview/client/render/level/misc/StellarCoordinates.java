@@ -2,6 +2,8 @@ package net.povstalec.stellarview.client.render.level.misc;
 
 import org.joml.Vector3f;
 
+import net.povstalec.stellarview.common.util.SphericalCoords;
+
 public class StellarCoordinates
 {
 	//============================================================================================
@@ -78,7 +80,7 @@ public class StellarCoordinates
 		return new double[] {x, y, z};
 	}
 	
-	public static float[] placeOnSphere(float offsetX, float offsetY, float r, double theta, double phi, double rotation)
+	public static Vector3f placeOnSphere(float offsetX, float offsetY, float r, double theta, double phi, double rotation)
 	{
 		double x = cartesianX(r, theta, phi);
 		double y = cartesianY(r, theta, phi);
@@ -95,7 +97,25 @@ public class StellarCoordinates
 		y += polarY * Math.sin(phi);
 		z += - polarY * Math.cos(phi) * Math.cos(theta) + polarX * Math.sin(theta);
 		
-		return new float[] {(float) x, (float) y, (float) z};
+		return new Vector3f((float) x, (float) y, (float) z);
+	}
+	
+	public static Vector3f placeOnSphere(float offsetX, float offsetY, SphericalCoords sphericalCoords, double rotation)
+	{
+		Vector3f cartesian = sphericalCoords.toCartesianF();
+		
+		double polarR = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
+		double polarPhi = Math.atan2(offsetY, offsetX);
+		polarPhi += rotation;
+		
+		double polarX = polarR * Math.cos(polarPhi);
+		double polarY = polarR * Math.sin(polarPhi);
+		
+		cartesian.x += - polarY * Math.cos(sphericalCoords.phi) * Math.sin(sphericalCoords.theta) - polarX * Math.cos(sphericalCoords.theta);
+		cartesian.y += polarY * Math.sin(sphericalCoords.phi);
+		cartesian.z += - polarY * Math.cos(sphericalCoords.phi) * Math.cos(sphericalCoords.theta) + polarX * Math.sin(sphericalCoords.theta);
+		
+		return cartesian;
 	}
 	
 	public static double spiralR(double r, double phi, double beta)

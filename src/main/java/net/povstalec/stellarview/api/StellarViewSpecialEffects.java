@@ -5,6 +5,7 @@ import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
 
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -14,6 +15,7 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.povstalec.stellarview.client.render.level.StellarViewSky;
+import net.povstalec.stellarview.client.resourcepack.ViewCenters;
 
 /**
  * Extend this to create your own custom Special Effects
@@ -55,8 +57,10 @@ public class StellarViewSpecialEffects extends DimensionSpecialEffects
 	@Override
 	public boolean renderSky(ClientLevel level, int ticks, float partialTick, PoseStack poseStack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
     {
-		this.skyRenderer.renderSky(level, partialTick, poseStack, camera, projectionMatrix, setupFog);
-        return true;
+		//ViewCenters.renderViewCenterSky(level.dimension().location(), level, partialTick, poseStack, Tesselator.getInstance().getBuilder());
+		//this.skyRenderer.renderSky(level, partialTick, poseStack, camera, projectionMatrix, setupFog);
+        //return true;
+        return ViewCenters.renderViewCenterSky(level, ticks, partialTick, poseStack, camera, projectionMatrix, isFoggy, setupFog);
     }
 	
 	/*@Override

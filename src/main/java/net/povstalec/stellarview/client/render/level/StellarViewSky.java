@@ -16,12 +16,10 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.ShaderInstance;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 import net.povstalec.stellarview.api.celestials.orbiting.OrbitingCelestialObject;
 import net.povstalec.stellarview.client.render.level.misc.StellarViewFogEffects;
 import net.povstalec.stellarview.client.render.level.misc.StellarViewSkyEffects;
-import net.povstalec.stellarview.client.render.level.misc.StellarViewSkybox;
 
 public class StellarViewSky implements StellarViewSkyEffects, StellarViewFogEffects
 {
@@ -33,7 +31,7 @@ public class StellarViewSky implements StellarViewSkyEffects, StellarViewFogEffe
 	@Nullable
 	protected VertexBuffer darkBuffer;
 	
-	protected StellarViewSkybox skybox = null;
+	//protected Skybox skybox = null;
 	
 	public StellarViewSky(OrbitingCelestialObject center)
 	{
@@ -43,11 +41,11 @@ public class StellarViewSky implements StellarViewSkyEffects, StellarViewFogEffe
 		this.darkBuffer = createDarkSky();
 	}
 	
-	public final StellarViewSky skybox(ResourceLocation texture)
+	/*public final StellarViewSky skybox(ResourceLocation texture)
 	{
-		this.skybox = new StellarViewSkybox(texture);
+		this.skybox = new Skybox(texture);
 		return this;
-	}
+	}*/
 	
 	
 	
@@ -60,8 +58,10 @@ public class StellarViewSky implements StellarViewSkyEffects, StellarViewFogEffe
 	{
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		
-		if(skybox != null)
-			skybox.render(level, partialTicks, stack, bufferbuilder, 0, 0, 0);
+		//if(skybox != null)
+		//	skybox.render(level, partialTicks, stack, bufferbuilder, 0, 0, 0);
+        
+        //TODO Space.renderStars(level, camera, partialTicks, stack, projectionMatrix, setupFog, bufferbuilder);
 		
         this.center.renderLocalSky(level, camera, partialTicks, stack, projectionMatrix, setupFog, bufferbuilder);
 	}

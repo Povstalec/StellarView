@@ -9,6 +9,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.povstalec.stellarview.common.config.StellarViewConfig;
+import net.povstalec.stellarview.common.util.TextureLayer;
 
 public class Star
 {
@@ -156,7 +157,7 @@ public class Star
 		SpectralType spectralType = SpectralType.randomSpectralType(seed);
 		int[] starColor = StellarViewConfig.uniform_star_color.get() ? new int[] {255, 255, 255} : 
 			new int[] {spectralType.red(), spectralType.green(), spectralType.blue()};
-
+		
 		double starSize = (double) spectralType.randomSize(seed); // This randomizes the Star size
 		double maxStarSize = StellarViewConfig.distance_star_size.get() ? starSize : 0.2 + starSize * 1 / 5;
 		double minStarSize = StellarViewConfig.distance_star_size.get() ? starSize : starSize * 3 / 5;
@@ -250,8 +251,8 @@ public class Star
 			 * Which corresponds to:
 			 * UV:	00	01	11	10
 			 */
-			double aLocation = (double) ((j & 2) - 1) * Mth.clamp(starSize * 20 * distance, minStarSize, maxStarSize); //starSize;
-			double bLocation = (double) ((j + 1 & 2) - 1) * Mth.clamp(starSize * 20 * distance, minStarSize, maxStarSize); //starSize;
+			double aLocation = (double) ((j & 2) - 1) * Mth.clamp(starSize * 200000 * distance, TextureLayer.MIN_VISUAL_SIZE, maxStarSize); //starSize;
+			double bLocation = (double) ((j + 1 & 2) - 1) * Mth.clamp(starSize * 200000 * distance, TextureLayer.MIN_VISUAL_SIZE, maxStarSize); //starSize;
 			
 			/* These are the values for cos(random) = sin(random)
 			 * (random is simply there to randomize the star rotation)

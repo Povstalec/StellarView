@@ -12,6 +12,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
+import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RegisterDimensionSpecialEffectsEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -22,6 +23,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.povstalec.stellarview.client.render.level.StellarViewEndEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewOverworldEffects;
+import net.povstalec.stellarview.client.resourcepack.ResourcepackReloadListener;
 import net.povstalec.stellarview.client.screens.config.ConfigScreen;
 import net.povstalec.stellarview.common.config.StellarViewConfig;
 import net.povstalec.stellarview.common.util.KeyBindings;
@@ -69,6 +71,13 @@ public class StellarView
         	event.register(StellarViewOverworldEffects.OVERWORLD_EFFECTS, overworld);
         	//event.register(StellarViewEndEffects.END_EFFECTS, end);
         }
+    	
+
+    	@SubscribeEvent
+        public static void registerClientReloadListener(RegisterClientReloadListenersEvent event)
+        {
+    		ResourcepackReloadListener.ReloadListener.registerReloadListener(event);
+        }
 
     	@SubscribeEvent
         public static void onKeyRegister(RegisterKeyMappingsEvent event)
@@ -100,4 +109,4 @@ public class StellarView
     	overworld.setupGalaxy();
     	end.setupGalaxy();
     }
-}
+}	

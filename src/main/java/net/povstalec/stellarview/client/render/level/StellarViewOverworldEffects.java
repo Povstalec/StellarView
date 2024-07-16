@@ -219,7 +219,7 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 	public StellarViewOverworldEffects()
 	{
 		super(new StellarViewSky(EARTH)
-				.skybox(OVERWORLD_SKYBOX),
+				/*.skybox(OVERWORLD_SKYBOX)*/,
 				192.0F, true, DimensionSpecialEffects.SkyType.NORMAL, false, false);
 	}
 	

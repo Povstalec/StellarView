@@ -11,7 +11,6 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.povstalec.stellarview.StellarView;
-import net.povstalec.stellarview.api.celestials.Star.SpectralType;
 import net.povstalec.stellarview.common.config.StellarViewConfig;
 
 public class MeteorShower extends SkyEffect

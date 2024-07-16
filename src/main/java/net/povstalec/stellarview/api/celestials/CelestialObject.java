@@ -192,10 +192,10 @@ public abstract class CelestialObject
 		if(uv == null || uv.length < 4)
 			uv = FULL_UV;
 		
-		float[] corner00 = StellarCoordinates.placeOnSphere(-size, -size, DEFAULT_DISTANCE, theta, phi, rotation);
-		float[] corner10 = StellarCoordinates.placeOnSphere(size, -size, DEFAULT_DISTANCE, theta, phi, rotation);
-		float[] corner11 = StellarCoordinates.placeOnSphere(size, size, DEFAULT_DISTANCE, theta, phi, rotation);
-		float[] corner01 = StellarCoordinates.placeOnSphere(-size, size, DEFAULT_DISTANCE, theta, phi, rotation);
+		Vector3f corner00 = StellarCoordinates.placeOnSphere(-size, -size, DEFAULT_DISTANCE, theta, phi, rotation);
+		Vector3f corner10 = StellarCoordinates.placeOnSphere(size, -size, DEFAULT_DISTANCE, theta, phi, rotation);
+		Vector3f corner11 = StellarCoordinates.placeOnSphere(size, size, DEFAULT_DISTANCE, theta, phi, rotation);
+		Vector3f corner01 = StellarCoordinates.placeOnSphere(-size, size, DEFAULT_DISTANCE, theta, phi, rotation);
 		
 		if(brightness > 0.0F)
 		{
@@ -206,17 +206,17 @@ public abstract class CelestialObject
 	        
 	        if(flipUV)
 	        {
-		        bufferbuilder.vertex(lastMatrix, corner00[0], corner00[1], corner00[2]).uv(uv[0], uv[1]).endVertex();
-		        bufferbuilder.vertex(lastMatrix, corner10[0], corner10[1], corner10[2]).uv(uv[2], uv[1]).endVertex();
-		        bufferbuilder.vertex(lastMatrix, corner11[0], corner11[1], corner11[2]).uv(uv[2], uv[3]).endVertex();
-		        bufferbuilder.vertex(lastMatrix, corner01[0], corner01[1], corner01[2]).uv(uv[0], uv[3]).endVertex();
+	        	bufferbuilder.vertex(lastMatrix, corner00.x, corner00.y, corner00.z).uv(uv[0], uv[1]).endVertex();
+	            bufferbuilder.vertex(lastMatrix, corner10.x, corner10.y, corner10.z).uv(uv[2], uv[1]).endVertex();
+	            bufferbuilder.vertex(lastMatrix, corner11.x, corner11.y, corner11.z).uv(uv[2], uv[3]).endVertex();
+	            bufferbuilder.vertex(lastMatrix, corner01.x, corner01.y, corner01.z).uv(uv[0], uv[3]).endVertex();
 	        }
 	        else
 	        {
-		        bufferbuilder.vertex(lastMatrix, corner00[0], corner00[1], corner00[2]).uv(uv[2], uv[1]).endVertex();
-		        bufferbuilder.vertex(lastMatrix, corner10[0], corner10[1], corner10[2]).uv(uv[0], uv[1]).endVertex();
-		        bufferbuilder.vertex(lastMatrix, corner11[0], corner11[1], corner11[2]).uv(uv[0], uv[3]).endVertex();
-		        bufferbuilder.vertex(lastMatrix, corner01[0], corner01[1], corner01[2]).uv(uv[2], uv[3]).endVertex();
+	        	bufferbuilder.vertex(lastMatrix, corner00.x, corner00.y, corner00.z).uv(uv[0], uv[3]).endVertex();
+	            bufferbuilder.vertex(lastMatrix, corner10.x, corner10.y, corner10.z).uv(uv[2], uv[3]).endVertex();
+	            bufferbuilder.vertex(lastMatrix, corner11.x, corner11.y, corner11.z).uv(uv[2], uv[1]).endVertex();
+	            bufferbuilder.vertex(lastMatrix, corner01.x, corner01.y, corner01.z).uv(uv[0], uv[1]).endVertex();
 	        }
 	        
 	        BufferUploader.drawWithShader(bufferbuilder.end());
