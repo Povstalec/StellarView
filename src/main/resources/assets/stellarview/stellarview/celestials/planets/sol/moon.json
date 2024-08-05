@@ -1,0 +1,54 @@
+{
+	"parent": "stellarview:planets/sol/earth",
+	"coords": { "x": {"ly": 0}, "y": {"ly": 0}, "z": {"ly": 0} },
+	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
+	"orbit_info":
+	{
+		"apoapsis": 405400,
+		"periapsis": 363228.9,
+		"orbital_period": 192000,
+		"argument_of_periapsis": 0,
+		"inclination": 0,
+		"longtitude_of_ascending_node": 0,
+		"epoch_mean_anomaly": 1502.35104
+	},
+	"texture_layers":
+	[
+		{
+			"texture": "stellarview:textures/environment/moon_halo_phases.png",
+			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
+			"blend": true,
+			"size": 7697847.735118539,
+			"rotation": 0,
+			"uv":
+			{
+				"phase_handler":
+				{
+					"ticks_per_phase": 24000,
+					"phase_tick_offset": 0,
+					"columns": 4,
+					"rows": 2
+				},
+				"flip_uv": true
+			}
+		},
+		{
+			"texture": "stellarview:textures/environment/moon_phases.png",
+			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
+			"blend": false,
+			"size": 7697847.735118539,
+			"rotation": 0,
+			"uv":
+			{
+				"phase_handler":
+				{
+					"ticks_per_phase": 24000,
+					"phase_tick_offset": 0,
+					"columns": 4,
+					"rows": 2
+				},
+				"flip_uv": true
+			}
+		}
+	]
+}

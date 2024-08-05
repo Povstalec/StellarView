@@ -31,12 +31,13 @@ import net.povstalec.stellarview.client.render.shader.StellarViewShaders;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 import net.povstalec.stellarview.common.util.SphericalCoords;
+import net.povstalec.stellarview.common.util.StarBuffer;
 import net.povstalec.stellarview.common.util.TextureLayer;
 
 public abstract class StarField extends SpaceObject
 {
 	@Nullable
-	protected VertexBuffer starBuffer;
+	protected StarBuffer starBuffer;
 	protected StarInfo starInfo;
 	
 	protected final long seed;
@@ -84,7 +85,7 @@ public abstract class StarField extends SpaceObject
 		if(starBuffer != null)
 			starBuffer.close();
 		
-		starBuffer = new VertexBuffer();
+		starBuffer = new StarBuffer();
 		Tesselator tesselator = Tesselator.getInstance();
 		BufferBuilder bufferBuilder = tesselator.getBuilder();
 		RenderSystem.setShader(GameRenderer::getPositionShader);
@@ -104,7 +105,7 @@ public abstract class StarField extends SpaceObject
 		if(starBuffer != null)
 			starBuffer.close();
 		
-		starBuffer = new VertexBuffer();
+		starBuffer = new StarBuffer();
 		Tesselator tesselator = Tesselator.getInstance();
 		BufferBuilder bufferBuilder = tesselator.getBuilder();
 		RenderSystem.setShader(GameRenderer::getPositionShader);

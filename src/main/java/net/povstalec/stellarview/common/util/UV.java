@@ -1,14 +1,35 @@
 package net.povstalec.stellarview.common.util;
 
+import javax.annotation.Nullable;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
 public class UV
 {
+	@Nullable
+	private UV.PhaseHandler phaseHandler;
+	
 	private final float u;
 	private final float v;
 	
-	public UV(float u, float v)
+	public static final Codec<UV> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    		Codec.FLOAT.fieldOf("u").forGetter(UV::u),
+    		Codec.FLOAT.fieldOf("v").forGetter(UV::v)
+			).apply(instance, UV::new));
+	
+	public UV(UV.PhaseHandler phaseHandler, float u, float v)
 	{
+		if(phaseHandler.doPhases())
+			this.phaseHandler = phaseHandler;
+		
 		this.u = u;
 		this.v = v;
+	}
+	
+	public UV(float u, float v)
+	{
+		this(UV.PhaseHandler.DEFAULT_PHASE_HANDLER, u, v);
 	}
 	
 	public float u()
@@ -16,23 +37,41 @@ public class UV
 		return u;
 	}
 	
+	public float u(long ticks)
+	{
+		return phaseHandler != null ? (float) (u + phaseHandler.u(ticks)) / phaseHandler.columns() : u;
+	}
+	
 	public float v()
 	{
 		return v;
+	}
+	
+	public float v(long ticks)
+	{
+		return phaseHandler != null ? (float) (v + phaseHandler.v(ticks)) / phaseHandler.rows() : v;
 	}
 	
 	
 	
 	public static class Quad
 	{
+		public static final Quad DEFAULT_QUAD_UV = new Quad(false);
+		
+		private final UV.PhaseHandler phaseHandler;
+		
 		//TODO Check if you're flipping them correctly, maybe Y should be flipped and not X, I don't remember
 		private final UV topLeft;
 		private final UV bottomLeft;
 		private final UV bottomRight;
 		private final UV topRight;
 		
-		public Quad(UV topLeft, UV bottomLeft, UV bottomRight, UV topRight, boolean flipped)
+		private final boolean flipped;
+		
+		public Quad(UV.PhaseHandler phaseHandler, UV topLeft, UV bottomLeft, UV bottomRight, UV topRight, boolean flipped)
 		{
+			this.phaseHandler = phaseHandler;
+			
 			if(flipped)
 			{
 				this.topLeft = topRight;
@@ -47,39 +86,58 @@ public class UV
 				this.bottomRight = bottomRight;
 				this.topRight = topRight;
 			}
+			
+			this.flipped = flipped;
 		}
 		
-		public Quad(UV topLeft, UV bottomLeft, UV bottomRight, UV topRight)
+		public Quad(UV.PhaseHandler phaseHandler, UV topLeft, UV bottomLeft, UV bottomRight, UV topRight)
 		{
-			this(topLeft, bottomLeft, bottomRight, topRight, false);
+			this(phaseHandler, topLeft, bottomLeft, bottomRight, topRight, false);
 		}
 		
-		public Quad(float topLeftX, float topLeftY, float bottomRightX, float bottomRightY, boolean flipped)
+		public Quad(UV.PhaseHandler phaseHandler, float topLeftX, float topLeftY, float bottomRightX, float bottomRightY, boolean flipped)
 		{
+			this.phaseHandler = phaseHandler;
+			
 			if(flipped)
 			{
-				this.topLeft = new UV(bottomRightX, topLeftY);
-				this.bottomLeft = new UV(bottomRightX, bottomRightY);
-				this.bottomRight = new UV(topLeftX, bottomRightY);
-				this.topRight = new UV(topLeftX, topLeftY);
+				this.topLeft = new UV(phaseHandler, bottomRightX, topLeftY);
+				this.bottomLeft = new UV(phaseHandler, bottomRightX, bottomRightY);
+				this.bottomRight = new UV(phaseHandler, topLeftX, bottomRightY);
+				this.topRight = new UV(phaseHandler, topLeftX, topLeftY);
 			}
 			else
 			{
-				this.topLeft = new UV(topLeftX, topLeftY);
-				this.bottomLeft = new UV(topLeftX, bottomRightY);
-				this.bottomRight = new UV(bottomRightX, bottomRightY);
-				this.topRight = new UV(bottomRightX, topLeftY);
+				this.topLeft = new UV(phaseHandler, topLeftX, topLeftY);
+				this.bottomLeft = new UV(phaseHandler, topLeftX, bottomRightY);
+				this.bottomRight = new UV(phaseHandler, bottomRightX, bottomRightY);
+				this.topRight = new UV(phaseHandler, bottomRightX, topLeftY);
 			}
+			
+			this.flipped = flipped;
 		}
 		
-		public Quad(float topLeftX, float topLeftY, float bottomRightX, float bottomRightY)
+		public Quad(UV.PhaseHandler phaseHandler, float topLeftX, float topLeftY, float bottomRightX, float bottomRightY)
 		{
-			this(bottomRightY, bottomRightY, bottomRightY, bottomRightY, false);
+			this(phaseHandler, bottomRightY, bottomRightY, bottomRightY, bottomRightY, false);
+		}
+		
+		public static final Codec<UV.Quad> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+	    		PhaseHandler.CODEC.optionalFieldOf("phase_handler", PhaseHandler.DEFAULT_PHASE_HANDLER).forGetter((quad) -> quad.phaseHandler),
+	    		Codec.BOOL.fieldOf("flip_uv").forGetter((quad) -> quad.flipped)
+				).apply(instance, UV.Quad::new));
+		
+		// Phase dependant Quad UV
+		public Quad(UV.PhaseHandler phaseHandler, boolean flipped)
+		{
+			this(phaseHandler, 0, 0, 1, 1, flipped);
 		}
 		
 		// Full quad
 		public Quad(boolean flipped)
 		{
+			this.phaseHandler = UV.PhaseHandler.DEFAULT_PHASE_HANDLER;
+			
 			if(flipped)
 			{
 				this.topLeft = new UV(1, 0);
@@ -94,6 +152,8 @@ public class UV
 				this.bottomRight = new UV(1, 1);
 				this.topRight = new UV(1, 0);
 			}
+			
+			this.flipped = flipped;
 		}
 		
 		public UV topLeft()
@@ -115,5 +175,70 @@ public class UV
 		{
 			return topRight;
 		}
+	}
+	
+	public static class PhaseHandler
+	{
+		private final int ticksPerPhase;
+		private final int phaseTickOffset;
+		private final int columns;
+		private final int rows;
+		
+		private final int totalPhases;
+		private final int tickPeriod;
+		
+		private final boolean doPhases;
+		
+		public static final PhaseHandler DEFAULT_PHASE_HANDLER = new PhaseHandler(24000, 0, 1, 1);
+		
+		public static final Codec<PhaseHandler> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+	    		Codec.intRange(1, Integer.MAX_VALUE).fieldOf("ticks_per_phase").forGetter((phaseHandler) -> phaseHandler.ticksPerPhase),
+	    		Codec.INT.optionalFieldOf("phase_tick_offset", 0).forGetter((phaseHandler) -> phaseHandler.phaseTickOffset),
+	    		Codec.INT.fieldOf("columns").forGetter((phaseHandler) -> phaseHandler.columns),
+	    		Codec.INT.fieldOf("rows").forGetter((phaseHandler) -> phaseHandler.rows)
+				).apply(instance, PhaseHandler::new));
+	    
+	    public PhaseHandler(int ticksPerPhase, int phaseTickOffset, int columns, int rows)
+	    {
+			this.ticksPerPhase = ticksPerPhase;
+			this.phaseTickOffset = phaseTickOffset;
+			this.columns = columns;
+			this.rows = rows;
+			
+			this.totalPhases = columns * rows;
+			this.tickPeriod = ticksPerPhase * totalPhases;
+			
+			this.doPhases = this.totalPhases != 1;
+	    }
+	    
+	    public int phase(long ticks)
+	    {
+			return (int) ((ticks + phaseTickOffset) % tickPeriod * totalPhases) / tickPeriod;
+	    }
+	    
+	    public int u(long ticks)
+	    {
+	    	return phase(ticks) % columns;
+	    }
+	    
+	    public int v(long ticks)
+	    {
+	        return phase(ticks) / columns % rows;
+	    }
+	    
+	    public int rows()
+	    {
+	    	return rows;
+	    }
+	    
+	    public int columns()
+	    {
+	        return columns;
+	    }
+	    
+	    public boolean doPhases()
+	    {
+	    	return doPhases;
+	    }
 	}
 }

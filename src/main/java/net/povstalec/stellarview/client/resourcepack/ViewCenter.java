@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -197,7 +198,7 @@ public class ViewCenter implements StellarViewSkyEffects, StellarViewFogEffects
 		coords = viewCenter.getCoords();
 		
 		stack.pushPose();
-
+		
 		stack.mulPose(Axis.YP.rotationDegrees((float) axisRotation.yAxis)); //TODO Rotation of the sky depending on where you are
 		stack.mulPose(Axis.ZP.rotationDegrees((float) axisRotation.zAxis)); //TODO Rotation of the sky because you're on the surface
 		stack.mulPose(Axis.XP.rotationDegrees((float) axisRotation.xAxis)); //TODO Rotation of the planet
@@ -211,10 +212,10 @@ public class ViewCenter implements StellarViewSkyEffects, StellarViewFogEffects
 		return true;
 	}
 	
-	public void renderSkyObjects(ClientLevel level, float partialTicks, PoseStack stack, Camera camera, 
+	public void renderSkyObjects(SpaceObject masterParent, ClientLevel level, float partialTicks, PoseStack stack, Camera camera, 
 			Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder)
 	{
-		Space.render(this, level, camera, partialTicks, stack, projectionMatrix, isFoggy, setupFog, bufferbuilder);
+		Space.render(this, masterParent, level, camera, partialTicks, stack, projectionMatrix, isFoggy, setupFog, bufferbuilder);
 	}
 	
 	public boolean renderSky(ClientLevel level, int ticks, float partialTicks, PoseStack stack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)

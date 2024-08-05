@@ -9,8 +9,10 @@
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": true,
 			"size": 4488626469,
+			"min_size": 0.5,
+			"clamp_at_min_size": true,
 			"rotation": 0,
-			"flip_uv": false
+			"uv": { "flip_uv": false }
 		}
 	]
 }

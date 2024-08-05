@@ -107,7 +107,7 @@ public abstract class MeteorEffect
         stack.mulPose(Axis.ZP.rotationDegrees(zRotation));
         stack.mulPose(Axis.XP.rotationDegrees(xRotation));
 		
-		meteorType.render(bufferbuilder, stack.last().pose(), SPHERICAL_START, getBrightness(level, camera, partialTicks), mulSize, addRotation);
+		meteorType.render(bufferbuilder, stack.last().pose(), SPHERICAL_START, level.getDayTime(), getBrightness(level, camera, partialTicks), mulSize, addRotation);
 		stack.popPose();
 	}
 	
@@ -137,11 +137,11 @@ public abstract class MeteorEffect
 			return weight;
 		}
 		
-		public final void render(BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, float brightness, float mulSize, float addRotation)
+		public final void render(BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, float brightness, float mulSize, float addRotation)
 		{
 			for(TextureLayer textureLayer : textureLayers)
 			{
-				textureLayer.render(bufferbuilder, lastMatrix, sphericalCoords, brightness, mulSize, addRotation);
+				textureLayer.render(bufferbuilder, lastMatrix, sphericalCoords, ticks, brightness, mulSize, addRotation);
 			}
 		}
 	}

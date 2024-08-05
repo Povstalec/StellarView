@@ -31,7 +31,6 @@ public class TextureLayer
 	private final double rotation;
 	
 	private final UV.Quad uv;
-	private final boolean flipUV;
     
     public static final Codec<TextureLayer> CODEC = RecordCodecBuilder.create(instance -> instance.group(
     		ResourceLocation.CODEC.fieldOf("texture").forGetter(TextureLayer::texture),
@@ -45,12 +44,12 @@ public class TextureLayer
     		
     		Codec.DOUBLE.fieldOf("rotation").forGetter(TextureLayer::rotation),
     		
-    		Codec.BOOL.optionalFieldOf("flip_uv", false).forGetter(TextureLayer::flipUV)
+    		UV.Quad.CODEC.optionalFieldOf("uv", UV.Quad.DEFAULT_QUAD_UV).forGetter(TextureLayer::uv)
 			).apply(instance, TextureLayer::new));
 	
 	public TextureLayer(ResourceLocation texture, Color.IntRGBA rgba, boolean blend,
 		double size, double minSize, boolean clampAtMinSize,
-		double rotation, boolean flipUV)
+		double rotation, UV.Quad uv)
 	{
 		this.texture = texture;
 		this.rgba = rgba;
@@ -62,10 +61,7 @@ public class TextureLayer
 		this.clampAtMinSize = clampAtMinSize;
 		
 		this.rotation = Math.toRadians(rotation);
-		
-		this.flipUV = flipUV;
-		
-		uv = new UV.Quad(flipUV); //TODO make sure this can be changed in the json files too
+		this.uv = uv;
 	}
 	
 	public ResourceLocation texture()
@@ -113,24 +109,19 @@ public class TextureLayer
 		return (float) (rotation + addRotation);
 	}
 	
-	public boolean flipUV()
-	{
-		return flipUV;
-	}
-	
 	public UV.Quad uv()
 	{
 		return uv;
 	}
 	
-	public void render(BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, float brightness, double mulSize, double addRotation)
+	public void render(BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, float brightness, double mulSize, double addRotation)
 	{
 		if(brightness <= 0.0F || this.rgba().alpha() <= 0)
 			return;
 		
 		float size = this.mulSize(mulSize);
 		
-		if(size < minSize && clampAtMinSize)
+		if(size < minSize)
 		{
 			if(clampAtMinSize)
 				size = (float) minSize;
@@ -155,19 +146,19 @@ public class TextureLayer
 		RenderSystem.setShaderTexture(0, this.texture());
         bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
         
-        bufferbuilder.vertex(lastMatrix, corner00.x, corner00.y, corner00.z).uv(this.uv().topRight().u(), this.uv().topRight().v()).endVertex();
-        bufferbuilder.vertex(lastMatrix, corner10.x, corner10.y, corner10.z).uv(this.uv().bottomRight().u(), this.uv().bottomRight().v()).endVertex();
-        bufferbuilder.vertex(lastMatrix, corner11.x, corner11.y, corner11.z).uv(this.uv().bottomLeft().u(), this.uv().bottomLeft().v()).endVertex();
-        bufferbuilder.vertex(lastMatrix, corner01.x, corner01.y, corner01.z).uv(this.uv().topLeft().u(), this.uv().topLeft().v()).endVertex();
+        bufferbuilder.vertex(lastMatrix, corner00.x, corner00.y, corner00.z).uv(this.uv().topRight().u(ticks), this.uv().topRight().v(ticks)).endVertex();
+        bufferbuilder.vertex(lastMatrix, corner10.x, corner10.y, corner10.z).uv(this.uv().bottomRight().u(ticks), this.uv().bottomRight().v(ticks)).endVertex();
+        bufferbuilder.vertex(lastMatrix, corner11.x, corner11.y, corner11.z).uv(this.uv().bottomLeft().u(ticks), this.uv().bottomLeft().v(ticks)).endVertex();
+        bufferbuilder.vertex(lastMatrix, corner01.x, corner01.y, corner01.z).uv(this.uv().topLeft().u(ticks), this.uv().topLeft().v(ticks)).endVertex();
         
         BufferUploader.drawWithShader(bufferbuilder.end());
         
         RenderSystem.defaultBlendFunc();
 	}
 	
-	public void render(BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, float brightness)
+	public void render(BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, float brightness)
 	{
-		this.render(bufferbuilder, lastMatrix, sphericalCoords, brightness, 1, 0);
+		this.render(bufferbuilder, lastMatrix, sphericalCoords, ticks, brightness, 1, 0);
 	}
 	
 	@Override

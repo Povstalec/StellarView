@@ -17,7 +17,7 @@ public class SpaceCoords
 	
 	public static final double LIGHT_SPEED = 299_792.458;
 	
-	public static final SpaceCoords NULL_COORDS = new SpaceCoords(0, 0, 0);
+	public static final SpaceCoords NULL_COORDS = new SpaceCoords();
     
     public static final Codec<SpaceCoords> CODEC = RecordCodecBuilder.create(instance -> instance.group(
     		SpaceDistance.CODEC.fieldOf(X).forGetter(SpaceCoords::x),
@@ -54,6 +54,11 @@ public class SpaceCoords
 	public SpaceCoords(Vector3f vector)
 	{
 		this(0, 0, 0, vector.x, vector.y, vector.z);
+	}
+	
+	public SpaceCoords()
+	{
+		this(0, 0, 0, 0, 0, 0);
 	}
 	
 	//============================================================================================
@@ -163,14 +168,17 @@ public class SpaceCoords
 	
 	public static class SpaceDistance
 	{
+		public static final String LY = "ly";
+		public static final String KM = "km";
+		
 		private long ly; // Light Years
 		private double km; // Kilometers
 		
 		public static final Codec<SpaceDistance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 	    		// Coordinates in Light Years
-				Codec.LONG.fieldOf("ly").forGetter(SpaceDistance::ly),
+				Codec.LONG.optionalFieldOf(LY, 0L).forGetter(SpaceDistance::ly),
 				// Coordinates in Kilometers
-				Codec.DOUBLE.optionalFieldOf("km", 0D).forGetter(SpaceDistance::km)
+				Codec.DOUBLE.optionalFieldOf(KM, 0D).forGetter(SpaceDistance::km)
 				).apply(instance, SpaceDistance::new));
 		
 		public SpaceDistance(long lightYears, double kilometers)

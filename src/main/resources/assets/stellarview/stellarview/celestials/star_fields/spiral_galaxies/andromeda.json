@@ -9,7 +9,7 @@
 			"blend": true,
 			"size": 800,
 			"rotation": 0,
-			"flip_uv": false
+			"uv": { "flip_uv": false }
 		}
 	],
 	

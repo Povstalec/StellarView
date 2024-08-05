@@ -2,7 +2,6 @@ package net.povstalec.stellarview.client.resourcepack;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
 
-import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.povstalec.stellarview.common.config.StellarViewConfig;
 import net.povstalec.stellarview.common.util.SpaceCoords;
@@ -24,7 +23,7 @@ public class StarInfo
 	public StarInfo(int stars)
 	{
 		this.starCoords = new double[stars][3];
-		this.starSizes = new double[stars][2];
+		this.starSizes = new double[stars][3];
 
 		this.deformations = new double[stars][2];
 		
@@ -73,7 +72,7 @@ public class StarInfo
 		
 		starSizes[i][0] = (double) spectralType.randomSize(seed); // This randomizes the Star size
 		starSizes[i][1] = StellarViewConfig.distance_star_size.get() ? starSizes[i][0] : 0.2 + starSizes[i][0] * 1 / 5;
-		//double minStarSize = StellarViewConfig.distance_star_size.get() ? starSize : starSize * 3 / 5;
+		starSizes[i][2] = StellarViewConfig.distance_star_size.get() ? starSizes[i][0] : starSizes[i][0] * 3 / 5;
 		//starSizes[i][0] = Mth.clamp(starSize * 200000 * distance, TextureLayer.MIN_VISUAL_SIZE, maxStarSize);
 		
 		// Set up color and alpha

@@ -97,7 +97,7 @@ public abstract class SpaceObject
 	{
 		if(child.parent != null)
 		{
-			StellarView.LOGGER.error(this.location + " already has a parent");
+			StellarView.LOGGER.error(this.toString() + " already has a parent");
 			return;
 		}
 		
@@ -119,13 +119,13 @@ public abstract class SpaceObject
 	
 	
 	
-	protected void renderTextureLayers(BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, float sizeMultiplier, float brightness)
+	protected void renderTextureLayers(BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, float sizeMultiplier, float brightness)
 	{
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		
 		for(TextureLayer textureLayer : textureLayers)
 		{
-			textureLayer.render(bufferbuilder, lastMatrix, sphericalCoords, brightness, sizeMultiplier, 0);
+			textureLayer.render(bufferbuilder, lastMatrix, sphericalCoords, ticks, brightness, sizeMultiplier, 0);
 		}
 	}
 	
@@ -134,24 +134,34 @@ public abstract class SpaceObject
 			Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder, 
 			Vector3f parentVector)
 	{
-		Vector3f potitionVector = getPosition(level.getDayTime()).add(parentVector); // Handles orbits 'n stuff
+		long ticks = level.getDayTime();
+		
+		Vector3f positionVector = getPosition(ticks).add(parentVector); // Handles orbits 'n stuff
 		
 		if(!viewCenter.objectEquals(this))
 		{
 			// Add parent vector to current coords
-			SpaceCoords coords = getCoords().add(potitionVector);
+			SpaceCoords coords = getCoords().add(positionVector);
 			
 			// Subtract coords of this from View Center coords to get relative coords
 			SphericalCoords sphericalCoords = coords.skyPosition(viewCenter.getCoords());
 			
 			double distance = sphericalCoords.r;
 			sphericalCoords.r = DEFAULT_DISTANCE;
-			renderTextureLayers(bufferbuilder, stack.last().pose(), sphericalCoords, sizeMultiplier((float) distance), 1); //TODO Brightness
-		}
-		
-		for(SpaceObject child : children)
-		{
-			child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, parentVector);
+			
+			// Render children behind the parent
+			/*for(SpaceObject child : children) //TODO
+			{
+				child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, potitionVector);
+			}*/
+			
+			renderTextureLayers(bufferbuilder, stack.last().pose(), sphericalCoords, ticks, sizeMultiplier((float) distance), 1); //TODO Brightness
+			
+			// Render children in front of the parent
+			for(SpaceObject child : children)
+			{
+				child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, positionVector);
+			}
 		}
 	}
 	
@@ -164,7 +174,7 @@ public abstract class SpaceObject
 		if(parent != null)
 			parent.renderFrom(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder);
 		else
-			viewCenter.renderSkyObjects(level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder);
+			viewCenter.renderSkyObjects(this, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder);
 	}
 	
 	@Override

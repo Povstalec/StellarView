@@ -62,56 +62,57 @@ public class OrbitingObject extends SpaceObject
 	public static class OrbitInfo
 	{
 		public static final Codec<OrbitInfo> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-				Codec.FLOAT.fieldOf("apoapsis").forGetter(OrbitInfo::apoapsis),
-				Codec.FLOAT.fieldOf("periapsis").forGetter(OrbitInfo::periapsis),
+				Codec.floatRange(1, Float.MAX_VALUE).fieldOf("apoapsis").forGetter(OrbitInfo::apoapsis),
+				Codec.floatRange(1, Float.MAX_VALUE).fieldOf("periapsis").forGetter(OrbitInfo::periapsis),
 				
-				Codec.FLOAT.fieldOf("apoapsis_velocity").forGetter(OrbitInfo::periapsisVelocity),
-				Codec.FLOAT.fieldOf("periapsis_velocity").forGetter(OrbitInfo::apoapsisVelocity),
+				Codec.LONG.fieldOf("orbital_period").forGetter(OrbitInfo::orbitalPeriod),
 				
 				Codec.FLOAT.optionalFieldOf("argument_of_periapsis", 0F).forGetter(OrbitInfo::argumentOfPeriapsis),
 				
 				Codec.FLOAT.optionalFieldOf("inclination", 0F).forGetter(OrbitInfo::inclination),
 				Codec.FLOAT.optionalFieldOf("longtitude_of_ascending_node", 0F).forGetter(OrbitInfo::longtitudeOfAscendingNode),
 				
-				Codec.FLOAT.optionalFieldOf("mean_anomaly", 0f).forGetter(OrbitInfo::meanAnomaly),
-				Codec.floatRange(0, 1).optionalFieldOf("eccentricity", 0f).forGetter(OrbitInfo::eccentricity)
+				Codec.FLOAT.optionalFieldOf("epoch_mean_anomaly", 0f).forGetter(OrbitInfo::epochMeanAnomaly)
 				).apply(instance, OrbitInfo::new));
 		
 		private final float apoapsis;
 		private final float periapsis;
 		
-		private final float apoapsisVelocity;
-		private final float periapsisVelocity;
+		private final long orbitalPeriod;
 		
 		private final float argumentOfPeriapsis;
 		
 		private final float inclination;
 		private final float longtitudeOfAscendingNode;
 		
-		private final float meanAnomaly;
+		private final float epochMeanAnomaly;
+		
+		private final float sweep;
+		
 		private final float eccentricity;
 		
 		private final Matrix4f orbitMatrix;
 		
 		public OrbitInfo(float apoapsis, float periapsis,
-				float apoapsisVelocity, float periapsisVelocity,
+				long orbitalPeriod,
 				float argumentOfPeriapsis,
 				float inclination, float longtitudeOfAscendingNode,
-				float meanAnomaly, float eccentricity)
+				float meanAnomaly)
 		{
 			this.apoapsis = apoapsis;
 			this.periapsis = periapsis;
 			
-			this.apoapsisVelocity = apoapsisVelocity;
-			this.periapsisVelocity = periapsisVelocity;
+			this.orbitalPeriod = orbitalPeriod;
 
-			this.argumentOfPeriapsis = argumentOfPeriapsis;
+			this.argumentOfPeriapsis = (float) Math.toRadians(argumentOfPeriapsis);
 			
-			this.inclination = inclination;
-			this.longtitudeOfAscendingNode = longtitudeOfAscendingNode;
+			this.inclination = (float) Math.toRadians(inclination);
+			this.longtitudeOfAscendingNode = (float) Math.toRadians(longtitudeOfAscendingNode);
 			
-			this.meanAnomaly = meanAnomaly;
-			this.eccentricity = eccentricity;
+			this.epochMeanAnomaly = (float) Math.toRadians(meanAnomaly);
+			this.sweep = (float) ((2 * Math.PI) / orbitalPeriod);
+			
+			this.eccentricity = (apoapsis - periapsis) / (apoapsis + periapsis);
 			
 			this.orbitMatrix = orbitMatrix();
 		}
@@ -126,14 +127,9 @@ public class OrbitingObject extends SpaceObject
 			return periapsis;
 		}
 		
-		public float apoapsisVelocity()
+		public long orbitalPeriod()
 		{
-			return apoapsisVelocity;
-		}
-		
-		public float periapsisVelocity()
-		{
-			return periapsisVelocity;
+			return orbitalPeriod;
 		}
 		
 		public float argumentOfPeriapsis()
@@ -151,9 +147,9 @@ public class OrbitingObject extends SpaceObject
 			return longtitudeOfAscendingNode;
 		}
 		
-		public float meanAnomaly()
+		public float epochMeanAnomaly()
 		{
-			return meanAnomaly;
+			return epochMeanAnomaly;
 		}
 		
 		public float eccentricity()
@@ -165,35 +161,40 @@ public class OrbitingObject extends SpaceObject
 		{
 			Vector3f orbitVector = new Vector3f(INITIAL_ORBIT_VECTOR);
 			
-			orbitVector = orbitVector.mulProject(movementMatrix(getOrbitProgress(ticks)).mul(orbitMatrix));
+			float trueAnomaly = (float) eccentricAnomaly(ticks);
 			
-			//System.out.println(orbitVector);
+			orbitVector = orbitVector.mulProject(movementMatrix(trueAnomaly)).mulProject(orbitMatrix);
+			
 			return orbitVector;
 		}
 		
-		public float getOrbitProgress(long ticks)
+		public double meanAnomaly(long ticks)
 		{
-			//System.out.println(ticks);
-			return (float) (2 * Math.PI * (ticks / 24000F)); //TODO
+			return epochMeanAnomaly + sweep * ticks;
+		}
+		
+		public double eccentricAnomaly(long ticks)
+		{
+			return approximateEccentricAnomaly(eccentricity, meanAnomaly(ticks), 4); // 4 chosen as an arbitrary number
 		}
 		
 		// Moves a point along a unit circle, starting from the mean anomaly
 		public Matrix4f movementMatrix(float orbitProgress)
 		{
-			return new Matrix4f().rotate(Axis.YP.rotation(meanAnomaly + orbitProgress));
+			return new Matrix4f().rotate(Axis.YP.rotation(epochMeanAnomaly + orbitProgress));
 		}
 		
 		// Reference direction is positive X axis and reference plane is the XZ plane
 		public Matrix4f orbitMatrix()
 		{
 			// Radius of a circle with the diameter of apoapsis + periapsis
-			float radius = (apoapsis + periapsis) / 2;
+			float semiMajorAxis = (apoapsis + periapsis) / 2;
 			
-			Matrix4f scaleMatrix = new Matrix4f().scale(radius, radius, radius);
+			Matrix4f scaleMatrix = new Matrix4f().scale(semiMajorAxis, semiMajorAxis, semiMajorAxis);
 			
 			Matrix4f eccentricityMatrix = new Matrix4f().scale(1, 1, 1 - eccentricity);
 			
-			Matrix4f offsetMatrix = new Matrix4f().translate(new Vector3f(radius - periapsis, 0, 0));
+			Matrix4f offsetMatrix = new Matrix4f().translate(new Vector3f(0, 0, semiMajorAxis - periapsis));
 			
 			Matrix4f inclinationMatrix = new Matrix4f().rotate(Axis.ZP.rotation(inclination));
 			
@@ -205,6 +206,35 @@ public class OrbitingObject extends SpaceObject
 		public Matrix4f getOrbitMatrix()
 		{
 			return orbitMatrix;
+		}
+
+		/**
+		 * Approximate E (Eccentric Anomaly) for a given
+		 * e (eccentricity) and M (Mean Anomaly)
+		 * where e < 1 and E and M are given in radians
+		 * 
+		 * This is performed by finding the root of the
+		 * function f(E) = E - e*sin(E) - M(t)
+		 * via Newton's method, where the derivative of
+		 * f(E) with respect to E is 
+		 * f'(E) = 1 - e*cos(E)
+		 * 
+		 * @param eccentricity
+		 * @param meanAnomaly
+		 * @param iterations
+		 * @return
+		 */
+		public static double approximateEccentricAnomaly(double eccentricity, double meanAnomaly, int iterations)
+		{
+			double sinMeanAnomaly = Math.sin(meanAnomaly);
+			
+			double E = meanAnomaly + eccentricity * ( sinMeanAnomaly / (1 - Math.sin(meanAnomaly + eccentricity) + sinMeanAnomaly) );
+			
+			for (int i = 0; i < iterations; i++)
+			{
+				E = E - (E - eccentricity * Math.sin(E) - meanAnomaly) / (1 - eccentricity * Math.cos(E));
+			}
+			return E;
 		}
 	}
 }

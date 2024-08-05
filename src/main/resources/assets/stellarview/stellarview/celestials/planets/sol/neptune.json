@@ -1,36 +1,35 @@
 {
 	"parent": "stellarview:stars/sol",
-	"coords": { "x": {"ly": 0}, "y": {"ly": 0, "km": 0}, "z": {"ly": 0, "km": 0} },
+	"coords": { "x": {"ly": 0}, "y": {"ly": 0}, "z": {"ly": 0} },
 	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
 	"orbit_info":
 	{
-		"apoapsis": 100,
-		"periapsis": 100,
-		"apoapsis_velocity": 10,
-		"periapsis_velocity": 10,
+		"apoapsis": 4500000000,
+		"periapsis": 4500000000,
+		"orbital_period": 380160000,
 		"argument_of_periapsis": 0,
 		"inclination": 0,
 		"longtitude_of_ascending_node": 0,
-		"mean_anomaly": 0,
-		"eccentricity": 0
+		"epoch_mean_anomaly": 0
 	},
 	"texture_layers":
 	[
+		
 		{
 			"texture": "stellarview:textures/environment/halo_template.png",
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": true,
-			"size": 5,
+			"size": 239371506.0216606,
 			"rotation": 0,
-			"flip_uv": false
+			"uv": { "flip_uv": false }
 		},
 		{
-			"texture": "stellarview:textures/environment/planet/mars.png",
+			"texture": "stellarview:textures/environment/planet/neptune.png",
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": false,
-			"size": 5,
+			"size": 239371506.0216606,
 			"rotation": 0,
-			"flip_uv": false
+			"uv": { "flip_uv": false }
 		}
 	]
 }

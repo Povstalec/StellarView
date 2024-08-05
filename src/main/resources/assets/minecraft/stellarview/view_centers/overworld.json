@@ -1,5 +1,5 @@
 {
-	"view_center": "stellarview:planets/earth",
+	"view_center": "stellarview:planets/sol/earth",
 	
 	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
 
@@ -17,7 +17,7 @@
 						"blend": true,
 						"size": 1,
 						"rotation": 0,
-						"flip_uv": false
+						"uv": { "flip_uv": false }
 					}
 				]
 				
@@ -32,7 +32,7 @@
 						"blend": true,
 						"size": 1,
 						"rotation": 0,
-						"flip_uv": false
+						"uv": { "flip_uv": false }
 					}
 				]
 			},
@@ -46,7 +46,7 @@
 						"blend": true,
 						"size": 1,
 						"rotation": 0,
-						"flip_uv": false
+						"uv": { "flip_uv": false }
 					}
 				]
 			},
@@ -60,7 +60,7 @@
 						"blend": true,
 						"size": 1,
 						"rotation": 0,
-						"flip_uv": false
+						"uv": { "flip_uv": false }
 					}
 				]
 			},
@@ -74,7 +74,7 @@
 						"blend": true,
 						"size": 1,
 						"rotation": 0,
-						"flip_uv": false
+						"uv": { "flip_uv": false }
 					}
 				]
 			},
@@ -88,7 +88,7 @@
 						"blend": true,
 						"size": 1,
 						"rotation": 0,
-						"flip_uv": false
+						"uv": { "flip_uv": false }
 					}
 				]
 			},
@@ -102,7 +102,7 @@
 						"blend": true,
 						"size": 1,
 						"rotation": 0,
-						"flip_uv": false
+						"uv": { "flip_uv": false }
 					}
 				]
 			}
@@ -124,7 +124,7 @@
 						"blend": true,
 						"size": 1,
 						"rotation": 0,
-						"flip_uv": false
+						"uv": { "flip_uv": false }
 					}
 				]
 				
@@ -139,7 +139,7 @@
 						"blend": true,
 						"size": 1,
 						"rotation": 0,
-						"flip_uv": false
+						"uv": { "flip_uv": false }
 					}
 				]
 			},
@@ -153,7 +153,7 @@
 						"blend": true,
 						"size": 1,
 						"rotation": 0,
-						"flip_uv": false
+						"uv": { "flip_uv": false }
 					}
 				]
 			},
@@ -167,7 +167,7 @@
 						"blend": true,
 						"size": 1,
 						"rotation": 0,
-						"flip_uv": false
+						"uv": { "flip_uv": false }
 					}
 				]
 			},
@@ -181,7 +181,7 @@
 						"blend": true,
 						"size": 1,
 						"rotation": 0,
-						"flip_uv": false
+						"uv": { "flip_uv": false }
 					}
 				]
 			},
@@ -195,7 +195,7 @@
 						"blend": true,
 						"size": 1,
 						"rotation": 0,
-						"flip_uv": false
+						"uv": { "flip_uv": false }
 					}
 				]
 			},
@@ -209,7 +209,7 @@
 						"blend": true,
 						"size": 1,
 						"rotation": 0,
-						"flip_uv": false
+						"uv": { "flip_uv": false }
 					}
 				]
 			}

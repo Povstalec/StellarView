@@ -76,9 +76,9 @@ public class ResourcepackReloadListener
 						addEllipticalGalaxy(spaceObjects, location, element);
 				}
 			}
-			
-			setViewCenters(spaceObjects, viewCenters);
+
 			setSpaceObjects(spaceObjects);
+			setViewCenters(spaceObjects, viewCenters);
 		}
 		
 		private static void addViewCenter(HashMap<ResourceLocation, ViewCenter> viewCenters, ResourceLocation location, JsonElement element)
