@@ -12,7 +12,6 @@ import org.joml.Vector3f;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferBuilder.RenderedBuffer;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexBuffer;
@@ -28,6 +27,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
 import net.povstalec.stellarview.api.celestials.Star;
 import net.povstalec.stellarview.client.render.shader.StellarViewShaders;
+import net.povstalec.stellarview.client.render.shader.StellarViewVertexFormat;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 import net.povstalec.stellarview.common.util.SphericalCoords;
@@ -123,10 +123,12 @@ public abstract class StarField extends SpaceObject
 	@Override
 	public void render(ViewCenter viewCenter, ClientLevel level, float partialTicks, PoseStack stack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder, Vector3f parentVector)
 	{
+		SpaceCoords difference = viewCenter.getCoords().sub(getCoords());
+		
 		if(requiresSetup())
-			setupBuffer(viewCenter.getCoords().sub(this.coords));
+			setupBuffer(difference);
 		//else
-		//	setStarBuffer(viewCenter.getCoords().sub(this.coords)); // This could be viable with fewer stars
+		//	setStarBuffer(difference); // This could be viable with fewer stars
 		
 		float starBrightness = Star.getStarBrightness(level, camera, partialTicks);
 		
@@ -140,7 +142,7 @@ public abstract class StarField extends SpaceObject
 			FogRenderer.setupNoFog();
 			
 			this.starBuffer.bind();
-			this.starBuffer.drawWithShader(stack.last().pose(), projectionMatrix, StellarViewShaders.starShader());
+			this.starBuffer.drawWithShader(stack.last().pose(), projectionMatrix, new Vector3f((float) difference.x().toLy(), (float) difference.y().toLy(), (float) difference.z().toLy()), StellarViewShaders.starShader());
 			//this.starBuffer.drawWithShader(stack.last().pose(), projectionMatrix, GameRenderer.getPositionColorTexShader());
 			VertexBuffer.unbind();
 			
@@ -180,7 +182,7 @@ public abstract class StarField extends SpaceObject
 		protected RenderedBuffer generateStarBuffer(BufferBuilder bufferBuilder, SpaceCoords relativeCoords)
 		{
 			RandomSource randomsource = RandomSource.create(seed);
-			bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+			bufferBuilder.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR);
 			
 			starInfo = new StarInfo(stars);
 			
@@ -198,7 +200,7 @@ public abstract class StarField extends SpaceObject
 		protected RenderedBuffer getStarBuffer(BufferBuilder bufferBuilder, SpaceCoords relativeCoords)
 		{
 			RandomSource randomsource = RandomSource.create(seed);
-			bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+			bufferBuilder.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR);
 			
 			for(int i = 0; i < stars; i++)
 			{

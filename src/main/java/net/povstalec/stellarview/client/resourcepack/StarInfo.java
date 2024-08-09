@@ -1,18 +1,16 @@
 package net.povstalec.stellarview.client.resourcepack;
 
+import java.util.Random;
+
 import com.mojang.blaze3d.vertex.BufferBuilder;
 
 import net.minecraft.util.RandomSource;
-import net.povstalec.stellarview.common.config.StellarViewConfig;
 import net.povstalec.stellarview.common.util.SpaceCoords;
-import net.povstalec.stellarview.common.util.TextureLayer;
 
 public class StarInfo
 {
-	private static final float DEFAULT_DISTANCE = 100.0F;
-	
 	private double[][] starCoords;
-	private double[][] starSizes;
+	private double[] starSizes;
 	
 	private double deformations[][];
 	
@@ -23,7 +21,7 @@ public class StarInfo
 	public StarInfo(int stars)
 	{
 		this.starCoords = new double[stars][3];
-		this.starSizes = new double[stars][3];
+		this.starSizes = new double[stars];
 
 		this.deformations = new double[stars][2];
 		
@@ -34,8 +32,6 @@ public class StarInfo
 	
 	public static double clampStar(double starSize, double minStarSize, double maxStarSize)
 	{
-		//System.out.println(minStarSize + " < " + starSize + " < " + maxStarSize);
-		
 		if(starSize < minStarSize)
 			return minStarSize;
 		
@@ -52,9 +48,11 @@ public class StarInfo
 	 * @param z Z coordinate of the star
 	 * @param i Index of the star
 	 */
-	public void newStar(BufferBuilder builder, RandomSource randomSource, SpaceCoords viewCenterCoords, double x, double y, double z, int i)
+	public void newStar(BufferBuilder builder, RandomSource randomSource, SpaceCoords relativeCoords, double x, double y, double z, int i)
 	{
 		long seed = randomSource.nextLong();
+		
+		Random randomValues = new Random(seed);
 		
 		// Set up position
 		
@@ -62,25 +60,19 @@ public class StarInfo
 		starCoords[i][1] = y;
 		starCoords[i][2] = z;
 		
-		Star.Type spectralType = Star.Type.randomSpectralType(seed);
-		
 		//TODO Set up deformation
 		deformations[i][0] = 1; // Height deformation
 		deformations[i][1] = 1;// Width deformation
 
 		// Set up size
 		
-		starSizes[i][0] = (double) spectralType.randomSize(seed); // This randomizes the Star size
-		starSizes[i][1] = StellarViewConfig.distance_star_size.get() ? starSizes[i][0] : 0.2 + starSizes[i][0] * 1 / 5;
-		starSizes[i][2] = StellarViewConfig.distance_star_size.get() ? starSizes[i][0] : starSizes[i][0] * 3 / 5;
-		//starSizes[i][0] = Mth.clamp(starSize * 200000 * distance, TextureLayer.MIN_VISUAL_SIZE, maxStarSize);
+		starSizes[i] = randomValues.nextDouble(0.15, 0.25); // This randomizes the Star size
 		
 		// Set up color and alpha
 		
-		short alpha = spectralType.randomBrightness(seed); // 0xAA is the default
+		short alpha = (short) randomValues.nextInt(100, 256); // 0xAA is the default
 		
-		this.starRGBA[i] = StellarViewConfig.uniform_star_color.get() ? new short[] {255, 255, 255, alpha} : 
-			new short[] {spectralType.red(), spectralType.green(), spectralType.blue(), alpha};
+		this.starRGBA[i] = new short[] {255, 255, 255, alpha};
 		
 		// sin and cos are used to effectively clamp the random number between two values without actually clamping it,
 		// wwhich would result in some awkward lines as Stars would be brought to the clamped values
@@ -89,68 +81,11 @@ public class StarInfo
 		randoms[i][0] = Math.sin(random); // sin random
 		randoms[i][1] = Math.cos(random); // cos random
 		
-		this.createStar(builder, randomSource, viewCenterCoords, i);
+		this.createStar(builder, randomSource, relativeCoords, i);
 	}
 	
-	public void createStar(BufferBuilder builder, RandomSource randomSource, SpaceCoords viewCenterCoords, int i)
+	public void createStar(BufferBuilder builder, RandomSource randomSource, SpaceCoords relativeCoords, int i)
 	{
-		double x = starCoords[i][0] - viewCenterCoords.x().toLy();
-		double y = starCoords[i][1] - viewCenterCoords.y().toLy();
-		double z = starCoords[i][2] - viewCenterCoords.z().toLy();
-		
-		double distance = x * x + y * y + z * z; // Distance squared
-		
-		short alpha = starRGBA[i][3];
-		// Makes stars less bright the further away they are
-		if(StellarViewConfig.distance_star_brightness.get())
-		{
-			short minAlpha = (short) ((alpha - 0xAA) * 2 / 3);
-			
-			if(distance > 40)
-				alpha -= 2 * (int) Math.round(distance); //TODO Change this so it works with new distances
-			
-			if(alpha < minAlpha)
-				alpha = minAlpha;
-		}
-
-		distance = 1.0D / Math.sqrt(distance); // Regular distance
-		x *= distance;
-		y *= distance;
-		z *= distance;
-		
-		// This effectively pushes the Star away from the camera
-		// It's better to have them very far away, otherwise they will appear as though they're shaking when the Player is walking
-		double starX = x * DEFAULT_DISTANCE;
-		double starY = y * DEFAULT_DISTANCE;
-		double starZ = z * DEFAULT_DISTANCE;
-		
-		double starSize = clampStar(starSizes[i][0] * 200000 * distance, TextureLayer.MIN_VISUAL_SIZE, starSizes[i][1]);
-		
-		/* These very obviously represent Spherical Coordinates (r, theta, phi)
-		 * 
-		 * Spherical equations (adjusted for Minecraft, since usually +Z is up, while in Minecraft +Y is up):
-		 * 
-		 * r = sqrt(x * x + y * y + z * z)
-		 * tetha = arctg(x / z)
-		 * phi = arccos(y / r)
-		 * 
-		 * x = r * sin(phi) * sin(theta)
-		 * y = r * cos(phi)
-		 * z = r * sin(phi) * cos(theta)
-		 * 
-		 * Polar equations
-		 * z = r * cos(theta)
-		 * x = r * sin(theta)
-		 */
-		double sphericalTheta = Math.atan2(x, z);
-		double sinTheta = Math.sin(sphericalTheta);
-		double cosTheta = Math.cos(sphericalTheta);
-		
-		double xzLength = Math.sqrt(x * x + z * z);
-		double sphericalPhi = Math.atan2(xzLength, y);
-		double sinPhi = Math.sin(sphericalPhi);
-		double cosPhi = Math.cos(sphericalPhi);
-		
 		double sinRandom = randoms[i][0];
 		double cosRandom = randoms[i][1];
 		
@@ -182,8 +117,8 @@ public class StarInfo
 			 * Which corresponds to:
 			 * UV:	00	01	11	10
 			 */
-			double aLocation = (double) ((j & 2) - 1) * starSize;
-			double bLocation = (double) ((j + 1 & 2) - 1) * starSize;
+			double aLocation = (double) ((j & 2) - 1);
+			double bLocation = (double) ((j + 1 & 2) - 1);
 			
 			/* These are the values for cos(random) = sin(random)
 			 * (random is simply there to randomize the star rotation)
@@ -206,26 +141,15 @@ public class StarInfo
 			 */
 			double height = deformations[i][0] * (aLocation * cosRandom - bLocation * sinRandom);
 			double width = deformations[i][1] * (bLocation * cosRandom + aLocation * sinRandom);
-			//double width = starWidthFunction(aLocation, bLocation, sinRandom, cosRandom, sinTheta, cosTheta, sinPhi, cosPhi);
 			
-			double heightProjectionY = height * sinPhi; // Y projection of the Star's height
+			builder.vertex(height, width, starSizes[i]).color(starRGBA[i][0], starRGBA[i][1], starRGBA[i][2], starRGBA[i][3]);
+			// These next few lines add a "custom" element defined as SpacePos in SpaceTravelVertexFormat
+			builder.putFloat(0, (float) starCoords[i][0]);
+			builder.putFloat(4, (float) starCoords[i][1]);
+			builder.putFloat(8, (float) starCoords[i][2]);
+			builder.nextElement();
 			
-			double heightProjectionXZ = - height * cosPhi; // If the Star is angled, the XZ projected height needs to be subtracted from both X and Z 
-			
-			/* 
-			 * projectedX:
-			 * Projected height is projected onto the X-axis using sin(theta) and then gets subtracted (added because it's already negative)
-			 * Width is projected onto the X-axis using cos(theta) and then gets subtracted
-			 * 
-			 * projectedZ:
-			 * Width is projected onto the Z-axis using sin(theta)
-			 * Projected height is projected onto the Z-axis using cos(theta) and then gets subtracted (added because it's already negative)
-			 * 
-			 */
-			double projectedX = heightProjectionXZ * sinTheta - width * cosTheta;
-			double projectedZ = width * sinTheta + heightProjectionXZ * cosTheta;
-			
-			builder.vertex(starX + projectedX, starY + heightProjectionY, starZ + projectedZ).color(starRGBA[i][0], starRGBA[i][1], starRGBA[i][2], alpha).endVertex();
+			builder.endVertex();
 		}
 	}
 }

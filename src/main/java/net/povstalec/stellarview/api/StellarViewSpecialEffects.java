@@ -5,7 +5,6 @@ import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
 
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;

@@ -7,7 +7,6 @@ import org.joml.Vector3d;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferBuilder.RenderedBuffer;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -15,6 +14,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
 import net.povstalec.stellarview.client.render.level.misc.StellarCoordinates;
+import net.povstalec.stellarview.client.render.shader.StellarViewVertexFormat;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 import net.povstalec.stellarview.common.util.SphericalCoords;
@@ -64,7 +64,7 @@ public class Galaxy
 		protected RenderedBuffer generateStarBuffer(BufferBuilder bufferBuilder, SpaceCoords relativeCoords)
 		{
 			RandomSource randomsource = RandomSource.create(seed);
-			bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+			bufferBuilder.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR);
 			
 			double spread = armThickness;
 			double sizeMultiplier = diameter / 30D;
@@ -119,7 +119,7 @@ public class Galaxy
 		protected RenderedBuffer getStarBuffer(BufferBuilder bufferBuilder, SpaceCoords relativeCoords)
 		{
 			RandomSource randomsource = RandomSource.create(seed);
-			bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+			bufferBuilder.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR);
 			
 			for(int j = 0; j < numberOfArms; j++) //Draw each arm
 			{
@@ -182,7 +182,7 @@ public class Galaxy
 		protected RenderedBuffer generateStarBuffer(BufferBuilder bufferBuilder, SpaceCoords relativeCoords)
 		{
 			RandomSource randomsource = RandomSource.create(seed);
-			bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+			bufferBuilder.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR);
 			
 			starInfo = new StarInfo(stars);
 			
@@ -219,7 +219,7 @@ public class Galaxy
 		protected RenderedBuffer getStarBuffer(BufferBuilder bufferBuilder, SpaceCoords relativeCoords)
 		{
 			RandomSource randomsource = RandomSource.create(seed);
-			bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+			bufferBuilder.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR);
 			
 			for(int i = 0; i < stars; i++)
 			{
