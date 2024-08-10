@@ -25,12 +25,13 @@ public class ResourcepackReloadListener
 	public static final String VIEW_CENTERS = "view_centers";
 	public static final String CELESTIALS = "celestials";
 
-	public static final String PLANETS = "planets";
-	public static final String STARS = "stars";
+	public static final String PLANET = "planet";
+	public static final String STAR = "star";
+	public static final String SUPERNOVA = "star/supernova";
 	
-	public static final String GLOBULAR_CLUSTERS = "star_fields/globular_clusters";
-	public static final String SPIRAL_GALAXIES = "star_fields/spiral_galaxies";
-	public static final String ELLIPTICAL_GALAXIES = "star_fields/elliptical_galaxies";
+	public static final String GLOBULAR_CLUSTER = "star_field/globular_cluster";
+	public static final String SPIRAL_GALAXY = "star_field/spiral_galaxy";
+	public static final String ELLIPTICAL_GALAXY = "star_field/elliptical_galaxy";
 	
 	@Mod.EventBusSubscriber(modid = StellarView.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 	public static class ReloadListener extends SimpleJsonResourceReloadListener
@@ -60,19 +61,22 @@ public class ResourcepackReloadListener
 				{
 					location = shortenPath(location, CELESTIALS);
 					
-					if(canShortenPath(location, PLANETS))
+					if(canShortenPath(location, PLANET))
 						addPlanet(spaceObjects, location, element);
 					
-					else if(canShortenPath(location, STARS))
+					else if(canShortenPath(location, SUPERNOVA))
+						addSupernova(spaceObjects, location, element);
+					
+					else if(canShortenPath(location, STAR))
 						addStar(spaceObjects, location, element);
 					
-					else if(canShortenPath(location, GLOBULAR_CLUSTERS))
+					else if(canShortenPath(location, GLOBULAR_CLUSTER))
 						addGlobularCluster(spaceObjects, location, element);
 					
-					else if(canShortenPath(location, SPIRAL_GALAXIES))
+					else if(canShortenPath(location, SPIRAL_GALAXY))
 						addSpiralGalaxy(spaceObjects, location, element);
 					
-					else if(canShortenPath(location, ELLIPTICAL_GALAXIES))
+					else if(canShortenPath(location, ELLIPTICAL_GALAXY))
 						addEllipticalGalaxy(spaceObjects, location, element);
 				}
 			}
@@ -114,6 +118,23 @@ public class ResourcepackReloadListener
 				Star star = Star.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Star", msg));
 				
 				spaceObjects.put(location, star);
+				StellarView.LOGGER.error("Parsed " + location.toString() + " as Star");
+			}
+			catch(RuntimeException e)
+			{
+				StellarView.LOGGER.error("Could not load " + location.toString());
+			}
+		}
+		
+		private static void addSupernova(HashMap<ResourceLocation, SpaceObject> spaceObjects, ResourceLocation location, JsonElement element)
+		{
+			try
+			{
+				JsonObject json = GsonHelper.convertToJsonObject(element, "supernova");
+				Supernova supernova = Supernova.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Supernova", msg));
+				
+				spaceObjects.put(location, supernova);
+				StellarView.LOGGER.error("Parsed " + location.toString() + " as Supernova");
 			}
 			catch(RuntimeException e)
 			{
@@ -125,10 +146,11 @@ public class ResourcepackReloadListener
 		{
 			try
 			{
-				JsonObject json = GsonHelper.convertToJsonObject(element, "star");
-				Planet planet = Planet.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Star", msg));
+				JsonObject json = GsonHelper.convertToJsonObject(element, "planet");
+				Planet planet = Planet.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Planet", msg));
 
 				spaceObjects.put(location, planet);
+				StellarView.LOGGER.error("Parsed " + location.toString() + " as Planet");
 			}
 			catch(RuntimeException e)
 			{
@@ -145,6 +167,7 @@ public class ResourcepackReloadListener
 
 				spaceObjects.put(location, globularCluster);
 				Space.addStarField(globularCluster);
+				StellarView.LOGGER.error("Parsed " + location.toString() + " as Globular Cluster");
 			}
 			catch(RuntimeException e)
 			{
@@ -161,6 +184,7 @@ public class ResourcepackReloadListener
 
 				spaceObjects.put(location, spiralGalaxy);
 				Space.addStarField(spiralGalaxy);
+				StellarView.LOGGER.error("Parsed " + location.toString() + " as Spiral Galaxy");
 			}
 			catch(RuntimeException e)
 			{
@@ -172,11 +196,12 @@ public class ResourcepackReloadListener
 		{
 			try
 			{
-				JsonObject json = GsonHelper.convertToJsonObject(element, "spiral_galaxy");
-				Galaxy.EllipticalGalaxy ellipticalGalaxy = Galaxy.EllipticalGalaxy.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Spiral Galaxy", msg));
+				JsonObject json = GsonHelper.convertToJsonObject(element, "elliptical_galaxy");
+				Galaxy.EllipticalGalaxy ellipticalGalaxy = Galaxy.EllipticalGalaxy.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Elliptical Galaxy", msg));
 
 				spaceObjects.put(location, ellipticalGalaxy);
 				Space.addStarField(ellipticalGalaxy);
+				StellarView.LOGGER.error("Parsed " + location.toString() + " as Elliptical Galaxy");
 			}
 			catch(RuntimeException e)
 			{
@@ -222,7 +247,7 @@ public class ResourcepackReloadListener
 		
 		private static boolean canShortenPath(ResourceLocation location, String shortenBy)
 		{
-			return location.getPath().startsWith(shortenBy) && location.getPath().length() > shortenBy.length(); // If it starts with the string and isn't empty after getting shortened
+			return location.getPath().startsWith(shortenBy + "/") && location.getPath().length() > shortenBy.length(); // If it starts with the string and isn't empty after getting shortened
 		}
 		
 		private static ResourceLocation shortenPath(ResourceLocation location, String shortenBy)

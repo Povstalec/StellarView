@@ -104,7 +104,7 @@ public class TextureLayer
 		return rotation;
 	}
 	
-	private float rotation(double addRotation)
+	private float rotation(long ticks, double addRotation)
 	{
 		return (float) (rotation + addRotation);
 	}
@@ -114,12 +114,12 @@ public class TextureLayer
 		return uv;
 	}
 	
-	public void render(BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, float brightness, double mulSize, double addRotation)
+	public void render(BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, float brightness, double distanceSize, double sizeMultiplier, double addRotation)
 	{
 		if(brightness <= 0.0F || this.rgba().alpha() <= 0)
 			return;
 		
-		float size = this.mulSize(mulSize);
+		float size = this.mulSize(distanceSize);
 		
 		if(size < minSize)
 		{
@@ -129,8 +129,9 @@ public class TextureLayer
 				return;
 		}
 		
-		float rotation = this.rotation(addRotation);
-		//System.out.println(texture + " " + size);
+		size *= sizeMultiplier;
+		
+		float rotation = this.rotation(ticks, addRotation);
 		
 		Vector3f corner00 = StellarCoordinates.placeOnSphere(-size, -size, sphericalCoords, rotation);
 		Vector3f corner10 = StellarCoordinates.placeOnSphere(size, -size, sphericalCoords, rotation);
@@ -158,7 +159,7 @@ public class TextureLayer
 	
 	public void render(BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, float brightness)
 	{
-		this.render(bufferbuilder, lastMatrix, sphericalCoords, ticks, brightness, 1, 0);
+		this.render(bufferbuilder, lastMatrix, sphericalCoords, ticks, brightness, 1, 1, 0);
 	}
 	
 	@Override

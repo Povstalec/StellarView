@@ -3,6 +3,9 @@ package net.povstalec.stellarview.client.resourcepack;
 import java.util.List;
 import java.util.Optional;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
 import net.minecraft.resources.ResourceKey;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.SpaceCoords;
@@ -13,7 +16,14 @@ import net.povstalec.stellarview.common.util.TextureLayer;
  */
 public class Moon extends Planet
 {
-
+	public static final Codec<Moon> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+			RESOURCE_KEY_CODEC.optionalFieldOf("parent").forGetter(Moon::getParentKey),
+			SpaceCoords.CODEC.fieldOf("coords").forGetter(Moon::getCoords),
+			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(Moon::getAxisRotation),
+			OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(Moon::getOrbitInfo),
+			TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(Moon::getTextureLayers)
+			).apply(instance, Moon::new));
+	
 	public Moon(Optional<ResourceKey<SpaceObject>> parent, SpaceCoords coords, AxisRotation axisRotation,
 			Optional<OrbitInfo> orbitInfo, List<TextureLayer> textureLayers)
 	{

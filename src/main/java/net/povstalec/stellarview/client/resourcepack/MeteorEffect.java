@@ -141,7 +141,7 @@ public abstract class MeteorEffect
 		{
 			for(TextureLayer textureLayer : textureLayers)
 			{
-				textureLayer.render(bufferbuilder, lastMatrix, sphericalCoords, ticks, brightness, mulSize, addRotation);
+				textureLayer.render(bufferbuilder, lastMatrix, sphericalCoords, ticks, brightness, mulSize, 1, addRotation);
 			}
 		}
 	}

@@ -1,0 +1,35 @@
+{
+	"parent": "stellarview:star/sol",
+	"coords": { "x": {"ly": 0}, "y": {"ly": 0}, "z": {"ly": 0} },
+	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
+	"orbit_info":
+	{
+		"apoapsis": 212910000,
+		"periapsis": 212910000,
+		"orbital_period": 4320000,
+		"argument_of_periapsis": 0,
+		"inclination": 0,
+		"longtitude_of_ascending_node": 0,
+		"epoch_mean_anomaly": 0
+	},
+	"texture_layers":
+	[
+		
+		{
+			"texture": "stellarview:textures/environment/halo_template.png",
+			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
+			"blend": true,
+			"size": 1539569400,
+			"rotation": 0,
+			"uv": { "flip_uv": false }
+		},
+		{
+			"texture": "stellarview:textures/environment/planet/mars.png",
+			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
+			"blend": false,
+			"size": 1539569400,
+			"rotation": 0,
+			"uv": { "flip_uv": false }
+		}
+	]
+}

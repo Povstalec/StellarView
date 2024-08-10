@@ -1,5 +1,5 @@
 {
-	"parent": "stellarview:star_fields/spiral_galaxies/milky_way",
+	"parent": "stellarview:star_field/spiral_galaxy/milky_way",
 	"coords": { "x": {"ly": 0}, "y": {"ly": 0}, "z": {"ly": -28000} },
 	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
 	"texture_layers":

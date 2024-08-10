@@ -88,9 +88,19 @@ public abstract class SpaceObject
 		return Optional.empty();
 	}
 	
-	public float sizeMultiplier(float distance)
+	public float distanceSize(long ticks, float distance)
 	{
 		return 1 / distance;
+	}
+	
+	public float sizeMultiplier(long ticks)
+	{
+		return 1;
+	}
+	
+	public float rotation(long ticks)
+	{
+		return 0;
 	}
 	
 	public void addChild(SpaceObject child)
@@ -119,13 +129,13 @@ public abstract class SpaceObject
 	
 	
 	
-	protected void renderTextureLayers(BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, float sizeMultiplier, float brightness)
+	protected void renderTextureLayers(BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, float distanceSize, float brightness)
 	{
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		
 		for(TextureLayer textureLayer : textureLayers)
 		{
-			textureLayer.render(bufferbuilder, lastMatrix, sphericalCoords, ticks, brightness, sizeMultiplier, 0);
+			textureLayer.render(bufferbuilder, lastMatrix, sphericalCoords, ticks, brightness, distanceSize, sizeMultiplier(ticks), rotation(ticks));
 		}
 	}
 	
@@ -155,7 +165,7 @@ public abstract class SpaceObject
 				child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, potitionVector);
 			}*/
 			
-			renderTextureLayers(bufferbuilder, stack.last().pose(), sphericalCoords, ticks, sizeMultiplier((float) distance), 1); //TODO Brightness
+			renderTextureLayers(bufferbuilder, stack.last().pose(), sphericalCoords, ticks, distanceSize(ticks, (float) distance), 1); //TODO Brightness
 			
 			// Render children in front of the parent
 			for(SpaceObject child : children)

@@ -32,19 +32,22 @@ void main() {
 	float y = StarPos.y - RelativeSpacePos.y;
 	float z = StarPos.z - RelativeSpacePos.z;
 	
-	float distance = x * x + y * y + z * z;
+	float distance = sqrt(x * x + y * y + z * z);
 	
 	// COLOR START
 	
 	float alpha = Color.w;
-	float minAlpha = (alpha - 0.66) * 2 / 3;
+	float minAlpha = (alpha - 0.66) * 2 / 5; // Previously used (alpha - 0.66) * 2 / 3
+	
+	if(distance > 10000) // Stars more than 10000 light years away appear dimmer
+		alpha -= distance / 100000;
 	
 	if(alpha < minAlpha)
 			alpha = minAlpha;
 	
 	// COLOR END
 	
-	distance = 1.0 / sqrt(distance);
+	distance = 1.0 / distance;
 	x *= distance;
 	y *= distance;
 	z *= distance;

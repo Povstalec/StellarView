@@ -24,17 +24,19 @@ public class Star extends OrbitingObject
 	private static final short MAX_STAR_BRIGHTNESS = 255; // 0xFF
 	
 	public static final Codec<Star> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			RESOURCE_KEY_CODEC.optionalFieldOf("parent").forGetter(OrbitingObject::getParentKey),
-			SpaceCoords.CODEC.fieldOf("coords").forGetter(OrbitingObject::getCoords),
-			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(OrbitingObject::getAxisRotation),
-			OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(OrbitingObject::getOrbitInfo),
-			TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(OrbitingObject::getTextureLayers)
+			RESOURCE_KEY_CODEC.optionalFieldOf("parent").forGetter(Star::getParentKey),
+			SpaceCoords.CODEC.fieldOf("coords").forGetter(Star::getCoords),
+			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(Star::getAxisRotation),
+			OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(Star::getOrbitInfo),
+			TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(Star::getTextureLayers)
 			).apply(instance, Star::new));
 	
 	public Star(Optional<ResourceKey<SpaceObject>> parent, SpaceCoords coords, AxisRotation axisRotation, Optional<OrbitInfo> orbitInfo, List<TextureLayer> textureLayers)
 	{
 		super(parent, coords, axisRotation, orbitInfo, textureLayers);
 	}
+	
+	
 	
 	
 	
