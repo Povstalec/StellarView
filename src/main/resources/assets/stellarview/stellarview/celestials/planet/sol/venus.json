@@ -4,13 +4,13 @@
 	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
 	"orbit_info":
 	{
-		"apoapsis": 249261000,
-		"periapsis": 206650000,
-		"orbital_period": 4320000,
-		"argument_of_periapsis": 286.5,
-		"inclination": 1.850,
-		"longtitude_of_ascending_node": 49.57854,
-		"epoch_mean_anomaly": 19.412
+		"apoapsis": 108940000,
+		"periapsis": 107480000,
+		"orbital_period": 1416000,
+		"argument_of_periapsis": 54.884,
+		"inclination": 3.39458,
+		"longtitude_of_ascending_node": 76.680,
+		"epoch_mean_anomaly": 50.115
 	},
 	"texture_layers":
 	[
@@ -19,17 +19,17 @@
 			"texture": "stellarview:textures/environment/halo_template.png",
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": true,
-			"size": 15395694,
-			"min_size": 1.0,
+			"size": 29248677.11480144,
+			"min_size": 2.0,
 			"clamp_at_min_size": true,
 			"rotation": 0,
 			"uv": { "flip_uv": false }
 		},
 		{
-			"texture": "stellarview:textures/environment/planet/mars.png",
+			"texture": "stellarview:textures/environment/planet/venus.png",
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": false,
-			"size": 15395694,
+			"size": 29248677.11480144,
 			"min_size": 0.5,
 			"clamp_at_min_size": true,
 			"rotation": 0,

@@ -7,10 +7,10 @@
 		"apoapsis": 4500000000,
 		"periapsis": 4500000000,
 		"orbital_period": 380160000,
-		"argument_of_periapsis": 0,
-		"inclination": 0,
-		"longtitude_of_ascending_node": 0,
-		"epoch_mean_anomaly": 0
+		"argument_of_periapsis": 273.187,
+		"inclination": 	1.770,
+		"longtitude_of_ascending_node": 131.783,
+		"epoch_mean_anomaly": 259.883
 	},
 	"texture_layers":
 	[
@@ -20,6 +20,8 @@
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": true,
 			"size": 239371506.0216606,
+			"min_size": 0.5,
+			"clamp_at_min_size": true,
 			"rotation": 0,
 			"uv": { "flip_uv": false }
 		},
@@ -28,6 +30,8 @@
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": false,
 			"size": 239371506.0216606,
+			"min_size": 0.3,
+			"clamp_at_min_size": true,
 			"rotation": 0,
 			"uv": { "flip_uv": false }
 		}

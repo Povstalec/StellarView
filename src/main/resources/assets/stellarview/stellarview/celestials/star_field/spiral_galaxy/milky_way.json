@@ -18,5 +18,5 @@
 	
 	"number_of_arms": 4,
 	"arm_thickness": 2.5,
-	"stars_per_arm": 15000
+	"stars_per_arm": 1500
 }
