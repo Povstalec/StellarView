@@ -6,6 +6,8 @@ import java.util.Optional;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import net.minecraft.client.Camera;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceKey;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.SpaceCoords;
@@ -53,7 +55,7 @@ public class Supernova extends Star
 	}
 	
 	@Override
-	public float sizeMultiplier(long ticks)
+	public float sizeMultiplier(ClientLevel level, Camera camera, long ticks, float partialTicks)
 	{
 		if(!supernovaStarted(ticks))
 			return 1;
@@ -68,7 +70,7 @@ public class Supernova extends Star
 	}
 	
 	@Override
-	public float rotation(long ticks)
+	public float rotation(ClientLevel level, Camera camera, long ticks, float partialTicks)
 	{
 		if(!supernovaStarted(ticks))
 			return 0;

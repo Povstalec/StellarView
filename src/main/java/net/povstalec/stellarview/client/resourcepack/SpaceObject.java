@@ -22,6 +22,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.common.util.AxisRotation;
+import net.povstalec.stellarview.common.util.Color;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 import net.povstalec.stellarview.common.util.SphericalCoords;
 import net.povstalec.stellarview.common.util.TextureLayer;
@@ -88,19 +89,24 @@ public abstract class SpaceObject
 		return Optional.empty();
 	}
 	
-	public float distanceSize(long ticks, float distance)
+	public float distanceSize(float distance)
 	{
 		return 1 / distance;
 	}
 	
-	public float sizeMultiplier(long ticks)
+	public float sizeMultiplier(ClientLevel level, Camera camera, long ticks, float partialTicks)
 	{
 		return 1;
 	}
 	
-	public float rotation(long ticks)
+	public float rotation(ClientLevel level, Camera camera, long ticks, float partialTicks)
 	{
 		return 0;
+	}
+	
+	public Color.FloatRGBA rgba(ClientLevel level, Camera camera, long ticks, float partialTicks)
+	{
+		return new Color.FloatRGBA(1, 1, 1, 1);
 	}
 	
 	public void addChild(SpaceObject child)
@@ -129,13 +135,13 @@ public abstract class SpaceObject
 	
 	
 	
-	protected void renderTextureLayers(BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, float distanceSize, float brightness)
+	protected void renderTextureLayers(BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, Color.FloatRGBA rgba, long ticks, float distanceSize, float sizeMultiplier, float rotation)
 	{
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		
 		for(TextureLayer textureLayer : textureLayers)
 		{
-			textureLayer.render(bufferbuilder, lastMatrix, sphericalCoords, ticks, brightness, distanceSize, sizeMultiplier(ticks), rotation(ticks));
+			textureLayer.render(bufferbuilder, lastMatrix, sphericalCoords, rgba, ticks, distanceSize, sizeMultiplier, rotation);
 		}
 	}
 	
@@ -148,30 +154,28 @@ public abstract class SpaceObject
 		
 		Vector3f positionVector = getPosition(ticks).add(parentVector); // Handles orbits 'n stuff
 		
-		if(!viewCenter.objectEquals(this))
+		// Add parent vector to current coords
+		SpaceCoords coords = getCoords().add(positionVector);
+		
+		// Subtract coords of this from View Center coords to get relative coords
+		SphericalCoords sphericalCoords = coords.skyPosition(viewCenter.getCoords());
+		
+		double distance = sphericalCoords.r;
+		sphericalCoords.r = DEFAULT_DISTANCE;
+		
+		// Render children behind the parent
+		/*for(SpaceObject child : children) //TODO
 		{
-			// Add parent vector to current coords
-			SpaceCoords coords = getCoords().add(positionVector);
-			
-			// Subtract coords of this from View Center coords to get relative coords
-			SphericalCoords sphericalCoords = coords.skyPosition(viewCenter.getCoords());
-			
-			double distance = sphericalCoords.r;
-			sphericalCoords.r = DEFAULT_DISTANCE;
-			
-			// Render children behind the parent
-			/*for(SpaceObject child : children) //TODO
-			{
-				child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, potitionVector);
-			}*/
-			
-			renderTextureLayers(bufferbuilder, stack.last().pose(), sphericalCoords, ticks, distanceSize(ticks, (float) distance), 1); //TODO Brightness
-			
-			// Render children in front of the parent
-			for(SpaceObject child : children)
-			{
-				child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, positionVector);
-			}
+			child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, potitionVector);
+		}*/
+		
+		if(!viewCenter.objectEquals(this))
+			renderTextureLayers(bufferbuilder, stack.last().pose(), sphericalCoords, rgba(level, camera, ticks, partialTicks), ticks, distanceSize((float) distance), sizeMultiplier(level, camera, ticks, partialTicks), rotation(level, camera, ticks, partialTicks)); //TODO Brightness
+		
+		// Render children in front of the parent
+		for(SpaceObject child : children)
+		{
+			child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, positionVector);
 		}
 	}
 	

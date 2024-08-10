@@ -19,7 +19,7 @@
 			"texture": "stellarview:textures/environment/halo_template.png",
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": true,
-			"size": 1539569400,
+			"size": 15395694,
 			"rotation": 0,
 			"uv": { "flip_uv": false }
 		},
@@ -27,7 +27,7 @@
 			"texture": "stellarview:textures/environment/planet/mars.png",
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": false,
-			"size": 1539569400,
+			"size": 15395694,
 			"rotation": 0,
 			"uv": { "flip_uv": false }
 		}

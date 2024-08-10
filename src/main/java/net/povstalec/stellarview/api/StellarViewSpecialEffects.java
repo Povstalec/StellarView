@@ -13,8 +13,11 @@ import net.minecraft.client.renderer.DimensionSpecialEffects;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
+import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.client.render.level.StellarViewSky;
 import net.povstalec.stellarview.client.resourcepack.ViewCenters;
+import net.povstalec.stellarview.common.config.StellarViewConfig;
+import net.povstalec.stellarview.compatibility.enhancedcelestials.EnhancedCelestialsCompatibility;
 
 /**
  * Extend this to create your own custom Special Effects
@@ -85,6 +88,26 @@ public class StellarViewSpecialEffects extends DimensionSpecialEffects
 	@Override
 	public void adjustLightmapColors(ClientLevel level, float partialTicks, float skyDarken, float skyLight, float blockLight, int pixelX, int pixelY, Vector3f colors)
     {
+		if(StellarViewConfig.replace_overworld.get())
+		{
+			defaultLightmapColors(level, partialTicks, skyDarken, skyLight, blockLight, pixelX, pixelY, colors);
+			
+			if(StellarView.isEnhancedCelestialsLoaded())
+				EnhancedCelestialsCompatibility.adjustLightmapColors(level, partialTicks, skyDarken, skyLight, blockLight, pixelX, pixelY, colors);
+		}
+	}
+	
+	/**
+	 * @param color
+	 * @see Copied from LightTexture#clampColor(Vector3f)
+	 */
+	public static void clampColor(Vector3f color)
+	{
+		color.set(Mth.clamp(color.x, 0.0F, 1.0F), Mth.clamp(color.y, 0.0F, 1.0F), Mth.clamp(color.z, 0.0F, 1.0F));
+	}
+	
+	public static void defaultLightmapColors(ClientLevel level, float partialTicks, float skyDarken, float skyLight, float blockLight, int pixelX, int pixelY, Vector3f colors)
+    {
 		float darkMultiplier = getSkyDarken(level, 1.0F);
 		
 		boolean darkerWorld = true;
@@ -123,14 +146,5 @@ public class StellarViewSpecialEffects extends DimensionSpecialEffects
 			}
 			colors.set(lightColor);
 		}
-	}
-	
-	/**
-	 * @param color
-	 * @see Copied from LightTexture#clampColor(Vector3f)
-	 */
-	public static void clampColor(Vector3f color)
-	{
-		color.set(Mth.clamp(color.x, 0.0F, 1.0F), Mth.clamp(color.y, 0.0F, 1.0F), Mth.clamp(color.z, 0.0F, 1.0F));
 	}
 }

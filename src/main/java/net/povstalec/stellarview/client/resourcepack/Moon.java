@@ -6,10 +6,14 @@ import java.util.Optional;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import net.minecraft.client.Camera;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceKey;
 import net.povstalec.stellarview.common.util.AxisRotation;
+import net.povstalec.stellarview.common.util.Color;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 import net.povstalec.stellarview.common.util.TextureLayer;
+import net.povstalec.stellarview.compatibility.enhancedcelestials.EnhancedCelestialsCompatibility;
 
 /**
  * A subtype of planet that should be compatible with enhanced celestials
@@ -29,5 +33,16 @@ public class Moon extends Planet
 	{
 		super(parent, coords, axisRotation, orbitInfo, textureLayers);
 	}
-
+	
+	@Override
+	public float sizeMultiplier(ClientLevel level, Camera camera, long ticks, float partialTicks)
+	{
+		return EnhancedCelestialsCompatibility.getMoonSize(partialTicks) / 20F;
+	}
+	
+	@Override
+	public Color.FloatRGBA rgba(ClientLevel level, Camera camera, long ticks, float partialTicks)
+	{
+		return EnhancedCelestialsCompatibility.getMoonColor(level, partialTicks);
+	}
 }

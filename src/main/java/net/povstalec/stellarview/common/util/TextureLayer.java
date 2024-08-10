@@ -114,9 +114,9 @@ public class TextureLayer
 		return uv;
 	}
 	
-	public void render(BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, float brightness, double distanceSize, double sizeMultiplier, double addRotation)
+	public void render(BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, Color.FloatRGBA rgba, long ticks, double distanceSize, double sizeMultiplier, double addRotation)
 	{
-		if(brightness <= 0.0F || this.rgba().alpha() <= 0)
+		if(rgba.alpha() <= 0.0F || this.rgba().alpha() <= 0)
 			return;
 		
 		float size = this.mulSize(distanceSize);
@@ -142,7 +142,7 @@ public class TextureLayer
 		if(this.shoulBlend())
 			RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 		
-		RenderSystem.setShaderColor(this.rgba().red() / 255F, this.rgba().green() / 255F, this.rgba().blue() / 255F, brightness * this.rgba().alpha() / 255F);
+		RenderSystem.setShaderColor(rgba.red() * this.rgba().red() / 255F, rgba.green() * this.rgba().green() / 255F, rgba.blue() * this.rgba().blue() / 255F, rgba.alpha() * this.rgba().alpha() / 255F);
 		
 		RenderSystem.setShaderTexture(0, this.texture());
         bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
@@ -157,9 +157,9 @@ public class TextureLayer
         RenderSystem.defaultBlendFunc();
 	}
 	
-	public void render(BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, float brightness)
+	public void render(BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, Color.FloatRGBA rgba, long ticks)
 	{
-		this.render(bufferbuilder, lastMatrix, sphericalCoords, ticks, brightness, 1, 1, 0);
+		this.render(bufferbuilder, lastMatrix, sphericalCoords, rgba, ticks, 1, 1, 0);
 	}
 	
 	@Override

@@ -16,6 +16,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.util.Mth;
 import net.povstalec.stellarview.common.config.StellarViewConfig;
+import net.povstalec.stellarview.common.util.Color;
 import net.povstalec.stellarview.common.util.SphericalCoords;
 import net.povstalec.stellarview.common.util.TextureLayer;
 import net.povstalec.stellarview.common.util.UV;
@@ -83,7 +84,7 @@ public abstract class MeteorEffect
 		return meteorTypes.get(i);
 	}
 	
-	public float getBrightness(ClientLevel level, Camera camera, float partialTicks)
+	public Color.FloatRGBA rgba(ClientLevel level, Camera camera, long ticks, float partialTicks)
 	{
 		float brightness = level.getStarBrightness(partialTicks);
 		brightness = StellarViewConfig.day_stars.get() && brightness < 0.5F ? 
@@ -92,7 +93,9 @@ public abstract class MeteorEffect
 		if(StellarViewConfig.bright_stars.get())
 			brightness = brightness * (1 + ((float) (15 - level.getLightEngine().getRawBrightness(camera.getEntity().getOnPos().above(), 15)) / 15));
 		
-		return brightness * (1.0F - level.getRainLevel(partialTicks));
+		brightness *= (1.0F - level.getRainLevel(partialTicks));
+		
+		return new Color.FloatRGBA(1, 1, 1, brightness);
 	}
 	
 	public abstract void render(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder);
@@ -107,7 +110,7 @@ public abstract class MeteorEffect
         stack.mulPose(Axis.ZP.rotationDegrees(zRotation));
         stack.mulPose(Axis.XP.rotationDegrees(xRotation));
 		
-		meteorType.render(bufferbuilder, stack.last().pose(), SPHERICAL_START, level.getDayTime(), getBrightness(level, camera, partialTicks), mulSize, addRotation);
+		meteorType.render(bufferbuilder, stack.last().pose(), SPHERICAL_START, rgba(level, camera, level.getDayTime(), partialTicks), level.getDayTime(), mulSize, addRotation);
 		stack.popPose();
 	}
 	
@@ -137,11 +140,11 @@ public abstract class MeteorEffect
 			return weight;
 		}
 		
-		public final void render(BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, float brightness, float mulSize, float addRotation)
+		public final void render(BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, Color.FloatRGBA rgba, long ticks, float mulSize, float addRotation)
 		{
 			for(TextureLayer textureLayer : textureLayers)
 			{
-				textureLayer.render(bufferbuilder, lastMatrix, sphericalCoords, ticks, brightness, mulSize, 1, addRotation);
+				textureLayer.render(bufferbuilder, lastMatrix, sphericalCoords, rgba, ticks, mulSize, 1, addRotation);
 			}
 		}
 	}

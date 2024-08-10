@@ -63,14 +63,14 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 				return super.getSize(level, partialTicks);
 			}
 			
-			@Override
+			/*@Override
 			protected float[] getColor(ClientLevel level, float partialTicks)
 			{
 				if(!StellarView.isEnhancedCelestialsLoaded())
 					return super.getColor(level, partialTicks);
 				
 				return EnhancedCelestialsCompatibility.getMoonColor(level, partialTicks);
-			}
+			}*/
 		};
 
 		private static final Planet IO = (Planet) new Planet(Planet.IO_TEXTURE, 0.15F)

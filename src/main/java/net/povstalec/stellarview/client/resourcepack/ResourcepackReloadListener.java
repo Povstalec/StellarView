@@ -26,6 +26,8 @@ public class ResourcepackReloadListener
 	public static final String CELESTIALS = "celestials";
 
 	public static final String PLANET = "planet";
+	public static final String MOON = "moon";
+	
 	public static final String STAR = "star";
 	public static final String SUPERNOVA = "star/supernova";
 	
@@ -63,6 +65,9 @@ public class ResourcepackReloadListener
 					
 					if(canShortenPath(location, PLANET))
 						addPlanet(spaceObjects, location, element);
+					
+					else if(canShortenPath(location, MOON))
+						addMoon(spaceObjects, location, element);
 					
 					else if(canShortenPath(location, SUPERNOVA))
 						addSupernova(spaceObjects, location, element);
@@ -151,6 +156,22 @@ public class ResourcepackReloadListener
 
 				spaceObjects.put(location, planet);
 				StellarView.LOGGER.error("Parsed " + location.toString() + " as Planet");
+			}
+			catch(RuntimeException e)
+			{
+				StellarView.LOGGER.error("Could not load " + location.toString());
+			}
+		}
+		
+		private static void addMoon(HashMap<ResourceLocation, SpaceObject> spaceObjects, ResourceLocation location, JsonElement element)
+		{
+			try
+			{
+				JsonObject json = GsonHelper.convertToJsonObject(element, "moon");
+				Moon moon = Moon.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Moon", msg));
+
+				spaceObjects.put(location, moon);
+				StellarView.LOGGER.error("Parsed " + location.toString() + " as Moon");
 			}
 			catch(RuntimeException e)
 			{

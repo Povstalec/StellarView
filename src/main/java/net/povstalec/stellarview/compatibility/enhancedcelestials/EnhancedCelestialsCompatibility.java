@@ -14,6 +14,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.util.Mth;
 import net.povstalec.stellarview.api.StellarViewSpecialEffects;
+import net.povstalec.stellarview.common.util.Color;
 
 public class EnhancedCelestialsCompatibility
 {
@@ -22,7 +23,7 @@ public class EnhancedCelestialsCompatibility
 		return ECWorldRenderer.getMoonSize(partialTicks);
 	}
 	
-	public static final float[] getMoonColor(ClientLevel level, float partialTicks)
+	public static final Color.FloatRGBA getMoonColor(ClientLevel level, float partialTicks)
 	{
 		/*
 		 * Shamelessly copy pasted from
@@ -46,10 +47,10 @@ public class EnhancedCelestialsCompatibility
             float g = Mth.clampedLerp(lastGLColor.y(), currentGLColor.y(), blend);
             float b = Mth.clampedLerp(lastGLColor.z(), currentGLColor.z(), blend);
             
-            return new float[] {r, g, b};
+            return new Color.FloatRGBA(r, g, b);
         }
         
-        return new float[] {1, 1, 1};
+        return new Color.FloatRGBA(1, 1, 1);
 	}
 	
 	public static final void adjustLightmapColors(ClientLevel level, float partialTicks, float skyDarken, float skyLight, float blockLight, int pixelX, int pixelY, Vector3f colors)
