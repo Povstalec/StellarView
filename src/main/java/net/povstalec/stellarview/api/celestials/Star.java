@@ -143,9 +143,12 @@ public class Star
 	{
 		float rain = 1.0F - level.getRainLevel(partialTicks);
 		float starBrightness = level.getStarBrightness(partialTicks);
+		
 		starBrightness = StellarViewConfig.day_stars.get() && starBrightness < 0.5F ? 0.5F : starBrightness;
+		
 		if(StellarViewConfig.bright_stars.get())
 			starBrightness = starBrightness * (1 + ((float) (15 - level.getLightEngine().getRawBrightness(camera.getEntity().getOnPos().above(), 15)) / 15));
+		
 		starBrightness = starBrightness * rain;
 		
 		return starBrightness;

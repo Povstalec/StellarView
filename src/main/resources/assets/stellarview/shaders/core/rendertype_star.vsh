@@ -9,22 +9,19 @@ uniform mat4 ProjMat;
 uniform vec3 RelativeSpacePos;
 
 float DEFAULT_DISTANCE = 100;
-mat4 matrix = mat4(	1.0, 0.0, 0.0, 0.0,
-					0.0, 1.0, 0.0, 0.0,
-					0.0, 0.0, 1.0, 0.0,
-					0.0, 0.0, 0.0, 1.0);
 
 out vec4 vertexColor;
 
 float clampStar(float starSize, float distance)
 {
-	float maxStarSize = 0.2 + starSize / 5;
-	starSize = starSize * 200000.0 * distance;
+	//float maxStarSize = 0.2 + starSize / 5;
+	
+	starSize -= starSize * distance / 1000000.0;
 	
 	if(starSize < 0.04)
 		return 0.04;
 	
-	return starSize > maxStarSize ? maxStarSize : starSize;
+	return starSize;// > maxStarSize ? maxStarSize : starSize;
 }
 
 void main() {
@@ -34,18 +31,20 @@ void main() {
 	
 	float distance = sqrt(x * x + y * y + z * z);
 	
-	// COLOR START
+	// COLOR START - Adjusts the brightness (alpha) of the star based on its distance
 	
 	float alpha = Color.w;
 	float minAlpha = (alpha - 0.66) * 2 / 5; // Previously used (alpha - 0.66) * 2 / 3
 	
-	if(distance > 10000) // Stars more than 10000 light years away appear dimmer
-		alpha -= distance / 100000;
+	//if(distance > 10000) // Stars more than 10000 light years away appear dimmer
+	alpha -= distance / 100000;
 	
 	if(alpha < minAlpha)
 			alpha = minAlpha;
 	
 	// COLOR END
+	
+	float starSize = clampStar(Position.z, distance);
 	
 	distance = 1.0 / distance;
 	x *= distance;
@@ -57,8 +56,6 @@ void main() {
 	float starX = x * DEFAULT_DISTANCE;
 	float starY = y * DEFAULT_DISTANCE;
 	float starZ = z * DEFAULT_DISTANCE;
-	
-	float starSize = clampStar(Position.z, distance);
 	
 	/* These very obviously represent Spherical Coordinates (r, theta, phi)
 	 * 
@@ -107,7 +104,7 @@ void main() {
 	
 	vec3 pos = vec3(projectedX + starX, heightProjectionY + starY, projectedZ + starZ);
 	
-	gl_Position = ProjMat * ModelViewMat * matrix * vec4(pos, 1.0);
+	gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
 	
 	vertexColor = vec4(Color.x, Color.y, Color.z, alpha);
 }

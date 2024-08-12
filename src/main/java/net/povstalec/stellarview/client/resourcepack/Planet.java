@@ -18,12 +18,14 @@ public class Planet extends OrbitingObject
 			SpaceCoords.CODEC.fieldOf("coords").forGetter(Planet::getCoords),
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(Planet::getAxisRotation),
 			OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(Planet::getOrbitInfo),
-			TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(Planet::getTextureLayers)
+			TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(Planet::getTextureLayers),
+			
+			SpaceObject.FadeOutHandler.CODEC.optionalFieldOf("fade_out_handler", SpaceObject.FadeOutHandler.DEFAULT_PLANET_HANDLER).forGetter(Planet::getFadeOutHandler)
 			).apply(instance, Planet::new));
 	
 	public Planet(Optional<ResourceKey<SpaceObject>> parent, SpaceCoords coords, AxisRotation axisRotation,
-			Optional<OrbitInfo> orbitInfo, List<TextureLayer> textureLayers)
+			Optional<OrbitInfo> orbitInfo, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler)
 	{
-		super(parent, coords, axisRotation, orbitInfo, textureLayers);
+		super(parent, coords, axisRotation, orbitInfo, textureLayers, fadeOutHandler);
 	}
 }

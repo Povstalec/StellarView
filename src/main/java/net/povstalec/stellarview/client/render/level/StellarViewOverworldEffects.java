@@ -54,14 +54,14 @@ public class StellarViewOverworldEffects extends StellarViewSpecialEffects
 				return !OverworldConfig.disable_moon_phases.get();
 			}
 			
-			@Override
+			/*@Override
 			protected float getSize(ClientLevel level, float partialTicks)
 			{
 				if(StellarView.isEnhancedCelestialsLoaded())
 					return EnhancedCelestialsCompatibility.getMoonSize(partialTicks);
 				
 				return super.getSize(level, partialTicks);
-			}
+			}*/
 			
 			/*@Override
 			protected float[] getColor(ClientLevel level, float partialTicks)

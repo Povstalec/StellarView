@@ -7,8 +7,10 @@ import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
@@ -108,5 +110,18 @@ public class StellarView
     {
     	overworld.setupGalaxy();
     	end.setupGalaxy();
+    }
+    
+    public static float lightSourceDimming(ClientLevel level, Camera camera)
+    {
+    	// Brightness of the position where the player is standing, 15 is subtracted from the ambient skylight, that way only block light is accounted for
+    	int brightnessAtBlock = level.getLightEngine().getRawBrightness(camera.getEntity().getOnPos().above(), 15);
+    	
+    	return 1 + ((15F - brightnessAtBlock) / 15F);
+    }
+    
+    public static float rainDimming(ClientLevel level, float partialTicks)
+    {
+    	return 1F - level.getRainLevel(partialTicks);
     }
 }	

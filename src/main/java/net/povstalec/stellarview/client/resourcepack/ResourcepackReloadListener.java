@@ -29,7 +29,7 @@ public class ResourcepackReloadListener
 	public static final String MOON = "moon";
 	
 	public static final String STAR = "star";
-	public static final String SUPERNOVA = "star/supernova";
+	public static final String SUPERNOVA = "supernova";
 	
 	public static final String GLOBULAR_CLUSTER = "star_field/globular_cluster";
 	public static final String SPIRAL_GALAXY = "star_field/spiral_galaxy";
@@ -237,7 +237,7 @@ public class ResourcepackReloadListener
 				SpaceObject spaceObject = spaceObjectEntry.getValue();
 
 				// Set name
-				spaceObject.location = spaceObjectEntry.getKey();
+				spaceObject.setResourceLocation(spaceObjectEntry.getKey());
 				
 				// Handle parents
 				if(spaceObject.getParentKey().isPresent())

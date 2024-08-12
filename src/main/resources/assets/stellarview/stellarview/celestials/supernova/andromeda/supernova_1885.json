@@ -1,17 +1,17 @@
 {
-	"parent": "stellarview:star_field/spiral_galaxy/milky_way",
-	"coords": { "x": {"ly": 400}, "y": {"ly": 300}, "z": {"ly": -28000} },
+	"parent": "stellarview:star_field/spiral_galaxy/andromeda",
+	"coords": { "x": {"ly": 400}, "y": {"ly": -300}, "z": {"ly": -1000} },
 	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
 	"texture_layers":
 	[
 		{
-			"texture": "textures/environment/sun.png",
+			"texture": "stellarview:textures/environment/supernova.png",
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": true,
 			"size": 4488626469,
-			"min_size": 2,
+			"min_size": 1,
 			"clamp_at_min_size": true,
-			"rotation": 0,
+			"rotation": -32,
 			"uv": { "flip_uv": false }
 		}
 	],
@@ -53,7 +53,7 @@
 			]
 		},
 		"max_size_multiplier": 10,
-		"start_ticks": 18000,
-		"duration_ticks": 4000
+		"start_ticks": 90000,
+		"duration_ticks": 378000
 	}
 }

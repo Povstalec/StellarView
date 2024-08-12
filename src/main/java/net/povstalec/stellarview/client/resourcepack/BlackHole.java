@@ -13,8 +13,9 @@ public class BlackHole extends Leftover
 {
 	//TODO Black Holes should visually bend space around them
 	public BlackHole(Optional<ResourceKey<SpaceObject>> parent, SpaceCoords coords, AxisRotation axisRotation,
-			Optional<OrbitInfo> orbitInfo, List<TextureLayer> textureLayers)
+			Optional<OrbitInfo> orbitInfo, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler,
+			float minStarSize, float maxStarAlpha, float minStarAlpha)
 	{
-		super(parent, coords, axisRotation, orbitInfo, textureLayers);
+		super(parent, coords, axisRotation, orbitInfo, textureLayers, fadeOutHandler, minStarSize, maxStarAlpha, minStarAlpha);
 	}
 }

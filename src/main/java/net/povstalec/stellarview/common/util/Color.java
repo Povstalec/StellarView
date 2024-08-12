@@ -198,17 +198,17 @@ public class Color
 		{
 			super(red, green, blue);
 			
-			if(alpha > MAX_INT_VALUE)
-				throw(new IllegalArgumentException("No value may be higher than 255"));
-			else if(alpha < MIN_INT_VALUE)
-				throw(new IllegalArgumentException("No value may be lower than 0"));
+			if(alpha > MAX_FLOAT_VALUE)
+				throw(new IllegalArgumentException("No value may be higher than 1.0"));
+			else if(alpha < MIN_FLOAT_VALUE)
+				throw(new IllegalArgumentException("No value may be lower than 0.0"));
 			
 			this.alpha = alpha;
 		}
 		
 		public FloatRGBA(float red, float green, float blue)
 		{
-			this(red, green, blue, 255);
+			this(red, green, blue, 1);
 		}
 		
 		public void setAlpha(float alpha)

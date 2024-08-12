@@ -17,6 +17,6 @@
 	"diameter_ly": 90000,
 	
 	"number_of_arms": 4,
-	"arm_thickness": 2.5,
+	"arm_thickness": 2.0,
 	"stars_per_arm": 1500
 }

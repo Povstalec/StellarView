@@ -16,7 +16,7 @@
 	"seed": 55183,
 	"diameter_ly": 152000,
 	
-	"number_of_arms": 4,
-	"arm_thickness": 3.5,
-	"stars_per_arm": 20000
+	"number_of_arms": 2,
+	"arm_thickness": 2.0,
+	"stars_per_arm": 2000
 }

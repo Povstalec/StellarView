@@ -19,7 +19,7 @@ import net.povstalec.stellarview.common.util.TextureLayer;
 
 public class OrbitingObject extends SpaceObject
 {
-	public static final Vector3f INITIAL_ORBIT_VECTOR = new Vector3f(0, 0, -1);
+	public static final Vector3f INITIAL_ORBIT_VECTOR = new Vector3f(-1, 0, 0);
 	
 	@Nullable
 	private OrbitInfo orbitInfo;
@@ -29,12 +29,15 @@ public class OrbitingObject extends SpaceObject
 			SpaceCoords.CODEC.fieldOf("coords").forGetter(OrbitingObject::getCoords),
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(OrbitingObject::getAxisRotation),
 			OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(OrbitingObject::getOrbitInfo),
-			TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(OrbitingObject::getTextureLayers)
+			TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(OrbitingObject::getTextureLayers),
+			
+			SpaceObject.FadeOutHandler.CODEC.optionalFieldOf("fade_out_handler", SpaceObject.FadeOutHandler.DEFAULT_PLANET_HANDLER).forGetter(OrbitingObject::getFadeOutHandler)
 			).apply(instance, OrbitingObject::new));
 	
-	public OrbitingObject(Optional<ResourceKey<SpaceObject>> parent, SpaceCoords coords, AxisRotation axisRotation, Optional<OrbitInfo> orbitInfo, List<TextureLayer> textureLayers)
+	public OrbitingObject(Optional<ResourceKey<SpaceObject>> parent, SpaceCoords coords, AxisRotation axisRotation, Optional<OrbitInfo> orbitInfo,
+			List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler)
 	{
-		super(parent, coords, axisRotation, textureLayers);
+		super(parent, coords, axisRotation, textureLayers, fadeOutHandler);
 		
 		if(orbitInfo.isPresent())
 			this.orbitInfo = orbitInfo.get();
@@ -181,7 +184,7 @@ public class OrbitingObject extends SpaceObject
 		// Moves a point along a unit circle, starting from the mean anomaly
 		public Matrix4f movementMatrix(float orbitProgress)
 		{
-			return new Matrix4f().rotate(Axis.YP.rotation(epochMeanAnomaly + orbitProgress));
+			return new Matrix4f().rotate(Axis.YP.rotation(orbitProgress));
 		}
 		
 		// Reference direction is positive X axis and reference plane is the XZ plane
@@ -190,17 +193,23 @@ public class OrbitingObject extends SpaceObject
 			// Radius of a circle with the diameter of apoapsis + periapsis
 			float semiMajorAxis = (apoapsis + periapsis) / 2;
 			
+			// Scale to the correct size
 			Matrix4f scaleMatrix = new Matrix4f().scale(semiMajorAxis, semiMajorAxis, semiMajorAxis);
 			
+			// Make the orbit eccentric
 			Matrix4f eccentricityMatrix = new Matrix4f().scale(1, 1, 1 - eccentricity);
 			
-			Matrix4f offsetMatrix = new Matrix4f().translate(new Vector3f(0, 0, semiMajorAxis - periapsis));
+			// Offset the orbit to make periapsis closer to whatever it's orbiting around
+			Matrix4f offsetMatrix = new Matrix4f().translate(new Vector3f(semiMajorAxis - periapsis, 0, 0));
+			
+			// Rotate to push the periapsis into the correct position
+			Matrix4f periapsisMatrix = new Matrix4f().rotate(Axis.YP.rotation(argumentOfPeriapsis));
 			
 			Matrix4f inclinationMatrix = new Matrix4f().rotate(Axis.ZP.rotation(inclination));
 			
 			Matrix4f ascensionMatrix = new Matrix4f().rotate(Axis.YP.rotation(longtitudeOfAscendingNode));
 			
-			return ascensionMatrix.mul(inclinationMatrix).mul(offsetMatrix).mul(eccentricityMatrix).mul(scaleMatrix);
+			return ascensionMatrix.mul(inclinationMatrix).mul(periapsisMatrix).mul(offsetMatrix).mul(eccentricityMatrix).mul(scaleMatrix);
 		}
 		
 		public Matrix4f getOrbitMatrix()

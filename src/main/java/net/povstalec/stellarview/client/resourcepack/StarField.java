@@ -25,7 +25,6 @@ import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
-import net.povstalec.stellarview.api.celestials.Star;
 import net.povstalec.stellarview.client.render.shader.StellarViewShaders;
 import net.povstalec.stellarview.client.render.shader.StellarViewVertexFormat;
 import net.povstalec.stellarview.common.util.AxisRotation;
@@ -45,10 +44,10 @@ public abstract class StarField extends SpaceObject
 	protected final int diameter;
 	protected final int stars;
 	
-	public StarField(Optional<ResourceKey<SpaceObject>> parent, SpaceCoords coords, AxisRotation axisRotation,
-			List<TextureLayer> textureLayers, long seed, int diameter, int numberOfStars)
+	public StarField(Optional<ResourceKey<SpaceObject>> parent, SpaceCoords coords, AxisRotation axisRotation, List<TextureLayer> textureLayers,
+			FadeOutHandler fadeOutHandler, long seed, int diameter, int numberOfStars)
 	{
-		super(parent, coords, axisRotation, textureLayers);
+		super(parent, coords, axisRotation, textureLayers, fadeOutHandler);
 		
 		this.seed = seed;
 
@@ -166,6 +165,8 @@ public abstract class StarField extends SpaceObject
 				AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(GlobularCluster::getAxisRotation),
 				TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(GlobularCluster::getTextureLayers),
 				
+				SpaceObject.FadeOutHandler.CODEC.optionalFieldOf("fade_out_handler", SpaceObject.FadeOutHandler.DEFAULT_STAR_FIELD_HANDLER).forGetter(GlobularCluster::getFadeOutHandler),
+				
 				Codec.LONG.fieldOf("seed").forGetter(GlobularCluster::getSeed),
 				Codec.INT.fieldOf("diameter_ly").forGetter(GlobularCluster::getDiameter),
 				
@@ -173,9 +174,9 @@ public abstract class StarField extends SpaceObject
 				).apply(instance, GlobularCluster::new));
 
 		public GlobularCluster(Optional<ResourceKey<SpaceObject>> parent, SpaceCoords coords, AxisRotation axisRotation,
-				List<TextureLayer> textureLayers, long seed, int diameter, int numberOfStars)
+				List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler, long seed, int diameter, int numberOfStars)
 		{
-			super(parent, coords, axisRotation, textureLayers, seed, diameter, numberOfStars);
+			super(parent, coords, axisRotation, textureLayers, fadeOutHandler, seed, diameter, numberOfStars);
 		}
 
 		@Override

@@ -32,6 +32,8 @@ public class Galaxy
 				SpaceCoords.CODEC.fieldOf("coords").forGetter(SpiralGalaxy::getCoords),
 				AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(SpiralGalaxy::getAxisRotation),
 				TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(SpiralGalaxy::getTextureLayers),
+
+				SpaceObject.FadeOutHandler.CODEC.optionalFieldOf("fade_out_handler", SpaceObject.FadeOutHandler.DEFAULT_STAR_FIELD_HANDLER).forGetter(SpiralGalaxy::getFadeOutHandler),
 				
 				Codec.LONG.fieldOf("seed").forGetter(SpiralGalaxy::getSeed),
 				Codec.INT.fieldOf("diameter_ly").forGetter(SpiralGalaxy::getDiameter),
@@ -42,9 +44,10 @@ public class Galaxy
 				).apply(instance, SpiralGalaxy::new));
 		
 		public SpiralGalaxy(Optional<ResourceKey<SpaceObject>> parent, SpaceCoords coords, AxisRotation axisRotation,
-				List<TextureLayer> textureLayers, long seed, int diameter, int numberOfArms, double armThickness, int starsPerArm)
+				List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler, 
+				long seed, int diameter, int numberOfArms, double armThickness, int starsPerArm)
 		{
-			super(parent, coords, axisRotation, textureLayers, seed, diameter, starsPerArm);
+			super(parent, coords, axisRotation, textureLayers, fadeOutHandler, seed, diameter, starsPerArm);
 			
 			this.numberOfArms = (short) numberOfArms;
 			this.armThickness = armThickness;
@@ -143,6 +146,8 @@ public class Galaxy
 				SpaceCoords.CODEC.fieldOf("coords").forGetter(EllipticalGalaxy::getCoords),
 				AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(EllipticalGalaxy::getAxisRotation),
 				TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(EllipticalGalaxy::getTextureLayers),
+
+				SpaceObject.FadeOutHandler.CODEC.optionalFieldOf("fade_out_handler", SpaceObject.FadeOutHandler.DEFAULT_STAR_FIELD_HANDLER).forGetter(EllipticalGalaxy::getFadeOutHandler),
 				
 				Codec.LONG.fieldOf("seed").forGetter(EllipticalGalaxy::getSeed),
 				Codec.INT.fieldOf("diameter_ly").forGetter(EllipticalGalaxy::getDiameter),
@@ -155,9 +160,10 @@ public class Galaxy
 				).apply(instance, EllipticalGalaxy::new));
 		
 		public EllipticalGalaxy(Optional<ResourceKey<SpaceObject>> parent, SpaceCoords coords, AxisRotation axisRotation,
-				List<TextureLayer> textureLayers, long seed, int diameter, int starsPerArm, double xStretch, double yStretch, double zStretch)
+				List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler,
+				long seed, int diameter, int starsPerArm, double xStretch, double yStretch, double zStretch)
 		{
-			super(parent, coords, axisRotation, textureLayers, seed, diameter, starsPerArm);
+			super(parent, coords, axisRotation, textureLayers, fadeOutHandler, seed, diameter, starsPerArm);
 			
 			this.xStretch = xStretch;
 			this.yStretch = yStretch;

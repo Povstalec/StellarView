@@ -17,11 +17,14 @@ public class Nebula extends SpaceObject
 			RESOURCE_KEY_CODEC.optionalFieldOf("parent").forGetter(Nebula::getParentKey),
 			SpaceCoords.CODEC.fieldOf("coords").forGetter(Nebula::getCoords),
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(Nebula::getAxisRotation),
-			TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(Nebula::getTextureLayers)
+			TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(Nebula::getTextureLayers),
+
+			SpaceObject.FadeOutHandler.CODEC.optionalFieldOf("fade_out_handler", SpaceObject.FadeOutHandler.DEFAULT_STAR_FIELD_HANDLER).forGetter(Nebula::getFadeOutHandler)
 			).apply(instance, Nebula::new));
 	
-	public Nebula(Optional<ResourceKey<SpaceObject>> parent, SpaceCoords coords, AxisRotation axisRotation, List<TextureLayer> textureLayers)
+	public Nebula(Optional<ResourceKey<SpaceObject>> parent, SpaceCoords coords, AxisRotation axisRotation, List<TextureLayer> textureLayers,
+			FadeOutHandler fadeOutHandler)
 	{
-		super(parent, coords, axisRotation, textureLayers);
+		super(parent, coords, axisRotation, textureLayers, fadeOutHandler);
 	}
 }
