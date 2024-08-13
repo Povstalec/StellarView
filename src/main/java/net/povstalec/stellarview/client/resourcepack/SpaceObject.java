@@ -38,11 +38,11 @@ public abstract class SpaceObject
 {
 	public static final float DEFAULT_DISTANCE = 100.0F;
 
-	public static final float MIN_VISIBLE_BRIGHTNESS = 0.25F;
+	/*public static final float MIN_VISIBLE_BRIGHTNESS = 0.25F;
 	
 	public static final float MIN_VISIBLE_SIZE = 2.5F; // TODO Make these values definable in resourcepacks
 	public static final float MAX_VISIBLE_SIZE = 10F;
-	public static final float VISIBLE_SIZE_RANGE = MAX_VISIBLE_SIZE - MIN_VISIBLE_SIZE;
+	public static final float VISIBLE_SIZE_RANGE = MAX_VISIBLE_SIZE - MIN_VISIBLE_SIZE;*/
 	
 	public static final ResourceLocation SPACE_OBJECT_LOCATION = new ResourceLocation(StellarView.MODID, "space_object");
 	public static final ResourceKey<Registry<SpaceObject>> REGISTRY_KEY = ResourceKey.createRegistryKey(SPACE_OBJECT_LOCATION);
@@ -122,19 +122,19 @@ public abstract class SpaceObject
 		return 1 / distance;
 	}
 	
-	public static float dayBrightness(float size, long ticks, ClientLevel level, Camera camera, float partialTicks)
+	public static float dayBrightness(ViewCenter viewCenter, float size, long ticks, ClientLevel level, Camera camera, float partialTicks)
 	{
 		if(StellarViewConfig.day_stars.get())
 			return StellarViewConfig.bright_stars.get() ? 0.5F * StellarView.lightSourceDimming(level, camera) : 0.5F;
 		
 		float brightness = level.getStarBrightness(partialTicks) * 2;
 		
-		if(brightness < MIN_VISIBLE_BRIGHTNESS && size > MIN_VISIBLE_SIZE)
+		if(brightness < viewCenter.dayMaxBrightness && size > viewCenter.dayMinVisibleSize)
 		{
-			float aboveSize = size >= MAX_VISIBLE_SIZE ? VISIBLE_SIZE_RANGE : size - MIN_VISIBLE_SIZE;
-			float brightnessPercentage = aboveSize / VISIBLE_SIZE_RANGE;
+			float aboveSize = size >= viewCenter.dayMaxVisibleSize ? viewCenter.dayVisibleSizeRange : size - viewCenter.dayMinVisibleSize;
+			float brightnessPercentage = aboveSize / viewCenter.dayVisibleSizeRange;
 			
-			brightness = brightnessPercentage * 0.25F;
+			brightness = brightnessPercentage * viewCenter.dayMaxBrightness;
 		}
 		
 		if(StellarViewConfig.bright_stars.get())
@@ -179,7 +179,7 @@ public abstract class SpaceObject
 	 * @param distance
 	 * @param partialTicks
 	 */
-	protected void renderTextureLayer(TextureLayer textureLayer, ClientLevel level, Camera camera, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)
+	protected void renderTextureLayer(TextureLayer textureLayer, ViewCenter viewCenter, ClientLevel level, Camera camera, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)
 	{
 		if(textureLayer.rgba().alpha() <= 0)
 			return;
@@ -207,7 +207,7 @@ public abstract class SpaceObject
 		else
 			RenderSystem.defaultBlendFunc();
 		
-		RenderSystem.setShaderColor(textureLayer.rgba().red() / 255F, textureLayer.rgba().green() / 255F, textureLayer.rgba().blue() / 255F, dayBrightness(size, ticks, level, camera, partialTicks) * textureLayer.rgba().alpha() / 255F);
+		RenderSystem.setShaderColor(textureLayer.rgba().red() / 255F, textureLayer.rgba().green() / 255F, textureLayer.rgba().blue() / 255F, dayBrightness(viewCenter, size, ticks, level, camera, partialTicks) * textureLayer.rgba().alpha() / 255F);
 		
 		RenderSystem.setShaderTexture(0, textureLayer.texture());
         bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
@@ -222,13 +222,13 @@ public abstract class SpaceObject
         RenderSystem.defaultBlendFunc();
 	}
 	
-	protected void renderTextureLayers(ClientLevel level, Camera camera, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)
+	protected void renderTextureLayers(ViewCenter viewCenter, ClientLevel level, Camera camera, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)
 	{
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		
 		for(TextureLayer textureLayer : textureLayers)
 		{
-			renderTextureLayer(textureLayer, level, camera, bufferbuilder, lastMatrix, sphericalCoords, ticks, distance, partialTicks);
+			renderTextureLayer(textureLayer, viewCenter, level, camera, bufferbuilder, lastMatrix, sphericalCoords, ticks, distance, partialTicks);
 		}
 	}
 	
@@ -259,7 +259,7 @@ public abstract class SpaceObject
 		
 		// If the object isn't the same we're viewing everything from and it itsn't too far away, render it
 		if(!viewCenter.objectEquals(this) && getFadeOutHandler().getFadeOutEndDistance().toKm() > lastDistance)
-			renderTextureLayers(level, camera, bufferbuilder, stack.last().pose(), sphericalCoords, ticks, lastDistance, partialTicks);
+			renderTextureLayers(viewCenter, level, camera, bufferbuilder, stack.last().pose(), sphericalCoords, ticks, lastDistance, partialTicks);
 		
 		if(getFadeOutHandler().getMaxChildRenderDistance().toKm() > lastDistance)
 		{

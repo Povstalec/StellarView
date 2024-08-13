@@ -33,8 +33,13 @@ import net.povstalec.stellarview.client.render.level.misc.StellarViewSkyEffects;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 
-public class ViewCenter implements StellarViewSkyEffects, StellarViewFogEffects
+public class ViewCenter
 {
+	public static final float DAY_MAX_BRIGHTNESS = 0.25F;
+	
+	public static final float DAY_MIN_VISIBLE_SIZE = 2.5F; // TODO Make these values definable in resourcepacks
+	public static final float DAY_MAX_VISIBLE_SIZE = 10F;
+	
 	@Nullable
 	private ResourceKey<SpaceObject> viewCenterKey;
 	@Nullable
@@ -45,9 +50,9 @@ public class ViewCenter implements StellarViewSkyEffects, StellarViewFogEffects
 	
 	private Minecraft minecraft = Minecraft.getInstance();
 	@Nullable
-	private VertexBuffer skyBuffer = createLightSky();
+	private VertexBuffer skyBuffer = StellarViewSkyEffects.createLightSky();
 	@Nullable
-	private VertexBuffer darkBuffer = createDarkSky();
+	private VertexBuffer darkBuffer = StellarViewSkyEffects.createDarkSky();
 	
 	private SpaceCoords coords;
 	private AxisRotation axisRotation; //TODO Is this really necessary? I'd say the viewCenter axis rotation could be used here instead
@@ -57,6 +62,11 @@ public class ViewCenter implements StellarViewSkyEffects, StellarViewFogEffects
 	@Nullable
 	private MeteorEffect.MeteorShower meteorShower;
 	
+	public final float dayMaxBrightness;
+
+	public final float dayMinVisibleSize;
+	public final float dayMaxVisibleSize;
+	public final float dayVisibleSizeRange;
     
     public static final Codec<ViewCenter> CODEC = RecordCodecBuilder.create(instance -> instance.group(
     		SpaceObject.RESOURCE_KEY_CODEC.optionalFieldOf("view_center").forGetter(ViewCenter::getViewCenterKey),
@@ -64,11 +74,17 @@ public class ViewCenter implements StellarViewSkyEffects, StellarViewFogEffects
 			
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(ViewCenter::getAxisRotation),
 			
+			Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("day_max_brightness", DAY_MAX_BRIGHTNESS).forGetter(viewCenter -> viewCenter.dayMaxBrightness),
+			Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("day_min_visible_size", DAY_MIN_VISIBLE_SIZE).forGetter(viewCenter -> viewCenter.dayMinVisibleSize),
+			Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("day_max_visible_size", DAY_MAX_VISIBLE_SIZE).forGetter(viewCenter -> viewCenter.dayMaxVisibleSize),
+			
 			MeteorEffect.ShootingStar.CODEC.optionalFieldOf("shooting_star").forGetter(ViewCenter::getShootingStar),
 			MeteorEffect.MeteorShower.CODEC.optionalFieldOf("meteor_shower").forGetter(ViewCenter::getMeteorShower)
 			).apply(instance, ViewCenter::new));
 	
-	public ViewCenter(Optional<ResourceKey<SpaceObject>> viewCenterKey, Optional<List<Skybox>> skyboxes, AxisRotation axisRotation, Optional<MeteorEffect.ShootingStar> shootingStar, Optional<MeteorEffect.MeteorShower> meteorShower)
+	public ViewCenter(Optional<ResourceKey<SpaceObject>> viewCenterKey, Optional<List<Skybox>> skyboxes, AxisRotation axisRotation,
+			float dayMaxBrightness, float dayMinVisibleSize, float dayMaxVisibleSize,
+			Optional<MeteorEffect.ShootingStar> shootingStar, Optional<MeteorEffect.MeteorShower> meteorShower)
 	{
 		if(viewCenterKey.isPresent())
 			this.viewCenterKey = viewCenterKey.get();
@@ -83,6 +99,12 @@ public class ViewCenter implements StellarViewSkyEffects, StellarViewFogEffects
 		
 		if(meteorShower.isPresent())
 			this.meteorShower = meteorShower.get();
+		
+		this.dayMaxBrightness = dayMaxBrightness;
+		
+		this.dayMinVisibleSize = dayMinVisibleSize;
+		this.dayMaxVisibleSize = dayMaxVisibleSize;
+		this.dayVisibleSizeRange = dayMaxVisibleSize - dayMinVisibleSize;
 	}
 	
 	public boolean setViewCenterObject(HashMap<ResourceLocation, SpaceObject> spaceObjects)
@@ -202,7 +224,7 @@ public class ViewCenter implements StellarViewSkyEffects, StellarViewFogEffects
 		stack.mulPose(Axis.ZP.rotationDegrees((float) axisRotation.zAxis)); //TODO Rotation of the sky because you're on the surface
 		stack.mulPose(Axis.XP.rotationDegrees((float) axisRotation.xAxis)); //TODO Rotation of the planet
 		
-		viewCenter.renderFrom(this, level, partialTicks, stack, camera, projectionMatrix, isFoggy(minecraft, camera), setupFog, bufferbuilder);
+		viewCenter.renderFrom(this, level, partialTicks, stack, camera, projectionMatrix, StellarViewFogEffects.isFoggy(minecraft, camera), setupFog, bufferbuilder);
 
 		stack.popPose();
 
@@ -224,7 +246,7 @@ public class ViewCenter implements StellarViewSkyEffects, StellarViewFogEffects
 		
 		setupFog.run();
 		
-		if(!this.isFoggy(this.minecraft, camera))
+		if(!StellarViewFogEffects.isFoggy(this.minecraft, camera))
 		{
 			RenderSystem.disableTexture();
 			Vec3 skyColor = level.getSkyColor(this.minecraft.gameRenderer.getMainCamera().getPosition(), partialTicks);
@@ -242,7 +264,7 @@ public class ViewCenter implements StellarViewSkyEffects, StellarViewFogEffects
 			RenderSystem.enableBlend();
 			RenderSystem.defaultBlendFunc();
 			
-			this.renderSunrise(level, partialTicks, stack, projectionMatrix, bufferbuilder);
+			StellarViewSkyEffects.renderSunrise(level, partialTicks, stack, projectionMatrix, bufferbuilder);
 			
 			RenderSystem.enableTexture();
 

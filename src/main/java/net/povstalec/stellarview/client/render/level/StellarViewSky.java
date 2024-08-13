@@ -21,7 +21,7 @@ import net.povstalec.stellarview.api.celestials.orbiting.OrbitingCelestialObject
 import net.povstalec.stellarview.client.render.level.misc.StellarViewFogEffects;
 import net.povstalec.stellarview.client.render.level.misc.StellarViewSkyEffects;
 
-public class StellarViewSky implements StellarViewSkyEffects, StellarViewFogEffects
+public class StellarViewSky
 {
 	protected Minecraft minecraft = Minecraft.getInstance();
 	@Nullable
@@ -37,8 +37,8 @@ public class StellarViewSky implements StellarViewSkyEffects, StellarViewFogEffe
 	{
 		this.center = center;
 		
-		this.skyBuffer = createLightSky();
-		this.darkBuffer = createDarkSky();
+		this.skyBuffer = StellarViewSkyEffects.createLightSky();
+		this.darkBuffer = StellarViewSkyEffects.createDarkSky();
 	}
 	
 	/*public final StellarViewSky skybox(ResourceLocation texture)
@@ -70,7 +70,7 @@ public class StellarViewSky implements StellarViewSkyEffects, StellarViewFogEffe
 	{
 		setupFog.run();
 		
-		if(this.isFoggy(this.minecraft, camera))
+		if(StellarViewFogEffects.isFoggy(this.minecraft, camera))
 			return;
 		
 		RenderSystem.disableTexture();
@@ -89,7 +89,7 @@ public class StellarViewSky implements StellarViewSkyEffects, StellarViewFogEffe
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 		
-		this.renderSunrise(level, partialTicks, stack, projectionMatrix, bufferbuilder);
+		StellarViewSkyEffects.renderSunrise(level, partialTicks, stack, projectionMatrix, bufferbuilder);
 		
 		RenderSystem.enableTexture();
 		

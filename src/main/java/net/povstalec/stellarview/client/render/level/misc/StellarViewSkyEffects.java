@@ -19,9 +19,9 @@ import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
-public interface StellarViewSkyEffects
+public class StellarViewSkyEffects
 {
-	default VertexBuffer createDarkSky()
+	public static VertexBuffer createDarkSky()
 	{
 		VertexBuffer darkBuffer = new VertexBuffer();
 		Tesselator tesselator = Tesselator.getInstance();
@@ -35,7 +35,7 @@ public interface StellarViewSkyEffects
 		return darkBuffer;
 	}
 
-	default VertexBuffer createLightSky()
+	public static VertexBuffer createLightSky()
 	{
 		VertexBuffer skyBuffer = new VertexBuffer();
 		Tesselator tesselator = Tesselator.getInstance();
@@ -72,7 +72,7 @@ public interface StellarViewSkyEffects
 		return builder.end();
 	}
 	
-	default void renderSunrise(ClientLevel level, float partialTicks, PoseStack stack, Matrix4f projectionMatrix, BufferBuilder bufferbuilder)
+	public static void renderSunrise(ClientLevel level, float partialTicks, PoseStack stack, Matrix4f projectionMatrix, BufferBuilder bufferbuilder)
 	{
 		float[] sunriseColor = level.effects().getSunriseColor(level.getTimeOfDay(partialTicks), partialTicks);
 		if(sunriseColor != null)
@@ -109,14 +109,14 @@ public interface StellarViewSkyEffects
 		}
 	}
 	
-	default void renderSky(Minecraft minecraft, VertexBuffer skyBuffer, ClientLevel level, float partialTicks,
+	public static void renderSky(Minecraft minecraft, VertexBuffer skyBuffer, ClientLevel level, float partialTicks,
 			PoseStack stack, Matrix4f projectionMatrix, ShaderInstance shaderinstance)
 	{
 		skyBuffer.bind();
 		skyBuffer.drawWithShader(stack.last().pose(), projectionMatrix, shaderinstance);
 	}
 	
-	default void renderDark(Minecraft minecraft, VertexBuffer darkBuffer, ClientLevel level, float partialTicks,
+	public static void renderDark(Minecraft minecraft, VertexBuffer darkBuffer, ClientLevel level, float partialTicks,
 			PoseStack stack, Matrix4f projectionMatrix, ShaderInstance shaderinstance, Vec3 skyColor)
 	{
 		float skyX = (float)skyColor.x;

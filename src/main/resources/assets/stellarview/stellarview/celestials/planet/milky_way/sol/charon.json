@@ -4,8 +4,8 @@
 	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
 	"orbit_info":
 	{
-		"apoapsis": 19592610,
-		"periapsis": 19598920,
+		"apoapsis": 19592.61,
+		"periapsis": 19598.92,
 		"orbital_period": 153293,
 		"argument_of_periapsis": 113.834,
 		"inclination": 	112.783,

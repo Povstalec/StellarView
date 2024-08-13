@@ -14,8 +14,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.api.sky_effects.MeteorShower;
 import net.povstalec.stellarview.api.sky_effects.ShootingStar;
-import net.povstalec.stellarview.client.render.level.misc.StellarViewFogEffects;
-import net.povstalec.stellarview.client.render.level.misc.StellarViewSkyEffects;
 import net.povstalec.stellarview.common.config.OverworldConfig;
 
 public class Planet extends OrbitingCelestialObject
@@ -247,7 +245,7 @@ public class Planet extends OrbitingCelestialObject
 		this.renderFrom(this, new Vector3f(0, 0, 0), level, camera, partialTicks, stack, projectionMatrix, setupFog, bufferbuilder, skyAxisRotation, new Vector3f(0, 0, 0));
 	}
 	
-	public static class Atmosphere implements StellarViewSkyEffects, StellarViewFogEffects
+	public static class Atmosphere
 	{
 		protected Optional<ShootingStar> shootingStar = Optional.empty();
 		protected Optional<MeteorShower> meteorShower = Optional.empty();

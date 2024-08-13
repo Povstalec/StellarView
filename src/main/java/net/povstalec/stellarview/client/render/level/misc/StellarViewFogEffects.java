@@ -9,9 +9,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.material.FogType;
 import net.minecraft.world.phys.Vec3;
 
-public interface StellarViewFogEffects
+public class StellarViewFogEffects
 {
-	default boolean doesMobEffectBlockSky(Camera camera)
+	public static boolean doesMobEffectBlockSky(Camera camera)
 	{
 		Entity entity = camera.getEntity();
 		if(!(entity instanceof LivingEntity livingentity))
@@ -20,7 +20,7 @@ public interface StellarViewFogEffects
 			return livingentity.hasEffect(MobEffects.BLINDNESS) || livingentity.hasEffect(MobEffects.DARKNESS);
 	}
 	
-	default boolean isFoggy(Minecraft minecraft, Camera camera)
+	public static boolean isFoggy(Minecraft minecraft, Camera camera)
 	{
 		Vec3 cameraPos = camera.getPosition();
 		boolean isFoggy = minecraft.level.effects().isFoggyAt(Mth.floor(cameraPos.x()), Mth.floor(cameraPos.y())) || minecraft.gui.getBossOverlay().shouldCreateWorldFog();
@@ -28,6 +28,6 @@ public interface StellarViewFogEffects
 			return true;
 		
 		FogType fogtype = camera.getFluidInCamera();
-		return fogtype == FogType.POWDER_SNOW || fogtype == FogType.LAVA || this.doesMobEffectBlockSky(camera);
+		return fogtype == FogType.POWDER_SNOW || fogtype == FogType.LAVA || doesMobEffectBlockSky(camera);
 	}
 }

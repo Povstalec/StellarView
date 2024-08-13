@@ -117,7 +117,7 @@ public class Supernova extends Star
 	}
 	
 	@Override
-	protected void renderTextureLayer(TextureLayer textureLayer, ClientLevel level, Camera camera, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)
+	protected void renderTextureLayer(TextureLayer textureLayer, ViewCenter viewCenter, ClientLevel level, Camera camera, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)
 	{
 		double lyDistance = distance / SpaceCoords.LY_TO_KM;
 		
@@ -156,7 +156,7 @@ public class Supernova extends Star
 		else
 			RenderSystem.defaultBlendFunc();
 		
-		RenderSystem.setShaderColor(rgba.red() * textureLayer.rgba().red() / 255F, rgba.green() * textureLayer.rgba().green() / 255F, rgba.blue() * textureLayer.rgba().blue() / 255F, dayBrightness(size, ticks, level, camera, partialTicks) * rgba.alpha() * textureLayer.rgba().alpha() / 255F);
+		RenderSystem.setShaderColor(rgba.red() * textureLayer.rgba().red() / 255F, rgba.green() * textureLayer.rgba().green() / 255F, rgba.blue() * textureLayer.rgba().blue() / 255F, dayBrightness(viewCenter, size, ticks, level, camera, partialTicks) * rgba.alpha() * textureLayer.rgba().alpha() / 255F);
 		
 		RenderSystem.setShaderTexture(0, textureLayer.texture());
         bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
