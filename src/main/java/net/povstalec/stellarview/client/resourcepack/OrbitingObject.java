@@ -52,12 +52,17 @@ public class OrbitingObject extends SpaceObject
 	}
 	
 	@Override
-	public Vector3f getPosition(long ticks)
+	public Vector3f getPosition(ViewCenter viewCenter, long ticks)
 	{
 		if(orbitInfo != null)
-			return orbitInfo.getOrbitVector(ticks);
+		{
+			if(!viewCenter.objectEquals(this) && orbitInfo.orbitClampNumber() > 0 && parent != null)
+				return orbitInfo.getOrbitVector(ticks, parent.lastDistance);
+			else
+				return orbitInfo.getOrbitVector(ticks);
+		}
 		else
-			return super.getPosition(ticks);
+			return super.getPosition(viewCenter, ticks);
 	}
 	
 	
@@ -68,6 +73,8 @@ public class OrbitingObject extends SpaceObject
 				Codec.floatRange(1, Float.MAX_VALUE).fieldOf("apoapsis").forGetter(OrbitInfo::apoapsis),
 				Codec.floatRange(1, Float.MAX_VALUE).fieldOf("periapsis").forGetter(OrbitInfo::periapsis),
 				
+				Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("orbit_clamp_distance", 0F).forGetter(OrbitInfo::orbitClampNumber),
+				
 				Codec.LONG.fieldOf("orbital_period").forGetter(OrbitInfo::orbitalPeriod),
 				
 				Codec.FLOAT.optionalFieldOf("argument_of_periapsis", 0F).forGetter(OrbitInfo::argumentOfPeriapsis),
@@ -75,11 +82,12 @@ public class OrbitingObject extends SpaceObject
 				Codec.FLOAT.optionalFieldOf("inclination", 0F).forGetter(OrbitInfo::inclination),
 				Codec.FLOAT.optionalFieldOf("longtitude_of_ascending_node", 0F).forGetter(OrbitInfo::longtitudeOfAscendingNode),
 				
-				Codec.FLOAT.optionalFieldOf("epoch_mean_anomaly", 0f).forGetter(OrbitInfo::epochMeanAnomaly)
+				Codec.FLOAT.optionalFieldOf("epoch_mean_anomaly", 0F).forGetter(OrbitInfo::epochMeanAnomaly)
 				).apply(instance, OrbitInfo::new));
 		
 		private final float apoapsis;
 		private final float periapsis;
+		private final float orbitClampNumber;
 		
 		private final long orbitalPeriod;
 		
@@ -96,7 +104,7 @@ public class OrbitingObject extends SpaceObject
 		
 		private final Matrix4f orbitMatrix;
 		
-		public OrbitInfo(float apoapsis, float periapsis,
+		public OrbitInfo(float apoapsis, float periapsis, float orbitClampNumber,
 				long orbitalPeriod,
 				float argumentOfPeriapsis,
 				float inclination, float longtitudeOfAscendingNode,
@@ -104,6 +112,7 @@ public class OrbitingObject extends SpaceObject
 		{
 			this.apoapsis = apoapsis;
 			this.periapsis = periapsis;
+			this.orbitClampNumber = orbitClampNumber;
 			
 			this.orbitalPeriod = orbitalPeriod;
 
@@ -128,6 +137,11 @@ public class OrbitingObject extends SpaceObject
 		public float periapsis()
 		{
 			return periapsis;
+		}
+		
+		public float orbitClampNumber()
+		{
+			return orbitClampNumber;
 		}
 		
 		public long orbitalPeriod()
@@ -169,6 +183,18 @@ public class OrbitingObject extends SpaceObject
 			orbitVector = orbitVector.mulProject(movementMatrix(trueAnomaly)).mulProject(orbitMatrix);
 			
 			return orbitVector;
+		}
+		
+		public Vector3f getOrbitVector(long ticks, double distance)
+		{
+			if(orbitClampNumber > 0 && distance > orbitClampNumber)
+			{
+				float mul = (float) distance / orbitClampNumber;
+				
+				return getOrbitVector(ticks).mulProject(new Matrix4f().scale(mul, mul, mul));
+			}
+			
+			return getOrbitVector(ticks);
 		}
 		
 		public double meanAnomaly(long ticks)

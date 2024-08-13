@@ -84,7 +84,7 @@ public abstract class SpaceObject
 		return this.coords;
 	}
 	
-	public Vector3f getPosition(long ticks)
+	public Vector3f getPosition(ViewCenter viewCenter, long ticks)
 	{
 		return new Vector3f();
 	}
@@ -239,7 +239,7 @@ public abstract class SpaceObject
 	{
 		long ticks = level.getDayTime();
 		
-		Vector3f positionVector = getPosition(ticks).add(parentVector); // Handles orbits 'n stuff
+		Vector3f positionVector = getPosition(viewCenter, ticks).add(parentVector); // Handles orbits 'n stuff
 		
 		// Add parent vector to current coords
 		SpaceCoords coords = getCoords().add(positionVector);
@@ -276,7 +276,7 @@ public abstract class SpaceObject
 	public void renderFrom(ViewCenter viewCenter, ClientLevel level, float partialTicks, PoseStack stack, Camera camera, 
 			Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder)
 	{
-		viewCenter.addCoords(getPosition(level.getDayTime()));
+		viewCenter.addCoords(getPosition(viewCenter, level.getDayTime()));
 		
 		if(parent != null)
 			parent.renderFrom(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder);

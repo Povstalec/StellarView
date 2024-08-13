@@ -6,6 +6,7 @@
 	{
 		"apoapsis": 405400,
 		"periapsis": 363228.9,
+		"orbit_clamp_distance": 100000000,
 		"orbital_period": 192000,
 		"argument_of_periapsis": 0,
 		"inclination": 5.145,
