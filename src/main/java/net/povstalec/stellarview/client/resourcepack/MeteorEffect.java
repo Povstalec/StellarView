@@ -72,10 +72,8 @@ public abstract class MeteorEffect
 		return random.nextDouble() <= rarity;
 	}
 	
-	protected MeteorType getMeteorType(long seed)
+	protected MeteorType getRandomMeteorType(long seed)
 	{
-		// TODO Randomize getting it
-		
 		Random random = new Random(seed);
 		
 		int i = 0;
@@ -240,7 +238,7 @@ public abstract class MeteorEffect
 				float yRotation = random.nextInt(0, 360);
 				float zRotation = random.nextInt(-70, 70);
 
-				MeteorType meteorType = getMeteorType(tickSeed);
+				MeteorType meteorType = getRandomMeteorType(tickSeed);
 				
 				float rotation = (float) (Math.PI * position / 4);
 				float size = (float) (Math.sin(Math.PI * position / DURATION));
@@ -289,7 +287,7 @@ public abstract class MeteorEffect
 				float yRotation = random.nextInt(0, 360);
 				float zRotation = random.nextInt(-70, 70);
 
-				MeteorType meteorType = getMeteorType(dailySeed);
+				MeteorType meteorType = getRandomMeteorType(dailySeed);
 				
 				float rotation = (float) (Math.PI * position / 4);
 				float size = (float) (Math.sin(Math.PI * position / DURATION));

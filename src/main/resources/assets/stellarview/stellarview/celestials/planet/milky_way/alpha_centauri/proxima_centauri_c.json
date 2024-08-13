@@ -1,16 +1,16 @@
 {
-	"parent": "stellarview:star/milky_way/sol",
+	"parent": "stellarview:star/milky_way/alpha_centauri/proxima_centauri",
 	"coords": { "x": {"ly": 0}, "y": {"ly": 0}, "z": {"ly": 0} },
 	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
 	"orbit_info":
 	{
-		"apoapsis": 152100000,
-		"periapsis": 147100000,
-		"orbital_period": 2304000,
+		"apoapsis": 223000000,
+		"periapsis": 223000000,
+		"orbital_period": 12161840,
 		"argument_of_periapsis": 0,
-		"inclination": 0,
-		"longtitude_of_ascending_node": 0,
-		"epoch_mean_anomaly": 180
+		"inclination": 133,
+		"longtitude_of_ascending_node": 331,
+		"epoch_mean_anomaly": 0
 	},
 	"texture_layers":
 	[

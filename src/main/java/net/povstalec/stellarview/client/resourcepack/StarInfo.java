@@ -1,155 +1,52 @@
 package net.povstalec.stellarview.client.resourcepack;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
-import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.util.RandomSource;
-import net.povstalec.stellarview.common.util.SpaceCoords;
+import net.povstalec.stellarview.common.util.Color;
 
 public class StarInfo
 {
-	private double[][] starCoords;
-	private double[] starSizes;
+	private final ArrayList<Star.StarType> starTypes;
+	private int totalWeight = 0;
 	
-	private double deformations[][];
+	public static final Star.StarType WHITE_STAR = new Star.StarType(new Color.IntRGB(255, 255, 255), 0.15F, 0.25F, (short) 100, (short) 255, 1);
+	public static final List<Star.StarType> DEFAULT_STARS = Arrays.asList(WHITE_STAR);
+	public static final StarInfo DEFAULT_STAR_INFO = new StarInfo(DEFAULT_STARS);
 	
-	private short[][] starRGBA;
+	public static final Codec<StarInfo> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+			Star.StarType.CODEC.listOf().fieldOf("star_types").forGetter(starInfo -> starInfo.starTypes)
+			).apply(instance, StarInfo::new));
 	
-	private double[][] randoms;
-	
-	public StarInfo(int stars)
+	public StarInfo(List<Star.StarType> starTypes)
 	{
-		this.starCoords = new double[stars][3];
-		this.starSizes = new double[stars];
-
-		this.deformations = new double[stars][2];
+		this.starTypes = new ArrayList<Star.StarType>(starTypes);
 		
-		this.randoms = new double[stars][2];
-		
-		this.starRGBA = new short[stars][4];
-	}
-	
-	public static double clampStar(double starSize, double minStarSize, double maxStarSize)
-	{
-		if(starSize < minStarSize)
-			return minStarSize;
-		
-		return starSize > maxStarSize ? maxStarSize : starSize;
-	}
-	
-	/**
-	 * Creates information for a completely new star
-	 * @param builder BufferBuilder used for building the vertexes
-	 * @param randomSource RandomSource used for randomizing the star information
-	 * @param relativeCoords SpaceCoords that give a relative position between the observer and the star
-	 * @param x X coordinate of the star
-	 * @param y Y coordinate of the star
-	 * @param z Z coordinate of the star
-	 * @param i Index of the star
-	 */
-	public void newStar(BufferBuilder builder, RandomSource randomSource, SpaceCoords relativeCoords, double x, double y, double z, int i)
-	{
-		long seed = randomSource.nextLong();
-		
-		Random randomValues = new Random(seed);
-		
-		// Set up position
-		
-		starCoords[i][0] = x;
-		starCoords[i][1] = y;
-		starCoords[i][2] = z;
-		
-		//TODO Set up deformation
-		deformations[i][0] = 1; // Height deformation
-		deformations[i][1] = 1;// Width deformation
-
-		// Set up size
-		
-		starSizes[i] = randomValues.nextDouble(0.15, 0.25); // This randomizes the Star size
-		
-		// Set up color and alpha
-		
-		short alpha = (short) randomValues.nextInt(100, 256); // 0xAA is the default
-		
-		this.starRGBA[i] = new short[] {255, 255, 255, alpha};
-		
-		// sin and cos are used to effectively clamp the random number between two values without actually clamping it,
-		// wwhich would result in some awkward lines as Stars would be brought to the clamped values
-		// Both affect Star size and rotation
-		double random = randomSource.nextDouble() * Math.PI * 2.0D;
-		randoms[i][0] = Math.sin(random); // sin random
-		randoms[i][1] = Math.cos(random); // cos random
-		
-		this.createStar(builder, randomSource, relativeCoords, i);
-	}
-	
-	public void createStar(BufferBuilder builder, RandomSource randomSource, SpaceCoords relativeCoords, int i)
-	{
-		double sinRandom = randoms[i][0];
-		double cosRandom = randoms[i][1];
-		
-		// This loop creates the 4 corners of a Star
-		for(int j = 0; j < 4; ++j)
+		for(Star.StarType starType : starTypes)
 		{
-			/* Bitwise AND is there to multiply the size by either 1 or -1 to reach this effect:
-			 * Where a coordinate is written as (A,B)
-			 * 		(-1,1)		(1,1)
-			 * 		x-----------x
-			 * 		|			|
-			 * 		|			|
-			 * 		|			|
-			 * 		|			|
-			 * 		x-----------x
-			 * 		(-1,-1)		(1,-1)
-			 * 								|	A	B
-			 * 0 & 2 = 000 & 010 = 000 = 0	|	x
-			 * 1 & 2 = 001 & 010 = 000 = 0	|	x	x
-			 * 2 & 2 = 010 & 010 = 010 = 2	|	x	x
-			 * 3 & 2 = 011 & 010 = 010 = 2	|	x	x
-			 * 4 & 2 = 100 & 000 = 000 = 0	|		x
-			 * 
-			 * After you subtract 1 one from each of them, you get this:
-			 * j:	0	1	2	3
-			 * --------------------
-			 * A:	-1	-1	1	1
-			 * B:	-1	1	1	-1
-			 * Which corresponds to:
-			 * UV:	00	01	11	10
-			 */
-			double aLocation = (double) ((j & 2) - 1);
-			double bLocation = (double) ((j + 1 & 2) - 1);
-			
-			/* These are the values for cos(random) = sin(random)
-			 * (random is simply there to randomize the star rotation)
-			 * j:	0	1	2	3
-			 * -------------------
-			 * A:	0	-2	0	2
-			 * B:	-2	0	2	0
-			 * 
-			 * A and B are there to create a diamond effect on the Y-axis and X-axis respectively
-			 * (Pretend it's not as stretched as the slashes make it look)
-			 * Where a coordinate is written as (B,A)
-			 * 
-			 *           (0,2)
-			 *          /\
-			 *   (-2,0)/  \(2,0)
-			 *         \  /
-			 *          \/
-			 *           (0,-2)
-			 * 
-			 */
-			double height = deformations[i][0] * (aLocation * cosRandom - bLocation * sinRandom);
-			double width = deformations[i][1] * (bLocation * cosRandom + aLocation * sinRandom);
-			
-			builder.vertex(height, width, starSizes[i]).color(starRGBA[i][0], starRGBA[i][1], starRGBA[i][2], starRGBA[i][3]);
-			// These next few lines add a "custom" element defined as SpacePos in SpaceTravelVertexFormat
-			builder.putFloat(0, (float) starCoords[i][0]);
-			builder.putFloat(4, (float) starCoords[i][1]);
-			builder.putFloat(8, (float) starCoords[i][2]);
-			builder.nextElement();
-			
-			builder.endVertex();
+			this.totalWeight += starType.getWeight();
 		}
+	}
+	
+	public Star.StarType getRandomStarType(long seed)
+	{
+		Random random = new Random(seed);
+		
+		int i = 0;
+		
+		for(int weight = random.nextInt(0, totalWeight); i < starTypes.size() - 1; i++)
+		{
+			weight -= starTypes.get(i).getWeight();
+			
+			if(weight <= 0)
+				break;
+		}
+		
+		return starTypes.get(i);
 	}
 }

@@ -14,6 +14,36 @@
 		}
 	],
 	
+	"star_info":
+	{
+		"star_types":
+		[
+			{
+				"rgb": {"red": 235, "green": 235, "blue": 255},
+				"min_size": 0.15,
+				"max_size": 0.25,
+				"min_brightness": 210,
+				"max_brightness": 240,
+				"weight": 1
+			},
+			{
+				"rgb": {"red": 255, "green": 255, "blue": 255},
+				"min_size": 0.15,
+				"max_size": 0.25,
+				"min_brightness": 190,
+				"max_brightness": 230,
+				"weight": 3
+			},
+			{
+				"rgb": {"red": 255, "green": 255, "blue": 120},
+				"min_size": 0.10,
+				"max_size": 0.25,
+				"min_brightness": 180,
+				"max_brightness": 210,
+				"weight": 7
+			}
+		]
+	},
 	"seed": 10842,
 	"diameter_ly": 18000,
 	"stars": 500

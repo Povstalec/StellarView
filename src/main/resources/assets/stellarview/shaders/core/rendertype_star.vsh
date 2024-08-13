@@ -34,7 +34,7 @@ void main() {
 	// COLOR START - Adjusts the brightness (alpha) of the star based on its distance
 	
 	float alpha = Color.w;
-	float minAlpha = (alpha - 0.66) * 2 / 5; // Previously used (alpha - 0.66) * 2 / 3
+	float minAlpha = alpha * 0.15; // Previously used (alpha - 0.66) * 2 / 3
 	
 	//if(distance > 10000) // Stars more than 10000 light years away appear dimmer
 	alpha -= distance / 100000;

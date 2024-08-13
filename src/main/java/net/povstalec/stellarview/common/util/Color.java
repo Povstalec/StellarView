@@ -38,6 +38,12 @@ public class Color
 		protected int green;
 		protected int blue;
 		
+		public static final Codec<Color.IntRGB> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				Codec.intRange(MIN_INT_VALUE, MAX_INT_VALUE).fieldOf(RED).forGetter(Color.IntRGB::red),
+				Codec.intRange(MIN_INT_VALUE, MAX_INT_VALUE).fieldOf(GREEN).forGetter(Color.IntRGB::green),
+				Codec.intRange(MIN_INT_VALUE, MAX_INT_VALUE).fieldOf(BLUE).forGetter(Color.IntRGB::blue)
+				).apply(instance, Color.IntRGB::new));
+		
 		public IntRGB(int red, int green, int blue)
 		{
 			if(red > MAX_INT_VALUE || green > MAX_INT_VALUE || blue > MAX_INT_VALUE)

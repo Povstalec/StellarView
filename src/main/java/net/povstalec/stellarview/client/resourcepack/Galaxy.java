@@ -18,6 +18,7 @@ import net.povstalec.stellarview.client.render.shader.StellarViewVertexFormat;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 import net.povstalec.stellarview.common.util.SphericalCoords;
+import net.povstalec.stellarview.common.util.StarData;
 import net.povstalec.stellarview.common.util.TextureLayer;
 
 public class Galaxy
@@ -34,7 +35,8 @@ public class Galaxy
 				TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(SpiralGalaxy::getTextureLayers),
 
 				SpaceObject.FadeOutHandler.CODEC.optionalFieldOf("fade_out_handler", SpaceObject.FadeOutHandler.DEFAULT_STAR_FIELD_HANDLER).forGetter(SpiralGalaxy::getFadeOutHandler),
-				
+
+				StarInfo.CODEC.optionalFieldOf("star_info", StarInfo.DEFAULT_STAR_INFO).forGetter(SpiralGalaxy::getStarInfo),
 				Codec.LONG.fieldOf("seed").forGetter(SpiralGalaxy::getSeed),
 				Codec.INT.fieldOf("diameter_ly").forGetter(SpiralGalaxy::getDiameter),
 				
@@ -44,10 +46,10 @@ public class Galaxy
 				).apply(instance, SpiralGalaxy::new));
 		
 		public SpiralGalaxy(Optional<ResourceKey<SpaceObject>> parent, SpaceCoords coords, AxisRotation axisRotation,
-				List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler, 
+				List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler, StarInfo starInfo, 
 				long seed, int diameter, int numberOfArms, double armThickness, int starsPerArm)
 		{
-			super(parent, coords, axisRotation, textureLayers, fadeOutHandler, seed, diameter, starsPerArm);
+			super(parent, coords, axisRotation, textureLayers, fadeOutHandler, starInfo, seed, diameter, starsPerArm);
 			
 			this.numberOfArms = (short) numberOfArms;
 			this.armThickness = armThickness;
@@ -72,7 +74,7 @@ public class Galaxy
 			double spread = armThickness;
 			double sizeMultiplier = diameter / 30D;
 			
-			starInfo = new StarInfo(stars * numberOfArms);
+			starData = new StarData(stars * numberOfArms);
 			
 			for(int j = 0; j < numberOfArms; j++) //Draw each arm
 			{
@@ -112,7 +114,7 @@ public class Galaxy
 					double gammaY = betaY;
 					double gammaZ = betaX * Math.cos(axisRotation.yAxis()) - betaZ * Math.sin(axisRotation.yAxis());
 					
-					starInfo.newStar(bufferBuilder, randomsource, relativeCoords, gammaX, gammaY, gammaZ, j * stars + i);
+					starData.newStar(starInfo, bufferBuilder, randomsource, relativeCoords, gammaX, gammaY, gammaZ, j * stars + i);
 				}
 			}
 			return bufferBuilder.end();
@@ -128,7 +130,7 @@ public class Galaxy
 			{
 				for(int i = 0; i < stars; i++)
 				{
-					starInfo.createStar(bufferBuilder, randomsource, relativeCoords, j * stars + i);
+					starData.createStar(bufferBuilder, randomsource, relativeCoords, j * stars + i);
 				}
 			}
 			return bufferBuilder.end();
@@ -149,6 +151,7 @@ public class Galaxy
 
 				SpaceObject.FadeOutHandler.CODEC.optionalFieldOf("fade_out_handler", SpaceObject.FadeOutHandler.DEFAULT_STAR_FIELD_HANDLER).forGetter(EllipticalGalaxy::getFadeOutHandler),
 				
+				StarInfo.CODEC.optionalFieldOf("star_info", StarInfo.DEFAULT_STAR_INFO).forGetter(EllipticalGalaxy::getStarInfo),
 				Codec.LONG.fieldOf("seed").forGetter(EllipticalGalaxy::getSeed),
 				Codec.INT.fieldOf("diameter_ly").forGetter(EllipticalGalaxy::getDiameter),
 				
@@ -160,10 +163,10 @@ public class Galaxy
 				).apply(instance, EllipticalGalaxy::new));
 		
 		public EllipticalGalaxy(Optional<ResourceKey<SpaceObject>> parent, SpaceCoords coords, AxisRotation axisRotation,
-				List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler,
+				List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler, StarInfo starInfo,
 				long seed, int diameter, int starsPerArm, double xStretch, double yStretch, double zStretch)
 		{
-			super(parent, coords, axisRotation, textureLayers, fadeOutHandler, seed, diameter, starsPerArm);
+			super(parent, coords, axisRotation, textureLayers, fadeOutHandler, starInfo, seed, diameter, starsPerArm);
 			
 			this.xStretch = xStretch;
 			this.yStretch = yStretch;
@@ -190,7 +193,7 @@ public class Galaxy
 			RandomSource randomsource = RandomSource.create(seed);
 			bufferBuilder.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR);
 			
-			starInfo = new StarInfo(stars);
+			starData = new StarData(stars);
 			
 			for(int i = 0; i < stars; i++)
 			{
@@ -216,7 +219,7 @@ public class Galaxy
 				double gammaY = betaY;
 				double gammaZ = betaX * Math.cos(axisRotation.yAxis()) - betaZ * Math.sin(axisRotation.yAxis());
 
-				starInfo.newStar(bufferBuilder, randomsource, relativeCoords, gammaX, gammaY, gammaZ, i);
+				starData.newStar(starInfo, bufferBuilder, randomsource, relativeCoords, gammaX, gammaY, gammaZ, i);
 			}
 			return bufferBuilder.end();
 		}
@@ -229,7 +232,7 @@ public class Galaxy
 			
 			for(int i = 0; i < stars; i++)
 			{
-				starInfo.createStar(bufferBuilder, randomsource, relativeCoords, i);
+				starData.createStar(bufferBuilder, randomsource, relativeCoords, i);
 			}
 			return bufferBuilder.end();
 		}

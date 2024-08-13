@@ -31,12 +31,15 @@ import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 import net.povstalec.stellarview.common.util.SphericalCoords;
 import net.povstalec.stellarview.common.util.StarBuffer;
+import net.povstalec.stellarview.common.util.StarData;
 import net.povstalec.stellarview.common.util.TextureLayer;
 
 public abstract class StarField extends SpaceObject
 {
 	@Nullable
 	protected StarBuffer starBuffer;
+	protected StarData starData;
+
 	protected StarInfo starInfo;
 	
 	protected final long seed;
@@ -45,14 +48,21 @@ public abstract class StarField extends SpaceObject
 	protected final int stars;
 	
 	public StarField(Optional<ResourceKey<SpaceObject>> parent, SpaceCoords coords, AxisRotation axisRotation, List<TextureLayer> textureLayers,
-			FadeOutHandler fadeOutHandler, long seed, int diameter, int numberOfStars)
+			FadeOutHandler fadeOutHandler, StarInfo starInfo, long seed, int diameter, int numberOfStars)
 	{
 		super(parent, coords, axisRotation, textureLayers, fadeOutHandler);
+		
+		this.starInfo = starInfo;
 		
 		this.seed = seed;
 
 		this.diameter = diameter;
 		this.stars = numberOfStars;
+	}
+	
+	public StarInfo getStarInfo()
+	{
+		return starInfo;
 	}
 	
 	public long getSeed()
@@ -166,7 +176,8 @@ public abstract class StarField extends SpaceObject
 				TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(GlobularCluster::getTextureLayers),
 				
 				SpaceObject.FadeOutHandler.CODEC.optionalFieldOf("fade_out_handler", SpaceObject.FadeOutHandler.DEFAULT_STAR_FIELD_HANDLER).forGetter(GlobularCluster::getFadeOutHandler),
-				
+
+				StarInfo.CODEC.optionalFieldOf("star_info", StarInfo.DEFAULT_STAR_INFO).forGetter(GlobularCluster::getStarInfo),
 				Codec.LONG.fieldOf("seed").forGetter(GlobularCluster::getSeed),
 				Codec.INT.fieldOf("diameter_ly").forGetter(GlobularCluster::getDiameter),
 				
@@ -174,9 +185,9 @@ public abstract class StarField extends SpaceObject
 				).apply(instance, GlobularCluster::new));
 
 		public GlobularCluster(Optional<ResourceKey<SpaceObject>> parent, SpaceCoords coords, AxisRotation axisRotation,
-				List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler, long seed, int diameter, int numberOfStars)
+				List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler, StarInfo starInfo, long seed, int diameter, int numberOfStars)
 		{
-			super(parent, coords, axisRotation, textureLayers, fadeOutHandler, seed, diameter, numberOfStars);
+			super(parent, coords, axisRotation, textureLayers, fadeOutHandler, starInfo, seed, diameter, numberOfStars);
 		}
 
 		@Override
@@ -185,14 +196,14 @@ public abstract class StarField extends SpaceObject
 			RandomSource randomsource = RandomSource.create(seed);
 			bufferBuilder.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR);
 			
-			starInfo = new StarInfo(stars);
+			starData = new StarData(stars);
 			
 			for(int i = 0; i < stars; i++)
 			{
 				// This generates random coordinates for the Star close to the camera
 				Vector3d cartesian = new SphericalCoords(randomsource.nextDouble() * diameter, randomsource.nextDouble() * 2F * Math.PI, randomsource.nextDouble() * Math.PI).toCartesianD();
 				
-				starInfo.newStar(bufferBuilder, randomsource, relativeCoords, cartesian.x, cartesian.y, cartesian.z, i);
+				starData.newStar(starInfo, bufferBuilder, randomsource, relativeCoords, cartesian.x, cartesian.y, cartesian.z, i);
 			}
 			return bufferBuilder.end();
 		}
@@ -205,7 +216,7 @@ public abstract class StarField extends SpaceObject
 			
 			for(int i = 0; i < stars; i++)
 			{
-				starInfo.createStar(bufferBuilder, randomsource, relativeCoords, i);
+				starData.createStar(bufferBuilder, randomsource, relativeCoords, i);
 			}
 			return bufferBuilder.end();
 		}

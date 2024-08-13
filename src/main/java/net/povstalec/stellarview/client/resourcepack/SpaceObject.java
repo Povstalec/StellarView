@@ -59,11 +59,12 @@ public abstract class SpaceObject
 	protected SpaceCoords coords; // Absolute coordinates of the center (not necessarily the object itself, since it can be orbiting some other object for example)
 	protected AxisRotation axisRotation;
 	
-	private ArrayList<TextureLayer> textureLayers;
+	protected ArrayList<TextureLayer> textureLayers;
 	
-	private FadeOutHandler fadeOutHandler;
+	protected FadeOutHandler fadeOutHandler;
 	
-	private ResourceLocation location;
+	protected ResourceLocation location;
+	protected double lastDistance = 0; // Last known distance of this object from the View Center, used for sorting
 	
 	public SpaceObject(Optional<ResourceKey<SpaceObject>> parentKey, SpaceCoords coords, AxisRotation axisRotation, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler)
 	{
@@ -246,25 +247,27 @@ public abstract class SpaceObject
 		// Subtract coords of this from View Center coords to get relative coords
 		SphericalCoords sphericalCoords = coords.skyPosition(viewCenter.getCoords());
 		
-		double distance = sphericalCoords.r;
+		lastDistance = sphericalCoords.r;
 		sphericalCoords.r = DEFAULT_DISTANCE;
 		
 		// Render children behind the parent
-		/*for(SpaceObject child : children) //TODO
+		for(SpaceObject child : children) //TODO
 		{
-			child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, potitionVector);
-		}*/
+			if(child.lastDistance >= this.lastDistance)
+				child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, positionVector);
+		}
 		
 		// If the object isn't the same we're viewing everything from and it itsn't too far away, render it
-		if(!viewCenter.objectEquals(this) && getFadeOutHandler().getFadeOutEndDistance().toKm() > distance)
-			renderTextureLayers(level, camera, bufferbuilder, stack.last().pose(), sphericalCoords, ticks, distance, partialTicks);
+		if(!viewCenter.objectEquals(this) && getFadeOutHandler().getFadeOutEndDistance().toKm() > lastDistance)
+			renderTextureLayers(level, camera, bufferbuilder, stack.last().pose(), sphericalCoords, ticks, lastDistance, partialTicks);
 		
-		if(getFadeOutHandler().getMaxChildRenderDistance().toKm() > distance)
+		if(getFadeOutHandler().getMaxChildRenderDistance().toKm() > lastDistance)
 		{
 			// Render children in front of the parent
 			for(SpaceObject child : children)
 			{
-				child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, positionVector);
+				if(child.lastDistance < this.lastDistance)
+					child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, positionVector);
 			}
 		}
 	}
