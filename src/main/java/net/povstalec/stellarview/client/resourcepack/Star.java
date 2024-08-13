@@ -95,7 +95,6 @@ public class Star extends OrbitingObject
 		float alpha = 1;
 		float minAlpha = alpha * 0.15F; // Previously used (alpha - 0.66) * 2 / 3
 		
-		//if(lyDistance > 10000) // Stars more than 10000 light years away appear dimmer
 		alpha -= lyDistance / 100000;
 		
 		if(alpha < minAlpha)

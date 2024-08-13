@@ -251,7 +251,7 @@ public abstract class SpaceObject
 		sphericalCoords.r = DEFAULT_DISTANCE;
 		
 		// Render children behind the parent
-		for(SpaceObject child : children) //TODO
+		for(SpaceObject child : children)
 		{
 			if(child.lastDistance >= this.lastDistance)
 				child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, positionVector);

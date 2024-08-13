@@ -67,12 +67,20 @@ public class Moon extends Planet
 	
 	public float sizeMultiplier(ClientLevel level)
 	{
-		return EnhancedCelestialsCompatibility.getMoonSize(level, 20) / 20F;
+		// If the Moon is being viewed from the correct dimension, make it larger
+		if(getCompatibility().isPresent() && level.dimension().equals(getCompatibility().get().enhancedCelestialsMoonDimension))
+			return EnhancedCelestialsCompatibility.getMoonSize(level, 20) / 20F;
+		
+		return 1F;
 	}
 	
 	public Color.FloatRGBA rgba(ClientLevel level, float partialTicks)
 	{
-		return EnhancedCelestialsCompatibility.getMoonColor(level, partialTicks);
+		// If the Moon is being viewed from the correct dimension, color it differently
+		if(getCompatibility().isPresent() && level.dimension().equals(getCompatibility().get().enhancedCelestialsMoonDimension))
+			return EnhancedCelestialsCompatibility.getMoonColor(level, partialTicks);
+		
+		return new Color.FloatRGBA(1F, 1F, 1F);
 	}
 	
 	@Override
