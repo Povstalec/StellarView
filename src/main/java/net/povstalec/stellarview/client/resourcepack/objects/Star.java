@@ -172,7 +172,8 @@ public class Star extends OrbitingObject
 	{
 		float starBrightness = level.getStarBrightness(partialTicks);
 		
-		starBrightness = StellarViewConfig.day_stars.get() && starBrightness < 0.5F ? 0.5F : starBrightness;
+		if(StellarViewConfig.day_stars.get() && starBrightness < 0.5F)
+			starBrightness = 0.5F;
 		
 		if(StellarViewConfig.bright_stars.get())
 			starBrightness = starBrightness * StellarView.lightSourceDimming(level, camera);

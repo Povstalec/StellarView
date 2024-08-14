@@ -77,6 +77,8 @@ public class Galaxy
 			
 			starData = new StarData(stars * numberOfArms);
 			
+			boolean clumpInCenter = true; // TODO Let resourcepacks change this
+			
 			for(int j = 0; j < numberOfArms; j++) //Draw each arm
 			{
 				double rotation = Math.PI * j / ((double) numberOfArms / 2);
@@ -90,7 +92,12 @@ public class Galaxy
 					double phi = length * Math.PI * progress - rotation;
 					double r = StellarCoordinates.spiralR(5, phi, rotation);
 
-					Vector3d cartesian = new SphericalCoords(randomsource.nextDouble() * spread, randomsource.nextDouble() * 2F * Math.PI, randomsource.nextDouble() * Math.PI).toCartesianD();
+					// This generates random coordinates for the Star close to the camera
+					double distance = clumpInCenter ? randomsource.nextDouble() : Math.cbrt(randomsource.nextDouble());
+					double theta = randomsource.nextDouble() * 2F * Math.PI;
+					double sphericalphi = Math.acos(2F * randomsource.nextDouble() - 1F); // This prevents the formation of that weird streak that normally happens
+
+					Vector3d cartesian = new SphericalCoords(distance * spread, theta, sphericalphi).toCartesianD();
 					
 					double x =  r * Math.cos(phi) + cartesian.x * spread / (progress * 1.5);
 					double z =  r * Math.sin(phi) + cartesian.z * spread / (progress * 1.5);
@@ -196,10 +203,16 @@ public class Galaxy
 			
 			starData = new StarData(stars);
 			
+			boolean clumpInCenter = true; // TODO Let resourcepacks change this
+			
 			for(int i = 0; i < stars; i++)
 			{
 				// This generates random coordinates for the Star close to the camera
-				Vector3d cartesian = new SphericalCoords(randomsource.nextDouble() * diameter, randomsource.nextDouble() * 2F * Math.PI, randomsource.nextDouble() * Math.PI).toCartesianD();
+				double distance = clumpInCenter ? randomsource.nextDouble() : Math.cbrt(randomsource.nextDouble());
+				double theta = randomsource.nextDouble() * 2F * Math.PI;
+				double phi = Math.acos(2F * randomsource.nextDouble() - 1F); // This prevents the formation of that weird streak that normally happens
+				
+				Vector3d cartesian = new SphericalCoords(distance * diameter, theta, phi).toCartesianD();
 				
 				cartesian.x *= xStretch;
 				cartesian.y *= yStretch;

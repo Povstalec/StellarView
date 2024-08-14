@@ -203,7 +203,11 @@ public abstract class StarField extends SpaceObject
 			for(int i = 0; i < stars; i++)
 			{
 				// This generates random coordinates for the Star close to the camera
-				Vector3d cartesian = new SphericalCoords(randomsource.nextDouble() * diameter, randomsource.nextDouble() * 2F * Math.PI, randomsource.nextDouble() * Math.PI).toCartesianD();
+				double distance = randomsource.nextDouble(); // Stars will be spread evenly aroudn the sphere
+				double theta = randomsource.nextDouble() * 2F * Math.PI;
+				double phi = Math.acos(2F * randomsource.nextDouble() - 1F); // This prevents the formation of that weird streak that normally happens
+				
+				Vector3d cartesian = new SphericalCoords(distance * diameter, theta, phi).toCartesianD();
 				
 				starData.newStar(starInfo, bufferBuilder, randomsource, relativeCoords, cartesian.x, cartesian.y, cartesian.z, i);
 			}

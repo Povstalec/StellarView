@@ -16,6 +16,7 @@ public class StellarViewConfig
 	public static final ForgeConfigSpec CLIENT_CONFIG;
 	
 	public static StellarViewConfigValue.BooleanValue replace_overworld;
+	public static StellarViewConfigValue.BooleanValue replace_nether;
 	public static StellarViewConfigValue.BooleanValue replace_end;
 	
 	public static StellarViewConfigValue.BooleanValue disable_stars;
@@ -54,6 +55,10 @@ public class StellarViewConfig
 		replace_overworld = new StellarViewConfigValue.BooleanValue(client, "client.replace_overworld", 
 				true, 
 				"Replaces the Vanilla Overworld sky with Stellar View sky");
+		
+		replace_nether = new StellarViewConfigValue.BooleanValue(client, "client.replace_nether", 
+				false, 
+				"Replaces the Vanilla Nether sky with Stellar View sky");
 		
 		replace_end = new StellarViewConfigValue.BooleanValue(client, "client.replace_end", 
 				false, 

@@ -24,6 +24,7 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.povstalec.stellarview.client.render.level.StellarViewEndEffects;
+import net.povstalec.stellarview.client.render.level.StellarViewNetherEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewOverworldEffects;
 import net.povstalec.stellarview.client.resourcepack.ResourcepackReloadListener;
 import net.povstalec.stellarview.client.screens.config.ConfigScreen;
@@ -42,6 +43,7 @@ public class StellarView
     public static final Logger LOGGER = LogUtils.getLogger();
     
     public static StellarViewOverworldEffects overworld;
+    public static StellarViewNetherEffects nether;
     public static StellarViewEndEffects end;
 
 	public StellarView()
@@ -68,9 +70,11 @@ public class StellarView
         public static void registerDimensionEffects(RegisterDimensionSpecialEffectsEvent event)
         {
     		overworld = new StellarViewOverworldEffects();
+    		nether = new StellarViewNetherEffects();
     		end = new StellarViewEndEffects();
     		
         	event.register(StellarViewOverworldEffects.OVERWORLD_EFFECTS, overworld);
+        	event.register(StellarViewNetherEffects.NETHER_EFFECTS, nether);
         	event.register(StellarViewEndEffects.END_EFFECTS, end);
         }
     	

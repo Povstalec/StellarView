@@ -66,7 +66,7 @@
 		},
 		
 		"max_size_multiplier": 10,
-		"start_ticks": 960000,
+		"start_ticks": 980000,
 		"duration_ticks": 576000
 	}
 }

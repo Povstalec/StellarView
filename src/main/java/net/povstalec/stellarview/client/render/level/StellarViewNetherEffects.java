@@ -15,16 +15,16 @@ import net.povstalec.stellarview.client.resourcepack.ViewCenters;
 import net.povstalec.stellarview.common.config.StellarViewConfig;
 import net.povstalec.stellarview.compatibility.enhancedcelestials.EnhancedCelestialsCompatibility;
 
-public class StellarViewEndEffects extends DimensionSpecialEffects.EndEffects
+public class StellarViewNetherEffects extends DimensionSpecialEffects.NetherEffects
 {
-	public static final ResourceLocation END_EFFECTS = new ResourceLocation("the_end");
+	public static final ResourceLocation NETHER_EFFECTS = new ResourceLocation("the_nether");
 	
-	public StellarViewEndEffects() {}
+	public StellarViewNetherEffects() {}
 	
 	@Override
 	public boolean renderSky(ClientLevel level, int ticks, float partialTick, PoseStack poseStack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
     {
-		if(StellarViewConfig.replace_end.get())
+		if(StellarViewConfig.replace_nether.get())
 			return ViewCenters.renderViewCenterSky(level, ticks, partialTick, poseStack, camera, projectionMatrix, isFoggy, setupFog); //TODO Make sure the Stars render even during day
 		
         return false;
@@ -33,7 +33,7 @@ public class StellarViewEndEffects extends DimensionSpecialEffects.EndEffects
 	@Override
 	public void adjustLightmapColors(ClientLevel level, float partialTicks, float skyDarken, float skyLight, float blockLight, int pixelX, int pixelY, Vector3f colors)
     {
-		if(StellarViewConfig.replace_end.get())
+		if(StellarViewConfig.replace_nether.get())
 		{
 			StellarViewLightmapEffects.defaultLightmapColors(level, partialTicks, skyDarken, skyLight, blockLight, pixelX, pixelY, colors);
 			
