@@ -11,6 +11,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.povstalec.stellarview.client.resourcepack.objects.SpaceObject;
+import net.povstalec.stellarview.client.resourcepack.objects.StarField;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 
 public final class Space

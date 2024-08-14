@@ -106,10 +106,10 @@ public class StellarView
     	return isEnhancedCelestialsLoaded.get();	
     }
     
-    public static void updateGalaxies()
+    public static void updateGalaxies() //TODO Remove this
     {
-    	overworld.setupGalaxy();
-    	end.setupGalaxy();
+    	//overworld.setupGalaxy();
+    	//end.setupGalaxy();
     }
     
     public static float lightSourceDimming(ClientLevel level, Camera camera)

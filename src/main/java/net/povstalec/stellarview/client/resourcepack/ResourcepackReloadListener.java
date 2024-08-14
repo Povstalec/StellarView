@@ -17,6 +17,13 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.povstalec.stellarview.StellarView;
+import net.povstalec.stellarview.client.resourcepack.objects.Galaxy;
+import net.povstalec.stellarview.client.resourcepack.objects.Moon;
+import net.povstalec.stellarview.client.resourcepack.objects.Planet;
+import net.povstalec.stellarview.client.resourcepack.objects.SpaceObject;
+import net.povstalec.stellarview.client.resourcepack.objects.Star;
+import net.povstalec.stellarview.client.resourcepack.objects.StarField;
+import net.povstalec.stellarview.client.resourcepack.objects.Supernova;
 
 public class ResourcepackReloadListener
 {
@@ -251,7 +258,7 @@ public class ResourcepackReloadListener
 						}
 					}
 					
-					if(spaceObject.parent == null)
+					if(!spaceObject.getParent().isPresent())
 						StellarView.LOGGER.error("Failed to find parent for " + spaceObject.toString());
 				}
 				else

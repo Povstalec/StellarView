@@ -8,6 +8,7 @@ import java.util.Random;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import net.povstalec.stellarview.client.resourcepack.objects.Star;
 import net.povstalec.stellarview.common.util.Color;
 
 public class StarInfo

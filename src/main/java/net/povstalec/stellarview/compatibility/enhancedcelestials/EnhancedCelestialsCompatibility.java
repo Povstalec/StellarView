@@ -13,7 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.util.Mth;
-import net.povstalec.stellarview.api.StellarViewSpecialEffects;
+import net.povstalec.stellarview.client.render.level.util.StellarViewLightmapEffects;
 import net.povstalec.stellarview.common.util.Color;
 
 public class EnhancedCelestialsCompatibility
@@ -59,7 +59,7 @@ public class EnhancedCelestialsCompatibility
 	
 	public static final void adjustLightmapColors(ClientLevel level, float partialTicks, float skyDarken, float skyLight, float blockLight, int pixelX, int pixelY, Vector3f colors)
     {
-		float darkMultiplier = StellarViewSpecialEffects.getSkyDarken(level, 1.0F);
+		float darkMultiplier = StellarViewLightmapEffects.getSkyDarken(level, 1.0F);
 		
 		boolean darkerWorld = true;
 		if(darkerWorld)
@@ -112,7 +112,7 @@ public class EnhancedCelestialsCompatibility
 			if(level.effects().forceBrightLightmap())
 			{
 				lightColor.lerp(new Vector3f(0.99F, 1.12F, 1.0F), 0.25F);
-				StellarViewSpecialEffects.clampColor(lightColor);
+				StellarViewLightmapEffects.clampColor(lightColor);
 			}
 			else
 			{

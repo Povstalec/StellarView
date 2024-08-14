@@ -28,8 +28,10 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 import net.povstalec.stellarview.StellarView;
-import net.povstalec.stellarview.client.render.level.misc.StellarViewFogEffects;
-import net.povstalec.stellarview.client.render.level.misc.StellarViewSkyEffects;
+import net.povstalec.stellarview.client.render.level.util.StellarViewFogEffects;
+import net.povstalec.stellarview.client.render.level.util.StellarViewSkyEffects;
+import net.povstalec.stellarview.client.resourcepack.effects.MeteorEffect;
+import net.povstalec.stellarview.client.resourcepack.objects.SpaceObject;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 

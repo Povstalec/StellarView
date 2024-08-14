@@ -1,33 +1,33 @@
 {
-	"parent": "stellarview:planet/milky_way/sol/earth",
+	"parent": "stellarview:planet/milky_way/sol/uranus",
 	"coords": { "x": {"ly": 0}, "y": {"ly": 0}, "z": {"ly": 0} },
 	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
 	"orbit_info":
 	{
-		"apoapsis": 405400,
-		"periapsis": 362600,
+		"apoapsis": 266000,
+		"periapsis": 266000,
 		"orbit_clamp_distance": 100000000,
-		"orbital_period": 192000,
-		"argument_of_periapsis": 0,
-		"inclination": 5.145,
+		"orbital_period": 26184,
+		"argument_of_periapsis": 87,
+		"inclination": 82.358,
 		"longtitude_of_ascending_node": 0,
-		"epoch_mean_anomaly": 180
+		"epoch_mean_anomaly": 0
 	},
 	"texture_layers":
 	[
 		{
-			"texture": "stellarview:textures/environment/moon_halo_phases.png",
+			"texture": "stellarview:textures/environment/planet_phases/umbriel_halo_phases.png",
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": true,
-			"size": 7697847.735118539,
-			"min_size": 0.15,
+			"size": 578900,
+			"min_size": 0.1,
 			"clamp_at_min_size": true,
-			"rotation": -90,
+			"rotation": 90,
 			"uv":
 			{
 				"phase_handler":
 				{
-					"ticks_per_phase": 24000,
+					"ticks_per_phase": 3273,
 					"phase_tick_offset": 0,
 					"columns": 4,
 					"rows": 2
@@ -36,18 +36,18 @@
 			}
 		},
 		{
-			"texture": "stellarview:textures/environment/moon_phases.png",
+			"texture": "stellarview:textures/environment/planet_phases/umbriel_phases.png",
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": false,
-			"size": 7697847.735118539,
-			"min_size": 0.15,
+			"size": 578900,
+			"min_size": 0.1,
 			"clamp_at_min_size": true,
-			"rotation": -90,
+			"rotation": 90,
 			"uv":
 			{
 				"phase_handler":
 				{
-					"ticks_per_phase": 24000,
+					"ticks_per_phase": 3273,
 					"phase_tick_offset": 0,
 					"columns": 4,
 					"rows": 2
@@ -55,10 +55,5 @@
 				"flip_uv": true
 			}
 		}
-	],
-	
-	"compatibility":
-	{
-		"enhanced_celestials_moon_dimension": "minecraft:overworld"
-	}
+	]
 }

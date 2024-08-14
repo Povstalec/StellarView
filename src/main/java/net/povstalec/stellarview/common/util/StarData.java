@@ -3,8 +3,8 @@ package net.povstalec.stellarview.common.util;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 
 import net.minecraft.util.RandomSource;
-import net.povstalec.stellarview.client.resourcepack.Star;
 import net.povstalec.stellarview.client.resourcepack.StarInfo;
+import net.povstalec.stellarview.client.resourcepack.objects.Star;
 
 public class StarData
 {
