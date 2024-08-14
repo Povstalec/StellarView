@@ -23,7 +23,12 @@ public class StellarViewFogEffects
 	public static boolean isFoggy(Minecraft minecraft, Camera camera)
 	{
 		Vec3 cameraPos = camera.getPosition();
-		boolean isFoggy = minecraft.level.effects().isFoggyAt(Mth.floor(cameraPos.x()), Mth.floor(cameraPos.y())) || minecraft.gui.getBossOverlay().shouldCreateWorldFog();
+		
+		boolean isFoggyAt = minecraft.level.effects().isFoggyAt(Mth.floor(cameraPos.x()), Mth.floor(cameraPos.y()));
+		boolean isWorldFog = minecraft.gui.getBossOverlay().shouldCreateWorldFog();
+		
+		boolean isFoggy = isFoggyAt || isWorldFog; // TODO Let people disable boss fog
+		
 		if(isFoggy)
 			return true;
 		

@@ -124,7 +124,11 @@ public class UV
 		
 		public static final Codec<UV.Quad> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 	    		PhaseHandler.CODEC.optionalFieldOf("phase_handler", PhaseHandler.DEFAULT_PHASE_HANDLER).forGetter((quad) -> quad.phaseHandler),
-	    		Codec.BOOL.fieldOf("flip_uv").forGetter((quad) -> quad.flipped)
+	    		Codec.FLOAT.optionalFieldOf("x_start", 0F).forGetter((quad) -> quad.topLeft.u()),
+	    		Codec.FLOAT.optionalFieldOf("y_start", 0F).forGetter((quad) -> quad.topLeft.v()),
+	    		Codec.FLOAT.optionalFieldOf("x_end", 1F).forGetter((quad) -> quad.bottomRight.u()),
+	    		Codec.FLOAT.optionalFieldOf("y_end", 1F).forGetter((quad) -> quad.bottomRight.v()),
+	    		Codec.BOOL.optionalFieldOf("flip_uv", false).forGetter((quad) -> quad.flipped)
 				).apply(instance, UV.Quad::new));
 		
 		// Phase dependant Quad UV

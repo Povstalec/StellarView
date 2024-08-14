@@ -28,6 +28,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 import net.povstalec.stellarview.StellarView;
+import net.povstalec.stellarview.client.render.level.StellarViewEndEffects;
 import net.povstalec.stellarview.client.render.level.util.StellarViewFogEffects;
 import net.povstalec.stellarview.client.render.level.util.StellarViewSkyEffects;
 import net.povstalec.stellarview.client.resourcepack.effects.MeteorEffect;
@@ -271,8 +272,10 @@ public class ViewCenter
 			RenderSystem.enableTexture();
 
 			RenderSystem.setShader(GameRenderer::getPositionTexShader);
-
+			
 			renderSkybox(level, partialTicks, stack, bufferbuilder);
+			
+			RenderSystem.setShaderColor(skyX, skyY, skyZ, 1.0F); // Added this here
 			renderSkyObjectsFrom(level, camera, partialTicks, stack, projectionMatrix, setupFog, bufferbuilder);
 	        
 	        RenderSystem.disableTexture();

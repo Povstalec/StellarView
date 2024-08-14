@@ -14,14 +14,14 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
+import net.povstalec.stellarview.common.util.Color;
 import net.povstalec.stellarview.common.util.UV;
 
 public class Skybox
 {
 	public static final float DEFAULT_DISTANCE = 150.0F;
-	
-	public static final UV.Quad UV = new UV.Quad(false);
 	
 	public static final Vector3f[][] BOX_COORDS =
 			{
@@ -63,55 +63,55 @@ public class Skybox
 				}
 			};
 
-	private ResourceLocation[] textures = new ResourceLocation[6];
+	private SkyboxFacade[] facades = new SkyboxFacade[6];
     
     public static final Codec<Skybox> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			ResourceLocation.CODEC.fieldOf("top_texture").forGetter(Skybox::topTexture),
-			ResourceLocation.CODEC.fieldOf("north_texture").forGetter(Skybox::northTexture),
-			ResourceLocation.CODEC.fieldOf("east_texture").forGetter(Skybox::eastTexture),
-			ResourceLocation.CODEC.fieldOf("south_texture").forGetter(Skybox::southTexture),
-			ResourceLocation.CODEC.fieldOf("west_texture").forGetter(Skybox::westTexture),
-			ResourceLocation.CODEC.fieldOf("bottom_texture").forGetter(Skybox::bottomTexture)
+    		SkyboxFacade.CODEC.fieldOf("top_facade").forGetter(Skybox::topFacade),
+			SkyboxFacade.CODEC.fieldOf("north_facade").forGetter(Skybox::northFacade),
+			SkyboxFacade.CODEC.fieldOf("east_facade").forGetter(Skybox::eastFacade),
+			SkyboxFacade.CODEC.fieldOf("south_facade").forGetter(Skybox::southFacade),
+			SkyboxFacade.CODEC.fieldOf("west_facade").forGetter(Skybox::westFacade),
+			SkyboxFacade.CODEC.fieldOf("bottom_facade").forGetter(Skybox::bottomFacade)
 			).apply(instance, Skybox::new));
 	
-	public Skybox(ResourceLocation topTexture, ResourceLocation northTexture, ResourceLocation eastTexture, ResourceLocation southTexture, ResourceLocation westTexture, ResourceLocation bottomTexture)
+	public Skybox(SkyboxFacade topFacade, SkyboxFacade northFacade, SkyboxFacade eastFacade, SkyboxFacade southFacade, SkyboxFacade westFacade, SkyboxFacade bottomFacade)
 	{
-		textures[0] = new ResourceLocation(topTexture.getNamespace(), "textures/" + topTexture.getPath());
-		textures[1] = new ResourceLocation(northTexture.getNamespace(), "textures/" + northTexture.getPath());
-		textures[2] = new ResourceLocation(eastTexture.getNamespace(), "textures/" + eastTexture.getPath());
-		textures[3] = new ResourceLocation(southTexture.getNamespace(), "textures/" + southTexture.getPath());
-		textures[4] = new ResourceLocation(westTexture.getNamespace(), "textures/" + westTexture.getPath());
-		textures[5] = new ResourceLocation(bottomTexture.getNamespace(), "textures/" + bottomTexture.getPath());
+		facades[0] = topFacade;
+		facades[1] = northFacade;
+		facades[2] = eastFacade;
+		facades[3] = southFacade;
+		facades[4] = westFacade;
+		facades[5] = bottomFacade;
 	}
 	
-	public ResourceLocation topTexture()
+	public SkyboxFacade topFacade()
 	{
-		return textures[0];
+		return facades[0];
 	}
 	
-	public ResourceLocation northTexture()
+	public SkyboxFacade northFacade()
 	{
-		return textures[1];
+		return facades[1];
 	}
 	
-	public ResourceLocation eastTexture()
+	public SkyboxFacade eastFacade()
 	{
-		return textures[2];
+		return facades[2];
 	}
 	
-	public ResourceLocation southTexture()
+	public SkyboxFacade southFacade()
 	{
-		return textures[3];
+		return facades[3];
 	}
 	
-	public ResourceLocation westTexture()
+	public SkyboxFacade westFacade()
 	{
-		return textures[4];
+		return facades[4];
 	}
 	
-	public ResourceLocation bottomTexture()
+	public SkyboxFacade bottomFacade()
 	{
-		return textures[5];
+		return facades[5];
 	}
 	
 	public void render(ClientLevel level, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder)
@@ -123,27 +123,70 @@ public class Skybox
         //stack.mulPose(Axis.XP.rotationDegrees(skyZAngle));
         
         Matrix4f lastMatrix = stack.last().pose();
+
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
         RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 
-        RenderSystem.setShaderColor(0.5F, 0.5F, 0.5F, 0.5F);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         
         for(int i = 0; i < 6; i++)
         {
-        	this.renderFacade(bufferbuilder, lastMatrix, textures[i], i);
+        	this.renderFacade(bufferbuilder, lastMatrix, facades[i], i);
         }
         
 		RenderSystem.defaultBlendFunc();
         stack.popPose();
 	}
 	
-	protected void renderFacade(BufferBuilder bufferbuilder, Matrix4f lastMatrix, ResourceLocation texture, int i)
+	protected void renderFacade(BufferBuilder bufferbuilder, Matrix4f lastMatrix, SkyboxFacade facade, int i)
 	{
-		RenderSystem.setShaderTexture(0, texture);
-        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        bufferbuilder.vertex(lastMatrix, BOX_COORDS[i][0].x, BOX_COORDS[i][0].y, BOX_COORDS[i][0].z).uv(UV.topLeft().u(), UV.topLeft().v()).endVertex();
-        bufferbuilder.vertex(lastMatrix, BOX_COORDS[i][1].x, BOX_COORDS[i][1].y, BOX_COORDS[i][1].z).uv(UV.bottomLeft().u(), UV.bottomLeft().v()).endVertex();
-        bufferbuilder.vertex(lastMatrix, BOX_COORDS[i][2].x, BOX_COORDS[i][2].y, BOX_COORDS[i][2].z).uv(UV.bottomRight().u(), UV.bottomRight().v()).endVertex();
-        bufferbuilder.vertex(lastMatrix, BOX_COORDS[i][3].x, BOX_COORDS[i][3].y, BOX_COORDS[i][3].z).uv(UV.topRight().u(), UV.topRight().v()).endVertex();
+		UV.Quad uv = facade.uv();
+		Color.IntRGBA rgba = facade.rgba();
+		
+		RenderSystem.setShaderTexture(0, facade.texture());
+        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+        bufferbuilder.vertex(lastMatrix, BOX_COORDS[i][0].x, BOX_COORDS[i][0].y, BOX_COORDS[i][0].z).uv(uv.topLeft().u(), uv.topLeft().v()).color(rgba.red(), rgba.green(), rgba.blue(), rgba.alpha()).endVertex();
+        bufferbuilder.vertex(lastMatrix, BOX_COORDS[i][1].x, BOX_COORDS[i][1].y, BOX_COORDS[i][1].z).uv(uv.bottomLeft().u(), uv.bottomLeft().v()).color(rgba.red(), rgba.green(), rgba.blue(), rgba.alpha()).endVertex();
+        bufferbuilder.vertex(lastMatrix, BOX_COORDS[i][2].x, BOX_COORDS[i][2].y, BOX_COORDS[i][2].z).uv(uv.bottomRight().u(), uv.bottomRight().v()).color(rgba.red(), rgba.green(), rgba.blue(), rgba.alpha()).endVertex();
+        bufferbuilder.vertex(lastMatrix, BOX_COORDS[i][3].x, BOX_COORDS[i][3].y, BOX_COORDS[i][3].z).uv(uv.topRight().u(), uv.topRight().v()).color(rgba.red(), rgba.green(), rgba.blue(), rgba.alpha()).endVertex();
         BufferUploader.drawWithShader(bufferbuilder.end());
+	}
+	
+	
+	
+	public static class SkyboxFacade
+	{
+		private final ResourceLocation texture;
+		private final UV.Quad uv;
+		private final Color.IntRGBA rgba;
+	    
+	    public static final Codec<SkyboxFacade> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				ResourceLocation.CODEC.fieldOf("texture").forGetter(SkyboxFacade::texture),
+				UV.Quad.CODEC.fieldOf("uv").forGetter(SkyboxFacade::uv),
+				Color.IntRGBA.CODEC.fieldOf("rgba").forGetter(SkyboxFacade::rgba)
+				).apply(instance, SkyboxFacade::new));
+		
+		public SkyboxFacade(ResourceLocation texture, UV.Quad uv, Color.IntRGBA rgba)
+		{
+			this.texture = new ResourceLocation(texture.getNamespace(), "textures/" + texture.getPath());
+			this.uv = uv;
+			this.rgba = rgba;
+		}
+		
+		public ResourceLocation texture()
+		{
+			return texture;
+		}
+		
+		public UV.Quad uv()
+		{
+			return uv;
+		}
+		
+		public Color.IntRGBA rgba()
+		{
+			return rgba;
+		}
 	}
 }

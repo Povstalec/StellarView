@@ -71,7 +71,7 @@ public class StellarView
     		end = new StellarViewEndEffects();
     		
         	event.register(StellarViewOverworldEffects.OVERWORLD_EFFECTS, overworld);
-        	//event.register(StellarViewEndEffects.END_EFFECTS, end);
+        	event.register(StellarViewEndEffects.END_EFFECTS, end);
         }
     	
 
