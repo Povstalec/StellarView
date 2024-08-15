@@ -7,6 +7,7 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -222,9 +223,14 @@ public class ViewCenter
 		
 		stack.pushPose();
 		
-		stack.mulPose(Axis.YP.rotationDegrees((float) axisRotation.yAxis)); //TODO Rotation of the sky depending on where you are
-		stack.mulPose(Axis.ZP.rotationDegrees((float) axisRotation.zAxis)); //TODO Rotation of the sky because you're on the surface
-		stack.mulPose(Axis.XP.rotationDegrees((float) axisRotation.xAxis)); //TODO Rotation of the planet
+		//Quaternionf q = new Quaternionf();
+		// Inverting so that we can view the world through the relative rotation of our view center
+		//viewCenter.getAxisRotation().quaternionf().invert(q);
+		//stack.mulPose(q);
+		
+		stack.mulPose(Axis.YP.rotationDegrees((float) axisRotation.yAxis())); //TODO Rotation of the sky depending on where you are
+		stack.mulPose(Axis.ZP.rotationDegrees((float) axisRotation.zAxis())); //TODO Rotation of the sky because you're on the surface
+		stack.mulPose(Axis.XP.rotationDegrees((float) axisRotation.xAxis())); //TODO Rotation of the planet
 		
 		viewCenter.renderFrom(this, level, partialTicks, stack, camera, projectionMatrix, StellarViewFogEffects.isFoggy(minecraft, camera), setupFog, bufferbuilder);
 

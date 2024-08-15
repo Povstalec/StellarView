@@ -53,6 +53,13 @@ public class OrbitingObject extends SpaceObject
 	}
 	
 	@Override
+	public Vector3f getPosition(ViewCenter viewCenter, AxisRotation axisRotation, long ticks)
+	{
+		//System.out.println(this + " " + axisRotation);
+		return axisRotation.quaterniond().transform(getPosition(viewCenter, ticks));
+	}
+	
+	@Override
 	public Vector3f getPosition(ViewCenter viewCenter, long ticks)
 	{
 		if(orbitInfo != null)

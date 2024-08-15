@@ -132,7 +132,9 @@ public abstract class StarField extends SpaceObject
 	}
 	
 	@Override
-	public void render(ViewCenter viewCenter, ClientLevel level, float partialTicks, PoseStack stack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder, Vector3f parentVector)
+	public void render(ViewCenter viewCenter, ClientLevel level, float partialTicks, PoseStack stack, Camera camera,
+			Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder,
+			Vector3f parentVector, AxisRotation parentRotation)
 	{
 		SpaceCoords difference = viewCenter.getCoords().sub(getCoords());
 		
@@ -163,7 +165,7 @@ public abstract class StarField extends SpaceObject
 		
 		for(SpaceObject child : children)
 		{
-			child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, parentVector);
+			child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, parentVector, new AxisRotation(0, 0, 0));
 		}
 	}
 	

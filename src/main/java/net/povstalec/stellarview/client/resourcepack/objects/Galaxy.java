@@ -3,6 +3,7 @@ package net.povstalec.stellarview.client.resourcepack.objects;
 import java.util.List;
 import java.util.Optional;
 
+import org.joml.Matrix4d;
 import org.joml.Vector3d;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -103,12 +104,14 @@ public class Galaxy
 					double z =  r * Math.sin(phi) + cartesian.z * spread / (progress * 1.5);
 					double y =  cartesian.y * spread / (progress * 1.5);
 					
-					x *= sizeMultiplier;
-					y *= sizeMultiplier;
-					z *= sizeMultiplier;
+					cartesian.x = x * sizeMultiplier;
+					cartesian.y = y * sizeMultiplier;
+					cartesian.z = z * sizeMultiplier;
+					
+					axisRotation.quaterniond().transform(cartesian);
 					
 					//Rotates around X
-					double alphaX = x;
+					/*double alphaX = x;
 					double alphaY = z * Math.sin(axisRotation.xAxis()) + y * Math.cos(axisRotation.xAxis());
 					double alphaZ = z * Math.cos(axisRotation.xAxis()) - y * Math.sin(axisRotation.xAxis());
 					
@@ -120,9 +123,9 @@ public class Galaxy
 					//Rotates around Y
 					double gammaX = - betaX * Math.sin(axisRotation.yAxis()) - betaZ * Math.cos(axisRotation.yAxis());
 					double gammaY = betaY;
-					double gammaZ = betaX * Math.cos(axisRotation.yAxis()) - betaZ * Math.sin(axisRotation.yAxis());
+					double gammaZ = betaX * Math.cos(axisRotation.yAxis()) - betaZ * Math.sin(axisRotation.yAxis());*/
 					
-					starData.newStar(starInfo, bufferBuilder, randomsource, relativeCoords, gammaX, gammaY, gammaZ, j * stars + i);
+					starData.newStar(starInfo, bufferBuilder, randomsource, relativeCoords, cartesian.x, cartesian.y, cartesian.z, j * stars + i);
 				}
 			}
 			return bufferBuilder.end();

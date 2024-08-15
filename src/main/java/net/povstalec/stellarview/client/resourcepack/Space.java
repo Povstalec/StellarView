@@ -13,6 +13,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.povstalec.stellarview.client.resourcepack.objects.SpaceObject;
 import net.povstalec.stellarview.client.resourcepack.objects.StarField;
+import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 
 public final class Space
@@ -40,10 +41,10 @@ public final class Space
 		for(SpaceObject spaceObject : SPACE_OBJECTS)
 		{
 			if(spaceObject != masterParent) // Makes sure the master parent (usually galaxy) is rendered last, that way stars from other galaxies don't get rendered over planets
-				spaceObject.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, NULL_VECTOR);
+				spaceObject.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, NULL_VECTOR, new AxisRotation(0, 0, 0));
 		}
 		
-		masterParent.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, NULL_VECTOR);
+		masterParent.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, NULL_VECTOR, new AxisRotation(0, 0, 0));
 	}
 	
 	

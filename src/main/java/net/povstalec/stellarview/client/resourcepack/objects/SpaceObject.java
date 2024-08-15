@@ -85,6 +85,11 @@ public abstract class SpaceObject
 		return this.coords;
 	}
 	
+	public Vector3f getPosition(ViewCenter viewCenter, AxisRotation axisRotation, long ticks)
+	{
+		return new Vector3f();
+	}
+	
 	public Vector3f getPosition(ViewCenter viewCenter, long ticks)
 	{
 		return new Vector3f();
@@ -158,15 +163,19 @@ public abstract class SpaceObject
 		child.parent = this;
 		child.coords = child.coords.add(this.coords);
 		
-		child.addCoordsToChildren(this.coords);
+		child.axisRotation = child.axisRotation.add(this.axisRotation);
+		
+		child.addCoordsAndRotationToChildren(this.coords, this.axisRotation);
 	}
 	
-	private void addCoordsToChildren(SpaceCoords coords)
+	protected void addCoordsAndRotationToChildren(SpaceCoords coords, AxisRotation axisRotation)
 	{
 		for(SpaceObject childOfChild : this.children)
 		{
 			childOfChild.coords = childOfChild.coords.add(coords);
-			childOfChild.addCoordsToChildren(coords);
+			childOfChild.axisRotation = childOfChild.axisRotation.add(axisRotation);
+			
+			childOfChild.addCoordsAndRotationToChildren(coords, axisRotation);
 		}
 	}
 	
@@ -238,11 +247,11 @@ public abstract class SpaceObject
 	
 	public void render(ViewCenter viewCenter, ClientLevel level, float partialTicks, PoseStack stack, Camera camera, 
 			Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder, 
-			Vector3f parentVector)
+			Vector3f parentVector, AxisRotation parentRotation)
 	{
 		long ticks = level.getDayTime();
 		
-		Vector3f positionVector = getPosition(viewCenter, ticks).add(parentVector); // Handles orbits 'n stuff
+		Vector3f positionVector = getPosition(viewCenter, parentRotation, ticks).add(parentVector); // Handles orbits 'n stuff
 		
 		// Add parent vector to current coords
 		SpaceCoords coords = getCoords().add(positionVector);
@@ -257,7 +266,7 @@ public abstract class SpaceObject
 		for(SpaceObject child : children)
 		{
 			if(child.lastDistance >= this.lastDistance)
-				child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, positionVector);
+				child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, positionVector, this.axisRotation);
 		}
 		
 		// If the object isn't the same we're viewing everything from and it itsn't too far away, render it
@@ -270,7 +279,7 @@ public abstract class SpaceObject
 			for(SpaceObject child : children)
 			{
 				if(child.lastDistance < this.lastDistance)
-					child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, positionVector);
+					child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, positionVector, this.axisRotation);
 			}
 		}
 	}
@@ -279,7 +288,10 @@ public abstract class SpaceObject
 	public void renderFrom(ViewCenter viewCenter, ClientLevel level, float partialTicks, PoseStack stack, Camera camera, 
 			Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder)
 	{
-		viewCenter.addCoords(getPosition(viewCenter, level.getDayTime()));
+		if(parent != null)
+			viewCenter.addCoords(getPosition(viewCenter, parent.getAxisRotation(), level.getDayTime()));
+		else
+			viewCenter.addCoords(getPosition(viewCenter, level.getDayTime()));
 		
 		if(parent != null)
 			parent.renderFrom(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder);
