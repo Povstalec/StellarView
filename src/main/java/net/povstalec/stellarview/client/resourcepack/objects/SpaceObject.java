@@ -137,6 +137,9 @@ public abstract class SpaceObject
 		
 		float brightness = level.getStarBrightness(partialTicks) * 2;
 		
+		if(StellarViewConfig.bright_stars.get())
+			brightness = brightness * StellarView.lightSourceDimming(level, camera);
+		
 		if(brightness < viewCenter.dayMaxBrightness && size > viewCenter.dayMinVisibleSize)
 		{
 			float aboveSize = size >= viewCenter.dayMaxVisibleSize ? viewCenter.dayVisibleSizeRange : size - viewCenter.dayMinVisibleSize;
@@ -144,9 +147,6 @@ public abstract class SpaceObject
 			
 			brightness = brightnessPercentage * viewCenter.dayMaxBrightness;
 		}
-		
-		if(StellarViewConfig.bright_stars.get())
-			brightness = brightness * StellarView.lightSourceDimming(level, camera);
 		
 		return brightness * StellarView.rainDimming(level, partialTicks);
 	}
@@ -257,7 +257,7 @@ public abstract class SpaceObject
 		SpaceCoords coords = getCoords().add(positionVector);
 		
 		// Subtract coords of this from View Center coords to get relative coords
-		SphericalCoords sphericalCoords = coords.skyPosition(viewCenter.getCoords());
+		SphericalCoords sphericalCoords = coords.skyPosition(viewCenter);
 		
 		lastDistance = sphericalCoords.r;
 		sphericalCoords.r = DEFAULT_DISTANCE;

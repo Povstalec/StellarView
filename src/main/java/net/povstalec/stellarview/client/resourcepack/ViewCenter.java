@@ -127,6 +127,14 @@ public class ViewCenter
 		return true;
 	}
 	
+	public AxisRotation getViewCenterAxisRotation()
+	{
+		if(viewCenter != null)
+			return viewCenter.getAxisRotation();
+		
+		return new AxisRotation();
+	}
+	
 	public Optional<ResourceKey<SpaceObject>> getViewCenterKey()
 	{
 		if(viewCenterKey != null)

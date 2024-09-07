@@ -6,6 +6,7 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 
@@ -154,6 +155,11 @@ public abstract class StarField extends SpaceObject
 			//RenderSystem.setShaderTexture(0, new ResourceLocation("textures/environment/sun.png"));
 			FogRenderer.setupNoFog();
 			
+			Quaternionf q = new Quaternionf();
+			// Inverting so that we can view the world through the relative rotation of our view center
+			viewCenter.getViewCenterAxisRotation().quaternionf().invert(q);
+			
+			stack.mulPose(q);
 			this.starBuffer.bind();
 			this.starBuffer.drawWithShader(stack.last().pose(), projectionMatrix, new Vector3f((float) difference.x().toLy(), (float) difference.y().toLy(), (float) difference.z().toLy()), StellarViewShaders.starShader());
 			//this.starBuffer.drawWithShader(stack.last().pose(), projectionMatrix, GameRenderer.getPositionColorTexShader());

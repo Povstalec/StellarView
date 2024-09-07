@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.Random;
 
 import org.joml.Matrix4f;
+import org.joml.Quaterniond;
 import org.joml.Vector3f;
 
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -133,10 +134,21 @@ public class Star extends OrbitingObject
 		
 		float rotation = (float) textureLayer.rotation();
 		
-		Vector3f corner00 = StellarCoordinates.placeOnSphere(-size, -size, sphericalCoords, rotation);
-		Vector3f corner10 = StellarCoordinates.placeOnSphere(size, -size, sphericalCoords, rotation);
-		Vector3f corner11 = StellarCoordinates.placeOnSphere(size, size, sphericalCoords, rotation);
-		Vector3f corner01 = StellarCoordinates.placeOnSphere(-size, size, sphericalCoords, rotation);
+		Vector3f corner00 = new Vector3f(size, DEFAULT_DISTANCE, size);//StellarCoordinates.placeOnSphere(-size, -size, sphericalCoords, rotation);
+		Vector3f corner10 = new Vector3f(-size, DEFAULT_DISTANCE, size);//StellarCoordinates.placeOnSphere(size, -size, sphericalCoords, rotation);
+		Vector3f corner11 = new Vector3f(-size, DEFAULT_DISTANCE, -size);//StellarCoordinates.placeOnSphere(size, size, sphericalCoords, rotation);
+		Vector3f corner01 = new Vector3f(size, DEFAULT_DISTANCE, -size);//StellarCoordinates.placeOnSphere(-size, size, sphericalCoords, rotation);
+		
+		//double phi90 = sphericalCoords.phi - Math.toRadians(90);
+		
+		Quaterniond quaternionX = new Quaterniond().rotateY(sphericalCoords.theta);
+		quaternionX.mul(new Quaterniond().rotateX(sphericalCoords.phi));
+		quaternionX.mul(new Quaterniond().rotateY( /*phi90 * Math.sin(sphericalCoords.theta) * Math.sin(phi90) + */rotation ));
+		
+		quaternionX.transform(corner00);
+		quaternionX.transform(corner10);
+		quaternionX.transform(corner11);
+		quaternionX.transform(corner01);
 	
 	
 		if(textureLayer.shoulBlend())
