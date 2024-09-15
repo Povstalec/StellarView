@@ -58,8 +58,53 @@ public class Comet extends OrbitingObject {
             float distanceAlphaFactor = sublimationTransitionRange
                     .map(range -> range.calculateAlphaFactor(distance))
                     .orElse(1.0f); // Default to full alpha if no range is defined
-            textureLayers.get(i).rgba().setAlpha((int) (originalAlpha * distanceAlphaFactor * 255));
+            textureLayers.get(i).rgba().setAlpha((int) (originalAlpha * distanceAlphaFactor));
         }
+    }
+
+    @Override
+    protected void renderTextureLayer(TextureLayer textureLayer, ViewCenter viewCenter, ClientLevel level, Camera camera, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)
+    {
+        if(textureLayer.rgba().alpha() <= 0)
+            return;
+
+        float size = (float) textureLayer.mulSize(distanceSize(distance));
+
+        if(size < textureLayer.minSize())
+        {
+            if(textureLayer.clampAtMinSize())
+                size = (float) textureLayer.minSize();
+            else
+                return;
+        }
+
+        float rotation = (float) textureLayer.rotation();
+
+        Vector3f corner00 = StellarCoordinates.placeOnSphere(-size, -size, sphericalCoords, rotation);
+        Vector3f corner10 = StellarCoordinates.placeOnSphere(size, -size, sphericalCoords, rotation);
+        Vector3f corner11 = StellarCoordinates.placeOnSphere(size, size, sphericalCoords, rotation);
+        Vector3f corner01 = StellarCoordinates.placeOnSphere(-size, size, sphericalCoords, rotation);
+
+        adjustAlpha(distance);
+
+        if(textureLayer.shoulBlend())
+            RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        else
+            RenderSystem.defaultBlendFunc();
+
+        RenderSystem.setShaderColor(textureLayer.rgba().red() / 255F, textureLayer.rgba().green() / 255F, textureLayer.rgba().blue() / 255F, dayBrightness(viewCenter, size, ticks, level, camera, partialTicks) * textureLayer.rgba().alpha() / 255F);
+
+        RenderSystem.setShaderTexture(0, textureLayer.texture());
+        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+
+        bufferbuilder.vertex(lastMatrix, corner00.x, corner00.y, corner00.z).uv(textureLayer.uv().topRight().u(ticks), textureLayer.uv().topRight().v(ticks)).endVertex();
+        bufferbuilder.vertex(lastMatrix, corner10.x, corner10.y, corner10.z).uv(textureLayer.uv().bottomRight().u(ticks), textureLayer.uv().bottomRight().v(ticks)).endVertex();
+        bufferbuilder.vertex(lastMatrix, corner11.x, corner11.y, corner11.z).uv(textureLayer.uv().bottomLeft().u(ticks), textureLayer.uv().bottomLeft().v(ticks)).endVertex();
+        bufferbuilder.vertex(lastMatrix, corner01.x, corner01.y, corner01.z).uv(textureLayer.uv().topLeft().u(ticks), textureLayer.uv().topLeft().v(ticks)).endVertex();
+
+        BufferUploader.drawWithShader(bufferbuilder.end());
+
+        RenderSystem.defaultBlendFunc();
     }
 
     public static class SublimationTransitionRange {
