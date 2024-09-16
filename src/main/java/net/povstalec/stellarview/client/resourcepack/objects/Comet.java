@@ -52,11 +52,15 @@ public class Comet extends OrbitingObject {
         return sublimationTransitionRange;
     }
 
-    public void adjustAlpha(double distance) {
+    public void adjustAlpha(ViewCenter viewCenter, long ticks) {
         for (int i = 1; i < textureLayers.size(); i++) {
+            Vector3f cometPosition = this.getPosition(viewCenter, axisRotation, ticks);
+            Vector3f parentPosition = this.getParent().get().getPosition(viewCenter, axisRotation, ticks);
+            float dist = cometPosition.distance(parentPosition);
+
             float originalAlpha = initialAlpha.get(i);
             float distanceAlphaFactor = sublimationTransitionRange
-                    .map(range -> range.calculateAlphaFactor(distance))
+                    .map(range -> range.calculateAlphaFactor(dist))
                     .orElse(1.0f); // Default to full alpha if no range is defined
             textureLayers.get(i).rgba().setAlpha((int) (originalAlpha * distanceAlphaFactor));
         }
@@ -97,7 +101,7 @@ public class Comet extends OrbitingObject {
         Vector3f corner11 = StellarCoordinates.placeOnSphere(size, size, sphericalCoords, rotation);
         Vector3f corner01 = StellarCoordinates.placeOnSphere(-size, size, sphericalCoords, rotation);
 
-        adjustAlpha(distance);
+        adjustAlpha(viewCenter, ticks);
 
         if(textureLayer.shoulBlend())
             RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
