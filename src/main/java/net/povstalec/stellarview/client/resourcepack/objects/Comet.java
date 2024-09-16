@@ -68,17 +68,29 @@ public class Comet extends OrbitingObject {
         if(textureLayer.rgba().alpha() <= 0)
             return;
 
+        // Compute the direction to the parent and the required rotation
+        Vector3f cometPosition = this.getPosition(viewCenter, axisRotation, ticks);
+        Vector3f parentPosition = this.getParent().get().getPosition(viewCenter, axisRotation, ticks);
+        Vector3f directionToParent = new Vector3f(parentPosition.x - cometPosition.x,
+                parentPosition.y - cometPosition.y,
+                parentPosition.z - cometPosition.z);
+        directionToParent.normalize();
+
+        float angleToParent = (float) Math.atan2(directionToParent.z, directionToParent.x);
+        float angleInDegrees = (float) Math.toDegrees(angleToParent);
+        float textureDefaultAngle = 153f; // Tail angle in the texture
+        float rotationAngle = angleInDegrees - textureDefaultAngle;
+
         float size = (float) textureLayer.mulSize(distanceSize(distance));
 
-        if(size < textureLayer.minSize())
-        {
-            if(textureLayer.clampAtMinSize())
+        if (size < textureLayer.minSize()) {
+            if (textureLayer.clampAtMinSize())
                 size = (float) textureLayer.minSize();
             else
                 return;
         }
 
-        float rotation = (float) textureLayer.rotation();
+        float rotation = rotationAngle + (float) textureLayer.rotation();
 
         Vector3f corner00 = StellarCoordinates.placeOnSphere(-size, -size, sphericalCoords, rotation);
         Vector3f corner10 = StellarCoordinates.placeOnSphere(size, -size, sphericalCoords, rotation);
