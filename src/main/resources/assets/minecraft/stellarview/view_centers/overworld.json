@@ -1,7 +1,7 @@
 {
 	"view_center": "stellarview:planet/milky_way/sol/earth",
 	
-	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": -90 },
+	"axis_rotation": { "x_axis": 0, "y_axis": -90, "z_axis": -90 },
 	
 	"day_max_brightness": 1,
 	"day_min_visible_size": 10,

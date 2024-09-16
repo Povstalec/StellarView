@@ -7,6 +7,9 @@
 	"day_min_visible_size": 0,
 	"day_max_visible_size": 0.1,
 	
+	"create_horizon": false,
+	"create_void": false,
+	
 	"skyboxes":
 	[
 		{

@@ -1,5 +1,6 @@
 package net.povstalec.stellarview.common.util;
 
+import org.joml.Math;
 import org.joml.Quaterniond;
 import org.joml.Quaternionf;
 
@@ -41,13 +42,28 @@ public class AxisRotation
 			this.zAxis = zAxis;
 		}
 		
-		Quaterniond quaterniondX = new Quaterniond().rotationX(this.xAxis);
+		Quaterniond quaterniondX = rotationdX(this.xAxis);
 		Quaterniond quaterniondY = new Quaterniond().rotationY(this.yAxis);
 		Quaterniond quaterniondZ = new Quaterniond().rotationZ(this.zAxis);
 		
 		quaterniond = quaterniondX.mul(quaterniondZ.mul(quaterniondY));
 		
-		quaternionf = new Quaternionf((float) quaterniond.x(), (float) quaterniond.y(), (float) quaterniond.z(), (float) quaterniond.w());
+		Quaternionf quaternionfX = new Quaternionf().rotationX((float) this.xAxis);
+		Quaternionf quaternionfY = new Quaternionf().rotationY((float) this.yAxis);
+		Quaternionf quaternionfZ = new Quaternionf().rotationZ((float) this.zAxis);
+		
+		Quaternionf quatf = quaternionfZ.mul(quaternionfY);
+		quaternionf = quaternionfX.mul(quatf);
+	}
+	
+	// Sooooooo... Quaterniond is kinda wrong, so here's a custom function for rotating around X-axis that works properly
+	private Quaterniond rotationdX(double angle)
+	{
+		Quaterniond quaternion = new Quaterniond();
+		
+		double sin = Math.sin(angle * 0.5);
+        double cos = Math.cosFromSin(sin, angle * 0.5);
+        return quaternion.set(sin, 0, 0, cos);
 	}
 	
 	/**

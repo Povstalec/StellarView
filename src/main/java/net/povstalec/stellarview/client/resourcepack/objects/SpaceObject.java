@@ -38,12 +38,6 @@ import net.povstalec.stellarview.common.util.TextureLayer;
 public abstract class SpaceObject
 {
 	public static final float DEFAULT_DISTANCE = 100.0F;
-
-	/*public static final float MIN_VISIBLE_BRIGHTNESS = 0.25F;
-	
-	public static final float MIN_VISIBLE_SIZE = 2.5F; // TODO Make these values definable in resourcepacks
-	public static final float MAX_VISIBLE_SIZE = 10F;
-	public static final float VISIBLE_SIZE_RANGE = MAX_VISIBLE_SIZE - MIN_VISIBLE_SIZE;*/
 	
 	public static final ResourceLocation SPACE_OBJECT_LOCATION = new ResourceLocation(StellarView.MODID, "space_object");
 	public static final ResourceKey<Registry<SpaceObject>> REGISTRY_KEY = ResourceKey.createRegistryKey(SPACE_OBJECT_LOCATION);
@@ -257,7 +251,7 @@ public abstract class SpaceObject
 		SpaceCoords coords = getCoords().add(positionVector);
 		
 		// Subtract coords of this from View Center coords to get relative coords
-		SphericalCoords sphericalCoords = coords.skyPosition(viewCenter);
+		SphericalCoords sphericalCoords = coords.skyPosition(level, viewCenter, partialTicks);
 		
 		lastDistance = sphericalCoords.r;
 		sphericalCoords.r = DEFAULT_DISTANCE;

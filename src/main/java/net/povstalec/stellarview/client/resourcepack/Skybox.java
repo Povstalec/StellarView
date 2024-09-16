@@ -126,15 +126,16 @@ public class Skybox
 
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
-        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        RenderSystem.defaultBlendFunc();
 
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        //RenderSystem.setShaderColor(255F / 255F, 255F / 255F, 255F / 255F, 1.0F); //TODO Render End Skybox
         
         for(int i = 0; i < 6; i++)
         {
         	this.renderFacade(bufferbuilder, lastMatrix, facades[i], i);
         }
-        
+
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 		RenderSystem.defaultBlendFunc();
         stack.popPose();
 	}

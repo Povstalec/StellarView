@@ -18,7 +18,7 @@
 		"star_types":
 		[
 			{
-				"rgb": {"red": 170, "green": 170, "blue": 255},
+				"rgb": {"red": 207, "green": 207, "blue": 255},
 				"min_size": 0.25,
 				"max_size": 0.35,
 				"min_brightness": 255,
@@ -26,7 +26,7 @@
 				"weight": 1
 			},
 			{
-				"rgb": {"red": 200, "green": 200, "blue": 255},
+				"rgb": {"red": 223, "green": 223, "blue": 255},
 				"min_size": 0.20,
 				"max_size": 0.30,
 				"min_brightness": 225,
@@ -34,7 +34,7 @@
 				"weight": 1
 			},
 			{
-				"rgb": {"red": 235, "green": 235, "blue": 255},
+				"rgb": {"red": 239, "green": 239, "blue": 255},
 				"min_size": 0.15,
 				"max_size": 0.25,
 				"min_brightness": 210,
@@ -50,7 +50,7 @@
 				"weight": 3
 			},
 			{
-				"rgb": {"red": 255, "green": 255, "blue": 120},
+				"rgb": {"red": 255, "green": 255, "blue": 223},
 				"min_size": 0.10,
 				"max_size": 0.25,
 				"min_brightness": 180,
@@ -58,7 +58,7 @@
 				"weight": 7
 			},
 			{
-				"rgb": {"red": 255, "green": 150, "blue": 10},
+				"rgb": {"red": 255, "green": 239, "blue": 223},
 				"min_size": 0.10,
 				"max_size": 0.25,
 				"min_brightness": 120,
@@ -66,7 +66,7 @@
 				"weight": 12
 			},
 			{
-				"rgb": {"red": 255, "green": 100, "blue": 100},
+				"rgb": {"red": 255, "green": 223, "blue": 223},
 				"min_size": 0.10,
 				"max_size": 0.15,
 				"min_brightness": 100,

@@ -1,12 +1,14 @@
 package net.povstalec.stellarview.common.util;
 
 import org.joml.Quaterniond;
+import org.joml.Quaternionf;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 
 public class SpaceCoords
@@ -100,19 +102,35 @@ public class SpaceCoords
 		return distance(NULL_COORDS);
 	}
 	
+	public static Quaterniond getQuaterniond(ClientLevel level, ViewCenter viewCenter, float partialTicks)
+	{
+		Quaterniond q = new Quaterniond();
+		// Inverting so that we can view the world through the relative rotation of our view center
+		viewCenter.getObjectAxisRotation().quaterniond().invert(q);
+		
+		return q;
+	}
+	
+	public static Quaternionf getQuaternionf(ClientLevel level, ViewCenter viewCenter, float partialTicks)
+	{
+		Quaternionf q = new Quaternionf();
+		// Inverting so that we can view the world through the relative rotation of our view center
+		viewCenter.getObjectAxisRotation().quaternionf().invert(q);
+		
+		return q;
+	}
+	
 	/**
 	 * @param viewCenter The coordinates this object is viewed from
 	 * @param r The radius of the sphere onto which the sky position is projected
 	 * @return Returns the sky position at which the coordinates of this would appear on the sky when viewed from the viewCenter
 	 */
-	public SphericalCoords skyPosition(ViewCenter viewCenter, float radius)
+	public SphericalCoords skyPosition(ClientLevel level, ViewCenter viewCenter, float radius, float partialTicks)
 	{
 		SpaceCoords viewCenterCoords = viewCenter.getCoords();
 		Vector3d positionVector = new Vector3d(this.x.sub(viewCenterCoords.x).toKm(), this.y.sub(viewCenterCoords.y).toKm(), this.z.sub(viewCenterCoords.z).toKm());
 		
-		Quaterniond q = new Quaterniond();
-		// Inverting so that we can view the world through the relative rotation of our view center
-		viewCenter.getViewCenterAxisRotation().quaterniond().invert(q);
+		Quaterniond q = getQuaterniond(level, viewCenter, partialTicks);
 		q.transform(positionVector);
 		
 		return new SphericalCoords(positionVector, radius);
@@ -122,14 +140,12 @@ public class SpaceCoords
 	 * @param viewCenter The coordinates this object is viewed from
 	 * @return Returns the sky position at which the coordinates of this would appear on the sky when viewed from the viewCenter
 	 */
-	public SphericalCoords skyPosition(ViewCenter viewCenter)
+	public SphericalCoords skyPosition(ClientLevel level, ViewCenter viewCenter, float partialTicks)
 	{
 		SpaceCoords viewCenterCoords = viewCenter.getCoords();
 		Vector3d positionVector = new Vector3d(this.x.sub(viewCenterCoords.x).toKm(), this.y.sub(viewCenterCoords.y).toKm(), this.z.sub(viewCenterCoords.z).toKm());
 		
-		Quaterniond q = new Quaterniond();
-		// Inverting so that we can view the world through the relative rotation of our view center
-		viewCenter.getViewCenterAxisRotation().quaterniond().invert(q);
+		Quaterniond q = getQuaterniond(level, viewCenter, partialTicks);
 		q.transform(positionVector);
 		
 		return new SphericalCoords(positionVector);

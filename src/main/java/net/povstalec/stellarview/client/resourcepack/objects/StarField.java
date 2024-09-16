@@ -17,6 +17,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexBuffer;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.math.Axis;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -155,9 +156,7 @@ public abstract class StarField extends SpaceObject
 			//RenderSystem.setShaderTexture(0, new ResourceLocation("textures/environment/sun.png"));
 			FogRenderer.setupNoFog();
 			
-			Quaternionf q = new Quaternionf();
-			// Inverting so that we can view the world through the relative rotation of our view center
-			viewCenter.getViewCenterAxisRotation().quaternionf().invert(q);
+			Quaternionf q = SpaceCoords.getQuaternionf(level, viewCenter, partialTicks);
 			
 			stack.mulPose(q);
 			this.starBuffer.bind();

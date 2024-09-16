@@ -32,6 +32,7 @@ import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.client.render.level.util.StellarViewFogEffects;
 import net.povstalec.stellarview.client.render.level.util.StellarViewSkyEffects;
 import net.povstalec.stellarview.client.resourcepack.effects.MeteorEffect;
+import net.povstalec.stellarview.client.resourcepack.objects.OrbitingObject;
 import net.povstalec.stellarview.client.resourcepack.objects.SpaceObject;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.SpaceCoords;
@@ -40,25 +41,25 @@ public class ViewCenter
 {
 	public static final float DAY_MAX_BRIGHTNESS = 0.25F;
 	
-	public static final float DAY_MIN_VISIBLE_SIZE = 2.5F; // TODO Make these values definable in resourcepacks
+	public static final float DAY_MIN_VISIBLE_SIZE = 2.5F;
 	public static final float DAY_MAX_VISIBLE_SIZE = 10F;
 	
 	@Nullable
 	private ResourceKey<SpaceObject> viewCenterKey;
 	@Nullable
-	private SpaceObject viewCenter;
+	private SpaceObject viewCenterObject;
 	
 	@Nullable
 	private List<Skybox> skyboxes;
 	
 	private Minecraft minecraft = Minecraft.getInstance();
 	@Nullable
-	private VertexBuffer skyBuffer = StellarViewSkyEffects.createLightSky();
+	private VertexBuffer skyBuffer;
 	@Nullable
-	private VertexBuffer darkBuffer = StellarViewSkyEffects.createDarkSky();
+	private VertexBuffer darkBuffer;
 	
 	private SpaceCoords coords;
-	private AxisRotation axisRotation; //TODO Is this really necessary? I'd say the viewCenter axis rotation could be used here instead
+	private AxisRotation axisRotation;
 	
 	@Nullable
 	private MeteorEffect.ShootingStar shootingStar;
@@ -70,6 +71,9 @@ public class ViewCenter
 	public final float dayMinVisibleSize;
 	public final float dayMaxVisibleSize;
 	public final float dayVisibleSizeRange;
+	
+	public final boolean createHorizon;
+	public final boolean createVoid;
     
     public static final Codec<ViewCenter> CODEC = RecordCodecBuilder.create(instance -> instance.group(
     		SpaceObject.RESOURCE_KEY_CODEC.optionalFieldOf("view_center").forGetter(ViewCenter::getViewCenterKey),
@@ -82,12 +86,16 @@ public class ViewCenter
 			Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("day_max_visible_size", DAY_MAX_VISIBLE_SIZE).forGetter(viewCenter -> viewCenter.dayMaxVisibleSize),
 			
 			MeteorEffect.ShootingStar.CODEC.optionalFieldOf("shooting_star").forGetter(ViewCenter::getShootingStar),
-			MeteorEffect.MeteorShower.CODEC.optionalFieldOf("meteor_shower").forGetter(ViewCenter::getMeteorShower)
+			MeteorEffect.MeteorShower.CODEC.optionalFieldOf("meteor_shower").forGetter(ViewCenter::getMeteorShower),
+			
+			Codec.BOOL.optionalFieldOf("create_horizon", true).forGetter(viewCenter -> viewCenter.createHorizon),
+			Codec.BOOL.optionalFieldOf("create_void", true).forGetter(viewCenter -> viewCenter.createVoid)
 			).apply(instance, ViewCenter::new));
 	
 	public ViewCenter(Optional<ResourceKey<SpaceObject>> viewCenterKey, Optional<List<Skybox>> skyboxes, AxisRotation axisRotation,
 			float dayMaxBrightness, float dayMinVisibleSize, float dayMaxVisibleSize,
-			Optional<MeteorEffect.ShootingStar> shootingStar, Optional<MeteorEffect.MeteorShower> meteorShower)
+			Optional<MeteorEffect.ShootingStar> shootingStar, Optional<MeteorEffect.MeteorShower> meteorShower,
+			boolean createHorizon, boolean createVoid)
 	{
 		if(viewCenterKey.isPresent())
 			this.viewCenterKey = viewCenterKey.get();
@@ -108,6 +116,14 @@ public class ViewCenter
 		this.dayMinVisibleSize = dayMinVisibleSize;
 		this.dayMaxVisibleSize = dayMaxVisibleSize;
 		this.dayVisibleSizeRange = dayMaxVisibleSize - dayMinVisibleSize;
+		
+		this.createHorizon = createHorizon;
+		this.createVoid = createVoid;
+		
+		if(createHorizon)
+			skyBuffer = StellarViewSkyEffects.createLightSky();
+		if(createVoid)
+			darkBuffer = StellarViewSkyEffects.createDarkSky();
 	}
 	
 	public boolean setViewCenterObject(HashMap<ResourceLocation, SpaceObject> spaceObjects)
@@ -116,7 +132,7 @@ public class ViewCenter
 		{
 			if(spaceObjects.containsKey(viewCenterKey.location()))
 			{
-				viewCenter = spaceObjects.get(viewCenterKey.location());
+				viewCenterObject = spaceObjects.get(viewCenterKey.location());
 				return true;
 			}
 			
@@ -127,10 +143,10 @@ public class ViewCenter
 		return true;
 	}
 	
-	public AxisRotation getViewCenterAxisRotation()
+	public AxisRotation getObjectAxisRotation()
 	{
-		if(viewCenter != null)
-			return viewCenter.getAxisRotation();
+		if(viewCenterObject != null)
+			return viewCenterObject.getAxisRotation();
 		
 		return new AxisRotation();
 	}
@@ -194,8 +210,8 @@ public class ViewCenter
 	
 	public boolean objectEquals(SpaceObject spaceObject)
 	{
-		if(this.viewCenter != null)
-			return spaceObject == this.viewCenter;
+		if(this.viewCenterObject != null)
+			return spaceObject == this.viewCenterObject;
 		
 		return false;
 	}
@@ -224,23 +240,33 @@ public class ViewCenter
 	
 	private boolean renderSkyObjectsFrom(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, Matrix4f projectionMatrix, Runnable setupFog, BufferBuilder bufferbuilder)
 	{
-		if(viewCenter == null)
+		if(viewCenterObject == null)
 			return false;
 		
-		coords = viewCenter.getCoords();
+		coords = viewCenterObject.getCoords();
 		
 		stack.pushPose();
 		
-		//Quaternionf q = new Quaternionf();
-		// Inverting so that we can view the world through the relative rotation of our view center
-		//viewCenter.getAxisRotation().quaternionf().invert(q);
+		double rotation = 2 * Math.PI * level.getTimeOfDay(partialTicks) + Math.PI;
+		if(viewCenterObject instanceof OrbitingObject orbitingObject && orbitingObject.getOrbitInfo().isPresent())
+			rotation -= orbitingObject.getOrbitInfo().get().meanAnomaly(level.getDayTime());
+		
+		Quaternionf q = new Quaternionf();
+		getAxisRotation().quaternionf().mul((float) rotation, q);
+		
+		
 		//stack.mulPose(q);
 		
-		stack.mulPose(Axis.YP.rotationDegrees((float) axisRotation.yAxis())); //TODO Rotation of the sky depending on where you are
-		stack.mulPose(Axis.ZP.rotationDegrees((float) axisRotation.zAxis())); //TODO Rotation of the sky because you're on the surface
-		stack.mulPose(Axis.XP.rotationDegrees((float) axisRotation.xAxis())); //TODO Rotation of the planet
+		stack.mulPose(Axis.YP.rotation((float) axisRotation.yAxis()));
+		stack.mulPose(Axis.ZP.rotation((float) axisRotation.zAxis()));
+		stack.mulPose(Axis.XP.rotation((float) axisRotation.xAxis()));
 		
-		viewCenter.renderFrom(this, level, partialTicks, stack, camera, projectionMatrix, StellarViewFogEffects.isFoggy(minecraft, camera), setupFog, bufferbuilder);
+		
+		stack.mulPose(Axis.YP.rotation((float) rotation));
+		//stack.mulPose(Axis.ZP.rotation((float) 0));
+		//stack.mulPose(Axis.XP.rotation((float) 0));
+		
+		viewCenterObject.renderFrom(this, level, partialTicks, stack, camera, projectionMatrix, StellarViewFogEffects.isFoggy(minecraft, camera), setupFog, bufferbuilder);
 
 		stack.popPose();
 
@@ -257,7 +283,7 @@ public class ViewCenter
 	
 	public boolean renderSky(ClientLevel level, int ticks, float partialTicks, PoseStack stack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
 	{
-		if(viewCenter == null && skyboxes == null)
+		if(viewCenterObject == null && skyboxes == null)
 			return false;
 		
 		setupFog.run();
@@ -274,8 +300,13 @@ public class ViewCenter
 			RenderSystem.depthMask(false);
 			RenderSystem.setShaderColor(skyX, skyY, skyZ, 1.0F);
 			ShaderInstance shaderinstance = RenderSystem.getShader();
-			this.skyBuffer.bind();
-			this.skyBuffer.drawWithShader(stack.last().pose(), projectionMatrix, shaderinstance);
+			
+			if(createHorizon)
+			{
+				this.skyBuffer.bind();
+				this.skyBuffer.drawWithShader(stack.last().pose(), projectionMatrix, shaderinstance);
+			}
+			
 			VertexBuffer.unbind();
 			RenderSystem.enableBlend();
 			RenderSystem.defaultBlendFunc();
@@ -292,19 +323,23 @@ public class ViewCenter
 			renderSkyObjectsFrom(level, camera, partialTicks, stack, projectionMatrix, setupFog, bufferbuilder);
 	        
 	        RenderSystem.disableTexture();
-	        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+	        //RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 	        RenderSystem.disableBlend();
 	        
 	        RenderSystem.setShaderColor(0.0F, 0.0F, 0.0F, 1.0F);
-	        double height = this.minecraft.player.getEyePosition(partialTicks).y - level.getLevelData().getHorizonHeight(level);
-	        if(height < 0.0D)
+	        
+	        if(createVoid)
 	        {
-	        	stack.pushPose();
-	        	stack.translate(0.0F, 12.0F, 0.0F);
-	        	this.darkBuffer.bind();
-	        	this.darkBuffer.drawWithShader(stack.last().pose(), projectionMatrix, shaderinstance);
-	        	VertexBuffer.unbind();
-	        	stack.popPose();
+	        	double height = this.minecraft.player.getEyePosition(partialTicks).y - level.getLevelData().getHorizonHeight(level); //TODO Remove to remove blackness in End
+		        if(height < 0.0D)
+		        {
+		        	stack.pushPose();
+		        	stack.translate(0.0F, 12.0F, 0.0F);
+		        	this.darkBuffer.bind();
+		        	this.darkBuffer.drawWithShader(stack.last().pose(), projectionMatrix, shaderinstance);
+		        	VertexBuffer.unbind();
+		        	stack.popPose();
+		        }
 	        }
 	        
 	        if(level.effects().hasGround())

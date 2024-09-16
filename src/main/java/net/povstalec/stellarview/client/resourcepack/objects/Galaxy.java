@@ -3,7 +3,6 @@ package net.povstalec.stellarview.client.resourcepack.objects;
 import java.util.List;
 import java.util.Optional;
 
-import org.joml.Matrix4d;
 import org.joml.Vector3d;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
