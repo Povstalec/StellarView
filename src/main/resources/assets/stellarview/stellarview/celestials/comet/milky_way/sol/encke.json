@@ -34,14 +34,14 @@
       "uv": { "flip_uv": false }
     },
     {
-    "texture": "stellarview:textures/environment/halo_template.png",
-    "rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
-    "blend": true,
-    "size": 804672,
-    "min_size": 1.2,
-    "clamp_at_min_size": true,
-    "rotation": -63.27,
-    "uv": { "flip_uv": false }
+      "texture": "stellarview:textures/environment/halo_template.png",
+      "rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
+      "blend": true,
+      "size": 804672,
+      "min_size": 1.2,
+      "clamp_at_min_size": true,
+      "rotation": -63.27,
+      "uv": { "flip_uv": false }
     },
     {
       "texture": "stellarview:textures/environment/comet/comet_white.png",
