@@ -1,6 +1,15 @@
 {
 	"coords": { "x": {"ly": -540000}, "y": {"ly": 540000}, "z": {"ly": 0} },
 	"axis_rotation": { "x_axis": 0, "y_axis": 0.6, "z_axis": 0 },
+	
+	"seed": 10842,
+	"diameter_ly": 132000,
+	"stars": 3000,
+	
+	"x_stretch": 1.0,
+	"y_stretch": 1.0,
+	"z_stretch": 1.0,
+	
 	"texture_layers":
 	[
 		{
@@ -74,12 +83,5 @@
 				"weight": 74
 			}
 		]
-	},
-	"seed": 10842,
-	"diameter_ly": 132000,
-	"stars": 3000,
-	
-	"x_stretch": 1,
-	"y_stretch": 1,
-	"z_stretch": 1
+	}
 }

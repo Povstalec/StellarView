@@ -108,7 +108,7 @@ public class ResourcepackReloadListener
 			}
 			catch(RuntimeException e)
 			{
-				StellarView.LOGGER.error("Could not load " + location.toString());
+				StellarView.LOGGER.error("Could not load " + location.toString() + " " + e);
 			}
 		}
 		
@@ -134,7 +134,7 @@ public class ResourcepackReloadListener
 			}
 			catch(RuntimeException e)
 			{
-				StellarView.LOGGER.error("Could not load " + location.toString());
+				StellarView.LOGGER.error("Could not load " + location.toString() + " " + e);
 			}
 		}
 		
@@ -150,7 +150,7 @@ public class ResourcepackReloadListener
 			}
 			catch(RuntimeException e)
 			{
-				StellarView.LOGGER.error("Could not load " + location.toString());
+				StellarView.LOGGER.error("Could not load " + location.toString() + " " + e);
 			}
 		}
 		
@@ -166,7 +166,7 @@ public class ResourcepackReloadListener
 			}
 			catch(RuntimeException e)
 			{
-				StellarView.LOGGER.error("Could not load " + location.toString());
+				StellarView.LOGGER.error("Could not load " + location.toString() + " " + e);
 			}
 		}
 		
@@ -182,7 +182,7 @@ public class ResourcepackReloadListener
 			}
 			catch(RuntimeException e)
 			{
-				StellarView.LOGGER.error("Could not load " + location.toString());
+				StellarView.LOGGER.error("Could not load " + location.toString() + " " + e);
 			}
 		}
 		
@@ -199,7 +199,7 @@ public class ResourcepackReloadListener
 			}
 			catch(RuntimeException e)
 			{
-				StellarView.LOGGER.error("Could not load " + location.toString());
+				StellarView.LOGGER.error("Could not load " + location.toString() + " " + e);
 			}
 		}
 		
@@ -216,7 +216,7 @@ public class ResourcepackReloadListener
 			}
 			catch(RuntimeException e)
 			{
-				StellarView.LOGGER.error("Could not load " + location.toString());
+				StellarView.LOGGER.error("Could not load " + location.toString() + " " + e);
 			}
 		}
 		
@@ -233,7 +233,7 @@ public class ResourcepackReloadListener
 			}
 			catch(RuntimeException e)
 			{
-				StellarView.LOGGER.error("Could not load " + location.toString());
+				StellarView.LOGGER.error("Could not load " + location.toString() + " " + e);
 			}
 		}
 		

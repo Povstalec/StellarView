@@ -127,8 +127,6 @@ public class Skybox
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
         RenderSystem.defaultBlendFunc();
-
-        //RenderSystem.setShaderColor(255F / 255F, 255F / 255F, 255F / 255F, 1.0F); //TODO Render End Skybox
         
         for(int i = 0; i < 6; i++)
         {

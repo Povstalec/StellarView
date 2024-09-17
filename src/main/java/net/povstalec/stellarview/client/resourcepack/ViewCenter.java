@@ -330,7 +330,7 @@ public class ViewCenter
 	        
 	        if(createVoid)
 	        {
-	        	double height = this.minecraft.player.getEyePosition(partialTicks).y - level.getLevelData().getHorizonHeight(level); //TODO Remove to remove blackness in End
+	        	double height = this.minecraft.player.getEyePosition(partialTicks).y - level.getLevelData().getHorizonHeight(level);
 		        if(height < 0.0D)
 		        {
 		        	stack.pushPose();
