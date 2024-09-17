@@ -8,13 +8,13 @@
   },
   "orbit_info":
   {
-    "apoapsis": 5550000000000,
-    "periapsis": 165000000,
-    "orbital_period": 22000000000,
-    "argument_of_periapsis": 278.1,
-    "inclination": 	89.2,
-    "longtitude_of_ascending_node": 91.3,
-    "epoch_mean_anomaly": 90
+    "apoapsis": 1738000000,
+    "periapsis": 663000000,
+    "orbital_period": 199400000,
+    "argument_of_periapsis": 87.3,
+    "inclination": 	19.35,
+    "longtitude_of_ascending_node": 47.74,
+    "epoch_mean_anomaly": 254.19
   },
   "texture_layers":
   [
@@ -44,7 +44,7 @@
       "uv": { "flip_uv": false }
     },
     {
-      "texture": "stellarview:textures/environment/comet/comet_sky.png",
+      "texture": "stellarview:textures/environment/comet/comet_cyan.png",
       "rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 200},
       "blend": true,
       "size": 804672,

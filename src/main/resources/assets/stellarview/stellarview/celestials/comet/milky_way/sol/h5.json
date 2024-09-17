@@ -8,13 +8,13 @@
   },
   "orbit_info":
   {
-    "apoapsis": 5550000000000,
-    "periapsis": 165000000,
-    "orbital_period": 22000000000,
-    "argument_of_periapsis": 278.1,
-    "inclination": 	89.2,
-    "longtitude_of_ascending_node": 91.3,
-    "epoch_mean_anomaly": 90
+    "apoapsis": 1430000000,
+    "periapsis": 359000000,
+    "orbital_period": 128640000,
+    "argument_of_periapsis": 224.88,
+    "inclination": 	8.4,
+    "longtitude_of_ascending_node": 329.56,
+    "epoch_mean_anomaly": 184
   },
   "texture_layers":
   [

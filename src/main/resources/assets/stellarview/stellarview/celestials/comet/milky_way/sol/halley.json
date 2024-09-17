@@ -14,7 +14,7 @@
     "argument_of_periapsis": 111.33,
     "inclination": 	162.24,
     "longtitude_of_ascending_node": 58.55,
-    "epoch_mean_anomaly": 0
+    "epoch_mean_anomaly": 321
   },
   "texture_layers":
   [
@@ -28,8 +28,8 @@
       },
       "blend": false,
       "size": 10,
-      "min_size": 0.3,
-      "clamp_at_min_size": false,
+      "min_size": 0.01,
+      "clamp_at_min_size": true,
       "rotation": 0,
       "uv": { "flip_uv": false }
     },
