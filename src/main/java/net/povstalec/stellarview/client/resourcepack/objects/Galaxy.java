@@ -93,22 +93,9 @@ public class Galaxy
 				cartesian.y *= yStretch;
 				cartesian.z *= zStretch;
 				
-				//Rotates around X
-				double alphaX = cartesian.x;
-				double alphaY = cartesian.z * Math.sin(axisRotation.xAxis()) + cartesian.y * Math.cos(axisRotation.xAxis());
-				double alphaZ = cartesian.z * Math.cos(axisRotation.xAxis()) - cartesian.y * Math.sin(axisRotation.xAxis());
-				
-				//Rotates around Z
-				double betaX = alphaX * Math.cos(axisRotation.zAxis()) - alphaY * Math.sin(axisRotation.zAxis());
-				double betaY = - alphaX * Math.sin(axisRotation.zAxis()) - alphaY * Math.cos(axisRotation.zAxis());
-				double betaZ = alphaZ;
-				
-				//Rotates around Y
-				double gammaX = - betaX * Math.sin(axisRotation.yAxis()) - betaZ * Math.cos(axisRotation.yAxis());
-				double gammaY = betaY;
-				double gammaZ = betaX * Math.cos(axisRotation.yAxis()) - betaZ * Math.sin(axisRotation.yAxis());
+				axisRotation.quaterniond().transform(cartesian);
 
-				starData.newStar(starInfo, bufferBuilder, randomsource, relativeCoords, gammaX, gammaY, gammaZ, i);
+				starData.newStar(starInfo, bufferBuilder, randomsource, relativeCoords, cartesian.x, cartesian.y, cartesian.z, i);
 			}
 		}
 

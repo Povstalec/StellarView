@@ -1,11 +1,11 @@
 {
-	"coords": { "x": {"ly": 0}, "y": {"ly": -1200000}, "z": {"ly": 2500000} },
-	"axis_rotation": { "x_axis": 0, "y_axis": 32, "z_axis": 49 },
+	"coords": { "x": {"ly": 500000}, "y": {"ly": -2800000}, "z": {"ly": 0} },
+	"axis_rotation": { "x_axis": 22, "y_axis": 83, "z_axis": 12 },
 	
-	"seed": 55183,
-	"diameter_ly": 152000,
+	"seed": 58413,
+	"diameter_ly": 26093,
 	
-	"stars": 4000,
+	"stars": 1000,
 	
 	"x_stretch": 0.5,
 	"y_stretch": 0.25,
@@ -25,8 +25,8 @@
 	
 	"spiral_arms":
 	[
-		{ "stars": 4000, "arm_rotation": 0, "arm_length": 2.92, "arm_thickness": 2.5 },
-		{ "stars": 4000, "arm_rotation": 180, "arm_length": 2.56, "arm_thickness": 2.5 }
+		{ "stars": 1000, "arm_rotation": 0, "arm_length": 2.1, "arm_thickness": 2.5 },
+		{ "stars": 500, "arm_rotation": 156, "arm_length": 1.2, "arm_thickness": 2.5 }
 	],
 	
 	"star_info":

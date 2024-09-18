@@ -5,7 +5,17 @@
 	"texture_layers":
 	[
 		{
-			"texture": "stellarview:textures/environment/supernova.png",
+			"texture": "stellarview:textures/environment/halo_template.png",
+			"rgba": {"red": 100, "green": 200, "blue": 255, "alpha": 255},
+			"blend": true,
+			"size": 100000,
+			"min_size": 1,
+			"clamp_at_min_size": true,
+			"rotation": -32,
+			"uv": { "flip_uv": false }
+		},
+		{
+			"texture": "stellarview:textures/environment/star/blue_star.png",
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": true,
 			"size": 4488626469,
@@ -52,7 +62,7 @@
 				}
 			]
 		},
-		"max_size_multiplier": 10,
+		"max_size_multiplier": 50,
 		"start_ticks": 90000,
 		"duration_ticks": 378000
 	}

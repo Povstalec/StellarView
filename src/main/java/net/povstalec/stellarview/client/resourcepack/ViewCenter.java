@@ -263,6 +263,7 @@ public class ViewCenter
 		
 		
 		stack.mulPose(Axis.YP.rotation((float) rotation));
+		
 		//stack.mulPose(Axis.ZP.rotation((float) 0));
 		//stack.mulPose(Axis.XP.rotation((float) 0));
 		

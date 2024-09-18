@@ -61,7 +61,7 @@ public class StellarViewConfig
 				"Replaces the Vanilla Nether sky with Stellar View sky");
 		
 		replace_end = new StellarViewConfigValue.BooleanValue(client, "client.replace_end", 
-				false, 
+				true, 
 				"Replaces the Vanilla End sky with Stellar View sky");
 		
 		disable_stars = new StellarViewConfigValue.BooleanValue(client, "client.disable_stars", 

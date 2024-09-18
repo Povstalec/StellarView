@@ -78,12 +78,12 @@ public class Supernova extends Star
 	
 	public float supernovaSize(float size, long ticks, double lyDistance)
 	{
-		if(!supernovaStarted(ticks))
-			return size;
-
 		if(supernovaEnded(ticks))
 			return 0;
 		
+		if(!supernovaStarted(ticks))
+			return size;
+
 		long lifetime = lifetime(ticks);
 		float sizeMultiplier = supernovaInfo.getMaxSizeMultiplier() * (float) Math.sin(Math.PI * lifetime / supernovaInfo.getDurationTicks());
 		
@@ -103,10 +103,7 @@ public class Supernova extends Star
 	{
 		Color.FloatRGBA starRGBA = super.starRGBA(lyDistance);
 		
-		if(!supernovaStarted(ticks))
-			return starRGBA;
-
-		if(supernovaEnded(ticks))
+		if(supernovaEnded(ticks) || !supernovaStarted(ticks))
 			return starRGBA;
 		
 		float alphaDif = Color.MAX_FLOAT_VALUE - starRGBA.alpha(); // Difference between current star alpha and max alpha
@@ -143,6 +140,7 @@ public class Supernova extends Star
 		}
 		
 		size = supernovaSize(size, ticks, lyDistance);
+		
 		
 		float rotation = (float) textureLayer.rotation(rotation(ticks));
 		

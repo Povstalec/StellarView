@@ -1,5 +1,5 @@
 {
-	"coords": { "x": {"ly": -540000}, "y": {"ly": 540000}, "z": {"ly": 0} },
+	"coords": { "x": {"ly": -53500000}, "y": {"ly": 0}, "z": {"ly": 0} },
 	"axis_rotation": { "x_axis": 0, "y_axis": 0.6, "z_axis": 0 },
 	
 	"seed": 10842,

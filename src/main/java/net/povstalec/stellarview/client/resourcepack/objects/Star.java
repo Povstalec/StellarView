@@ -86,7 +86,7 @@ public class Star extends OrbitingObject
 		size -= size * lyDistance / 1000000.0;
 		
 		if(size < 0.01F)
-			return 0.01F;
+			return 0.2F;
 		
 		return size;
 	}
