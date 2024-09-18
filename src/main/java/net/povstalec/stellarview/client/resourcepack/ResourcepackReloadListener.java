@@ -17,7 +17,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.povstalec.stellarview.StellarView;
-import net.povstalec.stellarview.client.resourcepack.objects.Galaxy;
 import net.povstalec.stellarview.client.resourcepack.objects.Moon;
 import net.povstalec.stellarview.client.resourcepack.objects.Planet;
 import net.povstalec.stellarview.client.resourcepack.objects.SpaceObject;
@@ -37,7 +36,8 @@ public class ResourcepackReloadListener
 	
 	public static final String STAR = "star";
 	public static final String SUPERNOVA = "supernova";
-	
+
+	public static final String STAR_FIELD = "star_field";
 	public static final String GLOBULAR_CLUSTER = "star_field/globular_cluster";
 	public static final String SPIRAL_GALAXY = "star_field/spiral_galaxy";
 	public static final String ELLIPTICAL_GALAXY = "star_field/elliptical_galaxy";
@@ -82,14 +82,8 @@ public class ResourcepackReloadListener
 					else if(canShortenPath(location, STAR))
 						addStar(spaceObjects, location, element);
 					
-					else if(canShortenPath(location, GLOBULAR_CLUSTER))
-						addGlobularCluster(spaceObjects, location, element);
-					
-					else if(canShortenPath(location, SPIRAL_GALAXY))
-						addSpiralGalaxy(spaceObjects, location, element);
-					
-					else if(canShortenPath(location, ELLIPTICAL_GALAXY))
-						addEllipticalGalaxy(spaceObjects, location, element);
+					else if(canShortenPath(location, STAR_FIELD))
+						addStarField(spaceObjects, location, element);
 				}
 			}
 
@@ -186,50 +180,16 @@ public class ResourcepackReloadListener
 			}
 		}
 		
-		private static void addGlobularCluster(HashMap<ResourceLocation, SpaceObject> spaceObjects, ResourceLocation location, JsonElement element)
+		private static void addStarField(HashMap<ResourceLocation, SpaceObject> spaceObjects, ResourceLocation location, JsonElement element)
 		{
 			try
 			{
-				JsonObject json = GsonHelper.convertToJsonObject(element, "globular_cluster");
-				StarField.GlobularCluster globularCluster = StarField.GlobularCluster.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Globular Cluster", msg));
+				JsonObject json = GsonHelper.convertToJsonObject(element, "star_field");
+				StarField starField = StarField.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Star Field", msg));
 
-				spaceObjects.put(location, globularCluster);
-				Space.addStarField(globularCluster);
-				StellarView.LOGGER.error("Parsed " + location.toString() + " as Globular Cluster");
-			}
-			catch(RuntimeException e)
-			{
-				StellarView.LOGGER.error("Could not load " + location.toString() + " " + e);
-			}
-		}
-		
-		private static void addSpiralGalaxy(HashMap<ResourceLocation, SpaceObject> spaceObjects, ResourceLocation location, JsonElement element)
-		{
-			try
-			{
-				JsonObject json = GsonHelper.convertToJsonObject(element, "spiral_galaxy");
-				Galaxy.SpiralGalaxy spiralGalaxy = Galaxy.SpiralGalaxy.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Spiral Galaxy", msg));
-
-				spaceObjects.put(location, spiralGalaxy);
-				Space.addStarField(spiralGalaxy);
-				StellarView.LOGGER.error("Parsed " + location.toString() + " as Spiral Galaxy");
-			}
-			catch(RuntimeException e)
-			{
-				StellarView.LOGGER.error("Could not load " + location.toString() + " " + e);
-			}
-		}
-		
-		private static void addEllipticalGalaxy(HashMap<ResourceLocation, SpaceObject> spaceObjects, ResourceLocation location, JsonElement element)
-		{
-			try
-			{
-				JsonObject json = GsonHelper.convertToJsonObject(element, "elliptical_galaxy");
-				Galaxy.EllipticalGalaxy ellipticalGalaxy = Galaxy.EllipticalGalaxy.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Elliptical Galaxy", msg));
-
-				spaceObjects.put(location, ellipticalGalaxy);
-				Space.addStarField(ellipticalGalaxy);
-				StellarView.LOGGER.error("Parsed " + location.toString() + " as Elliptical Galaxy");
+				spaceObjects.put(location, starField);
+				Space.addStarField(starField);
+				StellarView.LOGGER.error("Parsed " + location.toString() + " as Star Field");
 			}
 			catch(RuntimeException e)
 			{

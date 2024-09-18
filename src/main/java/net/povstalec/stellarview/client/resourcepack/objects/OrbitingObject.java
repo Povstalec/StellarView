@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.math.Axis;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -16,6 +17,7 @@ import net.minecraft.resources.ResourceKey;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.SpaceCoords;
+import net.povstalec.stellarview.common.util.StellarCoordinates;
 import net.povstalec.stellarview.common.util.TextureLayer;
 
 public class OrbitingObject extends SpaceObject
@@ -27,7 +29,7 @@ public class OrbitingObject extends SpaceObject
 	
 	public static final Codec<OrbitingObject> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			RESOURCE_KEY_CODEC.optionalFieldOf("parent").forGetter(OrbitingObject::getParentKey),
-			SpaceCoords.CODEC.fieldOf("coords").forGetter(OrbitingObject::getCoords),
+			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf("coords").forGetter(object -> Either.left(object.getCoords())),
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(OrbitingObject::getAxisRotation),
 			OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(OrbitingObject::getOrbitInfo),
 			TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(OrbitingObject::getTextureLayers),
@@ -35,7 +37,7 @@ public class OrbitingObject extends SpaceObject
 			SpaceObject.FadeOutHandler.CODEC.optionalFieldOf("fade_out_handler", SpaceObject.FadeOutHandler.DEFAULT_PLANET_HANDLER).forGetter(OrbitingObject::getFadeOutHandler)
 			).apply(instance, OrbitingObject::new));
 	
-	public OrbitingObject(Optional<ResourceKey<SpaceObject>> parent, SpaceCoords coords, AxisRotation axisRotation, Optional<OrbitInfo> orbitInfo,
+	public OrbitingObject(Optional<ResourceKey<SpaceObject>> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation, Optional<OrbitInfo> orbitInfo,
 			List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler)
 	{
 		super(parent, coords, axisRotation, textureLayers, fadeOutHandler);

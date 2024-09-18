@@ -1,5 +1,6 @@
 package net.povstalec.stellarview.client.resourcepack.objects;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +18,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexBuffer;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -35,9 +37,10 @@ import net.povstalec.stellarview.common.util.SpaceCoords;
 import net.povstalec.stellarview.common.util.SphericalCoords;
 import net.povstalec.stellarview.common.util.StarBuffer;
 import net.povstalec.stellarview.common.util.StarData;
+import net.povstalec.stellarview.common.util.StellarCoordinates;
 import net.povstalec.stellarview.common.util.TextureLayer;
 
-public abstract class StarField extends SpaceObject
+public class StarField extends SpaceObject
 {
 	@Nullable
 	protected StarBuffer starBuffer;
@@ -50,8 +53,38 @@ public abstract class StarField extends SpaceObject
 	protected final int diameter;
 	protected final int stars;
 	
-	public StarField(Optional<ResourceKey<SpaceObject>> parent, SpaceCoords coords, AxisRotation axisRotation, List<TextureLayer> textureLayers,
-			FadeOutHandler fadeOutHandler, StarInfo starInfo, long seed, int diameter, int numberOfStars)
+	private final double xStretch;
+	private final double yStretch;
+	private final double zStretch;
+	
+	protected final ArrayList<SpiralArm> spiralArms;
+	
+	protected final int totalStars;
+	
+	public static final Codec<StarField> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+			RESOURCE_KEY_CODEC.optionalFieldOf("parent").forGetter(StarField::getParentKey),
+			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf("coords").forGetter(object -> Either.left(object.getCoords())),
+			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(StarField::getAxisRotation),
+			TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(StarField::getTextureLayers),
+
+			SpaceObject.FadeOutHandler.CODEC.optionalFieldOf("fade_out_handler", SpaceObject.FadeOutHandler.DEFAULT_STAR_FIELD_HANDLER).forGetter(StarField::getFadeOutHandler),
+
+			StarInfo.CODEC.optionalFieldOf("star_info", StarInfo.DEFAULT_STAR_INFO).forGetter(StarField::getStarInfo),
+			Codec.LONG.fieldOf("seed").forGetter(StarField::getSeed),
+			Codec.INT.fieldOf("diameter_ly").forGetter(StarField::getDiameter),
+			
+			Codec.intRange(1, 30000).fieldOf("stars").forGetter(StarField::getStars),
+			
+			Codec.DOUBLE.optionalFieldOf("x_stretch", 1.0).forGetter(StarField::xStretch),
+			Codec.DOUBLE.optionalFieldOf("y_stretch", 1.0).forGetter(StarField::yStretch),
+			Codec.DOUBLE.optionalFieldOf("z_stretch", 1.0).forGetter(StarField::zStretch),
+			
+			SpiralArm.CODEC.listOf().optionalFieldOf("spiral_arms").forGetter(starField -> Optional.ofNullable(starField.spiralArms))
+			).apply(instance, StarField::new));
+	
+	public StarField(Optional<ResourceKey<SpaceObject>> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation, List<TextureLayer> textureLayers,
+			FadeOutHandler fadeOutHandler, StarInfo starInfo, long seed, int diameter, int numberOfStars,
+			double xStretch, double yStretch, double zStretch, Optional<List<SpiralArm>> spiralArms)
 	{
 		super(parent, coords, axisRotation, textureLayers, fadeOutHandler);
 		
@@ -61,6 +94,24 @@ public abstract class StarField extends SpaceObject
 
 		this.diameter = diameter;
 		this.stars = numberOfStars;
+		
+		this.xStretch = xStretch;
+		this.yStretch = yStretch;
+		this.zStretch = zStretch;
+		
+		if(spiralArms.isPresent())
+			this.spiralArms = new ArrayList<SpiralArm>(spiralArms.get());
+		else
+			this.spiralArms = new ArrayList<SpiralArm>();
+
+		// Calculate the total amount of stars
+		int totalStars = stars;
+		for(SpiralArm arm : this.spiralArms)
+		{
+			totalStars += arm.armStars();
+		}
+		
+		this.totalStars = totalStars;
 	}
 	
 	public StarInfo getStarInfo()
@@ -83,14 +134,86 @@ public abstract class StarField extends SpaceObject
 		return stars;
 	}
 	
+	public double xStretch()
+	{
+		return xStretch;
+	}
+	
+	public double yStretch()
+	{
+		return yStretch;
+	}
+	
+	public double zStretch()
+	{
+		return zStretch;
+	}
+	
+	public List<SpiralArm> getSpiralArms()
+	{
+		return spiralArms;
+	}
+	
 	public boolean requiresSetup()
 	{
 		return starBuffer == null;
 	}
-
-	protected abstract BufferBuilder.RenderedBuffer generateStarBuffer(BufferBuilder bufferBuilder, SpaceCoords relativeCoords);
+	
+	protected void generateStars(BufferBuilder bufferBuilder, SpaceCoords relativeCoords, RandomSource randomsource)
+	{
+		boolean clumpInCenter = true; // TODO Let resourcepacks change this
 		
-	protected abstract BufferBuilder.RenderedBuffer getStarBuffer(BufferBuilder bufferBuilder, SpaceCoords relativeCoords);
+		for(int i = 0; i < stars; i++)
+		{
+			// This generates random coordinates for the Star close to the camera
+			double distance = clumpInCenter ? randomsource.nextDouble() : Math.cbrt(randomsource.nextDouble());
+			double theta = randomsource.nextDouble() * 2F * Math.PI;
+			double phi = Math.acos(2F * randomsource.nextDouble() - 1F); // This prevents the formation of that weird streak that normally happens
+			
+			Vector3d cartesian = new SphericalCoords(distance * diameter, theta, phi).toCartesianD();
+			
+			cartesian.x *= xStretch;
+			cartesian.y *= yStretch;
+			cartesian.z *= zStretch;
+			
+			axisRotation.quaterniond().transform(cartesian);
+
+			starData.newStar(starInfo, bufferBuilder, randomsource, relativeCoords, cartesian.x, cartesian.y, cartesian.z, i);
+		}
+	}
+	
+	protected RenderedBuffer generateStarBuffer(BufferBuilder bufferBuilder, SpaceCoords relativeCoords)
+	{
+		RandomSource randomsource = RandomSource.create(seed);
+		bufferBuilder.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR);
+		
+		double sizeMultiplier = diameter / 30D;
+		
+		starData = new StarData(totalStars);
+		
+		generateStars(bufferBuilder, relativeCoords, randomsource);
+		
+		int numberOfStars = stars;
+		for(SpiralArm arm : spiralArms) //Draw each arm
+		{
+			arm.generateStars(bufferBuilder, relativeCoords, axisRotation, starData, starInfo, randomsource, numberOfStars, sizeMultiplier);
+			numberOfStars += arm.armStars();
+		}
+		
+		return bufferBuilder.end();
+	}
+	
+	protected RenderedBuffer getStarBuffer(BufferBuilder bufferBuilder, SpaceCoords relativeCoords)
+	{
+		RandomSource randomsource = RandomSource.create(seed);
+		bufferBuilder.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR);
+		
+		for(int i = 0; i < totalStars; i++)
+		{
+			starData.createStar(bufferBuilder, randomsource, relativeCoords, i);
+		}
+		return bufferBuilder.end();
+	}
 	
 	public StarField setStarBuffer(SpaceCoords relativeCoords)
 	{
@@ -159,7 +282,7 @@ public abstract class StarField extends SpaceObject
 			
 			stack.mulPose(q);
 			this.starBuffer.bind();
-			this.starBuffer.drawWithShader(stack.last().pose(), projectionMatrix, new Vector3f((float) difference.x().toLy(), (float) difference.y().toLy(), (float) difference.z().toLy()), StellarViewShaders.starShader());
+			this.starBuffer.drawWithShader(stack.last().pose(), projectionMatrix, difference, StellarViewShaders.starShader());
 			//this.starBuffer.drawWithShader(stack.last().pose(), projectionMatrix, GameRenderer.getPositionColorTexShader());
 			VertexBuffer.unbind();
 			
@@ -173,66 +296,87 @@ public abstract class StarField extends SpaceObject
 		}
 	}
 	
-	
-	
-	public static class GlobularCluster extends StarField
+	public static class SpiralArm
 	{
-		public static final Codec<GlobularCluster> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-				RESOURCE_KEY_CODEC.optionalFieldOf("parent").forGetter(GlobularCluster::getParentKey),
-				SpaceCoords.CODEC.fieldOf("coords").forGetter(GlobularCluster::getCoords),
-				AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(GlobularCluster::getAxisRotation),
-				TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(GlobularCluster::getTextureLayers),
-				
-				SpaceObject.FadeOutHandler.CODEC.optionalFieldOf("fade_out_handler", SpaceObject.FadeOutHandler.DEFAULT_STAR_FIELD_HANDLER).forGetter(GlobularCluster::getFadeOutHandler),
-
-				StarInfo.CODEC.optionalFieldOf("star_info", StarInfo.DEFAULT_STAR_INFO).forGetter(GlobularCluster::getStarInfo),
-				Codec.LONG.fieldOf("seed").forGetter(GlobularCluster::getSeed),
-				Codec.INT.fieldOf("diameter_ly").forGetter(GlobularCluster::getDiameter),
-				
-				Codec.INT.fieldOf("stars").forGetter(GlobularCluster::getStars)
-				).apply(instance, GlobularCluster::new));
-
-		public GlobularCluster(Optional<ResourceKey<SpaceObject>> parent, SpaceCoords coords, AxisRotation axisRotation,
-				List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler, StarInfo starInfo, long seed, int diameter, int numberOfStars)
+		protected final int armStars;
+		protected final double armRotation;
+		protected final double armLength;
+		protected final double armThickness;
+		protected final boolean clumpInCenter;
+		
+		public static final Codec<SpiralArm> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				Codec.INT.fieldOf("stars").forGetter(SpiralArm::armStars),
+				Codec.DOUBLE.fieldOf("arm_rotation").forGetter(SpiralArm::armRotation),
+				Codec.DOUBLE.fieldOf("arm_length").forGetter(SpiralArm::armLength),
+				Codec.DOUBLE.fieldOf("arm_thickness").forGetter(SpiralArm::armThickness),
+				Codec.BOOL.optionalFieldOf("clump_in_center", true).forGetter(SpiralArm::clumpInCenter)
+				).apply(instance, SpiralArm::new));
+		
+		public SpiralArm(int armStars, double armRotationDegrees, double armLength, double armThickness, boolean clumpInCenter)
 		{
-			super(parent, coords, axisRotation, textureLayers, fadeOutHandler, starInfo, seed, diameter, numberOfStars);
+			this.armStars = armStars;
+			this.armRotation = Math.toRadians(armRotationDegrees);
+			this.armLength = armLength;
+			this.armThickness = armThickness;
+			
+			this.clumpInCenter = clumpInCenter;
 		}
-
-		@Override
-		protected RenderedBuffer generateStarBuffer(BufferBuilder bufferBuilder, SpaceCoords relativeCoords)
+		
+		public int armStars()
 		{
-			RandomSource randomsource = RandomSource.create(seed);
-			bufferBuilder.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR);
-			
-			starData = new StarData(stars);
-			
-			for(int i = 0; i < stars; i++)
+			return armStars;
+		}
+		
+		public double armRotation()
+		{
+			return armRotation;
+		}
+		
+		public double armLength()
+		{
+			return armLength;
+		}
+		
+		public double armThickness()
+		{
+			return armThickness;
+		}
+		
+		public boolean clumpInCenter()
+		{
+			return clumpInCenter;
+		}
+		
+		protected void generateStars(BufferBuilder bufferBuilder, SpaceCoords relativeCoords, AxisRotation axisRotation, StarData starData, StarInfo starInfo, RandomSource randomsource, int numberOfStars, double sizeMultiplier)
+		{
+			for(int i = 0; i < armStars; i++)
 			{
+				// Milky Way is 90 000 ly across
+				
+				double progress = (double) i / armStars;
+				
+				double phi = armLength * Math.PI * progress - armRotation;
+				double r = StellarCoordinates.spiralR(5, phi, armRotation);
+
 				// This generates random coordinates for the Star close to the camera
-				double distance = randomsource.nextDouble(); // Stars will be spread evenly aroudn the sphere
+				double distance = clumpInCenter ? randomsource.nextDouble() : Math.cbrt(randomsource.nextDouble());
 				double theta = randomsource.nextDouble() * 2F * Math.PI;
-				double phi = Math.acos(2F * randomsource.nextDouble() - 1F); // This prevents the formation of that weird streak that normally happens
-				
-				Vector3d cartesian = new SphericalCoords(distance * diameter, theta, phi).toCartesianD();
-				
-				starData.newStar(starInfo, bufferBuilder, randomsource, relativeCoords, cartesian.x, cartesian.y, cartesian.z, i);
-			}
-			return bufferBuilder.end();
-		}
+				double sphericalphi = Math.acos(2F * randomsource.nextDouble() - 1F); // This prevents the formation of that weird streak that normally happens
 
-		@Override
-		protected RenderedBuffer getStarBuffer(BufferBuilder bufferBuilder, SpaceCoords relativeCoords)
-		{
-			RandomSource randomsource = RandomSource.create(seed);
-			bufferBuilder.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR);
-			
-			for(int i = 0; i < stars; i++)
-			{
-				starData.createStar(bufferBuilder, randomsource, relativeCoords, i);
+				Vector3d cartesian = new SphericalCoords(distance * armThickness, theta, sphericalphi).toCartesianD();
+				
+				double x =  r * Math.cos(phi) + cartesian.x * armThickness / (progress * 1.5);
+				double z =  r * Math.sin(phi) + cartesian.z * armThickness / (progress * 1.5);
+				double y =  cartesian.y * armThickness / (progress * 1.5);
+				
+				cartesian.x = x * sizeMultiplier;
+				cartesian.y = y * sizeMultiplier;
+				cartesian.z = z * sizeMultiplier;
+				
+				axisRotation.quaterniond().transform(cartesian);
+				
+				starData.newStar(starInfo, bufferBuilder, randomsource, relativeCoords, cartesian.x, cartesian.y, cartesian.z, numberOfStars + i);
 			}
-			return bufferBuilder.end();
 		}
-		
-		
 	}
 }

@@ -12,6 +12,7 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -32,7 +33,7 @@ public class Supernova extends Star
 	
 	public static final Codec<Supernova> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			RESOURCE_KEY_CODEC.optionalFieldOf("parent").forGetter(Supernova::getParentKey),
-			SpaceCoords.CODEC.fieldOf("coords").forGetter(Supernova::getCoords),
+			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf("coords").forGetter(object -> Either.left(object.getCoords())),
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(Supernova::getAxisRotation),
 			OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(Supernova::getOrbitInfo),
 			TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(Supernova::getTextureLayers),
@@ -46,7 +47,7 @@ public class Supernova extends Star
 			SupernovaInfo.CODEC.fieldOf("supernova_info").forGetter(Supernova::getSupernovaInfo)
 			).apply(instance, Supernova::new));
 	
-	public Supernova(Optional<ResourceKey<SpaceObject>> parent, SpaceCoords coords, AxisRotation axisRotation,
+	public Supernova(Optional<ResourceKey<SpaceObject>> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
 			Optional<OrbitInfo> orbitInfo, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler,
 			float minStarSize, float maxStarAlpha, float minStarAlpha,
 			SupernovaInfo supernovaInfo)
@@ -239,7 +240,7 @@ public class Supernova extends Star
 	{
 		public static final Codec<Leftover> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				RESOURCE_KEY_CODEC.optionalFieldOf("parent").forGetter(Leftover::getParentKey),
-				SpaceCoords.CODEC.fieldOf("coords").forGetter(Leftover::getCoords),
+				Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf("coords").forGetter(object -> Either.left(object.getCoords())),
 				AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(Leftover::getAxisRotation),
 				OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(Leftover::getOrbitInfo),
 				TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(Leftover::getTextureLayers),
@@ -251,7 +252,7 @@ public class Supernova extends Star
 				Codec.floatRange(0, Color.MAX_FLOAT_VALUE).optionalFieldOf("min_star_alpha", MIN_ALPHA).forGetter(Leftover::getMinStarAlpha)
 				).apply(instance, Leftover::new));
 		
-		public Leftover(Optional<ResourceKey<SpaceObject>> parent, SpaceCoords coords, AxisRotation axisRotation,
+		public Leftover(Optional<ResourceKey<SpaceObject>> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
 				Optional<OrbitInfo> orbitInfo, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler,
 				float minStarSize, float maxStarAlpha, float minStarAlpha)
 		{

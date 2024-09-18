@@ -115,7 +115,6 @@ public class Skybox
 	
 	public void render(ClientLevel level, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder)
 	{
-		
 		stack.pushPose();
         //stack.mulPose(Axis.YP.rotationDegrees(skyXAngle));
         //stack.mulPose(Axis.ZP.rotationDegrees(skyYAngle));

@@ -127,19 +127,23 @@ public class StarBuffer implements AutoCloseable
 		return rendersystem$autostorageindexbuffer != null ? rendersystem$autostorageindexbuffer.type() : this.indexType;
 	}
 	
-	public void drawWithShader(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, Vector3f relativeSpacePos, StarShaderInstance shaderInstance) {
+	public void drawWithShader(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, SpaceCoords relativeSpacePos, StarShaderInstance shaderInstance)
+	{
+		Vector3f relativeVector = new Vector3f((float) relativeSpacePos.x().toLy(), (float) relativeSpacePos.y().toLy(), (float) relativeSpacePos.z().toLy());
+		
 		if(!RenderSystem.isOnRenderThread())
 		{
 			RenderSystem.recordRenderCall(() ->
 			{
-				this._drawWithShader(new Matrix4f(modelViewMatrix), new Matrix4f(projectionMatrix), relativeSpacePos, shaderInstance);
+				this._drawWithShader(new Matrix4f(modelViewMatrix), new Matrix4f(projectionMatrix), relativeVector, shaderInstance);
 			});
 		}
 		else
-			this._drawWithShader(modelViewMatrix, projectionMatrix, relativeSpacePos, shaderInstance);
+			this._drawWithShader(modelViewMatrix, projectionMatrix, relativeVector, shaderInstance);
 	}
 	
-	private void _drawWithShader(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, Vector3f relativeSpacePos, StarShaderInstance shaderInstance) {
+	private void _drawWithShader(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, Vector3f relativeSpacePos, StarShaderInstance shaderInstance)
+	{
 		for(int i = 0; i < 12; ++i)
 		{
 			int j = RenderSystem.getShaderTexture(i);
@@ -194,7 +198,8 @@ public class StarBuffer implements AutoCloseable
 		shaderInstance.clear();
 	}
 	
-	public void close() {
+	public void close()
+	{
 		if (this.vertexBufferId >= 0)
 		{
 			RenderSystem.glDeleteBuffers(this.vertexBufferId);

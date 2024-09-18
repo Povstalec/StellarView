@@ -2,6 +2,11 @@ package net.povstalec.stellarview.common.util;
 
 import org.joml.Vector3f;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
+import net.povstalec.stellarview.common.util.SpaceCoords.SpaceDistance;
+
 public class StellarCoordinates
 {
 	//============================================================================================
@@ -144,5 +149,166 @@ public class StellarCoordinates
 	public static Vector3f absoluteVector(Vector3f vector1, Vector3f vector2)
 	{
 		return addVectors(vector1, vector2);
+	}
+	
+	//============================================================================================
+	//****************************************Astronomical****************************************
+	//============================================================================================
+	
+	public static class RightAscension
+	{
+		public static final String HOURS = "hours";
+		public static final String MINUTES = "minutes";
+		public static final String SECONDS = "seconds";
+		
+		public final double hours;
+		public final double minutes;
+		public final double seconds;
+		
+		public final double radians;
+		
+		public static final Codec<RightAscension> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				Codec.doubleRange(0, 24).optionalFieldOf(HOURS, 0D).forGetter(rightAscension -> rightAscension.hours),
+				Codec.doubleRange(0, 60).optionalFieldOf(MINUTES, 0D).forGetter(rightAscension -> rightAscension.minutes),
+				Codec.doubleRange(0, 60).optionalFieldOf(SECONDS, 0D).forGetter(rightAscension -> rightAscension.seconds)
+				).apply(instance, RightAscension::new));
+		
+		public RightAscension(double hours, double minutes, double seconds)
+		{
+			this.hours = hours;
+			this.minutes = minutes;
+			this.seconds = seconds;
+			
+			this.radians = toRightAscension(hours, minutes, seconds);
+		}
+		
+		public static double toRightAscension(double hours, double minutes, double seconds)
+		{
+			return Math.toRadians(360F * (hours / 24F) + 360F * (minutes / 1440F) + 360F * (seconds / 86400F));
+		}
+		
+		@Override
+		public String toString()
+		{
+			return "[" + hours + "h " + minutes + "m " + seconds + "s]";
+		}
+	}
+	
+	public static class Declination
+	{
+		public static final String DEGREES = "degrees";
+		public static final String MINUTES = "minutes";
+		public static final String SECONDS = "seconds";
+		
+		public final double degrees;
+		public final double minutes;
+		public final double seconds;
+		
+		public final double radians;
+		
+		public static final Codec<Declination> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				Codec.doubleRange(-180, 180).optionalFieldOf(DEGREES, 0D).forGetter(declination -> declination.degrees),
+				Codec.doubleRange(-60, 60).optionalFieldOf(MINUTES, 0D).forGetter(declination -> declination.minutes),
+				Codec.doubleRange(-60, 60).optionalFieldOf(SECONDS, 0D).forGetter(declination -> declination.seconds)
+				).apply(instance, Declination::new));
+		
+		public Declination(double degrees, double minutes, double seconds)
+		{
+			this.degrees = degrees;
+			this.minutes = minutes;
+			this.seconds = seconds;
+			
+			this.radians = toDeclination(degrees, minutes, seconds);
+		}
+		
+		public static double toDeclination(double degrees, double minutes, double seconds)
+		{
+				return Math.toRadians(degrees + minutes / 60F + seconds / 3600F);
+		}
+		
+		@Override
+		public String toString()
+		{
+			return "[" + degrees + "° " + minutes + "' " + seconds + "\"]";
+		}
+	}
+	
+	public static class Equatorial
+	{
+		public static final String RIGHT_ASCENSION = "right_ascension";
+		public static final String DECLINATION = "declination";
+		public static final String DISTNACE = "distance";
+		
+		public static final double RIGHT_ASCENSION_NGP = RightAscension.toRightAscension(12, 51, 26.282); // Right ascension of the north galactic pole
+		public static final double DECLINATION_NGP = Declination.toDeclination(27, 7, 52.01); // Declination of the north galactic pole
+		public static final double L_NCP = Math.toRadians(122.93314); // Longtitude of the north celestial pole
+		
+		public final RightAscension rightAscension;
+		public final Declination declination;
+		public final SpaceDistance distance;
+		
+		public static final Codec<Equatorial> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				RightAscension.CODEC.fieldOf(RIGHT_ASCENSION).forGetter(equatorial -> equatorial.rightAscension),
+				Declination.CODEC.fieldOf(DECLINATION).forGetter(equatorial -> equatorial.declination),
+				SpaceDistance.CODEC.fieldOf(DISTNACE).forGetter(equatorial -> equatorial.distance)
+				).apply(instance, Equatorial::new));
+		
+		public Equatorial(RightAscension rightAscension, Declination declination, SpaceDistance distance)
+		{
+			this.rightAscension = rightAscension;
+			this.declination = declination;
+			this.distance = distance;
+		}
+		
+		public Galactic toGalactic()
+		{
+			return toGalactic(rightAscension.radians, declination.radians, distance);
+		}
+		
+		public static Galactic toGalactic(double rightAscension, double declination, SpaceDistance distance)
+		{
+			double sinB = Math.sin(DECLINATION_NGP) * Math.sin(declination) + Math.cos(DECLINATION_NGP) * Math.cos(declination) * Math.cos(rightAscension - RIGHT_ASCENSION_NGP);
+			
+			double galacticLatitude = Math.asin(sinB);
+			
+			double galacticLongtitude = L_NCP - Math.asin((Math.cos(declination) * Math.sin(rightAscension - RIGHT_ASCENSION_NGP)) / Math.cos(galacticLatitude));
+			
+			return new Galactic(galacticLongtitude, galacticLatitude, distance);
+		}
+		
+		@Override
+		public String toString()
+		{
+			return "{RA: " + rightAscension.toString() + " Dec: " + declination.toString() + " Dist: " + distance.toString() + '}';
+		}
+	}
+	
+	public static class Galactic
+	{
+		public final double galacticLongtitude;
+		public final double galacticLatitude;
+		public final SpaceDistance distance;
+		
+		public Galactic(double galacticLongtitude, double galacticLatitude, SpaceDistance distance)
+		{
+			this.galacticLongtitude = galacticLongtitude;
+			this.galacticLatitude = galacticLatitude;
+			this.distance = distance;
+		}
+		
+		public SpaceCoords toSpaceCoords()
+		{
+			double xProj = Math.sin(galacticLongtitude) * Math.cos(galacticLatitude);
+			double yProj = -Math.sin(galacticLatitude);
+			double zProj = Math.cos(galacticLongtitude) * Math.cos(galacticLatitude);
+			
+			return new SpaceCoords(distance.mul(xProj, true), distance.mul(yProj, true), distance.mul(zProj, true));
+		}
+		
+		@Override
+		public String toString()
+		{
+			return "{Long: " + Math.toDegrees(galacticLongtitude) + "° Lat: " + Math.toDegrees(galacticLatitude) + "° Dist: " + distance.toString() + '}';
+		}
 	}
 }

@@ -1,5 +1,5 @@
 {
-	"parent": "stellarview:star_field/spiral_galaxy/andromeda",
+	"parent": "stellarview:star_field/spiral_galaxy/andromeda/andromeda",
 	"coords": { "x": {"ly": 0}, "y": {"ly": 8000}, "z": {"ly": 160000} },
 	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
 	"texture_layers":

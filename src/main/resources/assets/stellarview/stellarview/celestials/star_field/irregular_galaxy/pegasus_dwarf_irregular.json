@@ -1,5 +1,5 @@
 {
-	"coords": { "x": {"ly": 500000}, "y": {"ly": -2800000}, "z": {"ly": 0} },
+	"coords": { "right_ascension": {"hours": 23, "minutes": 28, "seconds": 32.6}, "declination": {"degrees": 14, "minutes": 44, "seconds": 35}, "distance": {"ly": 3000000} },
 	"axis_rotation": { "x_axis": 22, "y_axis": 83, "z_axis": 12 },
 	
 	"seed": 58413,

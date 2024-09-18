@@ -14,6 +14,7 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -27,6 +28,7 @@ import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.Color;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 import net.povstalec.stellarview.common.util.SphericalCoords;
+import net.povstalec.stellarview.common.util.StellarCoordinates;
 import net.povstalec.stellarview.common.util.TextureLayer;
 
 public class Star extends OrbitingObject
@@ -43,7 +45,7 @@ public class Star extends OrbitingObject
 	
 	public static final Codec<Star> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			RESOURCE_KEY_CODEC.optionalFieldOf("parent").forGetter(Star::getParentKey),
-			SpaceCoords.CODEC.fieldOf("coords").forGetter(Star::getCoords),
+			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf("coords").forGetter(object -> Either.left(object.getCoords())),
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(Star::getAxisRotation),
 			OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(Star::getOrbitInfo),
 			TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(Star::getTextureLayers),
@@ -55,7 +57,7 @@ public class Star extends OrbitingObject
 			Codec.floatRange(0, Color.MAX_FLOAT_VALUE).optionalFieldOf("min_star_alpha", MIN_ALPHA).forGetter(Star::getMinStarAlpha)
 			).apply(instance, Star::new));
 	
-	public Star(Optional<ResourceKey<SpaceObject>> parent, SpaceCoords coords, AxisRotation axisRotation, Optional<OrbitInfo> orbitInfo,
+	public Star(Optional<ResourceKey<SpaceObject>> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation, Optional<OrbitInfo> orbitInfo,
 			List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler,
 			float minStarSize, float maxStarAlpha, float minStarAlpha)
 	{

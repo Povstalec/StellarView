@@ -1,32 +1,25 @@
 {
-	"coords": { "x": {"ly": 0}, "y": {"ly": -1200000}, "z": {"ly": 2500000} },
-	"axis_rotation": { "x_axis": 0, "y_axis": 32, "z_axis": 49 },
+	"coords": { "right_ascension": {"hours": 11, "minutes": 49, "seconds": 14.4}, "declination": {"degrees": -18, "minutes": 24, "seconds": 46.8}, "distance": {"ly": 380000} },
+	"axis_rotation": { "x_axis": 197, "y_axis": 71.6, "z_axis": 33.8 },
 	
-	"seed": 55183,
-	"diameter_ly": 152000,
+	"seed": 66837,
+	"diameter_ly": 6950,
+	"stars": 50,
 	
-	"stars": 4000,
-	
-	"x_stretch": 0.5,
-	"y_stretch": 0.25,
-	"z_stretch": 0.5,
+	"x_stretch": 1.0,
+	"y_stretch": 1.0,
+	"z_stretch": 1.0,
 	
 	"texture_layers":
 	[
 		{
-			"texture": "stellarview:textures/environment/galaxy/spiral_galaxy.png",
+			"texture": "stellarview:textures/environment/galaxy/elliptical_galaxy.png",
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": true,
 			"size": 800,
 			"rotation": 0,
 			"uv": { "flip_uv": false }
 		}
-	],
-	
-	"spiral_arms":
-	[
-		{ "stars": 4000, "arm_rotation": 0, "arm_length": 2.92, "arm_thickness": 2.5 },
-		{ "stars": 4000, "arm_rotation": 180, "arm_length": 2.56, "arm_thickness": 2.5 }
 	],
 	
 	"star_info":

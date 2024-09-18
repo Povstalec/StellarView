@@ -16,6 +16,7 @@ import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -61,12 +62,16 @@ public abstract class SpaceObject
 	protected ResourceLocation location;
 	protected double lastDistance = 0; // Last known distance of this object from the View Center, used for sorting
 	
-	public SpaceObject(Optional<ResourceKey<SpaceObject>> parentKey, SpaceCoords coords, AxisRotation axisRotation, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler)
+	public SpaceObject(Optional<ResourceKey<SpaceObject>> parentKey, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler)
 	{
 		if(parentKey.isPresent())
 				this.parentKey = parentKey.get();
 		
-		this.coords = coords;
+		if(coords.left().isPresent())
+			this.coords = coords.left().get();
+		else
+			this.coords = coords.right().get().toGalactic().toSpaceCoords();
+		
 		this.axisRotation = axisRotation;
 		
 		this.textureLayers = new ArrayList<TextureLayer>(textureLayers);

@@ -300,6 +300,14 @@ public class SpaceCoords
 			return new SpaceDistance(this.ly, this.km - value);
 		}
 		
+		public SpaceDistance mul(double value, boolean roundDown)
+		{
+			double result = this.ly * value;
+			long ly = (long) result;
+			
+			return new SpaceDistance((long) ly, roundDown ? 0 : result - ly);
+		}
+		
 		public SpaceDistance copy()
 		{
 			return new SpaceDistance(ly, km);

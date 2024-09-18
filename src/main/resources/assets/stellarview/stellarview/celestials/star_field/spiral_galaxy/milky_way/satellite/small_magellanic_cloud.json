@@ -1,10 +1,10 @@
 {
-	"coords": { "x": {"ly": -53500000}, "y": {"ly": 0}, "z": {"ly": 0} },
-	"axis_rotation": { "x_axis": 0, "y_axis": 0.6, "z_axis": 0 },
+	"coords": { "right_ascension": {"hours": 0, "minutes": 52, "seconds": 44.8}, "declination": {"degrees": -72, "minutes": 49, "seconds": 43}, "distance": {"ly": 203700} },
+	"axis_rotation": { "x_axis": 197, "y_axis": 71.6, "z_axis": 33.8 },
 	
-	"seed": 10842,
-	"diameter_ly": 132000,
-	"stars": 3000,
+	"seed": 66837,
+	"diameter_ly": 6950,
+	"stars": 500,
 	
 	"x_stretch": 1.0,
 	"y_stretch": 1.0,
