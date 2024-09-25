@@ -55,26 +55,65 @@ public class OrbitingObject extends SpaceObject
 	}
 	
 	@Override
-	public Vector3f getPosition(ViewCenter viewCenter, AxisRotation axisRotation, long ticks)
+	public Vector3f getPosition(ViewCenter viewCenter, AxisRotation axisRotation, long ticks, float partialTicks)
 	{
-		return axisRotation.quaterniond().transform(getPosition(viewCenter, ticks));
+		return axisRotation.quaterniond().transform(getPosition(viewCenter, ticks, partialTicks));
 	}
 	
 	@Override
-	public Vector3f getPosition(ViewCenter viewCenter, long ticks)
+	public Vector3f getPosition(ViewCenter viewCenter, long ticks, float partialTicks)
 	{
 		if(orbitInfo != null)
 		{
 			if(!viewCenter.objectEquals(this) && orbitInfo.orbitClampNumber() > 0 && parent != null)
-				return orbitInfo.getOrbitVector(ticks, parent.lastDistance);
+				return orbitInfo.getOrbitVector(ticks, partialTicks, parent.lastDistance);
 			else
-				return orbitInfo.getOrbitVector(ticks);
+				return orbitInfo.getOrbitVector(ticks, partialTicks);
 		}
 		else
-			return super.getPosition(viewCenter, ticks);
+			return super.getPosition(viewCenter, ticks, partialTicks);
 	}
 	
 	
+	
+	public static class OrbitalPeriod
+	{
+		private final long ticks;
+		private final int orbits; // The number of full orbital revolutions the object will complete in a given number of ticks
+		
+		private final double period;
+		
+		public static final Codec<OrbitalPeriod> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				Codec.LONG.fieldOf("ticks").forGetter(OrbitalPeriod::ticks),
+				Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("orbits", 1).forGetter(OrbitalPeriod::orbits)
+				).apply(instance, OrbitalPeriod::new));
+		
+		public OrbitalPeriod(long ticks, int orbits)
+		{
+			if(ticks <= 0)
+				throw(new IllegalArgumentException("Value ticks outside of range [" + 1 + ':' + Integer.MAX_VALUE + ']'));
+			
+			this.ticks = ticks;
+			this.orbits = orbits;
+			
+			this.period = (double) orbits / ticks;
+		}
+		
+		public long ticks()
+		{
+			return ticks;
+		}
+		
+		public int orbits()
+		{
+			return orbits;
+		}
+		
+		public double period()
+		{
+			return period;
+		}
+	}
 	
 	public static class OrbitInfo
 	{
@@ -84,7 +123,7 @@ public class OrbitingObject extends SpaceObject
 				
 				Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("orbit_clamp_distance", 0F).forGetter(OrbitInfo::orbitClampNumber),
 				
-				Codec.LONG.fieldOf("orbital_period").forGetter(OrbitInfo::orbitalPeriod),
+				OrbitalPeriod.CODEC.fieldOf("orbital_period").forGetter(OrbitInfo::orbitalPeriod),
 				
 				Codec.FLOAT.optionalFieldOf("argument_of_periapsis", 0F).forGetter(OrbitInfo::argumentOfPeriapsis),
 				
@@ -96,9 +135,9 @@ public class OrbitingObject extends SpaceObject
 		
 		private final float apoapsis;
 		private final float periapsis;
-		private final float orbitClampNumber;
+		private final float orbitClampDistance; // Visually clamps the orbit as if it was viewed from this distance
 		
-		private final long orbitalPeriod;
+		private final OrbitalPeriod orbitalPeriod;
 		
 		private final float argumentOfPeriapsis;
 		
@@ -113,15 +152,15 @@ public class OrbitingObject extends SpaceObject
 		
 		private final Matrix4f orbitMatrix;
 		
-		public OrbitInfo(float apoapsis, float periapsis, float orbitClampNumber,
-				long orbitalPeriod,
+		public OrbitInfo(float apoapsis, float periapsis, float orbitClampDistance,
+				OrbitalPeriod orbitalPeriod,
 				float argumentOfPeriapsis,
 				float inclination, float longtitudeOfAscendingNode,
 				float meanAnomaly)
 		{
 			this.apoapsis = apoapsis;
 			this.periapsis = periapsis;
-			this.orbitClampNumber = orbitClampNumber;
+			this.orbitClampDistance = orbitClampDistance;
 			
 			this.orbitalPeriod = orbitalPeriod;
 
@@ -131,7 +170,7 @@ public class OrbitingObject extends SpaceObject
 			this.longtitudeOfAscendingNode = (float) Math.toRadians(longtitudeOfAscendingNode);
 			
 			this.epochMeanAnomaly = (float) Math.toRadians(meanAnomaly);
-			this.sweep = (float) ((2 * Math.PI) / orbitalPeriod);
+			this.sweep = (float) ((2 * Math.PI) * orbitalPeriod().period());
 			
 			this.eccentricity = (apoapsis - periapsis) / (apoapsis + periapsis);
 			
@@ -150,10 +189,10 @@ public class OrbitingObject extends SpaceObject
 		
 		public float orbitClampNumber()
 		{
-			return orbitClampNumber;
+			return orbitClampDistance;
 		}
 		
-		public long orbitalPeriod()
+		public OrbitalPeriod orbitalPeriod()
 		{
 			return orbitalPeriod;
 		}
@@ -183,37 +222,37 @@ public class OrbitingObject extends SpaceObject
 			return eccentricity;
 		}
 		
-		public Vector3f getOrbitVector(long ticks)
+		public Vector3f getOrbitVector(long ticks, float partialTicks)
 		{
 			Vector3f orbitVector = new Vector3f(INITIAL_ORBIT_VECTOR);
 			
-			float trueAnomaly = (float) eccentricAnomaly(ticks);
+			float trueAnomaly = (float) eccentricAnomaly(ticks, partialTicks);
 			
 			orbitVector = orbitVector.mulProject(movementMatrix(trueAnomaly)).mulProject(orbitMatrix);
 			
 			return orbitVector;
 		}
 		
-		public Vector3f getOrbitVector(long ticks, double distance)
+		public Vector3f getOrbitVector(long ticks, float partialTicks, double distance)
 		{
-			if(orbitClampNumber > 0 && distance > orbitClampNumber)
+			if(orbitClampDistance > 0 && distance > orbitClampDistance)
 			{
-				float mul = (float) distance / orbitClampNumber;
+				float mul = (float) distance / orbitClampDistance;
 				
-				return getOrbitVector(ticks).mulProject(new Matrix4f().scale(mul, mul, mul));
+				return getOrbitVector(ticks, partialTicks).mulProject(new Matrix4f().scale(mul, mul, mul));
 			}
 			
-			return getOrbitVector(ticks);
+			return getOrbitVector(ticks, partialTicks);
 		}
 		
-		public double meanAnomaly(long ticks)
+		public double meanAnomaly(long ticks, float partialTicks)
 		{
-			return epochMeanAnomaly + sweep * ticks;
+			return epochMeanAnomaly + sweep * (ticks - 1 + partialTicks);
 		}
 		
-		public double eccentricAnomaly(long ticks)
+		public double eccentricAnomaly(long ticks, float partialTicks)
 		{
-			return approximateEccentricAnomaly(eccentricity, meanAnomaly(ticks), 4); // 4 chosen as an arbitrary number
+			return approximateEccentricAnomaly(eccentricity, meanAnomaly(ticks, partialTicks), 4); // 4 chosen as an arbitrary number
 		}
 		
 		// Moves a point along a unit circle, starting from the mean anomaly

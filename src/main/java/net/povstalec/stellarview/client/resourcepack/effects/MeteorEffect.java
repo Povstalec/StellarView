@@ -21,7 +21,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.util.Mth;
-import net.povstalec.stellarview.common.config.StellarViewConfig;
+import net.povstalec.stellarview.client.resourcepack.ViewCenter;
+import net.povstalec.stellarview.common.config.GeneralConfig;
 import net.povstalec.stellarview.common.util.Color;
 import net.povstalec.stellarview.common.util.SphericalCoords;
 import net.povstalec.stellarview.common.util.StellarCoordinates;
@@ -34,10 +35,10 @@ public abstract class MeteorEffect
 	public static final float DEFAULT_DISTANCE = 100.0F;
 	public static final SphericalCoords SPHERICAL_START = new SphericalCoords(DEFAULT_DISTANCE, 0, 0);
 	
-	private final ArrayList<MeteorType> meteorTypes;
-	private int totalWeight = 0;
+	protected final ArrayList<MeteorType> meteorTypes;
+	protected int totalWeight = 0;
 	
-	private double rarity;
+	protected double rarity;
 	
 	public MeteorEffect(List<MeteorType> meteorTypes, double rarity)
 	{
@@ -55,10 +56,12 @@ public abstract class MeteorEffect
 		return meteorTypes;
 	}
 	
-	public boolean canRender()
+	public boolean canRender(ViewCenter viewCenter)
 	{
-		return meteorTypes.size() > 0;
+		return getRarity(viewCenter) > 0 && meteorTypes.size() > 0;
 	}
+	
+	public abstract double getRarity(ViewCenter viewCenter);
 	
 	public double getRarity()
 	{
@@ -89,13 +92,13 @@ public abstract class MeteorEffect
 		return meteorTypes.get(i);
 	}
 	
-	public Color.FloatRGBA rgba(ClientLevel level, Camera camera, long ticks, float partialTicks)
+	public Color.FloatRGBA rgba(ViewCenter viewCenter, ClientLevel level, Camera camera, long ticks, float partialTicks)
 	{
 		float brightness = level.getStarBrightness(partialTicks);
-		brightness = StellarViewConfig.day_stars.get() && brightness < 0.5F ? 
+		brightness = viewCenter.starsAlwaysVisible() && brightness < 0.5F ? 
 				0.5F : brightness;
 		
-		if(StellarViewConfig.bright_stars.get())
+		if(GeneralConfig.bright_stars.get())
 			brightness = brightness * (1 + ((float) (15 - level.getLightEngine().getRawBrightness(camera.getEntity().getOnPos().above(), 15)) / 15));
 		
 		brightness *= (1.0F - level.getRainLevel(partialTicks));
@@ -103,9 +106,9 @@ public abstract class MeteorEffect
 		return new Color.FloatRGBA(1, 1, 1, brightness);
 	}
 	
-	public abstract void render(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder);
+	public abstract void render(ViewCenter viewCenter, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder);
 	
-	public void render(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder,
+	public void render(ViewCenter viewCenter, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder,
 			float xRotation, float yRotation, float zRotation,
 			MeteorType meteorType, float mulSize, float addRotation)
 	{
@@ -115,7 +118,7 @@ public abstract class MeteorEffect
         stack.mulPose(Axis.ZP.rotationDegrees(zRotation));
         stack.mulPose(Axis.XP.rotationDegrees(xRotation));
 		
-		meteorType.render(bufferbuilder, stack.last().pose(), SPHERICAL_START, rgba(level, camera, level.getDayTime(), partialTicks), level.getDayTime(), mulSize, addRotation);
+		meteorType.render(bufferbuilder, stack.last().pose(), SPHERICAL_START, rgba(viewCenter, level, camera, level.getDayTime(), partialTicks), level.getDayTime(), mulSize, addRotation);
 		stack.popPose();
 	}
 	
@@ -213,10 +216,23 @@ public abstract class MeteorEffect
 			super(meteorTypes, rarity);
 		}
 		
-		@Override
-		public final void render(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder)
+		public ShootingStar()
 		{
-			if(!canRender())
+			this(new ArrayList<MeteorType>(), 0);
+		}
+		
+		public double getRarity(ViewCenter viewCenter)
+		{
+			if(!viewCenter.overrideMeteorEffects())
+				return rarity;
+			
+			return viewCenter.overrideShootingStarRarity();
+		}
+		
+		@Override
+		public final void render(ViewCenter viewCenter, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder)
+		{
+			if(!canRender(viewCenter))
 				return;
 			
 			long tickSeed = level.getDayTime() / TICKS;
@@ -243,7 +259,7 @@ public abstract class MeteorEffect
 				float rotation = (float) (Math.PI * position / 4);
 				float size = (float) (Math.sin(Math.PI * position / DURATION));
 
-				this.render(level, camera, partialTicks, stack, bufferbuilder, xRotation, yRotation, zRotation, meteorType, size, rotation);
+				this.render(viewCenter, level, camera, partialTicks, stack, bufferbuilder, xRotation, yRotation, zRotation, meteorType, size, rotation);
 			}
 		}
 	}
@@ -267,10 +283,23 @@ public abstract class MeteorEffect
 			super(meteorTypes, rarity);
 		}
 		
-		@Override
-		public final void render(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder)
+		public MeteorShower()
 		{
-			if(!canRender())
+			this(new ArrayList<MeteorType>(), 0);
+		}
+		
+		public double getRarity(ViewCenter viewCenter)
+		{
+			if(!viewCenter.overrideMeteorEffects())
+				return rarity;
+			
+			return viewCenter.overrideMeteorShowerRarity();
+		}
+		
+		@Override
+		public final void render(ViewCenter viewCenter, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder)
+		{
+			if(!canRender(viewCenter))
 				return;
 			
 			long dailySeed = level.getDayTime() / DAY_LENGTH;
@@ -292,7 +321,7 @@ public abstract class MeteorEffect
 				float rotation = (float) (Math.PI * position / 4);
 				float size = (float) (Math.sin(Math.PI * position / DURATION));
 
-				this.render(level, camera, partialTicks, stack, bufferbuilder, xRotation, yRotation, zRotation, meteorType, size, rotation);
+				this.render(viewCenter, level, camera, partialTicks, stack, bufferbuilder, xRotation, yRotation, zRotation, meteorType, size, rotation);
 			}
 		}
 	}

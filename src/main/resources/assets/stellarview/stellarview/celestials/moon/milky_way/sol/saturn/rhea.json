@@ -7,7 +7,7 @@
 		"apoapsis": 527040,
 		"periapsis": 527040,
 		"orbit_clamp_distance": 100000000,
-		"orbital_period": 28536,
+		"orbital_period": { "ticks": 28536 },
 		"argument_of_periapsis": 285,
 		"inclination": 27.08,
 		"longtitude_of_ascending_node": 0,

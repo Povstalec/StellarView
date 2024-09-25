@@ -28,7 +28,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
-import net.povstalec.stellarview.common.config.StellarViewConfig;
+import net.povstalec.stellarview.common.config.GeneralConfig;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 import net.povstalec.stellarview.common.util.SpaceCoords.SpaceDistance;
@@ -84,12 +84,12 @@ public abstract class SpaceObject
 		return this.coords;
 	}
 	
-	public Vector3f getPosition(ViewCenter viewCenter, AxisRotation axisRotation, long ticks)
+	public Vector3f getPosition(ViewCenter viewCenter, AxisRotation axisRotation, long ticks, float partialTicks)
 	{
 		return new Vector3f();
 	}
 	
-	public Vector3f getPosition(ViewCenter viewCenter, long ticks)
+	public Vector3f getPosition(ViewCenter viewCenter, long ticks, float partialTicks)
 	{
 		return new Vector3f();
 	}
@@ -131,12 +131,12 @@ public abstract class SpaceObject
 	
 	public static float dayBrightness(ViewCenter viewCenter, float size, long ticks, ClientLevel level, Camera camera, float partialTicks)
 	{
-		if(StellarViewConfig.day_stars.get())
-			return StellarViewConfig.bright_stars.get() ? 0.5F * StellarView.lightSourceDimming(level, camera) : 0.5F;
+		if(viewCenter.starsAlwaysVisible())
+			return GeneralConfig.bright_stars.get() ? 0.5F * StellarView.lightSourceDimming(level, camera) : 0.5F;
 		
 		float brightness = level.getStarBrightness(partialTicks) * 2;
 		
-		if(StellarViewConfig.bright_stars.get())
+		if(GeneralConfig.bright_stars.get())
 			brightness = brightness * StellarView.lightSourceDimming(level, camera);
 		
 		if(brightness < viewCenter.dayMaxBrightness && size > viewCenter.dayMinVisibleSize)
@@ -250,7 +250,7 @@ public abstract class SpaceObject
 	{
 		long ticks = level.getDayTime();
 		
-		Vector3f positionVector = getPosition(viewCenter, parentRotation, ticks).add(parentVector); // Handles orbits 'n stuff
+		Vector3f positionVector = getPosition(viewCenter, parentRotation, ticks, partialTicks).add(parentVector); // Handles orbits 'n stuff
 		
 		// Add parent vector to current coords
 		SpaceCoords coords = getCoords().add(positionVector);
@@ -288,9 +288,9 @@ public abstract class SpaceObject
 			Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder)
 	{
 		if(parent != null)
-			viewCenter.addCoords(getPosition(viewCenter, parent.getAxisRotation(), level.getDayTime()));
+			viewCenter.addCoords(getPosition(viewCenter, parent.getAxisRotation(), level.getDayTime(), partialTicks));
 		else
-			viewCenter.addCoords(getPosition(viewCenter, level.getDayTime()));
+			viewCenter.addCoords(getPosition(viewCenter, level.getDayTime(), partialTicks));
 		
 		if(parent != null)
 			parent.renderFrom(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder);
@@ -312,8 +312,8 @@ public abstract class SpaceObject
 	public static class FadeOutHandler
 	{
 		public static final FadeOutHandler DEFAULT_PLANET_HANDLER = new FadeOutHandler(new SpaceDistance(70000000000D), new SpaceDistance(100000000000D), new SpaceDistance(100000000000D));
-		public static final FadeOutHandler DEFAULT_STAR_HANDLER = new FadeOutHandler(new SpaceDistance(10000000L), new SpaceDistance(50000000L), new SpaceDistance(50000000L));
-		public static final FadeOutHandler DEFAULT_STAR_FIELD_HANDLER = new FadeOutHandler(new SpaceDistance(10000000L), new SpaceDistance(50000000L), new SpaceDistance(50000000L));
+		public static final FadeOutHandler DEFAULT_STAR_HANDLER = new FadeOutHandler(new SpaceDistance(3000000L), new SpaceDistance(5000000L), new SpaceDistance(5000000L));
+		public static final FadeOutHandler DEFAULT_STAR_FIELD_HANDLER = new FadeOutHandler(new SpaceDistance(3000000L), new SpaceDistance(5000000L), new SpaceDistance(5000000L));
 		
 		private SpaceDistance fadeOutStartDistance;
 		private SpaceDistance fadeOutEndDistance;

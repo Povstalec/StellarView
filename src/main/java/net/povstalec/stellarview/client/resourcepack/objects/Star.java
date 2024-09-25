@@ -2,10 +2,10 @@ package net.povstalec.stellarview.client.resourcepack.objects;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
+
+import javax.annotation.Nullable;
 
 import org.joml.Matrix4f;
-import org.joml.Quaterniond;
 import org.joml.Vector3f;
 
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -20,10 +20,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceKey;
-import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
-import net.povstalec.stellarview.common.config.StellarViewConfig;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.Color;
 import net.povstalec.stellarview.common.util.SpaceCoords;
@@ -31,17 +30,10 @@ import net.povstalec.stellarview.common.util.SphericalCoords;
 import net.povstalec.stellarview.common.util.StellarCoordinates;
 import net.povstalec.stellarview.common.util.TextureLayer;
 
-public class Star extends OrbitingObject
+public class Star extends StarLike
 {
-	public static final float MIN_SIZE = 0.4F;
-	
-	public static final float MAX_ALPHA = 1F;
-	public static final float MIN_ALPHA = (MAX_ALPHA - 0.66F) * 2 / 5;
-	
-	private float minStarSize;
-
-	private float maxStarAlpha;
-	private float minStarAlpha;
+	@Nullable
+	private final SupernovaInfo supernovaInfo;
 	
 	public static final Codec<Star> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			RESOURCE_KEY_CODEC.optionalFieldOf("parent").forGetter(Star::getParentKey),
@@ -54,66 +46,78 @@ public class Star extends OrbitingObject
 			
 			Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("min_star_size", MIN_SIZE).forGetter(Star::getMinStarSize),
 			Codec.floatRange(0, Color.MAX_FLOAT_VALUE).optionalFieldOf("max_star_alpha", MAX_ALPHA).forGetter(Star::getMaxStarAlpha),
-			Codec.floatRange(0, Color.MAX_FLOAT_VALUE).optionalFieldOf("min_star_alpha", MIN_ALPHA).forGetter(Star::getMinStarAlpha)
+			Codec.floatRange(0, Color.MAX_FLOAT_VALUE).optionalFieldOf("min_star_alpha", MIN_ALPHA).forGetter(Star::getMinStarAlpha),
+			
+			SupernovaInfo.CODEC.optionalFieldOf("supernova_info").forGetter(Star::getSupernovaInfo)
 			).apply(instance, Star::new));
 	
-	public Star(Optional<ResourceKey<SpaceObject>> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation, Optional<OrbitInfo> orbitInfo,
-			List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler,
-			float minStarSize, float maxStarAlpha, float minStarAlpha)
+	public Star(Optional<ResourceKey<SpaceObject>> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
+			Optional<OrbitInfo> orbitInfo, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler,
+			float minStarSize, float maxStarAlpha, float minStarAlpha,
+			Optional<SupernovaInfo> supernovaInfo)
 	{
-		super(parent, coords, axisRotation, orbitInfo, textureLayers, fadeOutHandler);
+		super(parent, coords, axisRotation, orbitInfo, textureLayers, fadeOutHandler, minStarSize, maxStarAlpha, minStarAlpha);
 		
-		this.minStarSize = minStarSize;
-		this.maxStarAlpha = maxStarAlpha;
-		this.minStarAlpha = minStarAlpha;
+		if(supernovaInfo.isPresent())
+			this.supernovaInfo = supernovaInfo.get();
+		else
+			this.supernovaInfo = null;
 	}
 	
-	public float getMinStarSize()
+	public boolean isSupernova()
 	{
-		return minStarSize;
+		return this.supernovaInfo != null;
 	}
 	
-	public float getMaxStarAlpha()
+	public Optional<SupernovaInfo> getSupernovaInfo()
 	{
-		return maxStarAlpha;
+		return Optional.ofNullable(supernovaInfo);
 	}
 	
-	public float getMinStarAlpha()
+	public float supernovaSize(float size, long ticks, double lyDistance)
 	{
-		return minStarAlpha;
+		if(supernovaInfo.supernovaEnded(ticks))
+			return 0;
+		
+		if(!supernovaInfo.supernovaStarted(ticks))
+			return size;
+
+		long lifetime = supernovaInfo.lifetime(ticks);
+		float sizeMultiplier = supernovaInfo.getMaxSizeMultiplier() * (float) Math.sin(Math.PI * lifetime / supernovaInfo.getDurationTicks());
+		
+		return sizeMultiplier > 1 || (float) lifetime > supernovaInfo.getDurationTicks() / 2 ? sizeMultiplier * size : size;
 	}
 	
-	public float starSize(float size, double lyDistance)
+	public float rotation(long ticks)
 	{
-		size -= size * lyDistance / 1000000.0;
+		if(!isSupernova() || !supernovaInfo.supernovaStarted(ticks))
+			return 0;
 		
-		if(size < 0.01F)
-			return 0.2F;
-		
-		return size;
-	}
-	
-	public Color.FloatRGBA starRGBA(double lyDistance)
-	{
-		float alpha = 1;
-		float minAlpha = alpha * 0.15F; // Previously used (alpha - 0.66) * 2 / 3
-		
-		alpha -= lyDistance / 100000;
-		
-		if(alpha < minAlpha)
-				alpha = minAlpha;
-		
-		return new Color.FloatRGBA(1, 1, 1, alpha);
+		return (float) (Math.PI * supernovaInfo.lifetime(ticks) / supernovaInfo.getDurationTicks());
 	}
 	
 	
+	public Color.FloatRGBA supernovaRGBA(long ticks, double lyDistance)
+	{
+		Color.FloatRGBA starRGBA = super.starRGBA(lyDistance);
+		
+		if(!isSupernova() || supernovaInfo.supernovaEnded(ticks) || !supernovaInfo.supernovaStarted(ticks))
+			return starRGBA;
+		
+		float alphaDif = Color.MAX_FLOAT_VALUE - starRGBA.alpha(); // Difference between current star alpha and max alpha
+		
+		float alpha = starRGBA.alpha() + alphaDif * (float) Math.sin(Math.PI * supernovaInfo.lifetime(ticks) / supernovaInfo.getDurationTicks());
+		starRGBA.setAlpha(alpha <= Color.MIN_FLOAT_VALUE ? Color.MIN_FLOAT_VALUE : alpha >= Color.MAX_FLOAT_VALUE ? Color.MAX_FLOAT_VALUE : alpha);
+		
+		return starRGBA;
+	}
 	
 	@Override
 	protected void renderTextureLayer(TextureLayer textureLayer, ViewCenter viewCenter, ClientLevel level, Camera camera, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)
 	{
-		double lyDistance = distance / SpaceCoords.LY_TO_KM;
+		double lyDistance = distance / SpaceCoords.KM_PER_LY;
 		
-		Color.FloatRGBA rgba = starRGBA(lyDistance);
+		Color.FloatRGBA rgba = supernovaRGBA(ticks, lyDistance);
 		
 		if(rgba.alpha() <= 0.0F || textureLayer.rgba().alpha() <= 0)
 			return;
@@ -133,23 +137,16 @@ public class Star extends OrbitingObject
 				return;
 		}
 		
-		float rotation = (float) textureLayer.rotation();
+		if(isSupernova())
+			size = supernovaSize(size, ticks, lyDistance);
 		
-		Vector3f corner00 = new Vector3f(size, DEFAULT_DISTANCE, size);//StellarCoordinates.placeOnSphere(-size, -size, sphericalCoords, rotation);
-		Vector3f corner10 = new Vector3f(-size, DEFAULT_DISTANCE, size);//StellarCoordinates.placeOnSphere(size, -size, sphericalCoords, rotation);
-		Vector3f corner11 = new Vector3f(-size, DEFAULT_DISTANCE, -size);//StellarCoordinates.placeOnSphere(size, size, sphericalCoords, rotation);
-		Vector3f corner01 = new Vector3f(size, DEFAULT_DISTANCE, -size);//StellarCoordinates.placeOnSphere(-size, size, sphericalCoords, rotation);
 		
-		//double phi90 = sphericalCoords.phi - Math.toRadians(90);
+		float rotation = (float) textureLayer.rotation(rotation(ticks));
 		
-		Quaterniond quaternionX = new Quaterniond().rotateY(sphericalCoords.theta);
-		quaternionX.mul(new Quaterniond().rotateX(sphericalCoords.phi));
-		quaternionX.mul(new Quaterniond().rotateY( /*phi90 * Math.sin(sphericalCoords.theta) * Math.sin(phi90) + */rotation ));
-		
-		quaternionX.transform(corner00);
-		quaternionX.transform(corner10);
-		quaternionX.transform(corner11);
-		quaternionX.transform(corner01);
+		Vector3f corner00 = StellarCoordinates.placeOnSphere(-size, -size, sphericalCoords, rotation);
+		Vector3f corner10 = StellarCoordinates.placeOnSphere(size, -size, sphericalCoords, rotation);
+		Vector3f corner11 = StellarCoordinates.placeOnSphere(size, size, sphericalCoords, rotation);
+		Vector3f corner01 = StellarCoordinates.placeOnSphere(-size, size, sphericalCoords, rotation);
 	
 	
 		if(textureLayer.shoulBlend())
@@ -172,106 +169,99 @@ public class Star extends OrbitingObject
         RenderSystem.defaultBlendFunc();
 	}
 	
-	
-	
-	/**
-	 * Returns the brightness of stars in the current Player location
-	 * @param level The Level the Player is currently in
-	 * @param camera Player Camera
-	 * @param partialTicks
-	 * @return
-	 */
-	public static float getStarBrightness(ClientLevel level, Camera camera, float partialTicks)
+	@Override
+	protected void renderTextureLayers(ViewCenter viewCenter, ClientLevel level, Camera camera, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)
 	{
-		float starBrightness = level.getStarBrightness(partialTicks);
+		if(isSupernova() && supernovaInfo.supernovaEnded(ticks))
+			return;
 		
-		if(StellarViewConfig.day_stars.get() && starBrightness < 0.5F)
-			starBrightness = 0.5F;
+		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		
-		if(StellarViewConfig.bright_stars.get())
-			starBrightness = starBrightness * StellarView.lightSourceDimming(level, camera);
-		
-		starBrightness = starBrightness * StellarView.rainDimming(level, partialTicks);
-		
-		return starBrightness;
+		for(TextureLayer textureLayer : textureLayers)
+		{
+			renderTextureLayer(textureLayer, viewCenter, level, camera, bufferbuilder, lastMatrix, sphericalCoords, ticks, distance, partialTicks);
+		}
 	}
 	
-	//TODO Use this again
-	/*public double starWidthFunction(double aLocation, double bLocation, double sinRandom, double cosRandom, double sinTheta, double cosTheta, double sinPhi, double cosPhi)
+	
+	
+	public static class SupernovaInfo
 	{
-		if(StellarViewConfig.enable_black_hole.get())
-			return cosPhi  > 0.0 ? cosPhi * 8 *(bLocation * cosRandom + aLocation * sinRandom) : bLocation * cosRandom + aLocation * sinRandom;
+		protected Nebula nebula; //TODO Leave a Nebula where there used to be a Supernova
+		protected SupernovaLeftover supernovaLeftover; // Whatever is left after Supernova dies
 		
-		return bLocation * cosRandom + aLocation * sinRandom;
-	}*/
-	
-	
-	
-	public static class StarType
-	{
-		private final Color.IntRGB rgb;
-
-		private final float minSize;
-		private final float maxSize;
-
-		private final short minBrightness;
-		private final short maxBrightness;
+		protected float maxSizeMultiplier;
+		protected long startTicks;
+		protected long durationTicks;
 		
-		public final int weight;
+		protected long endTicks;
 		
-		public static final Codec<StarType> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-				Color.IntRGB.CODEC.fieldOf("rgb").forGetter(StarType::getRGB),
+		public static final Codec<SupernovaInfo> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				Codec.FLOAT.fieldOf("max_size_multiplier").forGetter(SupernovaInfo::getMaxSizeMultiplier),
+				Codec.LONG.fieldOf("start_ticks").forGetter(SupernovaInfo::getStartTicks),
+				Codec.LONG.fieldOf("duration_ticks").forGetter(SupernovaInfo::getDurationTicks),
 				
-				Codec.FLOAT.fieldOf("min_size").forGetter(starType -> starType.minSize),
-				Codec.FLOAT.fieldOf("max_size").forGetter(starType -> starType.maxSize),
-				
-				Codec.SHORT.fieldOf("min_brightness").forGetter(starType -> starType.minBrightness),
-				Codec.SHORT.fieldOf("max_brightness").forGetter(starType -> starType.maxBrightness),
-				
-				Codec.intRange(1, Integer.MAX_VALUE).fieldOf("weight").forGetter(StarType::getWeight)
-				).apply(instance, StarType::new));
+				Nebula.CODEC.fieldOf("nebula").forGetter(SupernovaInfo::getNebula),
+				SupernovaLeftover.CODEC.fieldOf("supernova_leftover").forGetter(SupernovaInfo::getSupernovaLeftover)
+				).apply(instance, SupernovaInfo::new));
 		
-		public StarType(Color.IntRGB rgb, float minSize, float maxSize, short minBrightness, short maxBrightness, int weight)
+		public SupernovaInfo(float maxSizeMultiplier, long startTicks, long durationTicks, Nebula nebula, SupernovaLeftover supernovaLeftover)
 		{
-			this.rgb = rgb;
+			this.maxSizeMultiplier = maxSizeMultiplier;
+			this.startTicks = startTicks;
+			this.durationTicks = durationTicks;
 			
-			this.minSize = minSize;
-			this.maxSize = maxSize;
-
-			this.minBrightness = minBrightness;
-			this.maxBrightness = (short) (maxBrightness + 1);
-
-			this.weight = weight;
+			this.endTicks = startTicks + durationTicks;
+			
+			this.nebula = nebula;
+			this.supernovaLeftover = supernovaLeftover;
 		}
 		
-		public Color.IntRGB getRGB() // TODO Maybe random RGB?
+		public Nebula getNebula()
 		{
-			return rgb;
+			return nebula;
 		}
 		
-		public int getWeight()
+		public SupernovaLeftover getSupernovaLeftover()
 		{
-			return weight;
+			return supernovaLeftover;
 		}
 		
-		public float randomSize(long seed)
+		public float getMaxSizeMultiplier()
 		{
-			if(minSize == maxSize)
-				return maxSize;
-			
-			Random random = new Random(seed);
-			
-			return random.nextFloat(minSize, maxSize);
+			return maxSizeMultiplier;
 		}
 		
-		public short randomBrightness(long seed)
+		public long getStartTicks()
 		{
-			if(minBrightness == maxBrightness)
-				return maxBrightness;
-			
-			Random random = new Random(seed);
-			
-			return (short) random.nextInt(minBrightness, maxBrightness);
+			return startTicks;
+		}
+		
+		public long getDurationTicks()
+		{
+			return durationTicks;
+		}
+		
+		public long getEndTicks()
+		{
+			return endTicks;
+		}
+		
+		
+		
+		public boolean supernovaStarted(long ticks)
+		{
+			return ticks > getStartTicks();
+		}
+		
+		public boolean supernovaEnded(long ticks)
+		{
+			return ticks > getEndTicks();
+		}
+		
+		public long lifetime(long ticks)
+		{
+			return ticks - getStartTicks();
 		}
 	}
 }

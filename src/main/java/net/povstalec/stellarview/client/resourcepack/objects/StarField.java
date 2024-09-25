@@ -49,6 +49,7 @@ public class StarField extends SpaceObject
 	protected StarInfo starInfo;
 	
 	protected final long seed;
+	protected final boolean clumpStarsInCenter;
 	
 	protected final int diameter;
 	protected final int stars;
@@ -74,6 +75,7 @@ public class StarField extends SpaceObject
 			Codec.INT.fieldOf("diameter_ly").forGetter(StarField::getDiameter),
 			
 			Codec.intRange(1, 30000).fieldOf("stars").forGetter(StarField::getStars),
+			Codec.BOOL.optionalFieldOf("clump_stars_in_center", true).forGetter(StarField::clumpStarsInCenter),
 			
 			Codec.DOUBLE.optionalFieldOf("x_stretch", 1.0).forGetter(StarField::xStretch),
 			Codec.DOUBLE.optionalFieldOf("y_stretch", 1.0).forGetter(StarField::yStretch),
@@ -83,17 +85,17 @@ public class StarField extends SpaceObject
 			).apply(instance, StarField::new));
 	
 	public StarField(Optional<ResourceKey<SpaceObject>> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation, List<TextureLayer> textureLayers,
-			FadeOutHandler fadeOutHandler, StarInfo starInfo, long seed, int diameter, int numberOfStars,
+			FadeOutHandler fadeOutHandler, StarInfo starInfo, long seed, int diameter, int numberOfStars, boolean clumpStarsInCenter,
 			double xStretch, double yStretch, double zStretch, Optional<List<SpiralArm>> spiralArms)
 	{
 		super(parent, coords, axisRotation, textureLayers, fadeOutHandler);
 		
 		this.starInfo = starInfo;
-		
 		this.seed = seed;
-
 		this.diameter = diameter;
+		
 		this.stars = numberOfStars;
+		this.clumpStarsInCenter = clumpStarsInCenter;
 		
 		this.xStretch = xStretch;
 		this.yStretch = yStretch;
@@ -134,6 +136,11 @@ public class StarField extends SpaceObject
 		return stars;
 	}
 	
+	public boolean clumpStarsInCenter()
+	{
+		return clumpStarsInCenter;
+	}
+	
 	public double xStretch()
 	{
 		return xStretch;
@@ -161,12 +168,10 @@ public class StarField extends SpaceObject
 	
 	protected void generateStars(BufferBuilder bufferBuilder, SpaceCoords relativeCoords, RandomSource randomsource)
 	{
-		boolean clumpInCenter = true; // TODO Let resourcepacks change this
-		
 		for(int i = 0; i < stars; i++)
 		{
 			// This generates random coordinates for the Star close to the camera
-			double distance = clumpInCenter ? randomsource.nextDouble() : Math.cbrt(randomsource.nextDouble());
+			double distance = clumpStarsInCenter ? randomsource.nextDouble() : Math.cbrt(randomsource.nextDouble());
 			double theta = randomsource.nextDouble() * 2F * Math.PI;
 			double phi = Math.acos(2F * randomsource.nextDouble() - 1F); // This prevents the formation of that weird streak that normally happens
 			
@@ -267,7 +272,7 @@ public class StarField extends SpaceObject
 		//else
 		//	setStarBuffer(difference); // This could be viable with fewer stars
 		
-		float starBrightness = Star.getStarBrightness(level, camera, partialTicks);
+		float starBrightness = StarLike.getStarBrightness(viewCenter, level, camera, partialTicks);
 		
 		if(starBrightness > 0.0F)
 		{
@@ -302,24 +307,24 @@ public class StarField extends SpaceObject
 		protected final double armRotation;
 		protected final double armLength;
 		protected final double armThickness;
-		protected final boolean clumpInCenter;
+		protected final boolean clumpStarsInCenter;
 		
 		public static final Codec<SpiralArm> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				Codec.INT.fieldOf("stars").forGetter(SpiralArm::armStars),
 				Codec.DOUBLE.fieldOf("arm_rotation").forGetter(SpiralArm::armRotation),
 				Codec.DOUBLE.fieldOf("arm_length").forGetter(SpiralArm::armLength),
 				Codec.DOUBLE.fieldOf("arm_thickness").forGetter(SpiralArm::armThickness),
-				Codec.BOOL.optionalFieldOf("clump_in_center", true).forGetter(SpiralArm::clumpInCenter)
+				Codec.BOOL.optionalFieldOf("clump_stars_in_center", true).forGetter(SpiralArm::clumpStarsInCenter)
 				).apply(instance, SpiralArm::new));
 		
-		public SpiralArm(int armStars, double armRotationDegrees, double armLength, double armThickness, boolean clumpInCenter)
+		public SpiralArm(int armStars, double armRotationDegrees, double armLength, double armThickness, boolean clumpStarsInCenter)
 		{
 			this.armStars = armStars;
 			this.armRotation = Math.toRadians(armRotationDegrees);
 			this.armLength = armLength;
 			this.armThickness = armThickness;
 			
-			this.clumpInCenter = clumpInCenter;
+			this.clumpStarsInCenter = clumpStarsInCenter;
 		}
 		
 		public int armStars()
@@ -342,9 +347,9 @@ public class StarField extends SpaceObject
 			return armThickness;
 		}
 		
-		public boolean clumpInCenter()
+		public boolean clumpStarsInCenter()
 		{
-			return clumpInCenter;
+			return clumpStarsInCenter;
 		}
 		
 		protected void generateStars(BufferBuilder bufferBuilder, SpaceCoords relativeCoords, AxisRotation axisRotation, StarData starData, StarInfo starInfo, RandomSource randomsource, int numberOfStars, double sizeMultiplier)
@@ -359,7 +364,7 @@ public class StarField extends SpaceObject
 				double r = StellarCoordinates.spiralR(5, phi, armRotation);
 
 				// This generates random coordinates for the Star close to the camera
-				double distance = clumpInCenter ? randomsource.nextDouble() : Math.cbrt(randomsource.nextDouble());
+				double distance = clumpStarsInCenter ? randomsource.nextDouble() : Math.cbrt(randomsource.nextDouble());
 				double theta = randomsource.nextDouble() * 2F * Math.PI;
 				double sphericalphi = Math.acos(2F * randomsource.nextDouble() - 1F); // This prevents the formation of that weird streak that normally happens
 

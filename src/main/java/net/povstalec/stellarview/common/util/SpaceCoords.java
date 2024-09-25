@@ -17,8 +17,8 @@ public class SpaceCoords
 	public static final String Y = "y";
 	public static final String Z = "z";
 	
-	public static final double LY_TO_KM = 9_460_730_472_581.2;
-	public static final double MAX_KM_VALUE = LY_TO_KM / 2;
+	public static final double KM_PER_LY = 9_460_730_472_581.2;
+	public static final double MAX_KM_VALUE = KM_PER_LY / 2;
 	
 	public static final double LIGHT_SPEED = 299_792.458;
 	
@@ -236,7 +236,7 @@ public class SpaceCoords
 		
 		private void handleKmOverflow()
 		{
-			if(this.km >= LY_TO_KM || this.km <= -LY_TO_KM)
+			if(this.km >= KM_PER_LY || this.km <= -KM_PER_LY)
 			{
 				long additionalLightYears = kmToLy(this.km );
 				double subKm = this.km - lyToKm(additionalLightYears);
@@ -260,12 +260,12 @@ public class SpaceCoords
 		
 		public static long kmToLy(double km)
 		{
-			return (long) (km / LY_TO_KM);
+			return (long) (km / KM_PER_LY);
 		}
 		
 		public static double lyToKm(long ly)
 		{
-			return LY_TO_KM * ly;
+			return KM_PER_LY * ly;
 		}
 		
 		
@@ -277,7 +277,7 @@ public class SpaceCoords
 		
 		public double toLy()
 		{
-			return ly + km / LY_TO_KM;
+			return ly + km / KM_PER_LY;
 		}
 		
 		public SpaceDistance add(SpaceDistance other)

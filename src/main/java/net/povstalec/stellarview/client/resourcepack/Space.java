@@ -54,7 +54,7 @@ public final class Space
 		STAR_FIELDS.add(starField);
 	}
 	
-	public static void setupStarFields(SpaceCoords coords)
+	public static void updateStarFields(SpaceCoords coords)
 	{
 		for(StarField starField : STAR_FIELDS)
 		{

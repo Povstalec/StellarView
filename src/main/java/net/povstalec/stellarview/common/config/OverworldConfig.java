@@ -4,13 +4,13 @@ import net.minecraftforge.common.ForgeConfigSpec;
 
 public class OverworldConfig
 {
-	public static final String PREFIX = "client.";
+	public static final String PREFIX = "client.overworld.";
 	
-	public static StellarViewConfigValue.BooleanValue disable_sun;
-
-	public static StellarViewConfigValue.BooleanValue disable_moon;
-	public static StellarViewConfigValue.BooleanValue disable_moon_phases;
-
+	public static StellarViewConfigValue.BooleanValue replace_vanilla;
+	public static StellarViewConfigValue.BooleanValue config_priority;
+	
+	public static StellarViewConfigValue.BooleanValue stars_always_visible;
+	
 	public static StellarViewConfigValue.IntValue meteor_shower_chance;
 	public static StellarViewConfigValue.IntValue shooting_star_chance;
 	
@@ -28,16 +28,19 @@ public class OverworldConfig
 	
 	public static void init(ForgeConfigSpec.Builder client)
 	{
-		disable_sun = new StellarViewConfigValue.BooleanValue(client, PREFIX + "disable_sun", 
+		replace_vanilla = new StellarViewConfigValue.BooleanValue(client, PREFIX + "replace_vanilla", 
+				true, 
+				"Replaces the Vanilla Overworld sky with Stellar View sky");
+
+		config_priority = new StellarViewConfigValue.BooleanValue(client, PREFIX + "config_priority", 
 				false, 
-				"Disables the Sun");
+				"Prioritizes config over information from resourcepacks");
 		
-		disable_moon = new StellarViewConfigValue.BooleanValue(client, PREFIX + "disable_moon", 
+		
+		
+		stars_always_visible = new StellarViewConfigValue.BooleanValue(client, PREFIX + "stars_always_visible", 
 				false, 
-				"Disables the Moon");
-		disable_moon_phases = new StellarViewConfigValue.BooleanValue(client, PREFIX + "disable_moon_phases", 
-				false, 
-				"Disables Moon phases");
+				"Stars will always be visible, even during daytime");
 		
 		
 		

@@ -10,6 +10,8 @@
 	"create_horizon": false,
 	"create_void": false,
 	
+	"stars_always_visible": true,
+	
 	"skyboxes":
 	[
 		{

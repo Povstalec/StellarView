@@ -11,7 +11,6 @@ import net.minecraft.network.chat.Component;
 import net.povstalec.stellarview.client.screens.config.ConfigList.BooleanConfigEntry;
 import net.povstalec.stellarview.client.screens.config.ConfigList.SliderConfigEntry;
 import net.povstalec.stellarview.common.config.OverworldConfig;
-import net.povstalec.stellarview.common.config.StellarViewConfig;
 
 public class OverworldConfigScreen extends Screen
 {
@@ -41,16 +40,11 @@ public class OverworldConfigScreen extends Screen
 		
 		this.configList = new ConfigList(minecraft, this.width, this.height, 
 				OPTIONS_LIST_TOP_HEIGHT, this.height - OPTIONS_LIST_BOTTOM_OFFSET, OPTIONS_LIST_ITEM_HEIGHT);
-		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.replace_overworld"), 
-				this.width, StellarViewConfig.replace_overworld));
-		
-		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.disable_sun"), 
-				this.width, OverworldConfig.disable_sun));
-		
-		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.disable_moon"), 
-				this.width, OverworldConfig.disable_moon));
-		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.disable_moon_phases"), 
-				this.width, OverworldConfig.disable_moon_phases));
+		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.replace_vanilla"), 
+				this.width, OverworldConfig.replace_vanilla));
+		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.config_priority"), 
+				this.width, OverworldConfig.config_priority));
+
 
 		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.meteor_shower_chance"),
 				Component.literal("\u0025"),

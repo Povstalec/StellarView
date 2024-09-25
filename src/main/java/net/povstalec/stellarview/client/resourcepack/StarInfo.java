@@ -8,33 +8,33 @@ import java.util.Random;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.povstalec.stellarview.client.resourcepack.objects.Star;
+import net.povstalec.stellarview.client.resourcepack.objects.StarLike;
 import net.povstalec.stellarview.common.util.Color;
 
 public class StarInfo
 {
-	private final ArrayList<Star.StarType> starTypes;
+	private final ArrayList<StarLike.StarType> starTypes;
 	private int totalWeight = 0;
 	
-	public static final Star.StarType WHITE_STAR = new Star.StarType(new Color.IntRGB(255, 255, 255), 0.15F, 0.25F, (short) 100, (short) 255, 1);
-	public static final List<Star.StarType> DEFAULT_STARS = Arrays.asList(WHITE_STAR);
+	public static final StarLike.StarType WHITE_STAR = new StarLike.StarType(new Color.IntRGB(255, 255, 255), 0.15F, 0.25F, (short) 100, (short) 255, 1);
+	public static final List<StarLike.StarType> DEFAULT_STARS = Arrays.asList(WHITE_STAR);
 	public static final StarInfo DEFAULT_STAR_INFO = new StarInfo(DEFAULT_STARS);
 	
 	public static final Codec<StarInfo> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			Star.StarType.CODEC.listOf().fieldOf("star_types").forGetter(starInfo -> starInfo.starTypes)
+			StarLike.StarType.CODEC.listOf().fieldOf("star_types").forGetter(starInfo -> starInfo.starTypes)
 			).apply(instance, StarInfo::new));
 	
-	public StarInfo(List<Star.StarType> starTypes)
+	public StarInfo(List<StarLike.StarType> starTypes)
 	{
-		this.starTypes = new ArrayList<Star.StarType>(starTypes);
+		this.starTypes = new ArrayList<StarLike.StarType>(starTypes);
 		
-		for(Star.StarType starType : starTypes)
+		for(StarLike.StarType starType : starTypes)
 		{
 			this.totalWeight += starType.getWeight();
 		}
 	}
 	
-	public Star.StarType getRandomStarType(long seed)
+	public StarLike.StarType getRandomStarType(long seed)
 	{
 		Random random = new Random(seed);
 		

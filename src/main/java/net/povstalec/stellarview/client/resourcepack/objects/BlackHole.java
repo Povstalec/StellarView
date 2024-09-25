@@ -6,13 +6,12 @@ import java.util.Optional;
 import com.mojang.datafixers.util.Either;
 
 import net.minecraft.resources.ResourceKey;
-import net.povstalec.stellarview.client.resourcepack.objects.Supernova.Leftover;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 import net.povstalec.stellarview.common.util.StellarCoordinates;
 import net.povstalec.stellarview.common.util.TextureLayer;
 
-public class BlackHole extends Leftover
+public class BlackHole extends SupernovaLeftover
 {
 	//TODO Black Holes should visually bend space around them
 	public BlackHole(Optional<ResourceKey<SpaceObject>> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,

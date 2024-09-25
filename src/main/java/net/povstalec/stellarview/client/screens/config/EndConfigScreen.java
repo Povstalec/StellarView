@@ -9,7 +9,8 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.povstalec.stellarview.client.screens.config.ConfigList.BooleanConfigEntry;
-import net.povstalec.stellarview.common.config.StellarViewConfig;
+import net.povstalec.stellarview.client.screens.config.ConfigList.SliderConfigEntry;
+import net.povstalec.stellarview.common.config.EndConfig;
 
 public class EndConfigScreen extends Screen
 {
@@ -27,7 +28,7 @@ public class EndConfigScreen extends Screen
 	
 	public EndConfigScreen(@Nullable Screen parentScreen)
 	{
-		super(Component.translatable("gui.stellarview.config.overworld"));
+		super(Component.translatable("gui.stellarview.config.ebd"));
 		this.parentScreen = parentScreen;
 	}
 
@@ -39,8 +40,18 @@ public class EndConfigScreen extends Screen
 		
 		this.configList = new ConfigList(minecraft, this.width, this.height, 
 				OPTIONS_LIST_TOP_HEIGHT, this.height - OPTIONS_LIST_BOTTOM_OFFSET, OPTIONS_LIST_ITEM_HEIGHT);
-		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.replace_end"), 
-				this.width, StellarViewConfig.replace_end));
+		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.replace_vanilla"), 
+				this.width, EndConfig.replace_vanilla));
+		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.config_priority"), 
+				this.width, EndConfig.config_priority));
+
+
+		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.meteor_shower_chance"),
+				Component.literal("\u0025"),
+				this.width, EndConfig.meteor_shower_chance));
+		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.shooting_star_chance"),
+				Component.literal("\u0025"),
+				this.width, EndConfig.shooting_star_chance));
 		
 		this.addWidget(this.configList);
 

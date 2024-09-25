@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.client.render.level.util.StellarViewLightmapEffects;
 import net.povstalec.stellarview.client.resourcepack.ViewCenters;
-import net.povstalec.stellarview.common.config.StellarViewConfig;
+import net.povstalec.stellarview.common.config.NetherConfig;
 import net.povstalec.stellarview.compatibility.enhancedcelestials.EnhancedCelestialsCompatibility;
 
 public class StellarViewNetherEffects extends DimensionSpecialEffects.NetherEffects
@@ -24,8 +24,8 @@ public class StellarViewNetherEffects extends DimensionSpecialEffects.NetherEffe
 	@Override
 	public boolean renderSky(ClientLevel level, int ticks, float partialTick, PoseStack poseStack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
     {
-		if(StellarViewConfig.replace_nether.get())
-			return ViewCenters.renderViewCenterSky(level, ticks, partialTick, poseStack, camera, projectionMatrix, isFoggy, setupFog); //TODO Make sure the Stars render even during day
+		if(NetherConfig.replace_vanilla.get())
+			return ViewCenters.renderViewCenterSky(level, ticks, partialTick, poseStack, camera, projectionMatrix, isFoggy, setupFog);
 		
         return false;
     }
@@ -33,7 +33,7 @@ public class StellarViewNetherEffects extends DimensionSpecialEffects.NetherEffe
 	@Override
 	public void adjustLightmapColors(ClientLevel level, float partialTicks, float skyDarken, float skyLight, float blockLight, int pixelX, int pixelY, Vector3f colors)
     {
-		if(StellarViewConfig.replace_nether.get())
+		if(NetherConfig.replace_vanilla.get())
 		{
 			StellarViewLightmapEffects.defaultLightmapColors(level, partialTicks, skyDarken, skyLight, blockLight, pixelX, pixelY, colors);
 			

@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 
 import net.minecraft.util.RandomSource;
 import net.povstalec.stellarview.client.resourcepack.StarInfo;
-import net.povstalec.stellarview.client.resourcepack.objects.Star;
+import net.povstalec.stellarview.client.resourcepack.objects.StarLike;
 
 public class StarData
 {
@@ -61,7 +61,7 @@ public class StarData
 		deformations[i][0] = 1; // Height deformation
 		deformations[i][1] = 1;// Width deformation
 		
-		Star.StarType starType = starInfo.getRandomStarType(seed);
+		StarLike.StarType starType = starInfo.getRandomStarType(seed);
 		Color.IntRGB rgb = starType.getRGB();
 		
 		// Set up size
