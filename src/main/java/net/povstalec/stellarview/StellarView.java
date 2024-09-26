@@ -121,7 +121,7 @@ public class StellarView
     	// Brightness of the position where the player is standing, 15 is subtracted from the ambient skylight, that way only block light is accounted for
     	int brightnessAtBlock = level.getLightEngine().getRawBrightness(camera.getEntity().getOnPos().above(), 15);
     	
-    	return 1 + ((15F - brightnessAtBlock) / 15F);
+    	return 0.5F + 1.5F * ((15F - brightnessAtBlock) / 15F);
     }
     
     public static float rainDimming(ClientLevel level, float partialTicks)

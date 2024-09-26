@@ -82,7 +82,7 @@ public abstract class StarLike extends OrbitingObject
 	public Color.FloatRGBA starRGBA(double lyDistance)
 	{
 		float alpha = 1;
-		float minAlpha = alpha * 0.15F; // Previously used (alpha - 0.66) * 2 / 3
+		float minAlpha = alpha * 0.1F; // Previously used (alpha - 0.66) * 2 / 3
 		
 		alpha -= lyDistance / 100000;
 		

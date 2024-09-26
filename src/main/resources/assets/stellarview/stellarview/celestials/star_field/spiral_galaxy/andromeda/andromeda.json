@@ -1,6 +1,6 @@
 {
 	"coords": { "right_ascension": {"hours": 0, "minutes": 42, "seconds": 44.3}, "declination": {"degrees": 41, "minutes": 16, "seconds": 9}, "distance": {"ly": 2500000} },
-	"axis_rotation": { "x_axis": 0, "y_axis": 32, "z_axis": 49 },
+	"axis_rotation": { "x_axis": 0, "y_axis": 32, "z_axis": -49 },
 	
 	"seed": 55183,
 	"diameter_ly": 152000,

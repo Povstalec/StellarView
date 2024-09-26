@@ -7,6 +7,7 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 import org.joml.Matrix4f;
+import org.joml.Quaterniond;
 import org.joml.Vector3f;
 
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -30,11 +31,13 @@ import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.config.GeneralConfig;
 import net.povstalec.stellarview.common.util.AxisRotation;
+import net.povstalec.stellarview.common.util.Color;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 import net.povstalec.stellarview.common.util.SpaceCoords.SpaceDistance;
 import net.povstalec.stellarview.common.util.SphericalCoords;
 import net.povstalec.stellarview.common.util.StellarCoordinates;
 import net.povstalec.stellarview.common.util.TextureLayer;
+import net.povstalec.stellarview.common.util.UV;
 
 public abstract class SpaceObject
 {
@@ -179,6 +182,44 @@ public abstract class SpaceObject
 	}
 	
 	
+	public static void renderOnSphere(Color.IntRGBA rgba, ResourceLocation texture, UV.Quad uv,
+			ClientLevel level, Camera camera, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords,
+			long ticks, double distance, float partialTicks, float brightness, float size, float rotation, boolean shouldBlend)
+	{
+		Vector3f corner00 = new Vector3f(size, DEFAULT_DISTANCE, size);
+		Vector3f corner10 = new Vector3f(-size, DEFAULT_DISTANCE, size);
+		Vector3f corner11 = new Vector3f(-size, DEFAULT_DISTANCE, -size);
+		Vector3f corner01 = new Vector3f(size, DEFAULT_DISTANCE, -size);
+		
+		Quaterniond quaternionX = new Quaterniond().rotateY(sphericalCoords.theta);
+		quaternionX.mul(new Quaterniond().rotateX(sphericalCoords.phi));
+		quaternionX.mul(new Quaterniond().rotateY(rotation));
+		
+		quaternionX.transform(corner00);
+		quaternionX.transform(corner10);
+		quaternionX.transform(corner11);
+		quaternionX.transform(corner01);
+		
+		if(shouldBlend)
+			RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+		else
+			RenderSystem.defaultBlendFunc();
+		
+		RenderSystem.setShaderColor(rgba.red() / 255F, rgba.green() / 255F, rgba.blue() / 255F, brightness * rgba.alpha() / 255F);
+		
+		RenderSystem.setShaderTexture(0, texture);
+        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        
+        bufferbuilder.vertex(lastMatrix, corner00.x, corner00.y, corner00.z).uv(uv.topRight().u(ticks), uv.topRight().v(ticks)).endVertex();
+        bufferbuilder.vertex(lastMatrix, corner10.x, corner10.y, corner10.z).uv(uv.bottomRight().u(ticks), uv.bottomRight().v(ticks)).endVertex();
+        bufferbuilder.vertex(lastMatrix, corner11.x, corner11.y, corner11.z).uv(uv.bottomLeft().u(ticks), uv.bottomLeft().v(ticks)).endVertex();
+        bufferbuilder.vertex(lastMatrix, corner01.x, corner01.y, corner01.z).uv(uv.topLeft().u(ticks), uv.topLeft().v(ticks)).endVertex();
+        
+        BufferUploader.drawWithShader(bufferbuilder.end());
+        
+        RenderSystem.defaultBlendFunc();
+	}
+	
 	/**
 	 * Method for rendering an individual texture layer, override to change details of how this object's texture layers are rendered
 	 * @param textureLayer
@@ -205,32 +246,9 @@ public abstract class SpaceObject
 				return;
 		}
 		
-		float rotation = (float) textureLayer.rotation();
-		
-		Vector3f corner00 = StellarCoordinates.placeOnSphere(-size, -size, sphericalCoords, rotation);
-		Vector3f corner10 = StellarCoordinates.placeOnSphere(size, -size, sphericalCoords, rotation);
-		Vector3f corner11 = StellarCoordinates.placeOnSphere(size, size, sphericalCoords, rotation);
-		Vector3f corner01 = StellarCoordinates.placeOnSphere(-size, size, sphericalCoords, rotation);
-	
-	
-		if(textureLayer.shoulBlend())
-			RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-		else
-			RenderSystem.defaultBlendFunc();
-		
-		RenderSystem.setShaderColor(textureLayer.rgba().red() / 255F, textureLayer.rgba().green() / 255F, textureLayer.rgba().blue() / 255F, dayBrightness(viewCenter, size, ticks, level, camera, partialTicks) * textureLayer.rgba().alpha() / 255F);
-		
-		RenderSystem.setShaderTexture(0, textureLayer.texture());
-        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        
-        bufferbuilder.vertex(lastMatrix, corner00.x, corner00.y, corner00.z).uv(textureLayer.uv().topRight().u(ticks), textureLayer.uv().topRight().v(ticks)).endVertex();
-        bufferbuilder.vertex(lastMatrix, corner10.x, corner10.y, corner10.z).uv(textureLayer.uv().bottomRight().u(ticks), textureLayer.uv().bottomRight().v(ticks)).endVertex();
-        bufferbuilder.vertex(lastMatrix, corner11.x, corner11.y, corner11.z).uv(textureLayer.uv().bottomLeft().u(ticks), textureLayer.uv().bottomLeft().v(ticks)).endVertex();
-        bufferbuilder.vertex(lastMatrix, corner01.x, corner01.y, corner01.z).uv(textureLayer.uv().topLeft().u(ticks), textureLayer.uv().topLeft().v(ticks)).endVertex();
-        
-        BufferUploader.drawWithShader(bufferbuilder.end());
-        
-        RenderSystem.defaultBlendFunc();
+		renderOnSphere(textureLayer.rgba(), textureLayer.texture(), textureLayer.uv(),
+				level, camera, bufferbuilder, lastMatrix, sphericalCoords,
+				ticks, distance, partialTicks, dayBrightness(viewCenter, size, ticks, level, camera, partialTicks), size, (float) textureLayer.rotation(), textureLayer.shoulBlend());
 	}
 	
 	protected void renderTextureLayers(ViewCenter viewCenter, ClientLevel level, Camera camera, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)

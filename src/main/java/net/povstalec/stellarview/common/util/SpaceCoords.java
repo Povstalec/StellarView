@@ -10,6 +10,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
+import net.povstalec.stellarview.common.config.GeneralConfig;
 
 public class SpaceCoords
 {
@@ -106,7 +107,8 @@ public class SpaceCoords
 	{
 		Quaterniond q = new Quaterniond();
 		// Inverting so that we can view the world through the relative rotation of our view center
-		viewCenter.getObjectAxisRotation().quaterniond().invert(q);
+		if(!GeneralConfig.disable_view_center_rotation.get())
+			viewCenter.getObjectAxisRotation().quaterniond().invert(q);
 		
 		return q;
 	}
@@ -115,7 +117,8 @@ public class SpaceCoords
 	{
 		Quaternionf q = new Quaternionf();
 		// Inverting so that we can view the world through the relative rotation of our view center
-		viewCenter.getObjectAxisRotation().quaternionf().invert(q);
+		if(!GeneralConfig.disable_view_center_rotation.get())
+			viewCenter.getObjectAxisRotation().quaternionf().invert(q);
 		
 		return q;
 	}

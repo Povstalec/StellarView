@@ -239,9 +239,9 @@ public class StellarCoordinates
 		public static final String DECLINATION = "declination";
 		public static final String DISTNACE = "distance";
 		
-		public static final double RIGHT_ASCENSION_NGP = RightAscension.toRightAscension(12, 51, 26.282); // Right ascension of the north galactic pole
-		public static final double DECLINATION_NGP = Declination.toDeclination(27, 7, 52.01); // Declination of the north galactic pole
-		public static final double L_NCP = Math.toRadians(122.93314); // Longtitude of the north celestial pole
+		public static final double RIGHT_ASCENSION_NGP = Math.toRadians(192.85948); // Right ascension of the north galactic pole
+		public static final double DECLINATION_NGP = Math.toRadians(27.12825); // Declination of the north galactic pole
+		public static final double L_NCP = Math.toRadians(122.93192); // Longtitude of the north celestial pole
 		
 		public final RightAscension rightAscension;
 		public final Declination declination;
@@ -271,7 +271,9 @@ public class StellarCoordinates
 			
 			double galacticLatitude = Math.asin(sinB);
 			
-			double galacticLongtitude = L_NCP - Math.asin((Math.cos(declination) * Math.sin(rightAscension - RIGHT_ASCENSION_NGP)) / Math.cos(galacticLatitude));
+			double inbetween = Math.cos(DECLINATION_NGP) * Math.sin(declination) - Math.sin(DECLINATION_NGP) * Math.cos(declination) * Math.cos(rightAscension - RIGHT_ASCENSION_NGP);
+			
+			double galacticLongtitude = L_NCP - Math.acos(inbetween / Math.cos(galacticLatitude));
 			
 			return new Galactic(galacticLongtitude, galacticLatitude, distance);
 		}
@@ -299,7 +301,7 @@ public class StellarCoordinates
 		public SpaceCoords toSpaceCoords()
 		{
 			double xProj = Math.sin(galacticLongtitude) * Math.cos(galacticLatitude);
-			double yProj = -Math.sin(galacticLatitude);
+			double yProj = Math.sin(galacticLatitude);
 			double zProj = Math.cos(galacticLongtitude) * Math.cos(galacticLatitude);
 			
 			return new SpaceCoords(distance.mul(xProj, true), distance.mul(yProj, true), distance.mul(zProj, true));

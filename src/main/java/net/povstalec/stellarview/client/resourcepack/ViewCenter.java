@@ -34,6 +34,7 @@ import net.povstalec.stellarview.client.render.level.util.StellarViewSkyEffects;
 import net.povstalec.stellarview.client.resourcepack.effects.MeteorEffect;
 import net.povstalec.stellarview.client.resourcepack.objects.OrbitingObject;
 import net.povstalec.stellarview.client.resourcepack.objects.SpaceObject;
+import net.povstalec.stellarview.common.config.GeneralConfig;
 import net.povstalec.stellarview.common.config.OverworldConfig;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.SpaceCoords;
@@ -292,16 +293,19 @@ public class ViewCenter
 		
 		stack.pushPose();
 		
-		double rotation = 2 * Math.PI * getTimeOfDay(level, partialTicks) + Math.PI;
-		if(viewCenterObject instanceof OrbitingObject orbitingObject && orbitingObject.getOrbitInfo().isPresent())
-			rotation -= orbitingObject.getOrbitInfo().get().meanAnomaly(level.getDayTime(), partialTicks);
-		
-		stack.mulPose(Axis.YP.rotation((float) getAxisRotation().yAxis()));
-		stack.mulPose(Axis.ZP.rotation((float) getAxisRotation().zAxis()));
-		stack.mulPose(Axis.XP.rotation((float) getAxisRotation().xAxis()));
-		
-		stack.mulPose(Axis.YP.rotation((float) rotation));
-		stack.mulPose(Axis.ZP.rotation((float) getZRotation(level, camera, partialTicks)));
+		if(!GeneralConfig.disable_view_center_rotation.get())
+		{
+			double rotation = 2 * Math.PI * getTimeOfDay(level, partialTicks) + Math.PI;
+			if(viewCenterObject instanceof OrbitingObject orbitingObject && orbitingObject.getOrbitInfo().isPresent())
+				rotation -= orbitingObject.getOrbitInfo().get().meanAnomaly(level.getDayTime(), partialTicks);
+			
+			stack.mulPose(Axis.YP.rotation((float) getAxisRotation().yAxis()));
+			stack.mulPose(Axis.ZP.rotation((float) getAxisRotation().zAxis()));
+			stack.mulPose(Axis.XP.rotation((float) getAxisRotation().xAxis()));
+			
+			stack.mulPose(Axis.YP.rotation((float) rotation));
+			stack.mulPose(Axis.ZP.rotation((float) getZRotation(level, camera, partialTicks)));
+		}
 		
 		viewCenterObject.renderFrom(this, level, partialTicks, stack, camera, projectionMatrix, StellarViewFogEffects.isFoggy(minecraft, camera), setupFog, bufferbuilder);
 
