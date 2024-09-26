@@ -32,6 +32,7 @@ import net.povstalec.stellarview.client.render.shader.StellarViewShaders;
 import net.povstalec.stellarview.client.render.shader.StellarViewVertexFormat;
 import net.povstalec.stellarview.client.resourcepack.StarInfo;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
+import net.povstalec.stellarview.common.config.GeneralConfig;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 import net.povstalec.stellarview.common.util.SphericalCoords;
@@ -274,7 +275,7 @@ public class StarField extends SpaceObject
 		
 		float starBrightness = StarLike.getStarBrightness(viewCenter, level, camera, partialTicks);
 		
-		if(starBrightness > 0.0F)
+		if(!GeneralConfig.disable_stars.get() && starBrightness > 0.0F)
 		{
 			stack.pushPose();
 			

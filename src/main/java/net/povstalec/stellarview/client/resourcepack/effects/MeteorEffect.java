@@ -68,11 +68,11 @@ public abstract class MeteorEffect
 		return rarity;
 	}
 	
-	protected boolean shouldAppear(long seed)
+	protected boolean shouldAppear(ViewCenter viewCenter, long seed)
 	{
 		Random random = new Random(seed);
 		
-		return random.nextDouble() <= rarity;
+		return random.nextDouble() <= getRarity(viewCenter);
 	}
 	
 	protected MeteorType getRandomMeteorType(long seed)
@@ -242,7 +242,7 @@ public abstract class MeteorEffect
 			
 			int randomStart = randomizer.nextInt(0, TICKS - DURATION);
 			
-			if(shouldAppear(tickSeed) && specificTime >= randomStart && specificTime < randomStart + DURATION)
+			if(shouldAppear(viewCenter, tickSeed) && specificTime >= randomStart && specificTime < randomStart + DURATION)
 			{
 				double position = level.getDayTime() % DURATION;
 				
@@ -271,7 +271,6 @@ public abstract class MeteorEffect
 		protected static final int TICKS = 1000;
 		protected static final float MAX_SIZE = 1;
 		protected static final int DURATION = 20;
-		protected static final int DAY_LENGTH = 24000;
 		
 		public static final Codec<MeteorShower> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				MeteorType.CODEC.listOf().fieldOf("meteor_types").forGetter(MeteorShower::getMeteorTypes),
@@ -302,9 +301,9 @@ public abstract class MeteorEffect
 			if(!canRender(viewCenter))
 				return;
 			
-			long dailySeed = level.getDayTime() / DAY_LENGTH;
+			long dailySeed = level.getDayTime() / viewCenter.getRotationPeriod();
 			
-			if(shouldAppear(dailySeed))
+			if(shouldAppear(viewCenter, dailySeed))
 			{
 				double position = level.getDayTime() % DURATION;
 				

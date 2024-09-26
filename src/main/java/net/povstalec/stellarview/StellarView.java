@@ -11,9 +11,9 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ConfigScreenHandler;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RegisterDimensionSpecialEffectsEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
@@ -27,6 +27,8 @@ import net.povstalec.stellarview.client.render.level.StellarViewEndEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewNetherEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewOverworldEffects;
 import net.povstalec.stellarview.client.resourcepack.ResourcepackReloadListener;
+import net.povstalec.stellarview.client.resourcepack.Space;
+import net.povstalec.stellarview.client.resourcepack.ViewCenters;
 import net.povstalec.stellarview.client.screens.config.ConfigScreen;
 import net.povstalec.stellarview.common.config.StellarViewConfig;
 import net.povstalec.stellarview.common.util.KeyBindings;
@@ -41,6 +43,8 @@ public class StellarView
     private static Optional<Boolean> isEnhancedCelestialsLoaded = Optional.empty();
     
     public static final Logger LOGGER = LogUtils.getLogger();
+    
+    private static Minecraft minecraft = Minecraft.getInstance();
     
     public static StellarViewOverworldEffects overworld;
     public static StellarViewNetherEffects nether;
@@ -92,16 +96,6 @@ public class StellarView
         }
     }
     
-    @Mod.EventBusSubscriber(modid = StellarView.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
-    public static class ClientForgeEvents
-    {
-    	@SubscribeEvent
-        public static void playerLoggedIn(ClientPlayerNetworkEvent.LoggingIn event)
-        {
-    		updateGalaxies();
-        }
-    }
-    
     public static boolean isEnhancedCelestialsLoaded()
     {
     	if(isEnhancedCelestialsLoaded.isEmpty())
@@ -110,10 +104,15 @@ public class StellarView
     	return isEnhancedCelestialsLoaded.get();	
     }
     
-    public static void updateGalaxies() //TODO Remove this
+    public static void updateGalaxies()
     {
-    	//overworld.setupGalaxy();
-    	//end.setupGalaxy();
+    	if(minecraft.level == null)
+    		return;
+    	
+    	ResourceLocation location = minecraft.level.dimension().location();
+    	
+    	if(ViewCenters.isViewCenterPresent(location))
+    		Space.updateStarFields(ViewCenters.getViewCenter(location).getCoords());
     }
     
     public static float lightSourceDimming(ClientLevel level, Camera camera)

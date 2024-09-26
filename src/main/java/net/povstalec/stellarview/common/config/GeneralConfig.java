@@ -14,7 +14,7 @@ public class GeneralConfig
 	public static void init(ForgeConfigSpec.Builder client)
 	{
 
-		disable_view_center_rotation = new StellarViewConfigValue.BooleanValue(client, "client.disable_stars", 
+		disable_view_center_rotation = new StellarViewConfigValue.BooleanValue(client, "client.disable_view_center_rotation", 
 				false, 
 				"Gets rid of any rotation caused by the view center, making the space XYZ coordinates align with the XYZ directions in Minecraft");
 		
