@@ -13,21 +13,24 @@
 	"gui.stellarview.replace_vanilla": "Replace Vanilla",
 	"gui.stellarview.config_priority": "Prioritize Config",
 	
-	"gui.stellarview.overworld_year_length": "Year length: ",
-	"gui.stellarview.days": " days",
-	"gui.stellarview.overworld_z_rotation_multiplier": "Sky Rotation Multiplier: ",
+	"gui.stellarview.overworld_z_rotation_multiplier": "Sky Rotation Multiplier",
 	
-	"gui.stellarview.meteor_shower_chance": "Meteor Shower Chance: ",
-	"gui.stellarview.shooting_star_chance": "Shooting Star Chance: ",
+	"gui.stellarview.meteor_shower_chance": "Meteor Shower Chance",
+	"gui.stellarview.shooting_star_chance": "Shooting Star Chance",
+
+	"gui.stellarview.sol.x_offset": "Sol X offset",
+	"gui.stellarview.sol.y_offset": "Sol Y offset",
+	"gui.stellarview.sol.z_offset": "Sol Z offset",
 	
-	"gui.stellarview.overworld.x_rotation": "Overworld X-Rotation: ",
-	"gui.stellarview.overworld.y_rotation": "Overworld Y-Rotation: ",
-	"gui.stellarview.overworld.z_rotation": "Overworld Z-Rotation: ",
+	"gui.stellarview.sol.x_rotation": "Sol X-Rotation",
+	"gui.stellarview.sol.y_rotation": "Sol Y-Rotation",
+	"gui.stellarview.sol.z_rotation": "Sol Z-Rotation",
 	
 	"key.category.stellarview.config_screen": "Stellar View Config Screen",
 	"key.stellarview.open_config_screen": "Open Config Screen",
 	
 	"gui.stellarview.reset": "Reset",
 	"gui.stellarview.true": "True",
-	"gui.stellarview.false": "False"
+	"gui.stellarview.false": "False",
+	"gui.stellarview.ly": "ly"
 }

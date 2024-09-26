@@ -43,6 +43,8 @@ public class ResourcepackReloadListener
 
 	public static final String NEBULA = "nebula";
 	
+	private static final ResourceLocation SOL_LOCATION = new ResourceLocation(StellarView.MODID, "star/milky_way/sol");
+	
 	@Mod.EventBusSubscriber(modid = StellarView.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 	public static class ReloadListener extends SimpleJsonResourceReloadListener
 	{
@@ -132,6 +134,9 @@ public class ResourcepackReloadListener
 			{
 				JsonObject json = GsonHelper.convertToJsonObject(element, "star");
 				Star star = Star.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Star", msg));
+				
+				if(SOL_LOCATION.equals(location))
+					Space.addSol(star);
 				
 				spaceObjects.put(location, star);
 				StellarView.LOGGER.debug("Parsed " + location.toString() + " as Star");

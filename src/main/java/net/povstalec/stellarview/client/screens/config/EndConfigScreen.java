@@ -46,10 +46,10 @@ public class EndConfigScreen extends Screen
 				this.width, EndConfig.config_priority));
 
 
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.meteor_shower_chance"),
+		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.meteor_shower_chance").append(Component.literal(": ")),
 				Component.literal("\u0025"),
 				this.width, EndConfig.meteor_shower_chance));
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.shooting_star_chance"),
+		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.shooting_star_chance").append(Component.literal(": ")),
 				Component.literal("\u0025"),
 				this.width, EndConfig.shooting_star_chance));
 		

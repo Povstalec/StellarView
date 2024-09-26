@@ -35,7 +35,6 @@ import net.povstalec.stellarview.client.resourcepack.effects.MeteorEffect;
 import net.povstalec.stellarview.client.resourcepack.objects.OrbitingObject;
 import net.povstalec.stellarview.client.resourcepack.objects.SpaceObject;
 import net.povstalec.stellarview.common.config.GeneralConfig;
-import net.povstalec.stellarview.common.config.OverworldConfig;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 
@@ -77,6 +76,7 @@ public class ViewCenter
 	public final boolean createVoid;
 	
 	public final boolean starsAlwaysVisible;
+	public final int zRotationMultiplier;
     
     public static final Codec<ViewCenter> CODEC = RecordCodecBuilder.create(instance -> instance.group(
     		SpaceObject.RESOURCE_KEY_CODEC.optionalFieldOf("view_center").forGetter(ViewCenter::getViewCenterKey),
@@ -95,13 +95,15 @@ public class ViewCenter
 			Codec.BOOL.optionalFieldOf("create_horizon", true).forGetter(viewCenter -> viewCenter.createHorizon),
 			Codec.BOOL.optionalFieldOf("create_void", true).forGetter(viewCenter -> viewCenter.createVoid),
 			
-			Codec.BOOL.optionalFieldOf("stars_always_visible", false).forGetter(viewCenter -> viewCenter.starsAlwaysVisible)
+			Codec.BOOL.optionalFieldOf("stars_always_visible", false).forGetter(viewCenter -> viewCenter.starsAlwaysVisible),
+			Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("z_rotation_multiplier", 30000000).forGetter(viewCenter -> viewCenter.zRotationMultiplier)
 			).apply(instance, ViewCenter::new));
 	
 	public ViewCenter(Optional<ResourceKey<SpaceObject>> viewCenterKey, Optional<List<Skybox>> skyboxes, AxisRotation axisRotation,
 			long rotationPeriod, float dayMaxBrightness, float dayMinVisibleSize, float dayMaxVisibleSize,
 			MeteorEffect.ShootingStar shootingStar, MeteorEffect.MeteorShower meteorShower,
-			boolean createHorizon, boolean createVoid, boolean starsAlwaysVisible)
+			boolean createHorizon, boolean createVoid,
+			boolean starsAlwaysVisible, int zRotationMultiplier)
 	{
 		if(viewCenterKey.isPresent())
 			this.viewCenterKey = viewCenterKey.get();
@@ -130,6 +132,7 @@ public class ViewCenter
 			darkBuffer = StellarViewSkyEffects.createDarkSky();
 		
 		this.starsAlwaysVisible = starsAlwaysVisible;
+		this.zRotationMultiplier = zRotationMultiplier;
 	}
 	
 	public boolean setViewCenterObject(HashMap<ResourceLocation, SpaceObject> spaceObjects)
@@ -210,14 +213,19 @@ public class ViewCenter
 	
 	public double zRotationMultiplier()
 	{
-		return 10000 * OverworldConfig.overworld_z_rotation_multiplier.get();
+		return zRotationMultiplier;
 	}
 	
 	public double getZRotation(ClientLevel level, Camera camera, float partialTicks)
 	{
+		double zRotationMultiplier = zRotationMultiplier();
+		
+		if(zRotationMultiplier == 0)
+			return 0;
+		
 		double zPos = camera.getEntity().getPosition(partialTicks).z();
 		
-		return 2 * Math.atan(zPos / zRotationMultiplier());
+		return 2 * Math.atan(zPos / zRotationMultiplier);
 	}
 	
 	public MeteorEffect.ShootingStar getShootingStar()

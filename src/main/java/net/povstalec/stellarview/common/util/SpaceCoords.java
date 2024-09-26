@@ -159,6 +159,11 @@ public class SpaceCoords
 		return new SpaceCoords(this.x.add(other.x), this.y.add(other.y), this.z.add(other.z));
 	}
 	
+	public SpaceCoords add(long x, long y, long z)
+	{
+		return new SpaceCoords(this.x.add(x), this.y.add(y), this.z.add(z));
+	}
+	
 	public SpaceCoords add(Vector3f vector)
 	{
 		return new SpaceCoords(this.x.add(vector.x), this.y.add(vector.y), this.z.add(vector.z));
@@ -293,6 +298,11 @@ public class SpaceCoords
 			return new SpaceDistance(this.ly, this.km + value);
 		}
 		
+		public SpaceDistance add(long value)
+		{
+			return new SpaceDistance(this.ly + value, this.km);
+		}
+		
 		public SpaceDistance sub(SpaceDistance other)
 		{
 			return new SpaceDistance(this.ly - other.ly, this.km - other.km);
@@ -301,6 +311,11 @@ public class SpaceCoords
 		public SpaceDistance sub(double value)
 		{
 			return new SpaceDistance(this.ly, this.km - value);
+		}
+		
+		public SpaceDistance sub(long value)
+		{
+			return new SpaceDistance(this.ly - value, this.km);
 		}
 		
 		public SpaceDistance mul(double value, boolean roundDown)

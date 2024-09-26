@@ -46,10 +46,10 @@ public class NetherConfigScreen extends Screen
 				this.width, NetherConfig.config_priority));
 
 
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.meteor_shower_chance"),
+		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.meteor_shower_chance").append(Component.literal(": ")),
 				Component.literal("\u0025"),
 				this.width, NetherConfig.meteor_shower_chance));
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.shooting_star_chance"),
+		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.shooting_star_chance").append(Component.literal(": ")),
 				Component.literal("\u0025"),
 				this.width, NetherConfig.shooting_star_chance));
 		

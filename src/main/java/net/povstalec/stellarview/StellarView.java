@@ -11,7 +11,6 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
@@ -28,7 +27,6 @@ import net.povstalec.stellarview.client.render.level.StellarViewNetherEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewOverworldEffects;
 import net.povstalec.stellarview.client.resourcepack.ResourcepackReloadListener;
 import net.povstalec.stellarview.client.resourcepack.Space;
-import net.povstalec.stellarview.client.resourcepack.ViewCenters;
 import net.povstalec.stellarview.client.screens.config.ConfigScreen;
 import net.povstalec.stellarview.common.config.StellarViewConfig;
 import net.povstalec.stellarview.common.util.KeyBindings;
@@ -104,15 +102,13 @@ public class StellarView
     	return isEnhancedCelestialsLoaded.get();	
     }
     
-    public static void updateGalaxies()
+    public static void updateSpaceObjects()
     {
-    	if(minecraft.level == null)
+		if(minecraft.level == null)
     		return;
     	
-    	ResourceLocation location = minecraft.level.dimension().location();
-    	
-    	if(ViewCenters.isViewCenterPresent(location))
-    		Space.updateStarFields(ViewCenters.getViewCenter(location).getCoords());
+    	Space.updateSol();
+    	Space.resetStarFields();
     }
     
     public static float lightSourceDimming(ClientLevel level, Camera camera)

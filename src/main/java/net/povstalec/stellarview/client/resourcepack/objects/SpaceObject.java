@@ -153,6 +153,16 @@ public abstract class SpaceObject
 		return brightness * StellarView.rainDimming(level, partialTicks);
 	}
 	
+	public void setPosAndRotation(SpaceCoords coords, AxisRotation axisRotation)
+	{
+		removeCoordsAndRotationFromChildren(getCoords(), getAxisRotation());
+		
+		this.coords = coords;
+		this.axisRotation = axisRotation;
+		
+		addCoordsAndRotationToChildren(coords, axisRotation);
+	}
+	
 	public void addChild(SpaceObject child)
 	{
 		if(child.parent != null)
@@ -178,6 +188,17 @@ public abstract class SpaceObject
 			childOfChild.axisRotation = childOfChild.axisRotation.add(axisRotation);
 			
 			childOfChild.addCoordsAndRotationToChildren(coords, axisRotation);
+		}
+	}
+	
+	protected void removeCoordsAndRotationFromChildren(SpaceCoords coords, AxisRotation axisRotation)
+	{
+		for(SpaceObject childOfChild : this.children)
+		{
+			childOfChild.coords = childOfChild.coords.sub(coords);
+			childOfChild.axisRotation = childOfChild.axisRotation.sub(axisRotation);
+			
+			childOfChild.removeCoordsAndRotationFromChildren(coords, axisRotation);
 		}
 	}
 	

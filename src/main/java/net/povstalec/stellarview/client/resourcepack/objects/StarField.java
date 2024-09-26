@@ -167,6 +167,11 @@ public class StarField extends SpaceObject
 		return starBuffer == null;
 	}
 	
+	public void reset()
+	{
+		starBuffer = null;
+	}
+	
 	protected void generateStars(BufferBuilder bufferBuilder, SpaceCoords relativeCoords, RandomSource randomsource)
 	{
 		for(int i = 0; i < stars; i++)
@@ -252,7 +257,7 @@ public class StarField extends SpaceObject
 		RenderSystem.setShader(GameRenderer::getPositionShader);
 		BufferBuilder.RenderedBuffer bufferbuilder$renderedbuffer;
 		
-		bufferbuilder$renderedbuffer = generateStarBuffer(bufferBuilder, relativeCoords);
+		bufferbuilder$renderedbuffer = generateStarBuffer(bufferBuilder, new SpaceCoords());
 		
 		starBuffer.bind();
 		starBuffer.upload(bufferbuilder$renderedbuffer);
@@ -266,6 +271,7 @@ public class StarField extends SpaceObject
 			Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder,
 			Vector3f parentVector, AxisRotation parentRotation)
 	{
+		//System.out.println(this + " " + viewCenter.getCoords());
 		SpaceCoords difference = viewCenter.getCoords().sub(getCoords());
 		
 		if(requiresSetup())

@@ -8,8 +8,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.resources.ResourceKey;
 import net.povstalec.stellarview.client.resourcepack.effects.MeteorEffect;
-import net.povstalec.stellarview.client.resourcepack.effects.MeteorEffect.MeteorShower;
-import net.povstalec.stellarview.client.resourcepack.effects.MeteorEffect.ShootingStar;
 import net.povstalec.stellarview.client.resourcepack.objects.SpaceObject;
 import net.povstalec.stellarview.common.config.EndConfig;
 import net.povstalec.stellarview.common.config.NetherConfig;
@@ -37,14 +35,25 @@ public final class DefaultViewCenters
 				Codec.BOOL.optionalFieldOf("create_horizon", true).forGetter(viewCenter -> viewCenter.createHorizon),
 				Codec.BOOL.optionalFieldOf("create_void", true).forGetter(viewCenter -> viewCenter.createVoid),
 				
-				Codec.BOOL.optionalFieldOf("stars_always_visible", false).forGetter(viewCenter -> viewCenter.starsAlwaysVisible)
+				Codec.BOOL.optionalFieldOf("stars_always_visible", false).forGetter(viewCenter -> viewCenter.starsAlwaysVisible),
+				Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("z_rotation_multiplier", 30000000).forGetter(viewCenter -> viewCenter.zRotationMultiplier)
 				).apply(instance, Overworld::new));
 		
-		public Overworld(Optional<ResourceKey<SpaceObject>> arg0, Optional<List<Skybox>> arg1, AxisRotation arg2,
-				long arg3, float arg4, float arg5, float arg6, ShootingStar arg7, MeteorShower arg8, boolean arg9,
-				boolean arg10, boolean arg11)
+		public Overworld(Optional<ResourceKey<SpaceObject>> viewCenterKey, Optional<List<Skybox>> skyboxes, AxisRotation axisRotation,
+				long rotationPeriod, float dayMaxBrightness, float dayMinVisibleSize, float dayMaxVisibleSize,
+				MeteorEffect.ShootingStar shootingStar, MeteorEffect.MeteorShower meteorShower,
+				boolean createHorizon, boolean createVoid,
+				boolean starsAlwaysVisible, int zRotationMultiplier)
 		{
-			super(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
+			super(viewCenterKey, skyboxes, axisRotation,
+					rotationPeriod, dayMaxBrightness, dayMinVisibleSize, dayMaxVisibleSize,
+					shootingStar, meteorShower, createHorizon, createVoid,
+					starsAlwaysVisible, zRotationMultiplier);
+		}
+		
+		public double zRotationMultiplier()
+		{
+			return OverworldConfig.config_priority.get() ? 10000 * OverworldConfig.overworld_z_rotation_multiplier.get() : zRotationMultiplier;
 		}
 		
 		public boolean overrideMeteorEffects()
@@ -82,14 +91,20 @@ public final class DefaultViewCenters
 				Codec.BOOL.optionalFieldOf("create_horizon", true).forGetter(viewCenter -> viewCenter.createHorizon),
 				Codec.BOOL.optionalFieldOf("create_void", true).forGetter(viewCenter -> viewCenter.createVoid),
 				
-				Codec.BOOL.optionalFieldOf("stars_always_visible", false).forGetter(viewCenter -> viewCenter.starsAlwaysVisible)
+				Codec.BOOL.optionalFieldOf("stars_always_visible", false).forGetter(viewCenter -> viewCenter.starsAlwaysVisible),
+				Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("z_rotation_multiplier", 0).forGetter(viewCenter -> viewCenter.zRotationMultiplier)
 				).apply(instance, Nether::new));
 		
-		public Nether(Optional<ResourceKey<SpaceObject>> arg0, Optional<List<Skybox>> arg1, AxisRotation arg2,
-				long arg3, float arg4, float arg5, float arg6, ShootingStar arg7, MeteorShower arg8, boolean arg9,
-				boolean arg10, boolean arg11)
+		public Nether(Optional<ResourceKey<SpaceObject>> viewCenterKey, Optional<List<Skybox>> skyboxes, AxisRotation axisRotation,
+				long rotationPeriod, float dayMaxBrightness, float dayMinVisibleSize, float dayMaxVisibleSize,
+				MeteorEffect.ShootingStar shootingStar, MeteorEffect.MeteorShower meteorShower,
+				boolean createHorizon, boolean createVoid,
+				boolean starsAlwaysVisible, int zRotationMultiplier)
 		{
-			super(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
+			super(viewCenterKey, skyboxes, axisRotation,
+					rotationPeriod, dayMaxBrightness, dayMinVisibleSize, dayMaxVisibleSize,
+					shootingStar, meteorShower, createHorizon, createVoid,
+					starsAlwaysVisible, zRotationMultiplier);
 		}
 		
 		public boolean overrideMeteorEffects()
@@ -127,14 +142,20 @@ public final class DefaultViewCenters
 				Codec.BOOL.optionalFieldOf("create_horizon", true).forGetter(viewCenter -> viewCenter.createHorizon),
 				Codec.BOOL.optionalFieldOf("create_void", true).forGetter(viewCenter -> viewCenter.createVoid),
 				
-				Codec.BOOL.optionalFieldOf("stars_always_visible", false).forGetter(viewCenter -> viewCenter.starsAlwaysVisible)
+				Codec.BOOL.optionalFieldOf("stars_always_visible", false).forGetter(viewCenter -> viewCenter.starsAlwaysVisible),
+				Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("z_rotation_multiplier", 0).forGetter(viewCenter -> viewCenter.zRotationMultiplier)
 				).apply(instance, End::new));
 		
-		public End(Optional<ResourceKey<SpaceObject>> arg0, Optional<List<Skybox>> arg1, AxisRotation arg2,
-				long arg3, float arg4, float arg5, float arg6, ShootingStar arg7, MeteorShower arg8, boolean arg9,
-				boolean arg10, boolean arg11)
+		public End(Optional<ResourceKey<SpaceObject>> viewCenterKey, Optional<List<Skybox>> skyboxes, AxisRotation axisRotation,
+				long rotationPeriod, float dayMaxBrightness, float dayMinVisibleSize, float dayMaxVisibleSize,
+				MeteorEffect.ShootingStar shootingStar, MeteorEffect.MeteorShower meteorShower,
+				boolean createHorizon, boolean createVoid,
+				boolean starsAlwaysVisible, int zRotationMultiplier)
 		{
-			super(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
+			super(viewCenterKey, skyboxes, axisRotation,
+					rotationPeriod, dayMaxBrightness, dayMinVisibleSize, dayMaxVisibleSize,
+					shootingStar, meteorShower, createHorizon, createVoid,
+					starsAlwaysVisible, zRotationMultiplier);
 		}
 		
 		public boolean overrideMeteorEffects()

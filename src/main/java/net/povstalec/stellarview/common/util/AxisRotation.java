@@ -126,6 +126,11 @@ public class AxisRotation
 		return new AxisRotation(false, this.xAxis + xRot, this.yAxis + yRot, this.zAxis + zRot);
 	}
 	
+	public AxisRotation sub(AxisRotation other)
+	{
+		return new AxisRotation(false, this.xAxis - other.xAxis, this.yAxis - other.yAxis, this.zAxis - other.zAxis);
+	}
+	
 	public AxisRotation copy()
 	{
 		return new AxisRotation(false, xAxis, yAxis, zAxis);
