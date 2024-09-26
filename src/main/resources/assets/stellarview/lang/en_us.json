@@ -4,12 +4,14 @@
 	"gui.stellarview.config.overworld": "Stellar View - Overworld Config",
 	"gui.stellarview.config.nether": "Stellar View - Nether Config",
 	"gui.stellarview.config.end": "Stellar View - End Config",
-	
-	"gui.stellarview.replace_vanilla": "Replace Vanilla",
-	"gui.stellarview.config_priority": "Prioritize Config",
+
+	"gui.stellarview.disable_stars": "Disable View Center Rotation",
 	"gui.stellarview.disable_stars": "Disable Stars",
 	"gui.stellarview.day_stars": "Stars During Day",
 	"gui.stellarview.bright_stars": "Bright Stars",
+
+	"gui.stellarview.replace_vanilla": "Replace Vanilla",
+	"gui.stellarview.config_priority": "Prioritize Config",
 	
 	"gui.stellarview.overworld_year_length": "Year length: ",
 	"gui.stellarview.days": " days",

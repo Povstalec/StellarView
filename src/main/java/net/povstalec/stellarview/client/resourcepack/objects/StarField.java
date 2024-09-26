@@ -191,7 +191,7 @@ public class StarField extends SpaceObject
 	protected RenderedBuffer generateStarBuffer(BufferBuilder bufferBuilder, SpaceCoords relativeCoords)
 	{
 		RandomSource randomsource = RandomSource.create(seed);
-		bufferBuilder.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR);
+		bufferBuilder.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR_POS_COLOR_LY);
 		
 		double sizeMultiplier = diameter / 30D;
 		
@@ -212,7 +212,7 @@ public class StarField extends SpaceObject
 	protected RenderedBuffer getStarBuffer(BufferBuilder bufferBuilder, SpaceCoords relativeCoords)
 	{
 		RandomSource randomsource = RandomSource.create(seed);
-		bufferBuilder.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR);
+		bufferBuilder.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR_POS_COLOR_LY);
 		
 		for(int i = 0; i < totalStars; i++)
 		{

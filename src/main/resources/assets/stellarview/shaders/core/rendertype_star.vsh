@@ -1,12 +1,13 @@
 #version 150
 
-in vec3 Position;
-in vec4 Color;
 in vec3 StarPos;
+in vec4 Color;
+in vec3 HeightWidthSize;
 
 uniform mat4 ModelViewMat;
 uniform mat4 ProjMat;
-uniform vec3 RelativeSpacePos;
+uniform vec3 RelativeSpaceLy;
+uniform vec3 RelativeSpaceKm;
 
 float DEFAULT_DISTANCE = 100;
 
@@ -25,9 +26,9 @@ float clampStar(float starSize, float distance)
 }
 
 void main() {
-	float x = StarPos.x - RelativeSpacePos.x;
-	float y = StarPos.y - RelativeSpacePos.y;
-	float z = StarPos.z - RelativeSpacePos.z;
+	float x = StarPos.x - RelativeSpaceLy.x;
+	float y = StarPos.y - RelativeSpaceLy.y;
+	float z = StarPos.z - RelativeSpaceLy.z;
 	
 	float distance = sqrt(x * x + y * y + z * z);
 	
@@ -44,7 +45,7 @@ void main() {
 	
 	// COLOR END
 	
-	float starSize = clampStar(Position.z, distance);
+	float starSize = clampStar(HeightWidthSize.z, distance);
 	
 	distance = 1.0 / distance;
 	x *= distance;
@@ -82,8 +83,8 @@ void main() {
 	float sinPhi = sin(sphericalPhi); //TODO These don't repeat so remove them
 	float cosPhi = cos(sphericalPhi); //
 	
-	float height = Position.x * starSize;
-	float width = Position.y * starSize;
+	float height = HeightWidthSize.x * starSize;
+	float width = HeightWidthSize.y * starSize;
 	
 	float heightProjectionY = height * sinPhi;
 	

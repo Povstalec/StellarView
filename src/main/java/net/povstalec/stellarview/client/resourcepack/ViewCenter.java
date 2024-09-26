@@ -222,7 +222,6 @@ public class ViewCenter
 	
 	public MeteorEffect.ShootingStar getShootingStar()
 	{
-		
 		return shootingStar;
 	}
 	

@@ -134,7 +134,7 @@ public class ResourcepackReloadListener
 				Star star = Star.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Star", msg));
 				
 				spaceObjects.put(location, star);
-				StellarView.LOGGER.error("Parsed " + location.toString() + " as Star");
+				StellarView.LOGGER.debug("Parsed " + location.toString() + " as Star");
 			}
 			catch(RuntimeException e)
 			{
@@ -150,7 +150,7 @@ public class ResourcepackReloadListener
 				Planet planet = Planet.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Planet", msg));
 
 				spaceObjects.put(location, planet);
-				StellarView.LOGGER.error("Parsed " + location.toString() + " as Planet");
+				StellarView.LOGGER.debug("Parsed " + location.toString() + " as Planet");
 			}
 			catch(RuntimeException e)
 			{
@@ -166,7 +166,7 @@ public class ResourcepackReloadListener
 				Moon moon = Moon.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Moon", msg));
 
 				spaceObjects.put(location, moon);
-				StellarView.LOGGER.error("Parsed " + location.toString() + " as Moon");
+				StellarView.LOGGER.debug("Parsed " + location.toString() + " as Moon");
 			}
 			catch(RuntimeException e)
 			{
@@ -183,7 +183,7 @@ public class ResourcepackReloadListener
 
 				spaceObjects.put(location, starField);
 				Space.addStarField(starField);
-				StellarView.LOGGER.error("Parsed " + location.toString() + " as Star Field");
+				StellarView.LOGGER.debug("Parsed " + location.toString() + " as Star Field");
 			}
 			catch(RuntimeException e)
 			{
@@ -199,7 +199,7 @@ public class ResourcepackReloadListener
 				Nebula nebula = Nebula.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Nebula", msg));
 
 				spaceObjects.put(location, nebula);
-				StellarView.LOGGER.error("Parsed " + location.toString() + " as Nebula");
+				StellarView.LOGGER.debug("Parsed " + location.toString() + " as Nebula");
 			}
 			catch(RuntimeException e)
 			{

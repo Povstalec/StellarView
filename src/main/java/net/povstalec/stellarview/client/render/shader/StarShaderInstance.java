@@ -14,12 +14,14 @@ import net.minecraft.server.packs.resources.ResourceProvider;
 public class StarShaderInstance extends ShaderInstance
 {
 	@Nullable
-	public final Uniform RELATIVE_SPACE_POS;
+	public final Uniform RELATIVE_SPACE_LY;
+	public final Uniform RELATIVE_SPACE_KM;
 	
 	public StarShaderInstance(ResourceProvider provider, ResourceLocation shaderLocation, VertexFormat format)
 			throws IOException
 	{
 		super(provider, shaderLocation, format);
-		this.RELATIVE_SPACE_POS = this.getUniform("RelativeSpacePos");
+		this.RELATIVE_SPACE_LY = this.getUniform("RelativeSpaceLy");
+		this.RELATIVE_SPACE_KM = this.getUniform("RelativeSpaceKm");
 	}
 }

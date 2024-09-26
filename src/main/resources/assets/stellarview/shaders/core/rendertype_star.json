@@ -7,9 +7,9 @@
     "vertex": "stellarview:rendertype_star",
     "fragment": "stellarview:rendertype_star",
     "attributes": [
-	"Position",
+	"StarPos",
         "Color",
-        "StarPos"
+        "HeightWidthSize"
     ],
     "samplers": [
     ],
@@ -17,6 +17,7 @@
         { "name": "ModelViewMat", "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
         { "name": "ProjMat", "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
         { "name": "ColorModulator", "type": "float", "count": 4, "values": [ 1.0, 1.0, 1.0, 1.0 ] },
-        { "name": "RelativeSpacePos", "type": "float", "count": 3, "values": [ 0.0, 0.0, 0.0 ] }
+        { "name": "RelativeSpaceLy", "type": "float", "count": 3, "values": [ 0.0, 0.0, 0.0 ] },
+        { "name": "RelativeSpaceKm", "type": "float", "count": 3, "values": [ 0.0, 0.0, 0.0 ] }
     ]
 }

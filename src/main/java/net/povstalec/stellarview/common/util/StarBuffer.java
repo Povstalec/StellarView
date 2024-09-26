@@ -129,20 +129,21 @@ public class StarBuffer implements AutoCloseable
 	
 	public void drawWithShader(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, SpaceCoords relativeSpacePos, StarShaderInstance shaderInstance)
 	{
-		Vector3f relativeVector = new Vector3f((float) relativeSpacePos.x().toLy(), (float) relativeSpacePos.y().toLy(), (float) relativeSpacePos.z().toLy());
+		Vector3f relativeVectorLy = new Vector3f((float) relativeSpacePos.x().toLy(), (float) relativeSpacePos.y().toLy(), (float) relativeSpacePos.z().toLy());
+		Vector3f relativeVectorKm = new Vector3f((float) relativeSpacePos.x().toKm(), (float) relativeSpacePos.y().toKm(), (float) relativeSpacePos.z().toKm());
 		
 		if(!RenderSystem.isOnRenderThread())
 		{
 			RenderSystem.recordRenderCall(() ->
 			{
-				this._drawWithShader(new Matrix4f(modelViewMatrix), new Matrix4f(projectionMatrix), relativeVector, shaderInstance);
+				this._drawWithShader(new Matrix4f(modelViewMatrix), new Matrix4f(projectionMatrix), relativeVectorLy, relativeVectorKm, shaderInstance);
 			});
 		}
 		else
-			this._drawWithShader(modelViewMatrix, projectionMatrix, relativeVector, shaderInstance);
+			this._drawWithShader(modelViewMatrix, projectionMatrix, relativeVectorLy, relativeVectorKm, shaderInstance);
 	}
 	
-	private void _drawWithShader(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, Vector3f relativeSpacePos, StarShaderInstance shaderInstance)
+	private void _drawWithShader(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, Vector3f relativeSpaceLy, Vector3f relativeSpaceKm, StarShaderInstance shaderInstance)
 	{
 		for(int i = 0; i < 12; ++i)
 		{
@@ -189,8 +190,11 @@ public class StarBuffer implements AutoCloseable
 		if(shaderInstance.LINE_WIDTH != null && (this.mode == VertexFormat.Mode.LINES || this.mode == VertexFormat.Mode.LINE_STRIP))
 			shaderInstance.LINE_WIDTH.set(RenderSystem.getShaderLineWidth());
 		
-		if(shaderInstance.RELATIVE_SPACE_POS != null)
-			shaderInstance.RELATIVE_SPACE_POS.set(relativeSpacePos);
+		if(shaderInstance.RELATIVE_SPACE_LY != null)
+			shaderInstance.RELATIVE_SPACE_LY.set(relativeSpaceLy);
+
+		if(shaderInstance.RELATIVE_SPACE_KM != null)
+			shaderInstance.RELATIVE_SPACE_KM.set(relativeSpaceKm);
 		
 		RenderSystem.setupShaderLights(shaderInstance);
 		shaderInstance.apply();
