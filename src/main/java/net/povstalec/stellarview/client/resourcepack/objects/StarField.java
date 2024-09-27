@@ -257,7 +257,7 @@ public class StarField extends SpaceObject
 		RenderSystem.setShader(GameRenderer::getPositionShader);
 		BufferBuilder.RenderedBuffer bufferbuilder$renderedbuffer;
 		
-		bufferbuilder$renderedbuffer = generateStarBuffer(bufferBuilder, new SpaceCoords());
+		bufferbuilder$renderedbuffer = generateStarBuffer(bufferBuilder, relativeCoords);
 		
 		starBuffer.bind();
 		starBuffer.upload(bufferbuilder$renderedbuffer);

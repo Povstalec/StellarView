@@ -157,10 +157,18 @@ public abstract class SpaceObject
 	{
 		removeCoordsAndRotationFromChildren(getCoords(), getAxisRotation());
 		
-		this.coords = coords;
-		this.axisRotation = axisRotation;
+		if(this.parent != null)
+		{
+			this.coords = coords.add(this.parent.getCoords());
+			this.axisRotation = axisRotation.add(this.parent.getAxisRotation());
+		}
+		else
+		{
+			this.coords = coords;
+			this.axisRotation = axisRotation;
+		}
 		
-		addCoordsAndRotationToChildren(coords, axisRotation);
+		addCoordsAndRotationToChildren(this.coords, this.axisRotation);
 	}
 	
 	public void addChild(SpaceObject child)
