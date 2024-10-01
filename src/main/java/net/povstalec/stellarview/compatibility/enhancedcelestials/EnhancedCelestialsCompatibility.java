@@ -13,48 +13,53 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.util.Mth;
-import net.povstalec.stellarview.api.StellarViewSpecialEffects;
+import net.povstalec.stellarview.client.render.level.util.StellarViewLightmapEffects;
+import net.povstalec.stellarview.common.util.Color;
 
 public class EnhancedCelestialsCompatibility
 {
-	public static final float getMoonSize(float partialTicks)
+	public static final float getMoonSize(ClientLevel level, float defaultSize)
 	{
-		return ECWorldRenderer.getMoonSize(partialTicks);
+		return ECWorldRenderer.getMoonSize(defaultSize);
 	}
 	
-	public static final float[] getMoonColor(ClientLevel level, float partialTicks)
+	public static final Color.FloatRGBA getMoonColor(ClientLevel level, float partialTicks)
 	{
 		/*
 		 * Shamelessly copy pasted from
 		 * https://github.com/CorgiTaco/Enhanced-Celestials/blob/1.20.X/Common/src/main/java/corgitaco/enhancedcelestials/client/ECWorldRenderer.java#L19C9-L34C91
 		 * because what else am I supposed to do to have it work the same way for the sake of compatibility?
 		 */
-		EnhancedCelestialsContext enhancedCelestialsContext = ((EnhancedCelestialsWorldData) level).getLunarContext();
-        if(enhancedCelestialsContext != null)
+		EnhancedCelestialsWorldData enhancedCelestialsWorldData = (EnhancedCelestialsWorldData) level;
+        if(enhancedCelestialsWorldData != null)
         {
-            LunarForecast lunarForecast = enhancedCelestialsContext.getLunarForecast();
-            
-            ColorSettings lastColorSettings = lunarForecast.getMostRecentEvent().value().getClientSettings().colorSettings();
-            ColorSettings currentColorSettings = lunarForecast.getCurrentEvent(level.getRainLevel(1) < 1).value().getClientSettings().colorSettings();
-            
-            Vector3f lastGLColor = lastColorSettings.getGLMoonColor();
-            Vector3f currentGLColor = currentColorSettings.getGLMoonColor();
-            
-            float blend = lunarForecast.getBlend();
-            
-            float r = Mth.clampedLerp(lastGLColor.x(), currentGLColor.x(), blend);
-            float g = Mth.clampedLerp(lastGLColor.y(), currentGLColor.y(), blend);
-            float b = Mth.clampedLerp(lastGLColor.z(), currentGLColor.z(), blend);
-            
-            return new float[] {r, g, b};
+    		EnhancedCelestialsContext enhancedCelestialsContext = enhancedCelestialsWorldData.getLunarContext();
+        	if(enhancedCelestialsContext != null)
+            {
+                LunarForecast lunarForecast = enhancedCelestialsContext.getLunarForecast();
+                
+                ColorSettings lastColorSettings = lunarForecast.getMostRecentEvent().value().getClientSettings().colorSettings();
+                ColorSettings currentColorSettings = lunarForecast.getCurrentEvent(level.getRainLevel(1) < 1).value().getClientSettings().colorSettings();
+                
+                Vector3f lastGLColor = lastColorSettings.getGLMoonColor();
+                Vector3f currentGLColor = currentColorSettings.getGLMoonColor();
+                
+                float blend = lunarForecast.getBlend();
+                
+                float r = Mth.clampedLerp(lastGLColor.x(), currentGLColor.x(), blend);
+                float g = Mth.clampedLerp(lastGLColor.y(), currentGLColor.y(), blend);
+                float b = Mth.clampedLerp(lastGLColor.z(), currentGLColor.z(), blend);
+                
+                return new Color.FloatRGBA(r > 1F ? 1F : r, g > 1F ? 1F : g, b > 1F ? 1F : b);
+            }
         }
         
-        return new float[] {1, 1, 1};
+        return new Color.FloatRGBA(1, 1, 1);
 	}
 	
 	public static final void adjustLightmapColors(ClientLevel level, float partialTicks, float skyDarken, float skyLight, float blockLight, int pixelX, int pixelY, Vector3f colors)
     {
-		float darkMultiplier = StellarViewSpecialEffects.getSkyDarken(level, 1.0F);
+		float darkMultiplier = StellarViewLightmapEffects.getSkyDarken(level, 1.0F);
 		
 		boolean darkerWorld = true;
 		if(darkerWorld)
@@ -107,7 +112,7 @@ public class EnhancedCelestialsCompatibility
 			if(level.effects().forceBrightLightmap())
 			{
 				lightColor.lerp(new Vector3f(0.99F, 1.12F, 1.0F), 0.25F);
-				StellarViewSpecialEffects.clampColor(lightColor);
+				StellarViewLightmapEffects.clampColor(lightColor);
 			}
 			else
 			{

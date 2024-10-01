@@ -1,0 +1,26 @@
+{
+	"view_center": "stellarview:planet/end",
+	
+	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
+	
+	"day_max_brightness": 1,
+	"day_min_visible_size": 0,
+	"day_max_visible_size": 0.1,
+	
+	"create_horizon": false,
+	"create_void": false,
+	
+	"stars_always_visible": true,
+	
+	"skyboxes":
+	[
+		{
+			"top_facade": { "texture": "environment/end_sky.png", "uv": { "x_start": 0, "y_start": 0, "x_end": 16, "y_end": 16 }, "rgba": {"red": 40, "green": 40, "blue": 40, "alpha": 255} },
+			"north_facade": { "texture": "environment/end_sky.png", "uv": { "x_start": 0, "y_start": 0, "x_end": 16, "y_end": 16 }, "rgba": {"red": 40, "green": 40, "blue": 40, "alpha": 255} },
+			"east_facade": { "texture": "environment/end_sky.png", "uv": { "x_start": 0, "y_start": 0, "x_end": 16, "y_end": 16 }, "rgba": {"red": 40, "green": 40, "blue": 40, "alpha": 255} },
+			"south_facade": { "texture": "environment/end_sky.png", "uv": { "x_start": 0, "y_start": 0, "x_end": 16, "y_end": 16 }, "rgba": {"red": 40, "green": 40, "blue": 40, "alpha": 255} },
+			"west_facade": { "texture": "environment/end_sky.png", "uv": { "x_start": 0, "y_start": 0, "x_end": 16, "y_end": 16 }, "rgba": {"red": 40, "green": 40, "blue": 40, "alpha": 255} },
+			"bottom_facade": { "texture": "environment/end_sky.png", "uv": { "x_start": 0, "y_start": 0, "x_end": 16, "y_end": 16 }, "rgba": {"red": 40, "green": 40, "blue": 40, "alpha": 255} }
+		}
+	]
+}

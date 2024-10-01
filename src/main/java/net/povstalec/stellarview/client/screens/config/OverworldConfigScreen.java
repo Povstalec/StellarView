@@ -10,7 +10,6 @@ import net.minecraft.network.chat.Component;
 import net.povstalec.stellarview.client.screens.config.ConfigList.BooleanConfigEntry;
 import net.povstalec.stellarview.client.screens.config.ConfigList.SliderConfigEntry;
 import net.povstalec.stellarview.common.config.OverworldConfig;
-import net.povstalec.stellarview.common.config.StellarViewConfig;
 
 public class OverworldConfigScreen extends Screen
 {
@@ -40,51 +39,42 @@ public class OverworldConfigScreen extends Screen
 		
 		this.configList = new ConfigList(minecraft, this.width, this.height, 
 				OPTIONS_LIST_TOP_HEIGHT, this.height - OPTIONS_LIST_BOTTOM_OFFSET, OPTIONS_LIST_ITEM_HEIGHT);
-		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.replace_overworld"), 
-				this.width, StellarViewConfig.replace_overworld));
-		
-		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.disable_sun"), 
-				this.width, OverworldConfig.disable_sun));
-		
-		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.disable_moon"), 
-				this.width, OverworldConfig.disable_moon));
-		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.disable_moon_phases"), 
-				this.width, OverworldConfig.disable_moon_phases));
+		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.replace_vanilla"), 
+				this.width, OverworldConfig.replace_vanilla));
+		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.config_priority"), 
+				this.width, OverworldConfig.config_priority));
 
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.meteor_shower_chance"),
+
+		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.meteor_shower_chance").append(Component.literal(": ")),
 				Component.literal("\u0025"),
 				this.width, OverworldConfig.meteor_shower_chance));
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.shooting_star_chance"),
+		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.shooting_star_chance").append(Component.literal(": ")),
 				Component.literal("\u0025"),
 				this.width, OverworldConfig.shooting_star_chance));
 
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.overworld_year_length"),
-				Component.translatable("gui.stellarview.days"),
-				this.width, OverworldConfig.overworld_year_length));
+		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.overworld_z_rotation_multiplier").append(Component.literal(": ")),
+				Component.empty(),
+				this.width, OverworldConfig.overworld_z_rotation_multiplier, 10000));
 
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.overworld_z_rotation_multiplier"),
-				Component.empty(),
-				this.width, OverworldConfig.overworld_z_rotation_multiplier));
+		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.sol.x_offset").append(Component.literal(": ")),
+				Component.literal(" ").append(Component.translatable("gui.stellarview.ly")),
+				this.width, OverworldConfig.sol_x_offset, 1000));
+		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.sol.y_offset").append(Component.literal(": ")),
+				Component.literal(" ").append(Component.translatable("gui.stellarview.ly")),
+				this.width, OverworldConfig.sol_y_offset, 1000));
+		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.sol.z_offset").append(Component.literal(": ")),
+				Component.literal(" ").append(Component.translatable("gui.stellarview.ly")),
+				this.width, OverworldConfig.sol_z_offset, 1000));
 
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_x"),
-				Component.empty(),
-				this.width, OverworldConfig.milky_way_x));
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_y"),
-				Component.empty(),
-				this.width, OverworldConfig.milky_way_y));
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_z"),
-				Component.empty(),
-				this.width, OverworldConfig.milky_way_z));
-
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_alpha"),
+		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.sol.x_rotation").append(Component.literal(": ")),
 				Component.literal("\u00b0"),
-				this.width, OverworldConfig.milky_way_x_axis_rotation));
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_beta"),
+				this.width, OverworldConfig.sol_x_rotation));
+		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.sol.y_rotation").append(Component.literal(": ")),
 				Component.literal("\u00b0"),
-				this.width, OverworldConfig.milky_way_y_axis_rotation));
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.milky_way_gamma"),
+				this.width, OverworldConfig.sol_y_rotation));
+		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.sol.z_rotation").append(Component.literal(": ")),
 				Component.literal("\u00b0"),
-				this.width, OverworldConfig.milky_way_z_axis_rotation));
+				this.width, OverworldConfig.sol_z_rotation));
 		
 		this.addWidget(this.configList);
 

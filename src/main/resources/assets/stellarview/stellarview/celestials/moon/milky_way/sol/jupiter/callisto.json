@@ -1,0 +1,59 @@
+{
+	"parent": "stellarview:planet/milky_way/sol/jupiter",
+	"coords": { "x": {"ly": 0}, "y": {"ly": 0}, "z": {"ly": 0} },
+	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
+	"orbit_info":
+	{
+		"apoapsis": 1897000,
+		"periapsis": 1869000,
+		"orbit_clamp_distance": 100000000,
+		"orbital_period": { "ticks": 384000 },
+		"argument_of_periapsis": 12,
+		"inclination": 2.017,
+		"longtitude_of_ascending_node": 0,
+		"epoch_mean_anomaly": 0
+	},
+	"texture_layers":
+	[
+		{
+			"texture": "stellarview:textures/environment/planet_phases/callisto_halo_phases.png",
+			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
+			"blend": true,
+			"size": 2410300,
+			"min_size": 0.2,
+			"clamp_at_min_size": true,
+			"rotation": 90,
+			"uv":
+			{
+				"phase_handler":
+				{
+					"ticks_per_phase": 48000,
+					"phase_tick_offset": 0,
+					"columns": 4,
+					"rows": 2
+				},
+				"flip_uv": true
+			}
+		},
+		{
+			"texture": "stellarview:textures/environment/planet_phases/callisto_phases.png",
+			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
+			"blend": false,
+			"size": 2410300,
+			"min_size": 0.2,
+			"clamp_at_min_size": true,
+			"rotation": 90,
+			"uv":
+			{
+				"phase_handler":
+				{
+					"ticks_per_phase": 48000,
+					"phase_tick_offset": 0,
+					"columns": 4,
+					"rows": 2
+				},
+				"flip_uv": true
+			}
+		}
+	]
+}

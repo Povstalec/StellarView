@@ -1,0 +1,92 @@
+{
+	"coords": { "right_ascension": {"hours": 5, "minutes": 23, "seconds": 34}, "declination": {"degrees": -69, "minutes": 45.4, "seconds": 0}, "distance": {"ly": 163000} },
+	"axis_rotation": { "x_axis": 0.44, "y_axis": 3.4, "z_axis": 0.34 },
+	
+	"seed": 10842,
+	"diameter_ly": 32200,
+	"stars": 800,
+	
+	"x_stretch": 1.0,
+	"y_stretch": 1.0,
+	"z_stretch": 1.0,
+	
+	"texture_layers":
+	[
+		{
+			"texture": "stellarview:textures/environment/galaxy/spiral_galaxy.png",
+			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
+			"blend": true,
+			"size": 800,
+			"rotation": 0,
+			"uv": { "flip_uv": false }
+		}
+	],
+	
+	"spiral_arms":
+	[
+		{ "stars": 800, "arm_rotation": 0, "arm_length": 1.8, "arm_thickness": 3.5 }
+	],
+	
+	"star_info":
+	{
+		"star_types":
+		[
+			{
+				"rgb": {"red": 207, "green": 207, "blue": 255},
+				"min_size": 0.25,
+				"max_size": 0.35,
+				"min_brightness": 255,
+				"max_brightness": 255,
+				"weight": 1
+			},
+			{
+				"rgb": {"red": 223, "green": 223, "blue": 255},
+				"min_size": 0.20,
+				"max_size": 0.30,
+				"min_brightness": 225,
+				"max_brightness": 255,
+				"weight": 1
+			},
+			{
+				"rgb": {"red": 239, "green": 239, "blue": 255},
+				"min_size": 0.15,
+				"max_size": 0.25,
+				"min_brightness": 210,
+				"max_brightness": 240,
+				"weight": 1
+			},
+			{
+				"rgb": {"red": 255, "green": 255, "blue": 255},
+				"min_size": 0.15,
+				"max_size": 0.25,
+				"min_brightness": 190,
+				"max_brightness": 230,
+				"weight": 3
+			},
+			{
+				"rgb": {"red": 255, "green": 255, "blue": 223},
+				"min_size": 0.10,
+				"max_size": 0.25,
+				"min_brightness": 180,
+				"max_brightness": 210,
+				"weight": 7
+			},
+			{
+				"rgb": {"red": 255, "green": 239, "blue": 223},
+				"min_size": 0.10,
+				"max_size": 0.25,
+				"min_brightness": 120,
+				"max_brightness": 200,
+				"weight": 12
+			},
+			{
+				"rgb": {"red": 255, "green": 223, "blue": 223},
+				"min_size": 0.10,
+				"max_size": 0.15,
+				"min_brightness": 100,
+				"max_brightness": 150,
+				"weight": 74
+			}
+		]
+	}
+}

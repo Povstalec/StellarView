@@ -1,0 +1,59 @@
+{
+	"parent": "stellarview:planet/milky_way/sol/saturn",
+	"coords": { "x": {"ly": 0}, "y": {"ly": 0}, "z": {"ly": 0} },
+	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
+	"orbit_info":
+	{
+		"apoapsis": 294619,
+		"periapsis": 294619,
+		"orbit_clamp_distance": 100000000,
+		"orbital_period": { "ticks": 11928 },
+		"argument_of_periapsis": 12,
+		"inclination": 27.85,
+		"longtitude_of_ascending_node": 0,
+		"epoch_mean_anomaly": 0
+	},
+	"texture_layers":
+	[
+		{
+			"texture": "stellarview:textures/environment/planet_phases/tethys_halo_phases.png",
+			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
+			"blend": true,
+			"size": 531100,
+			"min_size": 0.1,
+			"clamp_at_min_size": true,
+			"rotation": 90,
+			"uv":
+			{
+				"phase_handler":
+				{
+					"ticks_per_phase": 1491,
+					"phase_tick_offset": 0,
+					"columns": 4,
+					"rows": 2
+				},
+				"flip_uv": true
+			}
+		},
+		{
+			"texture": "stellarview:textures/environment/planet_phases/tethys_phases.png",
+			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
+			"blend": false,
+			"size": 531100,
+			"min_size": 0.1,
+			"clamp_at_min_size": true,
+			"rotation": 90,
+			"uv":
+			{
+				"phase_handler":
+				{
+					"ticks_per_phase": 1491,
+					"phase_tick_offset": 0,
+					"columns": 4,
+					"rows": 2
+				},
+				"flip_uv": true
+			}
+		}
+	]
+}
