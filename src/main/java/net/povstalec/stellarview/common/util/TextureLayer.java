@@ -10,7 +10,7 @@ public class TextureLayer
 	public static final double MIN_VISUAL_SIZE = 0.05;
 	
 	private final ResourceLocation texture;
-	private final Color.IntRGBA rgba;
+	private final Color.FloatRGBA rgba;
 	
 	private final boolean blend;
 	
@@ -24,7 +24,7 @@ public class TextureLayer
     
     public static final Codec<TextureLayer> CODEC = RecordCodecBuilder.create(instance -> instance.group(
     		ResourceLocation.CODEC.fieldOf("texture").forGetter(TextureLayer::texture),
-    		Color.IntRGBA.CODEC.fieldOf("rgba").forGetter(TextureLayer::rgba),
+    		Color.FloatRGBA.INT_CODEC.fieldOf("rgba").forGetter(TextureLayer::rgba),
     		
     		Codec.BOOL.fieldOf("blend").forGetter(TextureLayer::shoulBlend),
     		
@@ -37,7 +37,7 @@ public class TextureLayer
     		UV.Quad.CODEC.optionalFieldOf("uv", UV.Quad.DEFAULT_QUAD_UV).forGetter(TextureLayer::uv)
 			).apply(instance, TextureLayer::new));
 	
-	public TextureLayer(ResourceLocation texture, Color.IntRGBA rgba, boolean blend,
+	public TextureLayer(ResourceLocation texture, Color.FloatRGBA rgba, boolean blend,
 			double size, double minSize, boolean clampAtMinSize,
 			double rotation, UV.Quad uv)
 	{
@@ -59,7 +59,7 @@ public class TextureLayer
 		return texture;
 	}
 	
-	public Color.IntRGBA rgba()
+	public Color.FloatRGBA rgba()
 	{
 		return rgba;
 	}

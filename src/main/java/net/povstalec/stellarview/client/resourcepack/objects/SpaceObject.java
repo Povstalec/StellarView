@@ -211,7 +211,7 @@ public abstract class SpaceObject
 	}
 	
 	
-	public static void renderOnSphere(Color.IntRGBA rgba, ResourceLocation texture, UV.Quad uv,
+	public static void renderOnSphere(Color.FloatRGBA rgba, Color.FloatRGBA secondaryRGBA, ResourceLocation texture, UV.Quad uv,
 			ClientLevel level, Camera camera, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords,
 			long ticks, double distance, float partialTicks, float brightness, float size, float rotation, boolean shouldBlend)
 	{
@@ -234,7 +234,7 @@ public abstract class SpaceObject
 		else
 			RenderSystem.defaultBlendFunc();
 		
-		RenderSystem.setShaderColor(rgba.red() / 255F, rgba.green() / 255F, rgba.blue() / 255F, brightness * rgba.alpha() / 255F);
+		RenderSystem.setShaderColor(rgba.red() * secondaryRGBA.red(), rgba.green() * secondaryRGBA.green(), rgba.blue() * secondaryRGBA.blue(), brightness * rgba.alpha() * secondaryRGBA.alpha());
 		
 		RenderSystem.setShaderTexture(0, texture);
         bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
@@ -275,7 +275,7 @@ public abstract class SpaceObject
 				return;
 		}
 		
-		renderOnSphere(textureLayer.rgba(), textureLayer.texture(), textureLayer.uv(),
+		renderOnSphere(textureLayer.rgba(), Color.FloatRGBA.DEFAULT, textureLayer.texture(), textureLayer.uv(),
 				level, camera, bufferbuilder, lastMatrix, sphericalCoords,
 				ticks, distance, partialTicks, dayBrightness(viewCenter, size, ticks, level, camera, partialTicks), size, (float) textureLayer.rotation(), textureLayer.shoulBlend());
 	}
