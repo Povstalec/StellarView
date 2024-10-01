@@ -9,7 +9,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.povstalec.stellarview.client.screens.config.ConfigList.BooleanConfigEntry;
-import net.povstalec.stellarview.common.config.StellarViewConfig;
+import net.povstalec.stellarview.common.config.GeneralConfig;
 
 public class GeneralConfigScreen extends Screen
 {
@@ -39,24 +39,14 @@ public class GeneralConfigScreen extends Screen
 		
 		this.configList = new ConfigList(minecraft, this.width, this.height, 
 				OPTIONS_LIST_TOP_HEIGHT, this.height - OPTIONS_LIST_BOTTOM_OFFSET, OPTIONS_LIST_ITEM_HEIGHT);
-		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.disable_stars"), 
-				this.width, StellarViewConfig.disable_stars));
-		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.day_stars"), 
-				this.width, StellarViewConfig.day_stars));
-		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.bright_stars"), 
-				this.width, StellarViewConfig.bright_stars));
 
-		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.distance_star_size"), 
-				this.width, StellarViewConfig.distance_star_size));
-		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.distance_star_brightness"), 
-				this.width, StellarViewConfig.distance_star_brightness));
+		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.disable_view_center_rotation"), 
+				this.width, GeneralConfig.disable_view_center_rotation));
 		
-		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.uniform_star_brightness"), 
-				this.width, StellarViewConfig.uniform_star_brightness));
-		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.equal_spectral_types"), 
-				this.width, StellarViewConfig.equal_spectral_types));
-		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.uniform_star_color"), 
-				this.width, StellarViewConfig.uniform_star_color));
+		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.disable_stars"), 
+				this.width, GeneralConfig.disable_stars));
+		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.bright_stars"), 
+				this.width, GeneralConfig.bright_stars));
 		
 		this.addWidget(this.configList);
 

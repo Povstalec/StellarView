@@ -4,40 +4,41 @@ import net.minecraftforge.common.ForgeConfigSpec;
 
 public class OverworldConfig
 {
-	public static final String PREFIX = "client.";
+	public static final String PREFIX = "client.overworld.";
 	
-	public static StellarViewConfigValue.BooleanValue disable_sun;
-
-	public static StellarViewConfigValue.BooleanValue disable_moon;
-	public static StellarViewConfigValue.BooleanValue disable_moon_phases;
-
+	public static StellarViewConfigValue.BooleanValue replace_vanilla;
+	public static StellarViewConfigValue.BooleanValue config_priority;
+	
+	public static StellarViewConfigValue.BooleanValue stars_always_visible;
+	
 	public static StellarViewConfigValue.IntValue meteor_shower_chance;
 	public static StellarViewConfigValue.IntValue shooting_star_chance;
 	
-	public static StellarViewConfigValue.IntValue milky_way_x;
-	public static StellarViewConfigValue.IntValue milky_way_y;
-	public static StellarViewConfigValue.IntValue milky_way_z;
-
-	public static StellarViewConfigValue.IntValue overworld_year_length;
+	public static StellarViewConfigValue.IntValue sol_x_offset;
+	public static StellarViewConfigValue.IntValue sol_y_offset;
+	public static StellarViewConfigValue.IntValue sol_z_offset;
 	
 	public static StellarViewConfigValue.IntValue overworld_z_rotation_multiplier;
 	
-	public static StellarViewConfigValue.IntValue milky_way_x_axis_rotation;
-	public static StellarViewConfigValue.IntValue milky_way_y_axis_rotation;
-	public static StellarViewConfigValue.IntValue milky_way_z_axis_rotation;
+	public static StellarViewConfigValue.IntValue sol_x_rotation;
+	public static StellarViewConfigValue.IntValue sol_y_rotation;
+	public static StellarViewConfigValue.IntValue sol_z_rotation;
 	
 	public static void init(ForgeConfigSpec.Builder client)
 	{
-		disable_sun = new StellarViewConfigValue.BooleanValue(client, PREFIX + "disable_sun", 
+		replace_vanilla = new StellarViewConfigValue.BooleanValue(client, PREFIX + "replace_vanilla", 
+				true, 
+				"Replaces the Vanilla Overworld sky with Stellar View sky");
+
+		config_priority = new StellarViewConfigValue.BooleanValue(client, PREFIX + "config_priority", 
 				false, 
-				"Disables the Sun");
+				"Prioritizes config over information from resourcepacks");
 		
-		disable_moon = new StellarViewConfigValue.BooleanValue(client, PREFIX + "disable_moon", 
+		
+		
+		stars_always_visible = new StellarViewConfigValue.BooleanValue(client, PREFIX + "stars_always_visible", 
 				false, 
-				"Disables the Moon");
-		disable_moon_phases = new StellarViewConfigValue.BooleanValue(client, PREFIX + "disable_moon_phases", 
-				false, 
-				"Disables Moon phases");
+				"Stars will always be visible, even during daytime");
 		
 		
 		
@@ -50,34 +51,30 @@ public class OverworldConfig
 		
 		
 		
-		overworld_year_length = new StellarViewConfigValue.IntValue(client, PREFIX + "overworld_year_length", 
-				96, 1, 512, 
-				"Specifies the number of days it takes for the Earth to complete one orbit around the Sun");
-
 		overworld_z_rotation_multiplier = new StellarViewConfigValue.IntValue(client, "client.overworld_z_rotation_multiplier", 
-				3000, 1, 3000, 
+				3000, 0, 3000, 
 				"Controls how much the Overworld sky rotates when moving along the Z-axis");
 		
 		
 		
-		milky_way_x = new StellarViewConfigValue.IntValue(client, PREFIX + "milky_way_x", 
-				0, -45, 45, 
-				"Specifies Milky Way X position");
-		milky_way_y = new StellarViewConfigValue.IntValue(client, PREFIX + "milky_way_y", 
-				0, -45, 45, 
-				"Specifies Milky Way Y position");
-		milky_way_z = new StellarViewConfigValue.IntValue(client, PREFIX + "milky_way_z", 
-				16, -45, 45, 
-				"Specifies Milky Way Z position");
+		sol_x_offset = new StellarViewConfigValue.IntValue(client, PREFIX + "sol_x_offset", 
+				0, -120, 120, 
+				"Specifies Sol X offset");
+		sol_y_offset = new StellarViewConfigValue.IntValue(client, PREFIX + "sol_y_offset", 
+				0, -120, 120, 
+				"Specifies Sol Y offset");
+		sol_z_offset = new StellarViewConfigValue.IntValue(client, PREFIX + "sol_z_offset", 
+				0, -120, 120, 
+				"Specifies Sol Z offset");
 
-		milky_way_x_axis_rotation = new StellarViewConfigValue.IntValue(client, PREFIX + "milky_way_x_axis_rotation", 
-				18, 0, 360, 
-				"Specifies Milky Way Alpha rotation");
-		milky_way_y_axis_rotation = new StellarViewConfigValue.IntValue(client, PREFIX + "milky_way_y_axis_rotation", 
+		sol_x_rotation = new StellarViewConfigValue.IntValue(client, PREFIX + "sol_x_rotation", 
 				0, 0, 360, 
-				"Specifies Milky Way Beta rotation");
-		milky_way_z_axis_rotation = new StellarViewConfigValue.IntValue(client, PREFIX + "milky_way_z_axis_rotation", 
-				90, 0, 360, 
-				"Specifies Milky Way Gamma rotation");
+				"Specifies Sol X-axis rotation");
+		sol_y_rotation = new StellarViewConfigValue.IntValue(client, PREFIX + "sol_y_rotation", 
+				0, 0, 360, 
+				"Specifies Sol Y-axis rotation");
+		sol_z_rotation = new StellarViewConfigValue.IntValue(client, PREFIX + "sol_z_rotation", 
+				0, 0, 360, 
+				"Specifies Sol Z-axis rotation");
 	}
 }
