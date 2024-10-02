@@ -5,7 +5,7 @@
 	"gui.stellarview.config.nether": "Stellar View - Nether Config",
 	"gui.stellarview.config.end": "Stellar View - End Config",
 
-	"gui.stellarview.disable_stars": "Disable View Center Rotation",
+	"gui.stellarview.disable_view_center_rotation": "Disable View Center Rotation",
 	"gui.stellarview.disable_stars": "Disable Stars",
 	"gui.stellarview.day_stars": "Stars During Day",
 	"gui.stellarview.bright_stars": "Bright Stars",
