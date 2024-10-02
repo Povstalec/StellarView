@@ -228,7 +228,8 @@ public class OrbitingObject extends SpaceObject
 			
 			float trueAnomaly = (float) eccentricAnomaly(ticks, partialTicks);
 			
-			orbitVector = orbitVector.mulProject(movementMatrix(trueAnomaly)).mulProject(orbitMatrix);
+			orbitVector.mulProject(movementMatrix(trueAnomaly));
+			orbitVector.mulProject(orbitMatrix);
 			
 			return orbitVector;
 		}
