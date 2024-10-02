@@ -64,7 +64,7 @@ public class ConfigList extends ObjectSelectionList<ConfigList.ConfigEntry>
 	    
 	    protected void update()
 	    {
-	    	StellarView.updateGalaxies();
+	    	StellarView.updateSpaceObjects();
 	    }
 
 		@Override
@@ -134,25 +134,32 @@ public class ConfigList extends ObjectSelectionList<ConfigList.ConfigEntry>
 	{
 		protected AbstractWidget sliderButton;
 		protected StellarViewConfigValue.IntValue value;
+		protected int multiplier;
+		
+		public SliderConfigEntry(Component component1, Component component2, int screenWidth, StellarViewConfigValue.IntValue value, int multiplier)
+		{
+			this.value = value;
+			this.multiplier = multiplier;
+			this.sliderButton = new ForgeSlider(0, 0, 200, 20, 
+					component1, component2,
+					value.getMin() * multiplier, value.getMax() * multiplier, value.get() * multiplier, multiplier, 1, true);
+		}
 		
 		public SliderConfigEntry(Component component1, Component component2, int screenWidth, StellarViewConfigValue.IntValue value)
 		{
-			this.value = value;
-			this.sliderButton = new ForgeSlider(0, 0, 200, 20, 
-					component1, component2,
-					value.getMin(), value.getMax(), value.get(), 1.0, 1, true);
+			this(component1, component2, screenWidth, value, 1);
 		}
 		
 		protected void reset()
 		{
 			this.value.set(this.value.getDefault());
-			((ForgeSlider) this.sliderButton).setValue((double) this.value.get());
+			((ForgeSlider) this.sliderButton).setValue((double) this.value.get() * multiplier);
 			super.reset();
 		}
 		
 		protected void onChanged()
 		{
-	    	value.set((int) ((ForgeSlider) this.sliderButton).getValue());
+	    	value.set((int) ((ForgeSlider) this.sliderButton).getValue() / multiplier);
 	    	update();
 		}
 	    

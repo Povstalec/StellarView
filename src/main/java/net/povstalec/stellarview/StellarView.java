@@ -7,11 +7,13 @@ import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ConfigScreenHandler;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
+import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RegisterDimensionSpecialEffectsEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -21,7 +23,10 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.povstalec.stellarview.client.render.level.StellarViewEndEffects;
+import net.povstalec.stellarview.client.render.level.StellarViewNetherEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewOverworldEffects;
+import net.povstalec.stellarview.client.resourcepack.ResourcepackReloadListener;
+import net.povstalec.stellarview.client.resourcepack.Space;
 import net.povstalec.stellarview.client.screens.config.ConfigScreen;
 import net.povstalec.stellarview.common.config.StellarViewConfig;
 import net.povstalec.stellarview.common.util.KeyBindings;
@@ -37,7 +42,10 @@ public class StellarView
     
     public static final Logger LOGGER = LogUtils.getLogger();
     
+    private static Minecraft minecraft = Minecraft.getInstance();
+    
     public static StellarViewOverworldEffects overworld;
+    public static StellarViewNetherEffects nether;
     public static StellarViewEndEffects end;
 
 	public StellarView()
@@ -64,26 +72,25 @@ public class StellarView
         public static void registerDimensionEffects(RegisterDimensionSpecialEffectsEvent event)
         {
     		overworld = new StellarViewOverworldEffects();
+    		nether = new StellarViewNetherEffects();
     		end = new StellarViewEndEffects();
     		
         	event.register(StellarViewOverworldEffects.OVERWORLD_EFFECTS, overworld);
-        	//event.register(StellarViewEndEffects.END_EFFECTS, end);
+        	event.register(StellarViewNetherEffects.NETHER_EFFECTS, nether);
+        	event.register(StellarViewEndEffects.END_EFFECTS, end);
+        }
+    	
+
+    	@SubscribeEvent
+        public static void registerClientReloadListener(RegisterClientReloadListenersEvent event)
+        {
+    		ResourcepackReloadListener.ReloadListener.registerReloadListener(event);
         }
 
     	@SubscribeEvent
         public static void onKeyRegister(RegisterKeyMappingsEvent event)
         {
         	event.register(KeyBindings.OPEN_CONFIG_KEY);
-        }
-    }
-    
-    @Mod.EventBusSubscriber(modid = StellarView.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
-    public static class ClientForgeEvents
-    {
-    	@SubscribeEvent
-        public static void playerLoggedIn(ClientPlayerNetworkEvent.LoggingIn event)
-        {
-    		updateGalaxies();
         }
     }
     
@@ -95,9 +102,25 @@ public class StellarView
     	return isEnhancedCelestialsLoaded.get();	
     }
     
-    public static void updateGalaxies()
+    public static void updateSpaceObjects()
     {
-    	overworld.setupGalaxy();
-    	end.setupGalaxy();
+		if(minecraft.level == null)
+    		return;
+    	
+    	Space.updateSol();
+    	Space.resetStarFields();
     }
-}
+    
+    public static float lightSourceDimming(ClientLevel level, Camera camera)
+    {
+    	// Brightness of the position where the player is standing, 15 is subtracted from the ambient skylight, that way only block light is accounted for
+    	int brightnessAtBlock = level.getLightEngine().getRawBrightness(camera.getEntity().getOnPos().above(), 15);
+    	
+    	return 0.5F + 1.5F * ((15F - brightnessAtBlock) / 15F);
+    }
+    
+    public static float rainDimming(ClientLevel level, float partialTicks)
+    {
+    	return 1F - level.getRainLevel(partialTicks);
+    }
+}	

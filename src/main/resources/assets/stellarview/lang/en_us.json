@@ -2,50 +2,35 @@
 	"gui.stellarview.config": "Stellar View Config",
 	"gui.stellarview.config.general": "Stellar View - General Config",
 	"gui.stellarview.config.overworld": "Stellar View - Overworld Config",
+	"gui.stellarview.config.nether": "Stellar View - Nether Config",
+	"gui.stellarview.config.end": "Stellar View - End Config",
 
-	"gui.stellarview.distance_star_size": "Distance-based star size",
-	"gui.stellarview.distance_star_brightness": "Distance-based star brightness",
-
-	"gui.stellarview.uniform_star_brightness": "Uniform star brightness",
-	"gui.stellarview.equal_spectral_types": "Equal star spectral types",
-	"gui.stellarview.uniform_star_color": "Uniform star color",
-	
-	"gui.stellarview.replace_overworld": "Replace Overworld",
-	"gui.stellarview.replace_end": "Replace End",
-	"gui.stellarview.disable_sun": "Disable Sun",
-	"gui.stellarview.disable_moon": "Disable Moon",
-	"gui.stellarview.disable_moon_phases": "Disable Moon Phases",
+	"gui.stellarview.disable_stars": "Disable View Center Rotation",
 	"gui.stellarview.disable_stars": "Disable Stars",
 	"gui.stellarview.day_stars": "Stars During Day",
 	"gui.stellarview.bright_stars": "Bright Stars",
+
+	"gui.stellarview.replace_vanilla": "Replace Vanilla",
+	"gui.stellarview.config_priority": "Prioritize Config",
 	
-	"gui.stellarview.overworld_year_length": "Year length: ",
-	"gui.stellarview.days": " days",
-	"gui.stellarview.overworld_z_rotation_multiplier": "Sky Rotation Multiplier: ",
+	"gui.stellarview.overworld_z_rotation_multiplier": "Sky Rotation Multiplier",
 	
-	"gui.stellarview.meteor_shower_chance": "Meteor Shower Chance: ",
-	"gui.stellarview.shooting_star_chance": "Shooting Star Chance: ",
+	"gui.stellarview.meteor_shower_chance": "Meteor Shower Chance",
+	"gui.stellarview.shooting_star_chance": "Shooting Star Chance",
+
+	"gui.stellarview.sol.x_offset": "Sol X offset",
+	"gui.stellarview.sol.y_offset": "Sol Y offset",
+	"gui.stellarview.sol.z_offset": "Sol Z offset",
 	
-	"gui.stellarview.milky_way_x": "Milky Way X-Offset: ",
-	"gui.stellarview.milky_way_y": "Milky Way Y-Offset: ",
-	"gui.stellarview.milky_way_z": "Milky Way Z-Offset: ",
-	
-	"gui.stellarview.galaxy_x": "Galaxy X-Offset: ",
-	"gui.stellarview.galaxy_y": "Galaxy Y-Offset: ",
-	"gui.stellarview.galaxy_z": "Galaxy Z-Offset: ",
-	
-	"gui.stellarview.milky_way_alpha": "Milky Way X-Rotation: ",
-	"gui.stellarview.milky_way_beta": "Milky Way Z-Rotation: ",
-	"gui.stellarview.milky_way_gamma": "Milky Way Y-Rotation: ",
-	
-	"gui.stellarview.galaxy_alpha": "Galaxy X-Rotation: ",
-	"gui.stellarview.galaxy_beta": "Galaxy Z-Rotation: ",
-	"gui.stellarview.galaxy_gamma": "Galaxy Y-Rotation: ",
+	"gui.stellarview.sol.x_rotation": "Sol X-Rotation",
+	"gui.stellarview.sol.y_rotation": "Sol Y-Rotation",
+	"gui.stellarview.sol.z_rotation": "Sol Z-Rotation",
 	
 	"key.category.stellarview.config_screen": "Stellar View Config Screen",
 	"key.stellarview.open_config_screen": "Open Config Screen",
 	
 	"gui.stellarview.reset": "Reset",
 	"gui.stellarview.true": "True",
-	"gui.stellarview.false": "False"
+	"gui.stellarview.false": "False",
+	"gui.stellarview.ly": "ly"
 }
