@@ -338,7 +338,7 @@ public class ViewCenter
 		
 		if(!StellarViewFogEffects.isFoggy(this.minecraft, camera))
 		{
-			RenderSystem.disableTexture();
+			//RenderSystem.disableTexture();
 			Vec3 skyColor = level.getSkyColor(this.minecraft.gameRenderer.getMainCamera().getPosition(), partialTicks);
 			float skyX = (float)skyColor.x;
 	        float skyY = (float)skyColor.y;
@@ -361,7 +361,7 @@ public class ViewCenter
 			
 			StellarViewSkyEffects.renderSunrise(level, partialTicks, stack, projectionMatrix, bufferbuilder);
 			
-			RenderSystem.enableTexture();
+			//RenderSystem.enableTexture();
 
 			RenderSystem.setShader(GameRenderer::getPositionTexShader);
 			
@@ -370,7 +370,7 @@ public class ViewCenter
 			RenderSystem.setShaderColor(skyX, skyY, skyZ, 1.0F); // Added this here
 			renderSkyObjectsFrom(level, camera, partialTicks, stack, projectionMatrix, setupFog, bufferbuilder);
 	        
-	        RenderSystem.disableTexture();
+	        //RenderSystem.disableTexture();
 	        //RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 	        RenderSystem.disableBlend();
 	        
@@ -395,7 +395,8 @@ public class ViewCenter
 	        else
 	        	RenderSystem.setShaderColor(skyX, skyY, skyZ, 1.0F);
 	        
-	        RenderSystem.enableTexture();
+	        //RenderSystem.enableTexture();
+	        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 	        RenderSystem.depthMask(true);
 		}
 		
