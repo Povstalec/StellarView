@@ -1,0 +1,64 @@
+{
+	"coords": { "x": {"ly": 0}, "y": {"ly": 0}, "z": {"ly": 28000} },
+	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
+	
+	"seed": 81463,
+	"diameter_ly": 90000,
+	
+	"stars": 200,
+	
+	"x_stretch": 0.5,
+	"y_stretch": 0.25,
+	"z_stretch": 0.5,
+	
+	"texture_layers":
+	[
+		{
+			"texture": "stellarview:textures/environment/galaxy/spiral_galaxy.png",
+			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
+			"blend": true,
+			"size": 800,
+			"rotation": 0,
+			"uv": { "flip_uv": false }
+		}
+	],
+	
+	"spiral_arms":
+	[
+		{ "stars": 150, "arm_rotation": 0, "arm_length": 1.6298770314100501, "arm_thickness": 2.0 },
+		{ "stars": 150, "arm_rotation": 90, "arm_length": 1.6941251689586823, "arm_thickness": 2.0 },
+		{ "stars": 150, "arm_rotation": 180, "arm_length": 1.9660513834462778, "arm_thickness": 2.0 },
+		{ "stars": 150, "arm_rotation": 270, "arm_length": 1.8086568638593041, "arm_thickness": 2.0 }
+	],
+	
+	"star_info":
+	{
+		"star_types":
+		[
+			{
+				"rgb": {"red": 207, "green": 150, "blue": 40},
+				"min_size": 10,
+				"max_size": 20,
+				"min_brightness": 6,
+				"max_brightness": 12,
+				"weight": 1
+			},
+			{
+				"rgb": {"red": 207, "green": 207, "blue": 207},
+				"min_size": 10,
+				"max_size": 20,
+				"min_brightness": 6,
+				"max_brightness": 12,
+				"weight": 1
+			},
+			{
+				"rgb": {"red": 40, "green": 120, "blue": 207},
+				"min_size": 10,
+				"max_size": 20,
+				"min_brightness": 6,
+				"max_brightness": 12,
+				"weight": 4
+			}
+		]
+	}
+}
