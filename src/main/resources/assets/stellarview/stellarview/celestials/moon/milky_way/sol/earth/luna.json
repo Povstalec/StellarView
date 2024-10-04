@@ -48,11 +48,11 @@
 				"phase_handler":
 				{
 					"ticks_per_phase": 24000,
-					"phase_tick_offset": 0,
+					"phase_tick_offset": 12000,
 					"columns": 4,
 					"rows": 2
 				},
-				"flip_uv": true
+				"flip_uv": false
 			}
 		}
 	],
