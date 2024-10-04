@@ -25,10 +25,10 @@ import net.povstalec.stellarview.common.util.TextureLayer;
 
 public abstract class StarLike extends OrbitingObject
 {
-	public static final float MIN_SIZE = 0.4F;
+	public static final float MIN_SIZE = 0.2F;
 	
 	public static final float MAX_ALPHA = 1F;
-	public static final float MIN_ALPHA = (MAX_ALPHA - 0.66F) * 2 / 5;
+	public static final float MIN_ALPHA = MAX_ALPHA * 0.1F; // Previously used (MAX_ALPHA - 0.66F) * 2 / 5;
 	
 	private float minStarSize;
 
@@ -65,21 +65,20 @@ public abstract class StarLike extends OrbitingObject
 	{
 		size -= size * lyDistance / 1000000.0;
 		
-		if(size < 0.2F)
-			return 0.2F;
+		if(size < getMinStarSize())
+			return getMinStarSize();
 		
 		return size;
 	}
 	
 	public Color.FloatRGBA starRGBA(double lyDistance)
 	{
-		float alpha = 1;
-		float minAlpha = alpha * 0.1F; // Previously used (alpha - 0.66) * 2 / 3
+		float alpha = getMaxStarAlpha();
 		
 		alpha -= lyDistance / 100000;
 		
-		if(alpha < minAlpha)
-				alpha = minAlpha;
+		if(alpha < getMinStarAlpha())
+				alpha = getMinStarAlpha();
 		
 		return new Color.FloatRGBA(1, 1, 1, alpha);
 	}
