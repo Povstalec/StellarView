@@ -283,7 +283,7 @@ public abstract class SpaceObject
 	protected void renderTextureLayers(ViewCenter viewCenter, ClientLevel level, Camera camera, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)
 	{
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
-		
+
 		for(TextureLayer textureLayer : textureLayers)
 		{
 			renderTextureLayer(textureLayer, viewCenter, level, camera, bufferbuilder, lastMatrix, sphericalCoords, ticks, distance, partialTicks);
