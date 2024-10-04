@@ -298,10 +298,10 @@ public abstract class SpaceObject
 		long ticks = level.getDayTime();
 		
 		Vector3f positionVector = getPosition(viewCenter, parentRotation, ticks, partialTicks).add(parentVector); // Handles orbits 'n stuff
-		
+
 		// Add parent vector to current coords
 		SpaceCoords coords = getCoords().add(positionVector);
-		
+
 		// Subtract coords of this from View Center coords to get relative coords
 		SphericalCoords sphericalCoords = coords.skyPosition(level, viewCenter, partialTicks);
 		
@@ -359,7 +359,7 @@ public abstract class SpaceObject
 	public static class FadeOutHandler
 	{
 		public static final FadeOutHandler DEFAULT_PLANET_HANDLER = new FadeOutHandler(new SpaceDistance(70000000000D), new SpaceDistance(100000000000D), new SpaceDistance(100000000000D));
-		public static final FadeOutHandler DEFAULT_STAR_HANDLER = new FadeOutHandler(new SpaceDistance(3000000L), new SpaceDistance(5000000L), new SpaceDistance(5000000L));
+		public static final FadeOutHandler DEFAULT_STAR_HANDLER = new FadeOutHandler(new SpaceDistance(3000000L), new SpaceDistance(5000000L), new SpaceDistance(100000000000D));
 		public static final FadeOutHandler DEFAULT_STAR_FIELD_HANDLER = new FadeOutHandler(new SpaceDistance(3000000L), new SpaceDistance(5000000L), new SpaceDistance(5000000L));
 		
 		private SpaceDistance fadeOutStartDistance;
