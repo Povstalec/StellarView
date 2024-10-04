@@ -112,7 +112,7 @@
 				]
 			}
 		],
-		"probability": 100
+		"probability": 10
 	},
 
 	"meteor_shower":
@@ -219,6 +219,6 @@
 				]
 			}
 		],
-		"probability": 100
+		"probability": 10
 	}
 }
