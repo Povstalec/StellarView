@@ -90,7 +90,7 @@ public abstract class StarLike extends OrbitingObject
 	protected void renderTextureLayer(TextureLayer textureLayer, ViewCenter viewCenter, ClientLevel level, Camera camera, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)
 	{
 		double lyDistance = distance / SpaceCoords.KM_PER_LY;
-		
+
 		Color.FloatRGBA starRGBA = starRGBA(lyDistance);
 		
 		if(starRGBA.alpha() <= 0.0F || textureLayer.rgba().alpha() <= 0)
