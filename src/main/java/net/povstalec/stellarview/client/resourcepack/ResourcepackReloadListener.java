@@ -20,6 +20,7 @@ import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.client.render.level.StellarViewEndEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewNetherEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewOverworldEffects;
+import net.povstalec.stellarview.client.resourcepack.objects.BlackHole;
 import net.povstalec.stellarview.client.resourcepack.objects.Moon;
 import net.povstalec.stellarview.client.resourcepack.objects.Nebula;
 import net.povstalec.stellarview.client.resourcepack.objects.Planet;
@@ -38,6 +39,7 @@ public class ResourcepackReloadListener
 	public static final String MOON = "moon";
 	
 	public static final String STAR = "star";
+	public static final String BLACK_HOLE = "black_hole";
 
 	public static final String STAR_FIELD = "star_field";
 
@@ -84,6 +86,9 @@ public class ResourcepackReloadListener
 					
 					else if(canShortenPath(location, STAR_FIELD))
 						addStarField(spaceObjects, location, element);
+					
+					else if(canShortenPath(location, BLACK_HOLE))
+						addBlackHole(spaceObjects, location, element);
 					
 					else if(canShortenPath(location, NEBULA))
 						addNebula(spaceObjects, location, element);
@@ -140,6 +145,22 @@ public class ResourcepackReloadListener
 				
 				spaceObjects.put(location, star);
 				StellarView.LOGGER.debug("Parsed " + location.toString() + " as Star");
+			}
+			catch(RuntimeException e)
+			{
+				StellarView.LOGGER.error("Could not load " + location.toString() + " " + e);
+			}
+		}
+		
+		private static void addBlackHole(HashMap<ResourceLocation, SpaceObject> spaceObjects, ResourceLocation location, JsonElement element)
+		{
+			try
+			{
+				JsonObject json = GsonHelper.convertToJsonObject(element, "black_hole");
+				BlackHole blackHole = BlackHole.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Star", msg));
+				
+				spaceObjects.put(location, blackHole);
+				StellarView.LOGGER.debug("Parsed " + location.toString() + " as Black Hole");
 			}
 			catch(RuntimeException e)
 			{

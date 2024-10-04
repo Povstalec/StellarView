@@ -253,7 +253,7 @@ public class OrbitingObject extends SpaceObject
 		
 		public double eccentricAnomaly(long ticks, float partialTicks)
 		{
-			return approximateEccentricAnomaly(eccentricity, meanAnomaly(ticks, partialTicks), 4); // 4 chosen as an arbitrary number
+			return approximateEccentricAnomaly(eccentricity, meanAnomaly(ticks % orbitalPeriod().ticks(), partialTicks), 4); // 4 chosen as an arbitrary number
 		}
 		
 		// Moves a point along a unit circle, starting from the mean anomaly
