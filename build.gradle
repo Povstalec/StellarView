@@ -3,6 +3,7 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'org.spongepowered.mixin' version '0.7.+'
 }
 
 version = mod_version
@@ -131,6 +132,13 @@ repositories {
             includeGroup "maven.modrinth"
         }
     }
+    maven {
+        name "jTDev MavenReleases"
+        url "https://maven.jt-dev.tech/releases"
+    }
+    flatDir {
+        dir 'libs'
+    }
 }
 
 dependencies {
@@ -140,6 +148,7 @@ dependencies {
     // If the group id is "net.minecraft" and the artifact id is one of ["client", "server", "joined"],
     // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
     // Example mod dependency with JEI - using fg.deobf() ensures the dependency is remapped to your development mappings
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
@@ -155,12 +164,10 @@ dependencies {
     // For more info:
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
-    
-    compileOnly fg.deobf("maven.modrinth:corgilib:${minecraft_version}-${corgilib_version}-forge")
-    runtimeOnly fg.deobf("maven.modrinth:corgilib:${minecraft_version}-${corgilib_version}-forge")
-    
-    compileOnly fg.deobf("maven.modrinth:enhanced-celestials:${minecraft_version}-${enhanced_celestials_version}-forge")
-    runtimeOnly fg.deobf("maven.modrinth:enhanced-celestials:${minecraft_version}-${enhanced_celestials_version}-forge")
+
+    implementation(fg.deobf("blank:Corgilib-Forge-1.20.1:4.0.3.2"))
+
+    implementation(fg.deobf("blank:Enhanced-Celestials-Forge-1.20.1:5.0.1.0"))
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

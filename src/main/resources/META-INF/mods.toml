@@ -17,7 +17,7 @@ Enjoy a Stellar View of the Sky
 [[dependencies.stellarview]]
     modId="forge"
     mandatory=true
-    versionRange="[44,)"
+    versionRange="[47,)"
     ordering="NONE"
     side="CLIENT"
 [[dependencies.stellarview]]
