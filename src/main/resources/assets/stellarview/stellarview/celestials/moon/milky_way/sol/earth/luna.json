@@ -52,7 +52,7 @@
 					"columns": 4,
 					"rows": 2
 				},
-				"flip_uv": false
+				"flip_uv": true
 			}
 		}
 	],
