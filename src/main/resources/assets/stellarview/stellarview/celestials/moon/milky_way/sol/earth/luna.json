@@ -11,7 +11,7 @@
 		"argument_of_periapsis": 0,
 		"inclination": 5.145,
 		"longtitude_of_ascending_node": 0,
-		"epoch_mean_anomaly": 180
+		"epoch_mean_anomaly": 157.5
 	},
 	"texture_layers":
 	[
@@ -48,7 +48,7 @@
 				"phase_handler":
 				{
 					"ticks_per_phase": 24000,
-					"phase_tick_offset": 12000,
+					"phase_tick_offset": 0,
 					"columns": 4,
 					"rows": 2
 				},
