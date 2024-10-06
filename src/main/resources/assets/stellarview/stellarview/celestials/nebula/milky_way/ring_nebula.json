@@ -1,0 +1,27 @@
+{
+	"coords": { "right_ascension": {"hours": 18, "minutes": 53, "seconds": 35.079}, "declination": {"degrees": 33, "minutes": 1, "seconds": 45.03}, "distance": {"ly": 2567} },
+	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
+	"texture_layers":
+	[
+		{
+			"texture": "stellarview:textures/environment/halo_template.png",
+			"rgba": {"red": 255, "green": 0, "blue": 0, "alpha": 255},
+			"blend": true,
+			"size": 4488626469,
+			"min_size": 0.9,
+			"clamp_at_min_size": true,
+			"rotation": 0,
+			"uv": { "flip_uv": false }
+		},
+		{
+			"texture": "stellarview:textures/environment/nebula/ring_nebula.png",
+			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
+			"blend": true,
+			"size": 4488626469,
+			"min_size": 0.5,
+			"clamp_at_min_size": true,
+			"rotation": 0,
+			"uv": { "flip_uv": false }
+		}
+	]
+}
