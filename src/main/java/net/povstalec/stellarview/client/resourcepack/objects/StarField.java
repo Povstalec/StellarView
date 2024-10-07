@@ -82,12 +82,12 @@ public class StarField extends SpaceObject
 			Codec.DOUBLE.optionalFieldOf("y_stretch", 1.0).forGetter(StarField::yStretch),
 			Codec.DOUBLE.optionalFieldOf("z_stretch", 1.0).forGetter(StarField::zStretch),
 			
-			SpiralArm.CODEC.listOf().optionalFieldOf("spiral_arms").forGetter(starField -> Optional.ofNullable(starField.spiralArms))
+			SpiralArm.CODEC.listOf().optionalFieldOf("spiral_arms", new ArrayList<SpiralArm>()).forGetter(starField -> starField.spiralArms)
 			).apply(instance, StarField::new));
 	
 	public StarField(Optional<ResourceKey<SpaceObject>> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation, List<TextureLayer> textureLayers,
 			FadeOutHandler fadeOutHandler, StarInfo starInfo, long seed, int diameter, int numberOfStars, boolean clumpStarsInCenter,
-			double xStretch, double yStretch, double zStretch, Optional<List<SpiralArm>> spiralArms)
+			double xStretch, double yStretch, double zStretch, List<SpiralArm> spiralArms)
 	{
 		super(parent, coords, axisRotation, textureLayers, fadeOutHandler);
 		
@@ -102,10 +102,7 @@ public class StarField extends SpaceObject
 		this.yStretch = yStretch;
 		this.zStretch = zStretch;
 		
-		if(spiralArms.isPresent())
-			this.spiralArms = new ArrayList<SpiralArm>(spiralArms.get());
-		else
-			this.spiralArms = new ArrayList<SpiralArm>();
+		this.spiralArms = new ArrayList<SpiralArm>(spiralArms);
 
 		// Calculate the total amount of stars
 		int totalStars = stars;
@@ -115,6 +112,20 @@ public class StarField extends SpaceObject
 		}
 		
 		this.totalStars = totalStars;
+	}
+	
+	public StarField(Optional<ResourceKey<SpaceObject>> parent, SpaceCoords coords, AxisRotation axisRotation, List<TextureLayer> textureLayers,
+			FadeOutHandler fadeOutHandler, StarInfo starInfo, long seed, int diameter, int numberOfStars, boolean clumpStarsInCenter,
+			double xStretch, double yStretch, double zStretch, List<SpiralArm> spiralArms)
+	{
+		this(parent, Either.left(coords), axisRotation, textureLayers, fadeOutHandler, starInfo, seed, numberOfStars, numberOfStars, clumpStarsInCenter, zStretch, zStretch, zStretch, spiralArms);
+	}
+	
+	public StarField(Optional<ResourceKey<SpaceObject>> parent, StellarCoordinates.Equatorial coords, AxisRotation axisRotation, List<TextureLayer> textureLayers,
+			FadeOutHandler fadeOutHandler, StarInfo starInfo, long seed, int diameter, int numberOfStars, boolean clumpStarsInCenter,
+			double xStretch, double yStretch, double zStretch, List<SpiralArm> spiralArms)
+	{
+		this(parent, Either.right(coords), axisRotation, textureLayers, fadeOutHandler, starInfo, seed, numberOfStars, numberOfStars, clumpStarsInCenter, zStretch, zStretch, zStretch, spiralArms);
 	}
 	
 	public StarInfo getStarInfo()
