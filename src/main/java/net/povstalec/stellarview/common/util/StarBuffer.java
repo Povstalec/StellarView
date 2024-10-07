@@ -129,8 +129,8 @@ public class StarBuffer implements AutoCloseable
 	
 	public void drawWithShader(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, SpaceCoords relativeSpacePos, StarShaderInstance shaderInstance)
 	{
-		Vector3f relativeVectorLy = new Vector3f((float) relativeSpacePos.x().toLy(), (float) relativeSpacePos.y().toLy(), (float) relativeSpacePos.z().toLy());
-		Vector3f relativeVectorKm = new Vector3f((float) relativeSpacePos.x().toKm(), (float) relativeSpacePos.y().toKm(), (float) relativeSpacePos.z().toKm());
+		Vector3f relativeVectorLy = new Vector3f((float) relativeSpacePos.x().ly(), (float) relativeSpacePos.y().ly(), (float) relativeSpacePos.z().ly());
+		Vector3f relativeVectorKm = new Vector3f((float) relativeSpacePos.x().km(), (float) relativeSpacePos.y().km(), (float) relativeSpacePos.z().km());
 		
 		if(!RenderSystem.isOnRenderThread())
 		{
