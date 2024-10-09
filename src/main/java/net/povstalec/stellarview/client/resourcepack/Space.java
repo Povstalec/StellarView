@@ -14,8 +14,8 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.client.resourcepack.objects.SpaceObject;
-import net.povstalec.stellarview.client.resourcepack.objects.Star;
 import net.povstalec.stellarview.client.resourcepack.objects.StarField;
+import net.povstalec.stellarview.client.resourcepack.objects.distinct.Sol;
 import net.povstalec.stellarview.common.config.OverworldConfig;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.SpaceCoords;
@@ -28,7 +28,7 @@ public final class Space
 	private static final List<StarField> STAR_FIELDS = new ArrayList<StarField>();
 	
 	@Nullable
-	private static Star sol = null;
+	private static Sol sol = null;
 	@Nullable
 	private static SpaceCoords solCoords = null;
 	@Nullable
@@ -79,7 +79,7 @@ public final class Space
 	
 	
 	
-	public static void addSol(Star star)
+	public static void addSol(Sol solStar)
 	{
 		if(sol != null)
 		{
@@ -89,9 +89,9 @@ public final class Space
 
 		StellarView.LOGGER.debug("Setting Sol as a distinct Space Object");
 		
-		sol = star;
-		solCoords = star.getCoords().copy();
-		solAxisRotation = star.getAxisRotation().copy();
+		sol = solStar;
+		solCoords = solStar.getCoords().copy();
+		solAxisRotation = solStar.getAxisRotation().copy();
 		
 		updateSol();
 	}
