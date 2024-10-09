@@ -20,7 +20,7 @@ import net.povstalec.stellarview.common.util.SpaceCoords;
 import net.povstalec.stellarview.common.util.StellarCoordinates;
 import net.povstalec.stellarview.common.util.TextureLayer;
 
-public class OrbitingObject extends SpaceObject
+public class OrbitingObject extends TexturedObject
 {
 	public static final Vector3f INITIAL_ORBIT_VECTOR = new Vector3f(-1, 0, 0);
 	
