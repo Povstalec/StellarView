@@ -182,7 +182,7 @@ public class StarField extends SpaceObject
 		starBuffer = null;
 	}
 	
-	protected void generateStars(BufferBuilder bufferBuilder, SpaceCoords relativeCoords, RandomSource randomsource)
+	protected void generateStars(BufferBuilder bufferBuilder, RandomSource randomsource)
 	{
 		for(int i = 0; i < stars; i++)
 		{
@@ -199,11 +199,11 @@ public class StarField extends SpaceObject
 			
 			axisRotation.quaterniond().transform(cartesian);
 
-			starData.newStar(starInfo, bufferBuilder, randomsource, relativeCoords, cartesian.x, cartesian.y, cartesian.z, i);
+			starData.newStar(starInfo, bufferBuilder, randomsource, cartesian.x, cartesian.y, cartesian.z, i);
 		}
 	}
 	
-	protected RenderedBuffer generateStarBuffer(BufferBuilder bufferBuilder, SpaceCoords relativeCoords)
+	protected RenderedBuffer generateStarBuffer(BufferBuilder bufferBuilder)
 	{
 		RandomSource randomsource = RandomSource.create(seed);
 		bufferBuilder.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR_POS_COLOR_LY);
@@ -212,31 +212,30 @@ public class StarField extends SpaceObject
 		
 		starData = new StarData(totalStars);
 		
-		generateStars(bufferBuilder, relativeCoords, randomsource);
+		generateStars(bufferBuilder, randomsource);
 		
 		int numberOfStars = stars;
 		for(SpiralArm arm : spiralArms) //Draw each arm
 		{
-			arm.generateStars(bufferBuilder, relativeCoords, axisRotation, starData, starInfo, randomsource, numberOfStars, sizeMultiplier);
+			arm.generateStars(bufferBuilder, axisRotation, starData, starInfo, randomsource, numberOfStars, sizeMultiplier);
 			numberOfStars += arm.armStars();
 		}
 		
 		return bufferBuilder.end();
 	}
 	
-	protected RenderedBuffer getStarBuffer(BufferBuilder bufferBuilder, SpaceCoords relativeCoords)
+	protected RenderedBuffer getStarBuffer(BufferBuilder bufferBuilder)
 	{
-		RandomSource randomsource = RandomSource.create(seed);
 		bufferBuilder.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR_POS_COLOR_LY);
 		
 		for(int i = 0; i < totalStars; i++)
 		{
-			starData.createStar(bufferBuilder, randomsource, relativeCoords, i);
+			starData.createStar(bufferBuilder, i);
 		}
 		return bufferBuilder.end();
 	}
 	
-	public StarField setStarBuffer(SpaceCoords relativeCoords)
+	public StarField setStarBuffer()
 	{
 		if(starBuffer != null)
 			starBuffer.close();
@@ -247,7 +246,7 @@ public class StarField extends SpaceObject
 		RenderSystem.setShader(GameRenderer::getPositionShader);
 		BufferBuilder.RenderedBuffer bufferbuilder$renderedbuffer;
 		
-		bufferbuilder$renderedbuffer = getStarBuffer(bufferBuilder, relativeCoords);
+		bufferbuilder$renderedbuffer = getStarBuffer(bufferBuilder);
 		
 		starBuffer.bind();
 		starBuffer.upload(bufferbuilder$renderedbuffer);
@@ -267,7 +266,7 @@ public class StarField extends SpaceObject
 		RenderSystem.setShader(GameRenderer::getPositionShader);
 		BufferBuilder.RenderedBuffer bufferbuilder$renderedbuffer;
 		
-		bufferbuilder$renderedbuffer = generateStarBuffer(bufferBuilder, relativeCoords);
+		bufferbuilder$renderedbuffer = generateStarBuffer(bufferBuilder);
 		
 		starBuffer.bind();
 		starBuffer.upload(bufferbuilder$renderedbuffer);
@@ -369,7 +368,7 @@ public class StarField extends SpaceObject
 			return clumpStarsInCenter;
 		}
 		
-		protected void generateStars(BufferBuilder bufferBuilder, SpaceCoords relativeCoords, AxisRotation axisRotation, StarData starData, StarInfo starInfo, RandomSource randomsource, int numberOfStars, double sizeMultiplier)
+		protected void generateStars(BufferBuilder bufferBuilder, AxisRotation axisRotation, StarData starData, StarInfo starInfo, RandomSource randomsource, int numberOfStars, double sizeMultiplier)
 		{
 			for(int i = 0; i < armStars; i++)
 			{
@@ -397,7 +396,7 @@ public class StarField extends SpaceObject
 				
 				axisRotation.quaterniond().transform(cartesian);
 				
-				starData.newStar(starInfo, bufferBuilder, randomsource, relativeCoords, cartesian.x, cartesian.y, cartesian.z, numberOfStars + i);
+				starData.newStar(starInfo, bufferBuilder, randomsource, cartesian.x, cartesian.y, cartesian.z, numberOfStars + i);
 			}
 		}
 	}
