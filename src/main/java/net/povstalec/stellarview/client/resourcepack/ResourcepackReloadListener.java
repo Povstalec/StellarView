@@ -27,6 +27,7 @@ import net.povstalec.stellarview.client.resourcepack.objects.Planet;
 import net.povstalec.stellarview.client.resourcepack.objects.SpaceObject;
 import net.povstalec.stellarview.client.resourcepack.objects.Star;
 import net.povstalec.stellarview.client.resourcepack.objects.StarField;
+import net.povstalec.stellarview.client.resourcepack.objects.distinct.Sol;
 
 public class ResourcepackReloadListener
 {
@@ -137,13 +138,23 @@ public class ResourcepackReloadListener
 		{
 			try
 			{
-				JsonObject json = GsonHelper.convertToJsonObject(element, "star");
-				Star star = Star.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Star", msg));
 				
 				if(SOL_LOCATION.equals(location))
-					Space.addSol(star);
+				{
+					JsonObject json = GsonHelper.convertToJsonObject(element, "star");
+					Sol sol = Sol.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Star", msg));
+					Space.addSol(sol);
+					
+					spaceObjects.put(location, sol);
+				}
+				else
+				{
+					JsonObject json = GsonHelper.convertToJsonObject(element, "star");
+					Star star = Star.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Star", msg));
+					
+					spaceObjects.put(location, star);
+				}
 				
-				spaceObjects.put(location, star);
 				StellarView.LOGGER.debug("Parsed " + location.toString() + " as Star");
 			}
 			catch(RuntimeException e)
