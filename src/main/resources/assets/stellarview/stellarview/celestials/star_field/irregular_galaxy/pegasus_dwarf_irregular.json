@@ -11,18 +11,6 @@
 	"y_stretch": 0.25,
 	"z_stretch": 0.5,
 	
-	"texture_layers":
-	[
-		{
-			"texture": "stellarview:textures/environment/galaxy/spiral_galaxy.png",
-			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
-			"blend": true,
-			"size": 800,
-			"rotation": 0,
-			"uv": { "flip_uv": false }
-		}
-	],
-	
 	"spiral_arms":
 	[
 		{ "stars": 1000, "arm_rotation": 0, "arm_length": 2.1, "arm_thickness": 2.5 },

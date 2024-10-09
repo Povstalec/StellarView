@@ -19,7 +19,7 @@ import net.povstalec.stellarview.common.util.SpaceCoords;
 import net.povstalec.stellarview.common.util.StellarCoordinates;
 import net.povstalec.stellarview.common.util.TextureLayer;
 
-public class OrbitingObject extends SpaceObject
+public class OrbitingObject extends TexturedObject
 {
 	public static final Vec3 INITIAL_ORBIT_VECTOR = new Vec3(-1, 0, 0);
 	

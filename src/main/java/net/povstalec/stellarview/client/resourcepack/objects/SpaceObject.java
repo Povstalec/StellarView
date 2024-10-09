@@ -1,7 +1,6 @@
 package net.povstalec.stellarview.client.resourcepack.objects;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import javax.annotation.Nullable;
@@ -21,7 +20,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -57,14 +55,12 @@ public abstract class SpaceObject
 	protected SpaceCoords coords; // Absolute coordinates of the center (not necessarily the object itself, since it can be orbiting some other object for example)
 	protected AxisRotation axisRotation;
 	
-	protected ArrayList<TextureLayer> textureLayers;
-	
 	protected FadeOutHandler fadeOutHandler;
 	
 	protected ResourceLocation location;
 	protected double lastDistance = 0; // Last known distance of this object from the View Center, used for sorting
 	
-	public SpaceObject(Optional<ResourceKey<SpaceObject>> parentKey, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler)
+	public SpaceObject(Optional<ResourceKey<SpaceObject>> parentKey, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation, FadeOutHandler fadeOutHandler)
 	{
 		if(parentKey.isPresent())
 				this.parentKey = parentKey.get();
@@ -75,8 +71,6 @@ public abstract class SpaceObject
 			this.coords = coords.right().get().toGalactic().toSpaceCoords();
 		
 		this.axisRotation = axisRotation;
-		
-		this.textureLayers = new ArrayList<TextureLayer>(textureLayers);
 		
 		this.fadeOutHandler = fadeOutHandler;
 	}
@@ -99,11 +93,6 @@ public abstract class SpaceObject
 	public AxisRotation getAxisRotation()
 	{
 		return axisRotation;
-	}
-	
-	public ArrayList<TextureLayer> getTextureLayers()
-	{
-		return textureLayers;
 	}
 	
 	public Optional<ResourceKey<SpaceObject>> getParentKey()
@@ -279,55 +268,10 @@ public abstract class SpaceObject
 				ticks, distance, partialTicks, dayBrightness(viewCenter, size, ticks, level, camera, partialTicks), size, (float) textureLayer.rotation(), textureLayer.shoulBlend());
 	}
 	
-	protected void renderTextureLayers(ViewCenter viewCenter, ClientLevel level, Camera camera, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)
-	{
-		RenderSystem.setShader(GameRenderer::getPositionTexShader);
-
-		for(TextureLayer textureLayer : textureLayers)
-		{
-			renderTextureLayer(textureLayer, viewCenter, level, camera, bufferbuilder, lastMatrix, sphericalCoords, ticks, distance, partialTicks);
-		}
-	}
 	
-	
-	public void render(ViewCenter viewCenter, ClientLevel level, float partialTicks, PoseStack stack, Camera camera, 
-			Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder, 
-			Vector3f parentVector, AxisRotation parentRotation)
-	{
-		long ticks = level.getDayTime();
-		
-		Vector3f positionVector = getPosition(viewCenter, parentRotation, ticks, partialTicks);
-		positionVector.add(parentVector); // Handles orbits 'n stuff
-		// Add parent vector to current coords
-		SpaceCoords coords = getCoords().add(positionVector);
-
-		// Subtract coords of this from View Center coords to get relative coords
-		SphericalCoords sphericalCoords = coords.skyPosition(level, viewCenter, partialTicks);
-		
-		lastDistance = sphericalCoords.r;
-		sphericalCoords.r = DEFAULT_DISTANCE;
-		
-		// Render children behind the parent
-		for(SpaceObject child : children)
-		{
-			if(child.lastDistance >= this.lastDistance)
-				child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, positionVector, this.axisRotation);
-		}
-		
-		// If the object isn't the same we're viewing everything from and it itsn't too far away, render it
-		if(!viewCenter.objectEquals(this) && getFadeOutHandler().getFadeOutEndDistance().toKm() > lastDistance)
-			renderTextureLayers(viewCenter, level, camera, bufferbuilder, stack.last().pose(), sphericalCoords, ticks, lastDistance, partialTicks);
-		
-		if(getFadeOutHandler().getMaxChildRenderDistance().toKm() > lastDistance)
-		{
-			// Render children in front of the parent
-			for(SpaceObject child : children)
-			{
-				if(child.lastDistance < this.lastDistance)
-					child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, positionVector, this.axisRotation);
-			}
-		}
-	}
+	public abstract void render(ViewCenter viewCenter, ClientLevel level, float partialTicks, PoseStack stack, Camera camera, 
+			Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder,
+			Vector3f parentVector, AxisRotation parentRotation);
 	
 	// Sets View Center coords and then renders everything
 	public void renderFrom(ViewCenter viewCenter, ClientLevel level, float partialTicks, PoseStack stack, Camera camera, 
