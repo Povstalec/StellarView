@@ -126,18 +126,8 @@ repositories {
     //     dir 'libs'
     // }
     maven {
-        name = "Modrinth"
-        url = "https://api.modrinth.com/maven"
-        content {
-            includeGroup "maven.modrinth"
-        }
-    }
-    maven {
-        name "jTDev MavenReleases"
-        url "https://maven.jt-dev.tech/releases"
-    }
-    flatDir {
-        dir 'libs'
+        name 'JTDev-Maven-Repository'
+        url 'https://maven.jt-dev.tech/releases'
     }
 }
 
@@ -165,9 +155,8 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
-    implementation(fg.deobf("blank:Corgilib-Forge-1.20.1:4.0.3.2"))
-
-    implementation(fg.deobf("blank:Enhanced-Celestials-Forge-1.20.1:5.0.1.0"))
+    implementation fg.deobf("corgitaco.corgilib:Corgilib-Forge:${minecraft_version}-${corgilib_version}")
+    implementation fg.deobf("corgitaco.enhancedcelestials:Enhanced-Celestials-Forge:${minecraft_version}-${enhanced_celestials_version}")
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
