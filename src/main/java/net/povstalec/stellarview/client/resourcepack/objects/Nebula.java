@@ -21,7 +21,7 @@ import net.povstalec.stellarview.common.util.SphericalCoords;
 import net.povstalec.stellarview.common.util.StellarCoordinates;
 import net.povstalec.stellarview.common.util.TextureLayer;
 
-public class Nebula extends SpaceObject
+public class Nebula extends TexturedObject
 {
 	public static final float MIN_SIZE = 0.4F;
 	

@@ -10,18 +10,6 @@
 	"y_stretch": 0.6,
 	"z_stretch": 1.0,
 	
-	"texture_layers":
-	[
-		{
-			"texture": "stellarview:textures/environment/galaxy/elliptical_galaxy.png",
-			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
-			"blend": true,
-			"size": 800,
-			"rotation": 0,
-			"uv": { "flip_uv": false }
-		}
-	],
-	
 	"star_info":
 	{
 		"star_types":
