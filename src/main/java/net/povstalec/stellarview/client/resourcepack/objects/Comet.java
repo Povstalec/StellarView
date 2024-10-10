@@ -12,6 +12,7 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -26,7 +27,7 @@ import org.joml.Vector3f;
 public class Comet extends OrbitingObject {
     public static final Codec<Comet> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             RESOURCE_KEY_CODEC.optionalFieldOf("parent").forGetter(Comet::getParentKey),
-            SpaceCoords.CODEC.fieldOf("coords").forGetter(Comet::getCoords),
+            Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf("coords").forGetter(object -> Either.left(object.getCoords())),
             AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(Comet::getAxisRotation),
             OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(Comet::getOrbitInfo),
             TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(Comet::getTextureLayers),
@@ -36,11 +37,11 @@ public class Comet extends OrbitingObject {
 
     private final Optional<SublimationTransitionRange> sublimationTransitionRange;
 
-    public final List<Integer> initialAlpha = textureLayers.stream()
+    public final List<Float> initialAlpha = textureLayers.stream()
             .map(textureLayer -> textureLayer.rgba().alpha())
             .collect(Collectors.toList());
 
-    public Comet(Optional<ResourceKey<SpaceObject>> parent, SpaceCoords coords, AxisRotation axisRotation,
+    public Comet(Optional<ResourceKey<SpaceObject>> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
                  Optional<OrbitInfo> orbitInfo, List<TextureLayer> textureLayers,
                  Optional<SublimationTransitionRange> sublimationTransitionRange,
                  FadeOutHandler fadeOutHandler) {
@@ -52,10 +53,10 @@ public class Comet extends OrbitingObject {
         return sublimationTransitionRange;
     }
 
-    public void adjustAlpha(ViewCenter viewCenter, long ticks) {
+    public void adjustAlpha(ViewCenter viewCenter, long ticks, float partialTicks) {
         for (int i = 1; i < textureLayers.size(); i++) {
-            Vector3f cometPosition = this.getPosition(viewCenter, axisRotation, ticks);
-            Vector3f parentPosition = this.getParent().get().getPosition(viewCenter, axisRotation, ticks);
+            Vector3f cometPosition = this.getPosition(viewCenter, ticks, partialTicks);
+            Vector3f parentPosition = this.getParent().get().getPosition(viewCenter, ticks, partialTicks);
             float dist = cometPosition.distance(parentPosition);
 
             float originalAlpha = initialAlpha.get(i);
@@ -73,8 +74,8 @@ public class Comet extends OrbitingObject {
             return;
 
         // Compute the direction to the parent and the required rotation
-        Vector3f cometPosition = this.getPosition(viewCenter, axisRotation, ticks);
-        Vector3f parentPosition = this.getParent().get().getPosition(viewCenter, axisRotation, ticks);
+        Vector3f cometPosition = this.getPosition(viewCenter, ticks, partialTicks);
+        Vector3f parentPosition = this.getParent().get().getPosition(viewCenter, ticks, partialTicks);
         Vector3f directionToParent = new Vector3f(parentPosition.x - cometPosition.x,
                 parentPosition.y - cometPosition.y,
                 parentPosition.z - cometPosition.z);
@@ -101,7 +102,7 @@ public class Comet extends OrbitingObject {
         Vector3f corner11 = StellarCoordinates.placeOnSphere(size, size, sphericalCoords, rotation);
         Vector3f corner01 = StellarCoordinates.placeOnSphere(-size, size, sphericalCoords, rotation);
 
-        adjustAlpha(viewCenter, ticks);
+        adjustAlpha(viewCenter, ticks, partialTicks);
 
         if(textureLayer.shoulBlend())
             RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
