@@ -68,22 +68,25 @@ public abstract class TexturedObject extends SpaceObject
 		lastDistance = sphericalCoords.r;
 		sphericalCoords.r = DEFAULT_DISTANCE;
 		
-		// Render children behind the parent
-		for(SpaceObject child : children)
+		if(getFadeOutHandler().getMaxChildRenderDistance().toKm() > lastDistance)
 		{
-			if(child.lastDistance >= this.lastDistance)
-				child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, positionVector, this.axisRotation);
+			for(SpaceObject child : children)
+			{
+				// Render child behind the parent
+				if(child.lastDistance >= this.lastDistance)
+					child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, positionVector, this.axisRotation);
+			}
 		}
 		
-		// If the object isn't the same we're viewing everything from and it itsn't too far away, render it
+		// If the object isn't the same we're viewing everything from and it isn't too far away, render it
 		if(!viewCenter.objectEquals(this) && getFadeOutHandler().getFadeOutEndDistance().toKm() > lastDistance)
 			renderTextureLayers(viewCenter, level, camera, bufferbuilder, stack.last().pose(), sphericalCoords, ticks, lastDistance, partialTicks);
 		
 		if(getFadeOutHandler().getMaxChildRenderDistance().toKm() > lastDistance)
 		{
-			// Render children in front of the parent
 			for(SpaceObject child : children)
 			{
+				// Render child in front of the parent
 				if(child.lastDistance < this.lastDistance)
 					child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, positionVector, this.axisRotation);
 			}
