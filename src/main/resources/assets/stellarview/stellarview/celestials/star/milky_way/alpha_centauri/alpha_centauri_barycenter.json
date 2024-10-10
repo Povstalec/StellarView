@@ -1,5 +1,12 @@
 {
 	"coords": { "right_ascension": {"hours": 14, "minutes": 39, "seconds": 36}, "declination": {"degrees": -60, "minutes": 50, "seconds": 7}, "distance": {"ly": 4, "km": 3254490000000} },
 	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
-	"texture_layers": []
+	"texture_layers": [],
+	
+	"fade_out_handler":
+	{
+		"fade_out_start_distance": { "ly": 3000000 },
+		"fade_out_end_distance": { "ly": 5000000 },
+		"max_child_render_distance": { "ly": 5000000 }
+	}
 }
