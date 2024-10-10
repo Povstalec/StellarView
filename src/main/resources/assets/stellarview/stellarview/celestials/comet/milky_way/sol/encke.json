@@ -3,8 +3,8 @@
   "coords": { "x": {"ly": 0}, "y": {"ly": 0}, "z": {"ly": 0} },
   "axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
   "sublimation_transition_range": {
-    "upper_bound": 747990000,
-    "lower_bound": 373990000
+    "upper_bound": 747990000000,
+    "lower_bound": 373990000000
   },
   "orbit_info":
   {
@@ -28,7 +28,7 @@
       },
       "blend": false,
       "size": 10,
-      "min_size": 0.3,
+      "min_size": 10,
       "clamp_at_min_size": false,
       "rotation": 0,
       "uv": { "flip_uv": false }
