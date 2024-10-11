@@ -7,17 +7,7 @@
 	"texture_layers":
 	[
 		{
-			"texture": "stellarview:textures/environment/halo_template.png",
-			"rgba": {"red": 255, "green": 0, "blue": 0, "alpha": 255},
-			"blend": true,
-			"size": 4000000000,
-			"min_size": 0.9,
-			"clamp_at_min_size": true,
-			"rotation": 0,
-			"uv": { "flip_uv": false }
-		},
-		{
-			"texture": "stellarview:textures/environment/star/red_star.png",
+			"texture": "stellarview:textures/environment/star/pa_99_n2.png",
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": true,
 			"size": 4000000000,
