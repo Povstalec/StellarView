@@ -1,20 +1,16 @@
 {
-	"coords": { "right_ascension": {"hours": 5, "minutes": 55, "seconds": 10.30536}, "declination": {"degrees": 41, "minutes": 16, "seconds": 9}, "distance": {"ly": 488} },
+	"coords": { "right_ascension": {"hours": 5, "minutes": 35, "seconds": 28.03}, "declination": {"degrees": -69, "minutes": 16, "seconds": 11.79}, "distance": {"ly": 168000} },
 	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
-		
-	"min_star_size": 0.3,
-	
-
 	"texture_layers":
 	[
 		{
-			"texture": "stellarview:textures/environment/star/betelgeuse.png",
+			"texture": "stellarview:textures/environment/star/sn_1987a.png",
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": true,
 			"size": 4488626469,
-			"min_size": 0.9,
+			"min_size": 1,
 			"clamp_at_min_size": true,
-			"rotation": 25,
+			"rotation": -32,
 			"uv": { "flip_uv": false }
 		}
 	],
@@ -55,9 +51,8 @@
 				}
 			]
 		},
-		
 		"max_size_multiplier": 15,
-		"start_ticks": 5588000,
-		"duration_ticks": 576000
+		"start_ticks": 2370000,
+		"duration_ticks": 760000
 	}
 }
