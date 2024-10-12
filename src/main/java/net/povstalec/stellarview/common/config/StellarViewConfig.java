@@ -8,7 +8,6 @@ import net.povstalec.stellarview.StellarView;
 
 import java.io.File;
 
-@EventBusSubscriber
 public class StellarViewConfig
 {
 	private static final ModConfigSpec.Builder CLIENT_BUILDER = new ModConfigSpec.Builder();

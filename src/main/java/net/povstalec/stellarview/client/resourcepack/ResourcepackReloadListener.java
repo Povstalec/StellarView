@@ -14,6 +14,7 @@ import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
@@ -109,7 +110,7 @@ public class ResourcepackReloadListener
 				ViewCenter viewCenter;
 				
 				if(StellarViewOverworldEffects.OVERWORLD_EFFECTS.equals(location))
-					viewCenter = DefaultViewCenters.Overworld.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(/*false, msg -> StellarView.LOGGER.error("Failed to parse View Center", msg)*/);
+					viewCenter = DefaultViewCenters.Overworld.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(/*TODO: false, msg -> StellarView.LOGGER.error("Failed to parse View Center", msg)*/);
 				else if(StellarViewNetherEffects.NETHER_EFFECTS.equals(location))
 					viewCenter = DefaultViewCenters.Nether.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(/*false, msg -> StellarView.LOGGER.error("Failed to parse View Center", msg)*/);
 				else if(StellarViewEndEffects.END_EFFECTS.equals(location))
@@ -275,7 +276,7 @@ public class ResourcepackReloadListener
 		}
 		
 		
-		
+		@SubscribeEvent
 		public static void registerReloadListener(RegisterClientReloadListenersEvent event)
 		{
 			event.registerReloadListener(new ReloadListener());

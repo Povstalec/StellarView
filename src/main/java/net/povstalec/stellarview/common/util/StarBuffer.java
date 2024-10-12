@@ -75,7 +75,7 @@ public class StarBuffer implements AutoCloseable
 			formatEquals = true;
 		}
 		
-		if(!drawState.indexOnly())
+		if(false /*TODO: !drawState.indexOnly()*/)
 		{
 			if(!formatEquals)
 				GlStateManager._glBindBuffer(GL15C.GL_ARRAY_BUFFER, this.vertexBufferId);
@@ -89,7 +89,7 @@ public class StarBuffer implements AutoCloseable
 	@Nullable
 	private RenderSystem.AutoStorageIndexBuffer uploadIndexBuffer(MeshData.DrawState drawState, ByteBuffer indexBuffer)
 	{
-		if(!drawState.sequentialIndex())
+		if(false /*TODO: !drawState.sequentialIndex()*/)
 		{
 			GlStateManager._glBindBuffer(GL15C.GL_ELEMENT_ARRAY_BUFFER, this.indexBufferId);
 			RenderSystem.glBufferData(GL15C.GL_ELEMENT_ARRAY_BUFFER, indexBuffer, GL15C.GL_STATIC_DRAW);
@@ -157,9 +157,6 @@ public class StarBuffer implements AutoCloseable
 		
 		if(shaderInstance.PROJECTION_MATRIX != null)
 			shaderInstance.PROJECTION_MATRIX.set(projectionMatrix);
-		
-		if(shaderInstance.INVERSE_VIEW_ROTATION_MATRIX != null)
-			shaderInstance.INVERSE_VIEW_ROTATION_MATRIX.set(RenderSystem.getInverseViewRotationMatrix());
 		
 		if(shaderInstance.COLOR_MODULATOR != null)
 			shaderInstance.COLOR_MODULATOR.set(RenderSystem.getShaderColor());

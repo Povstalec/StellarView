@@ -50,8 +50,6 @@ public class StellarView
 		modContainer.registerConfig(ModConfig.Type.CLIENT, StellarViewConfig.CLIENT_CONFIG, MODID + "-client.toml");
 		
 		modContainer.registerExtensionPoint(IConfigScreenFactory.class, (mc, parent) -> new ConfigScreen(parent));
-		
-		NeoForge.EVENT_BUS.register(this);
 	}
 
     @EventBusSubscriber(modid = StellarView.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
