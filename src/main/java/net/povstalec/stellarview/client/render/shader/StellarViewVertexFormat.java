@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 @EventBusSubscriber(modid = StellarView.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class StellarViewVertexFormat
 {
-	public static final DeferredVertexThing<VertexFormatElement> ELEMENT_HEIGHT_WIDTH_SIZE = register(0, VertexFormatElement.Type.FLOAT, VertexFormatElement.Usage.POSITION, 3);
+	public static final DeferredVertexThing<VertexFormatElement> ELEMENT_HEIGHT_WIDTH_SIZE = register(VertexFormatElement.Type.FLOAT, VertexFormatElement.Usage.GENERIC, 3);
 	
 	// NOTE: The order of elements very much MATTERS!!!
 	public static final DeferredVertexThing<VertexFormat> STAR_POS_COLOR_LY = new DeferredVertexThing<>(() -> VertexFormat.builder()
@@ -29,8 +29,9 @@ public class StellarViewVertexFormat
 	// start. The reason the IDs are limited is that later on, an Integer is used as a bitmap for indexing which VertexFormatElements are used
 	// which then means that you can only have 32 different ones, as an Integer is 32 bits. This is a new limitation and hopefully will be adapted
 	// in the future in a different manner.
-	private static DeferredVertexThing<VertexFormatElement> register(int index, VertexFormatElement.Type type, VertexFormatElement.Usage usage, int count) {
-		return new DeferredVertexThing<>(() -> VertexFormatElement.register(VertexFormatElement.ELEMENTS.size(), index, type, usage, count));
+	private static DeferredVertexThing<VertexFormatElement> register(VertexFormatElement.Type type, VertexFormatElement.Usage usage, int count) {
+		final int index = (int) VertexFormatElement.ELEMENTS.stream().filter((el) -> el.usage().equals(usage)).count();
+        return new DeferredVertexThing<>(() -> VertexFormatElement.register(VertexFormatElement.ELEMENTS.size(), index, type, usage, count));
 	}
 
 	@SubscribeEvent
