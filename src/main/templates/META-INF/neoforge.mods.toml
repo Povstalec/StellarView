@@ -9,7 +9,8 @@ version="${mod_version}"
 displayName="${mod_name}"
 #logoFile="stellarview_large.png"
 credits="Noobly Walker, tehgreatdoge"
-authors="Woldericz_Junior"
+authors="${mod_authors}"
+description="""${mod_description}"""
 
 [[accessTransformers]]
 file="META-INF/accesstransformer.cfg"
