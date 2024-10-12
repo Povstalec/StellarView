@@ -192,7 +192,7 @@ public class StarField extends SpaceObject
 	protected MeshData generateStarBuffer(Tesselator tesselator)
 	{
 		RandomSource randomsource = RandomSource.create(seed);
-		final var bufferBuilder = tesselator.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR_POS_COLOR_LY);
+		final var bufferBuilder = tesselator.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR_POS_COLOR_LY.get());
 		
 		double sizeMultiplier = diameter / 30D;
 		
@@ -212,7 +212,7 @@ public class StarField extends SpaceObject
 	
 	protected MeshData getStarBuffer(Tesselator tesselator)
 	{
-		final var bufferBuilder = tesselator.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR_POS_COLOR_LY);
+		final var bufferBuilder = tesselator.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR_POS_COLOR_LY.get());
 		
 		for(int i = 0; i < totalStars; i++)
 		{

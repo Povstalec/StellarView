@@ -21,7 +21,7 @@ public class StellarViewShaders
         @SubscribeEvent
         public static void registerShaders(RegisterShadersEvent event) throws IOException
         {
-            event.registerShader(new StarShaderInstance(event.getResourceProvider(), ResourceLocation.fromNamespaceAndPath(StellarView.MODID,"rendertype_star"), StellarViewVertexFormat.STAR_POS_COLOR_LY),
+            event.registerShader(new StarShaderInstance(event.getResourceProvider(), ResourceLocation.fromNamespaceAndPath(StellarView.MODID,"rendertype_star"), StellarViewVertexFormat.STAR_POS_COLOR_LY.get()),
             		(shaderInstance) ->
             {
             	rendertypeStarShater = (StarShaderInstance) shaderInstance;

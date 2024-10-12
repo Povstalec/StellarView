@@ -150,7 +150,7 @@ public class StarData
 	}
 
 	public static void addStarHeightWidthSize(BufferBuilder builder, float height, float width, float size) {
-		long i = builder.beginElement(StellarViewVertexFormat.ELEMENT_HEIGHT_WIDTH_SIZE);
+		long i = builder.beginElement(StellarViewVertexFormat.ELEMENT_HEIGHT_WIDTH_SIZE.get());
 		if (i != -1L) {
 			MemoryUtil.memPutFloat(i, height);
 			MemoryUtil.memPutFloat(i + Float.BYTES, width);
