@@ -1,18 +1,19 @@
 package net.povstalec.stellarview.client.resourcepack;
 
-import com.mojang.blaze3d.vertex.*;
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
-
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferUploader;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.common.util.Color;
 import net.povstalec.stellarview.common.util.UV;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 public class Skybox
 {

@@ -1,23 +1,19 @@
 package net.povstalec.stellarview.common.util;
 
-import java.nio.ByteBuffer;
-
-import javax.annotation.Nullable;
-
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.platform.Window;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.MeshData;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.client.Minecraft;
+import net.povstalec.stellarview.client.render.shader.StarShaderInstance;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL15C;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.VertexFormat;
-
-import net.minecraft.client.Minecraft;
-import net.povstalec.stellarview.client.render.shader.StarShaderInstance;
+import javax.annotation.Nullable;
+import java.nio.ByteBuffer;
 
 public class StarBuffer implements AutoCloseable
 {

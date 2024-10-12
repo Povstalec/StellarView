@@ -1,10 +1,5 @@
 package net.povstalec.stellarview.client.render.level;
 
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
-
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.DimensionSpecialEffects;
@@ -14,6 +9,8 @@ import net.povstalec.stellarview.client.render.level.util.StellarViewLightmapEff
 import net.povstalec.stellarview.client.resourcepack.ViewCenters;
 import net.povstalec.stellarview.common.config.OverworldConfig;
 import net.povstalec.stellarview.compatibility.enhancedcelestials.EnhancedCelestialsCompatibility;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 public class StellarViewOverworldEffects extends DimensionSpecialEffects.OverworldEffects
 {

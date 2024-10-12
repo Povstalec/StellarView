@@ -1,28 +1,20 @@
 package net.povstalec.stellarview.client.resourcepack.objects;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import com.mojang.blaze3d.vertex.Tesselator;
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
-
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.datafixers.util.Either;
-
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceKey;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
-import net.povstalec.stellarview.common.util.AxisRotation;
-import net.povstalec.stellarview.common.util.SpaceCoords;
-import net.povstalec.stellarview.common.util.SphericalCoords;
-import net.povstalec.stellarview.common.util.StellarCoordinates;
-import net.povstalec.stellarview.common.util.TextureLayer;
+import net.povstalec.stellarview.common.util.*;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public abstract class TexturedObject extends SpaceObject
 {

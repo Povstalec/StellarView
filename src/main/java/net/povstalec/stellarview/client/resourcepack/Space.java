@@ -1,17 +1,6 @@
 package net.povstalec.stellarview.client.resourcepack;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import com.mojang.blaze3d.vertex.Tesselator;
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
-
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.povstalec.stellarview.StellarView;
@@ -21,6 +10,12 @@ import net.povstalec.stellarview.client.resourcepack.objects.distinct.Sol;
 import net.povstalec.stellarview.common.config.OverworldConfig;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.SpaceCoords;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class Space
 {

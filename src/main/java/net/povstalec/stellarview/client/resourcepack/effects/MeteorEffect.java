@@ -1,29 +1,26 @@
 package net.povstalec.stellarview.client.resourcepack.effects;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
-import com.mojang.blaze3d.vertex.*;
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
-
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferUploader;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Axis;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.util.Mth;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.config.GeneralConfig;
-import net.povstalec.stellarview.common.util.Color;
-import net.povstalec.stellarview.common.util.SphericalCoords;
-import net.povstalec.stellarview.common.util.StellarCoordinates;
-import net.povstalec.stellarview.common.util.TextureLayer;
-import net.povstalec.stellarview.common.util.UV;
+import net.povstalec.stellarview.common.util.*;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public abstract class MeteorEffect
 {

@@ -1,7 +1,6 @@
 package net.povstalec.stellarview.common.util;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
-
 import net.minecraft.util.RandomSource;
 import net.povstalec.stellarview.client.render.shader.StellarViewVertexFormat;
 import net.povstalec.stellarview.client.resourcepack.StarInfo;

@@ -1,7 +1,5 @@
 package net.povstalec.stellarview.client.screens.config;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -10,6 +8,8 @@ import net.minecraft.network.chat.Component;
 import net.povstalec.stellarview.client.screens.config.ConfigList.BooleanConfigEntry;
 import net.povstalec.stellarview.client.screens.config.ConfigList.SliderConfigEntry;
 import net.povstalec.stellarview.common.config.OverworldConfig;
+
+import javax.annotation.Nullable;
 
 public class OverworldConfigScreen extends Screen
 {

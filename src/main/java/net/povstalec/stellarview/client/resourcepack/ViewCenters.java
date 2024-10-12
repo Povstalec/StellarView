@@ -1,15 +1,12 @@
 package net.povstalec.stellarview.client.resourcepack;
 
-import java.util.HashMap;
-
-import org.joml.Matrix4f;
-
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.StellarView;
+import org.joml.Matrix4f;
+
+import java.util.HashMap;
 
 public final class ViewCenters
 {

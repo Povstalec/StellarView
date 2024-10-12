@@ -1,21 +1,16 @@
 package net.povstalec.stellarview.client.resourcepack.objects.distinct;
 
-import java.util.List;
-import java.util.Optional;
-
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-
 import net.minecraft.resources.ResourceKey;
 import net.povstalec.stellarview.client.resourcepack.objects.SpaceObject;
 import net.povstalec.stellarview.client.resourcepack.objects.Star;
-import net.povstalec.stellarview.common.util.AxisRotation;
-import net.povstalec.stellarview.common.util.Color;
-import net.povstalec.stellarview.common.util.SpaceCoords;
-import net.povstalec.stellarview.common.util.StellarCoordinates;
+import net.povstalec.stellarview.common.util.*;
 import net.povstalec.stellarview.common.util.StellarCoordinates.Equatorial;
-import net.povstalec.stellarview.common.util.TextureLayer;
+
+import java.util.List;
+import java.util.Optional;
 
 public class Sol extends Star
 {

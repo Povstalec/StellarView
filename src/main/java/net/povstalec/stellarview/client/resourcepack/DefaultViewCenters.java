@@ -1,11 +1,7 @@
 package net.povstalec.stellarview.client.resourcepack;
 
-import java.util.List;
-import java.util.Optional;
-
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-
 import net.minecraft.resources.ResourceKey;
 import net.povstalec.stellarview.client.resourcepack.effects.MeteorEffect;
 import net.povstalec.stellarview.client.resourcepack.objects.SpaceObject;
@@ -13,6 +9,9 @@ import net.povstalec.stellarview.common.config.EndConfig;
 import net.povstalec.stellarview.common.config.NetherConfig;
 import net.povstalec.stellarview.common.config.OverworldConfig;
 import net.povstalec.stellarview.common.util.AxisRotation;
+
+import java.util.List;
+import java.util.Optional;
 
 public final class DefaultViewCenters
 {

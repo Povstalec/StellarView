@@ -1,24 +1,21 @@
 package net.povstalec.stellarview.client.resourcepack.objects;
 
-import java.util.List;
-import java.util.Optional;
-
-import javax.annotation.Nullable;
-
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
-
 import com.mojang.datafixers.util.Either;
 import com.mojang.math.Axis;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-
 import net.minecraft.resources.ResourceKey;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 import net.povstalec.stellarview.common.util.StellarCoordinates;
 import net.povstalec.stellarview.common.util.TextureLayer;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Optional;
 
 public class OrbitingObject extends TexturedObject
 {

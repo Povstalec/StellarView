@@ -1,16 +1,14 @@
 package net.povstalec.stellarview.common.util;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.povstalec.stellarview.client.resourcepack.ViewCenter;
+import net.povstalec.stellarview.common.config.GeneralConfig;
 import org.joml.Quaterniond;
 import org.joml.Quaternionf;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
-
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.povstalec.stellarview.client.resourcepack.ViewCenter;
-import net.povstalec.stellarview.common.config.GeneralConfig;
 
 public class SpaceCoords
 {
