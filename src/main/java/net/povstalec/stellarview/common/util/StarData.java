@@ -142,15 +142,9 @@ public class StarData
 			double height = deformations[i][0] * (aLocation * cosRandom - bLocation * sinRandom);
 			double width = deformations[i][1] * (bLocation * cosRandom + aLocation * sinRandom);
 
-			builder.addVertex((float) starCoords[i][0], (float) starCoords[i][1], (float) starCoords[i][2]).setColor(starRGBA[i][0], starRGBA[i][1], starRGBA[i][2], starRGBA[i][3]);
-			// These next few lines add a "custom" element defined as HeightWidthSize in StellarViewVertexFormat
-//			builder.putFloat(0, (float) height);
-//			builder.putFloat(4, (float) width);
-//			builder.putFloat(8, (float) starSizes[i]);
-//			builder.nextElement();
-//
-//			builder.endVertex();
-			builder.addVertex((float) height, (float) width, (float) starSizes[i]);
+			builder.addVertex((float) starCoords[i][0], (float) starCoords[i][1], (float) starCoords[i][2])
+					.setColor(starRGBA[i][0], starRGBA[i][1], starRGBA[i][2], starRGBA[i][3]);
+			builder.addVertex((float) height, (float) width, (float) starSizes[i]).setColor(0xffffffff);
 		}
 	}
 }
