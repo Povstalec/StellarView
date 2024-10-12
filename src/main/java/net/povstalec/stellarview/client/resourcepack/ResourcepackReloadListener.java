@@ -13,9 +13,10 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.client.render.level.StellarViewEndEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewNetherEffects;
@@ -46,9 +47,9 @@ public class ResourcepackReloadListener
 
 	public static final String NEBULA = "nebula";
 	
-	private static final ResourceLocation SOL_LOCATION = new ResourceLocation(StellarView.MODID, "star/milky_way/sol");
+	private static final ResourceLocation SOL_LOCATION = ResourceLocation.fromNamespaceAndPath(StellarView.MODID, "star/milky_way/sol");
 	
-	@Mod.EventBusSubscriber(modid = StellarView.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+	@EventBusSubscriber(modid = StellarView.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 	public static class ReloadListener extends SimpleJsonResourceReloadListener
 	{
 		public ReloadListener()
@@ -108,13 +109,13 @@ public class ResourcepackReloadListener
 				ViewCenter viewCenter;
 				
 				if(StellarViewOverworldEffects.OVERWORLD_EFFECTS.equals(location))
-					viewCenter = DefaultViewCenters.Overworld.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse View Center", msg));
+					viewCenter = DefaultViewCenters.Overworld.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(/*false, msg -> StellarView.LOGGER.error("Failed to parse View Center", msg)*/);
 				else if(StellarViewNetherEffects.NETHER_EFFECTS.equals(location))
-					viewCenter = DefaultViewCenters.Nether.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse View Center", msg));
+					viewCenter = DefaultViewCenters.Nether.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(/*false, msg -> StellarView.LOGGER.error("Failed to parse View Center", msg)*/);
 				else if(StellarViewEndEffects.END_EFFECTS.equals(location))
-					viewCenter = DefaultViewCenters.End.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse View Center", msg));
+					viewCenter = DefaultViewCenters.End.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(/*false, msg -> StellarView.LOGGER.error("Failed to parse View Center", msg)*/);
 				else
-					viewCenter = ViewCenter.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse View Center", msg));
+					viewCenter = ViewCenter.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(/*false, msg -> StellarView.LOGGER.error("Failed to parse View Center", msg)*/);
 				
 				viewCenters.put(location, viewCenter);
 			}
@@ -142,7 +143,7 @@ public class ResourcepackReloadListener
 				if(SOL_LOCATION.equals(location))
 				{
 					JsonObject json = GsonHelper.convertToJsonObject(element, "star");
-					Sol sol = Sol.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Star", msg));
+					Sol sol = Sol.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(/*false, msg -> StellarView.LOGGER.error("Failed to parse Star", msg)*/);
 					Space.addSol(sol);
 					
 					spaceObjects.put(location, sol);
@@ -150,7 +151,7 @@ public class ResourcepackReloadListener
 				else
 				{
 					JsonObject json = GsonHelper.convertToJsonObject(element, "star");
-					Star star = Star.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Star", msg));
+					Star star = Star.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(/*false, msg -> StellarView.LOGGER.error("Failed to parse Star", msg)*/);
 					
 					spaceObjects.put(location, star);
 				}
@@ -168,7 +169,7 @@ public class ResourcepackReloadListener
 			try
 			{
 				JsonObject json = GsonHelper.convertToJsonObject(element, "black_hole");
-				BlackHole blackHole = BlackHole.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Star", msg));
+				BlackHole blackHole = BlackHole.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(/*false, msg -> StellarView.LOGGER.error("Failed to parse Star", msg)*/);
 				
 				spaceObjects.put(location, blackHole);
 				StellarView.LOGGER.debug("Parsed " + location.toString() + " as Black Hole");
@@ -184,7 +185,7 @@ public class ResourcepackReloadListener
 			try
 			{
 				JsonObject json = GsonHelper.convertToJsonObject(element, "planet");
-				Planet planet = Planet.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Planet", msg));
+				Planet planet = Planet.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(/*false, msg -> StellarView.LOGGER.error("Failed to parse Planet", msg)*/);
 
 				spaceObjects.put(location, planet);
 				StellarView.LOGGER.debug("Parsed " + location.toString() + " as Planet");
@@ -200,7 +201,7 @@ public class ResourcepackReloadListener
 			try
 			{
 				JsonObject json = GsonHelper.convertToJsonObject(element, "moon");
-				Moon moon = Moon.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Moon", msg));
+				Moon moon = Moon.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(/*false, msg -> StellarView.LOGGER.error("Failed to parse Moon", msg)*/);
 
 				spaceObjects.put(location, moon);
 				StellarView.LOGGER.debug("Parsed " + location.toString() + " as Moon");
@@ -216,7 +217,7 @@ public class ResourcepackReloadListener
 			try
 			{
 				JsonObject json = GsonHelper.convertToJsonObject(element, "star_field");
-				StarField starField = StarField.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Star Field", msg));
+				StarField starField = StarField.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(/*false, msg -> StellarView.LOGGER.error("Failed to parse Star Field", msg)*/);
 
 				spaceObjects.put(location, starField);
 				Space.addStarField(starField);
@@ -233,7 +234,7 @@ public class ResourcepackReloadListener
 			try
 			{
 				JsonObject json = GsonHelper.convertToJsonObject(element, "nebula");
-				Nebula nebula = Nebula.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Nebula", msg));
+				Nebula nebula = Nebula.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(/*false, msg -> StellarView.LOGGER.error("Failed to parse Nebula", msg)*/);
 
 				spaceObjects.put(location, nebula);
 				StellarView.LOGGER.debug("Parsed " + location.toString() + " as Nebula");

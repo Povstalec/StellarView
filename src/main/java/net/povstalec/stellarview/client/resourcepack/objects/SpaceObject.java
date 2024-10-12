@@ -41,7 +41,7 @@ public abstract class SpaceObject
 {
 	public static final float DEFAULT_DISTANCE = 100.0F;
 	
-	public static final ResourceLocation SPACE_OBJECT_LOCATION = new ResourceLocation(StellarView.MODID, "space_object");
+	public static final ResourceLocation SPACE_OBJECT_LOCATION = ResourceLocation.fromNamespaceAndPath(StellarView.MODID, "space_object");
 	public static final ResourceKey<Registry<SpaceObject>> REGISTRY_KEY = ResourceKey.createRegistryKey(SPACE_OBJECT_LOCATION);
 	public static final Codec<ResourceKey<SpaceObject>> RESOURCE_KEY_CODEC = ResourceKey.codec(REGISTRY_KEY);
 	

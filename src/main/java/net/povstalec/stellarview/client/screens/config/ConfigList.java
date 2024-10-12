@@ -9,7 +9,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.client.gui.widget.ForgeSlider;
+import net.neoforged.neoforge.client.gui.widget.ExtendedSlider;
 import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.common.config.StellarViewConfigValue;
 
@@ -139,7 +139,7 @@ public class ConfigList extends ObjectSelectionList<ConfigList.ConfigEntry>
 		{
 			this.value = value;
 			this.multiplier = multiplier;
-			this.sliderButton = new ForgeSlider(0, 0, 200, 20, 
+			this.sliderButton = new ExtendedSlider(0, 0, 200, 20, 
 					component1, component2,
 					value.getMin() * multiplier, value.getMax() * multiplier, value.get() * multiplier, multiplier, 1, true);
 		}
@@ -152,13 +152,13 @@ public class ConfigList extends ObjectSelectionList<ConfigList.ConfigEntry>
 		protected void reset()
 		{
 			this.value.set(this.value.getDefault());
-			((ForgeSlider) this.sliderButton).setValue((double) this.value.get() * multiplier);
+			((ExtendedSlider) this.sliderButton).setValue((double) this.value.get() * multiplier);
 			super.reset();
 		}
 		
 		protected void onChanged()
 		{
-	    	value.set((int) ((ForgeSlider) this.sliderButton).getValue() / multiplier);
+	    	value.set((int) ((ExtendedSlider) this.sliderButton).getValue() / multiplier);
 	    	update();
 		}
 	    
@@ -166,7 +166,7 @@ public class ConfigList extends ObjectSelectionList<ConfigList.ConfigEntry>
 	    public boolean mouseClicked(double mouseX, double mouseY, int key)
 	    {
 	    	if(this.sliderButton.isMouseOver(mouseX, mouseY))
-	    		((ForgeSlider) this.sliderButton).mouseClicked(mouseX, mouseY, key);
+	    		((ExtendedSlider) this.sliderButton).mouseClicked(mouseX, mouseY, key);
 	    	onChanged();
 	    	
 			return super.mouseClicked(mouseX, mouseY, key);
@@ -176,7 +176,7 @@ public class ConfigList extends ObjectSelectionList<ConfigList.ConfigEntry>
 	    public boolean mouseDragged(double mouseX, double mouseY, int key, double dragX, double dragY)
 	    {
 	    	if(this.sliderButton.isMouseOver(mouseX, mouseY))
-	    		((ForgeSlider) this.sliderButton).mouseDragged(mouseX, mouseY, key, dragX, dragY);
+	    		((ExtendedSlider) this.sliderButton).mouseDragged(mouseX, mouseY, key, dragX, dragY);
 	    	
 			return super.mouseDragged(mouseX, mouseY, key, dragX, dragY);
 	    }
@@ -185,7 +185,7 @@ public class ConfigList extends ObjectSelectionList<ConfigList.ConfigEntry>
 	    public boolean mouseReleased(double mouseX, double mouseY, int key)
 	    {
 	    	if(this.sliderButton.isMouseOver(mouseX, mouseY))
-	    		((ForgeSlider) this.sliderButton).mouseReleased(mouseX, mouseY, key);
+	    		((ExtendedSlider) this.sliderButton).mouseReleased(mouseX, mouseY, key);
 	    	onChanged();
 	    	
 			return super.mouseReleased(mouseX, mouseY, key);
@@ -195,7 +195,7 @@ public class ConfigList extends ObjectSelectionList<ConfigList.ConfigEntry>
 	    public void mouseMoved(double mouseX, double mouseY)
 	    {
 	    	if(this.sliderButton.isMouseOver(mouseX, mouseY))
-	    		((ForgeSlider) this.sliderButton).mouseMoved(mouseX, mouseY);
+	    		((ExtendedSlider) this.sliderButton).mouseMoved(mouseX, mouseY);
 	    	
 			super.mouseMoved(mouseX, mouseY);
 	    }

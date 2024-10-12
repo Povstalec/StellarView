@@ -166,7 +166,7 @@ public class Skybox
 		
 		public SkyboxFacade(ResourceLocation texture, UV.Quad uv, Color.IntRGBA rgba)
 		{
-			this.texture = new ResourceLocation(texture.getNamespace(), "textures/" + texture.getPath());
+			this.texture = ResourceLocation.fromNamespaceAndPath(texture.getNamespace(), "textures/" + texture.getPath());
 			this.uv = uv;
 			this.rgba = rgba;
 		}

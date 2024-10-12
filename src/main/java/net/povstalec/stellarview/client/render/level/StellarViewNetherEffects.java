@@ -17,15 +17,14 @@ import net.povstalec.stellarview.compatibility.enhancedcelestials.EnhancedCelest
 
 public class StellarViewNetherEffects extends DimensionSpecialEffects.NetherEffects
 {
-	public static final ResourceLocation NETHER_EFFECTS = new ResourceLocation("the_nether");
+	public static final ResourceLocation NETHER_EFFECTS = ResourceLocation.withDefaultNamespace("the_nether");
 	
 	public StellarViewNetherEffects() {}
-	
+
 	@Override
-	public boolean renderSky(ClientLevel level, int ticks, float partialTick, PoseStack poseStack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
-    {
+	public boolean renderSky(ClientLevel level, int ticks, float partialTick, Matrix4f modelViewMatrix, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog) {
 		if(NetherConfig.replace_vanilla.get())
-			return ViewCenters.renderViewCenterSky(level, ticks, partialTick, poseStack, camera, projectionMatrix, isFoggy, setupFog);
+			return ViewCenters.renderViewCenterSky(level, ticks, partialTick, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog);
 		
         return false;
     }
