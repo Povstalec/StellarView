@@ -3,8 +3,10 @@ package net.povstalec.stellarview.common.util;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 
 import net.minecraft.util.RandomSource;
+import net.povstalec.stellarview.client.render.shader.StellarViewVertexFormat;
 import net.povstalec.stellarview.client.resourcepack.StarInfo;
 import net.povstalec.stellarview.client.resourcepack.objects.StarLike;
+import org.lwjgl.system.MemoryUtil;
 
 public class StarData
 {
@@ -142,9 +144,35 @@ public class StarData
 			double height = deformations[i][0] * (aLocation * cosRandom - bLocation * sinRandom);
 			double width = deformations[i][1] * (bLocation * cosRandom + aLocation * sinRandom);
 
-			builder.addVertex((float) starCoords[i][0], (float) starCoords[i][1], (float) starCoords[i][2])
-					.setColor(starRGBA[i][0], starRGBA[i][1], starRGBA[i][2], starRGBA[i][3]);
-			builder.addVertex((float) height, (float) width, (float) starSizes[i]).setColor(0xffffffff);
+			addStarPos(builder, (float) starCoords[i][0], (float) starCoords[i][1], (float) starCoords[i][2]);
+			addStarColor(builder, (byte) starRGBA[i][0], (byte) starRGBA[i][1], (byte) starRGBA[i][2], (byte) starRGBA[i][3]);
+			addStarHeightWidthSize(builder, (float) height, (float) width, (float) starSizes[i]);
+		}
+	}
+
+	public static void addStarPos(BufferBuilder builder, float x, float y, float z) {
+		long i = builder.beginElement(StellarViewVertexFormat.ELEMENT_STAR_POS);
+		if (i != -1L) {
+			MemoryUtil.memPutFloat(i, x);
+			MemoryUtil.memPutFloat(i + Float.BYTES, y);
+			MemoryUtil.memPutFloat(i + Float.BYTES * 2, z);
+		}
+	}
+	public static void addStarHeightWidthSize(BufferBuilder builder, float height, float width, float size) {
+		long i = builder.beginElement(StellarViewVertexFormat.ELEMENT_HEIGHT_WIDTH_SIZE);
+		if (i != -1L) {
+			MemoryUtil.memPutFloat(i, height);
+			MemoryUtil.memPutFloat(i + Float.BYTES, width);
+			MemoryUtil.memPutFloat(i + Float.BYTES * 2, size);
+		}
+	}
+	public static void addStarColor(BufferBuilder builder, byte r, byte g, byte b, byte a) {
+		long i = builder.beginElement(StellarViewVertexFormat.ELEMENT_COLOR);
+		if (i != -1L) {
+			MemoryUtil.memPutByte(i, r);
+			MemoryUtil.memPutByte(i + Byte.BYTES, g);
+			MemoryUtil.memPutByte(i + Byte.BYTES * 2, b);
+			MemoryUtil.memPutByte(i + Byte.BYTES * 3, a);
 		}
 	}
 }
