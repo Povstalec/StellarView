@@ -1,5 +1,7 @@
 package net.povstalec.stellarview.compatibility.enhancedcelestials;
 
+// TODO: Re add things from here when Enhanced Celestials ports to 1.21
+
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
