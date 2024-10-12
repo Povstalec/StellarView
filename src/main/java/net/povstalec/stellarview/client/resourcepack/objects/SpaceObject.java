@@ -5,17 +5,13 @@ import java.util.Optional;
 
 import javax.annotation.Nullable;
 
+import com.mojang.blaze3d.vertex.*;
 import org.joml.Matrix4f;
 import org.joml.Quaterniond;
 import org.joml.Vector3f;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -201,8 +197,8 @@ public abstract class SpaceObject
 	
 	
 	public static void renderOnSphere(Color.FloatRGBA rgba, Color.FloatRGBA secondaryRGBA, ResourceLocation texture, UV.Quad uv,
-			ClientLevel level, Camera camera, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords,
-			long ticks, double distance, float partialTicks, float brightness, float size, float rotation, boolean shouldBlend)
+									  ClientLevel level, Camera camera, Tesselator tesselator, Matrix4f lastMatrix, SphericalCoords sphericalCoords,
+									  long ticks, double distance, float partialTicks, float brightness, float size, float rotation, boolean shouldBlend)
 	{
 		Vector3f corner00 = new Vector3f(size, DEFAULT_DISTANCE, size);
 		Vector3f corner10 = new Vector3f(-size, DEFAULT_DISTANCE, size);
@@ -226,14 +222,14 @@ public abstract class SpaceObject
 		RenderSystem.setShaderColor(rgba.red() * secondaryRGBA.red(), rgba.green() * secondaryRGBA.green(), rgba.blue() * secondaryRGBA.blue(), brightness * rgba.alpha() * secondaryRGBA.alpha());
 		
 		RenderSystem.setShaderTexture(0, texture);
-        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        final var bufferbuilder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
         
-        bufferbuilder.vertex(lastMatrix, corner00.x, corner00.y, corner00.z).uv(uv.topRight().u(ticks), uv.topRight().v(ticks)).endVertex();
-        bufferbuilder.vertex(lastMatrix, corner10.x, corner10.y, corner10.z).uv(uv.bottomRight().u(ticks), uv.bottomRight().v(ticks)).endVertex();
-        bufferbuilder.vertex(lastMatrix, corner11.x, corner11.y, corner11.z).uv(uv.bottomLeft().u(ticks), uv.bottomLeft().v(ticks)).endVertex();
-        bufferbuilder.vertex(lastMatrix, corner01.x, corner01.y, corner01.z).uv(uv.topLeft().u(ticks), uv.topLeft().v(ticks)).endVertex();
+        bufferbuilder.addVertex(lastMatrix, corner00.x, corner00.y, corner00.z).setUv(uv.topRight().u(ticks), uv.topRight().v(ticks));
+        bufferbuilder.addVertex(lastMatrix, corner10.x, corner10.y, corner10.z).setUv(uv.bottomRight().u(ticks), uv.bottomRight().v(ticks));
+        bufferbuilder.addVertex(lastMatrix, corner11.x, corner11.y, corner11.z).setUv(uv.bottomLeft().u(ticks), uv.bottomLeft().v(ticks));
+        bufferbuilder.addVertex(lastMatrix, corner01.x, corner01.y, corner01.z).setUv(uv.topLeft().u(ticks), uv.topLeft().v(ticks));
         
-        BufferUploader.drawWithShader(bufferbuilder.end());
+        BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
         
         RenderSystem.defaultBlendFunc();
 	}
@@ -249,7 +245,7 @@ public abstract class SpaceObject
 	 * @param distance
 	 * @param partialTicks
 	 */
-	protected void renderTextureLayer(TextureLayer textureLayer, ViewCenter viewCenter, ClientLevel level, Camera camera, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)
+	protected void renderTextureLayer(TextureLayer textureLayer, ViewCenter viewCenter, ClientLevel level, Camera camera, Tesselator tesselator, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)
 	{
 		if(textureLayer.rgba().alpha() <= 0)
 			return;
@@ -265,18 +261,18 @@ public abstract class SpaceObject
 		}
 		
 		renderOnSphere(textureLayer.rgba(), Color.FloatRGBA.DEFAULT, textureLayer.texture(), textureLayer.uv(),
-				level, camera, bufferbuilder, lastMatrix, sphericalCoords,
+				level, camera, tesselator, lastMatrix, sphericalCoords,
 				ticks, distance, partialTicks, dayBrightness(viewCenter, size, ticks, level, camera, partialTicks), size, (float) textureLayer.rotation(), textureLayer.shoulBlend());
 	}
 	
 	
-	public abstract void render(ViewCenter viewCenter, ClientLevel level, float partialTicks, PoseStack stack, Camera camera, 
-			Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder, 
+	public abstract void render(ViewCenter viewCenter, ClientLevel level, float partialTicks, Matrix4f modelViewMatrix, Camera camera,
+			Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, Tesselator tesselator,
 			Vector3f parentVector, AxisRotation parentRotation);
 	
 	// Sets View Center coords and then renders everything
-	public void renderFrom(ViewCenter viewCenter, ClientLevel level, float partialTicks, PoseStack stack, Camera camera, 
-			Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder)
+	public void renderFrom(ViewCenter viewCenter, ClientLevel level, float partialTicks, Matrix4f modelViewMatrix, Camera camera,
+			Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, Tesselator tesselator)
 	{
 		if(parent != null)
 			viewCenter.addCoords(getPosition(viewCenter, parent.getAxisRotation(), level.getDayTime(), partialTicks));
@@ -284,9 +280,9 @@ public abstract class SpaceObject
 			viewCenter.addCoords(getPosition(viewCenter, level.getDayTime(), partialTicks));
 		
 		if(parent != null)
-			parent.renderFrom(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder);
+			parent.renderFrom(viewCenter, level, partialTicks, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog, tesselator);
 		else
-			viewCenter.renderSkyObjects(this, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder);
+			viewCenter.renderSkyObjects(this, level, partialTicks, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog, tesselator);
 	}
 	
 	@Override

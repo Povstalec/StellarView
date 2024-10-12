@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import com.mojang.blaze3d.vertex.Tesselator;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -52,15 +53,15 @@ public final class Space
 		SPACE_OBJECTS.add(spaceObject);
 	}
 	
-	public static void render(ViewCenter viewCenter, SpaceObject masterParent, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder)
+	public static void render(ViewCenter viewCenter, SpaceObject masterParent, ClientLevel level, Camera camera, float partialTicks, Matrix4f modelViewMatrix, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, Tesselator tesselator)
 	{
 		for(SpaceObject spaceObject : SPACE_OBJECTS)
 		{
 			if(spaceObject != masterParent) // Makes sure the master parent (usually galaxy) is rendered last, that way stars from other galaxies don't get rendered over planets
-				spaceObject.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, NULL_VECTOR, new AxisRotation(0, 0, 0));
+				spaceObject.render(viewCenter, level, partialTicks, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog, tesselator, NULL_VECTOR, new AxisRotation(0, 0, 0));
 		}
 		
-		masterParent.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, NULL_VECTOR, new AxisRotation(0, 0, 0));
+		masterParent.render(viewCenter, level, partialTicks, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog, tesselator, NULL_VECTOR, new AxisRotation(0, 0, 0));
 	}
 	
 	

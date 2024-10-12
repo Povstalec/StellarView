@@ -6,10 +6,18 @@ import com.mojang.blaze3d.vertex.VertexFormatElement;
 
 public class StellarViewVertexFormat
 {
-	public static final VertexFormatElement ELEMENT_STAR_POS = new VertexFormatElement(0, VertexFormatElement.Type.FLOAT, VertexFormatElement.Usage.POSITION, 3);
-	public static final VertexFormatElement ELEMENT_HEIGHT_WIDTH_SIZE = new VertexFormatElement(0, VertexFormatElement.Type.FLOAT, VertexFormatElement.Usage.POSITION, 3);
-	public static final VertexFormatElement ELEMENT_COLOR = new VertexFormatElement(0, VertexFormatElement.Type.UBYTE, VertexFormatElement.Usage.COLOR, 4);
+	public static final VertexFormatElement ELEMENT_STAR_POS = register(0, VertexFormatElement.Type.FLOAT, VertexFormatElement.Usage.POSITION, 3);
+	public static final VertexFormatElement ELEMENT_HEIGHT_WIDTH_SIZE = register(0, VertexFormatElement.Type.FLOAT, VertexFormatElement.Usage.POSITION, 3);
+	public static final VertexFormatElement ELEMENT_COLOR = register(0, VertexFormatElement.Type.UBYTE, VertexFormatElement.Usage.COLOR, 4);
 	
 	// NOTE: The order of elements very much MATTERS!!!
-	public static final VertexFormat STAR_POS_COLOR_LY = new VertexFormat(ImmutableMap.<String, VertexFormatElement>builder().put("StarPos", ELEMENT_STAR_POS).put("Color", ELEMENT_COLOR).put("HeightWidthSize", ELEMENT_HEIGHT_WIDTH_SIZE).build());
+	public static final VertexFormat STAR_POS_COLOR_LY = VertexFormat.builder()
+			.add("StarPos", ELEMENT_STAR_POS)
+			.add("Color", ELEMENT_COLOR)
+			.add("HeightWidthSize", ELEMENT_HEIGHT_WIDTH_SIZE)
+			.build();
+
+	private static VertexFormatElement register(int index, VertexFormatElement.Type type, VertexFormatElement.Usage usage, int count) {
+		return VertexFormatElement.register(VertexFormatElement.ELEMENTS.size(), index, type, usage, count);
+	}
 }

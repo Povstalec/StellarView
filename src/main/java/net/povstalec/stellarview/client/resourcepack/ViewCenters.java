@@ -38,12 +38,12 @@ public final class ViewCenters
 		return VIEW_CENTER_MAP.get(location);
 	}
 	
-	public static boolean renderViewCenterSky(ClientLevel level, int ticks, float partialTicks, PoseStack poseStack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
+	public static boolean renderViewCenterSky(ClientLevel level, int ticks, float partialTicks, Matrix4f modelViewMatrix, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
 	{
 		if(!isViewCenterPresent(level.dimension().location()))
 			return false; // False because we're not replacing any rendering
 		
-		return getViewCenter(level.dimension().location()).renderSky(level, ticks, partialTicks, poseStack, camera, projectionMatrix, isFoggy, setupFog);
+		return getViewCenter(level.dimension().location()).renderSky(level, ticks, partialTicks, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog);
 	}
 	
 	//TODO Maybe more rendering stuff like clouds

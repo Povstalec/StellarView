@@ -31,7 +31,7 @@ public class StellarViewConfig
 		StellarView.LOGGER.info("Built config: " + path);
 		file.load();
 		StellarView.LOGGER.info("Loaded Config: " + path);
-		config.setConfig(file);
+		config.correct(file);
 	}
 	
 	private static void generalClientConfig(ModConfigSpec.Builder client)

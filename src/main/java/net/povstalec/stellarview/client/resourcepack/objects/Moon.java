@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import javax.annotation.Nullable;
 
+import com.mojang.blaze3d.vertex.Tesselator;
 import org.joml.Matrix4f;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -80,11 +81,11 @@ public class Moon extends Planet
 	}
 	
 	@Override
-	protected void renderTextureLayer(TextureLayer textureLayer, ViewCenter viewCenter, ClientLevel level, Camera camera, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)
+	protected void renderTextureLayer(TextureLayer textureLayer, ViewCenter viewCenter, ClientLevel level, Camera camera, Tesselator tesselator, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)
 	{
 		if(!StellarView.isEnhancedCelestialsLoaded())
 		{
-			super.renderTextureLayer(textureLayer, viewCenter, level, camera, bufferbuilder, lastMatrix, sphericalCoords, ticks, distance, partialTicks);
+			super.renderTextureLayer(textureLayer, viewCenter, level, camera, tesselator, lastMatrix, sphericalCoords, ticks, distance, partialTicks);
 			return;
 		}
 		
@@ -106,7 +107,7 @@ public class Moon extends Planet
 		size *= sizeMultiplier(level);
 		
 		renderOnSphere(textureLayer.rgba(), moonRGBA, textureLayer.texture(), textureLayer.uv(),
-				level, camera, bufferbuilder, lastMatrix, sphericalCoords,
+				level, camera, tesselator, lastMatrix, sphericalCoords,
 				ticks, distance, partialTicks, dayBrightness(viewCenter, size, ticks, level, camera, partialTicks), size, (float) textureLayer.rotation(), textureLayer.shoulBlend());
 	}
 	

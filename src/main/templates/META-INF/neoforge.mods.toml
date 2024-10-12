@@ -10,7 +10,9 @@ displayName="${mod_name}"
 #logoFile="stellarview_large.png"
 credits="Noobly Walker, tehgreatdoge"
 authors="Woldericz_Junior"
-displayTest="IGNORE_ALL_VERSION"
+
+[[accessTransformers]]
+file="META-INF/accesstransformer.cfg"
 
 description='''
 Enjoy a Stellar View of the Sky

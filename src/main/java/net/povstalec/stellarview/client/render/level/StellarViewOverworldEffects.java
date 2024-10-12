@@ -17,7 +17,7 @@ import net.povstalec.stellarview.compatibility.enhancedcelestials.EnhancedCelest
 
 public class StellarViewOverworldEffects extends DimensionSpecialEffects.OverworldEffects
 {
-	public static final ResourceLocation OVERWORLD_EFFECTS = ResourceLocation.fromNamespaceAndPath("overworld");
+	public static final ResourceLocation OVERWORLD_EFFECTS = ResourceLocation.withDefaultNamespace("overworld");
 	
 	public StellarViewOverworldEffects() {}
 

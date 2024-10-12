@@ -17,7 +17,7 @@ public class ConfigList extends ObjectSelectionList<ConfigList.ConfigEntry>
 {
 	public ConfigList(Minecraft minecraft, int screenWidth, int screenHeight, int yStart, int yEnd, int itemHeight)
 	{
-		super(minecraft, screenWidth, screenHeight, yStart, yEnd, itemHeight);
+		super(minecraft, screenWidth, screenHeight, yEnd - yStart, itemHeight);
 	}
 	
 	public void add(ConfigEntry entry)

@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 
 import javax.annotation.Nullable;
 
+import com.mojang.blaze3d.vertex.MeshData;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL15C;
@@ -39,29 +40,29 @@ public class StarBuffer implements AutoCloseable
 		this.arrayObjectId = GlStateManager._glGenVertexArrays();
 	}
 	
-	public void upload(BufferBuilder.RenderedBuffer buffer)
+	public void upload(MeshData mesh)
 	{
 		if (!this.isInvalid())
 		{
 			RenderSystem.assertOnRenderThread();
 			try
 			{
-				BufferBuilder.DrawState bufferbuilder$drawstate = buffer.drawState();
-				this.format = this.uploadVertexBuffer(bufferbuilder$drawstate, buffer.vertexBuffer());
-				this.sequentialIndices = this.uploadIndexBuffer(bufferbuilder$drawstate, buffer.indexBuffer());
-				this.indexCount = bufferbuilder$drawstate.indexCount();
-				this.indexType = bufferbuilder$drawstate.indexType();
-				this.mode = bufferbuilder$drawstate.mode();
+				final var drawState = mesh.drawState();
+				this.format = this.uploadVertexBuffer(drawState, mesh.vertexBuffer());
+				this.sequentialIndices = this.uploadIndexBuffer(drawState, mesh.indexBuffer());
+				this.indexCount = drawState.indexCount();
+				this.indexType = drawState.indexType();
+				this.mode = drawState.mode();
 			}
 			finally
 			{
-				buffer.release();
+				mesh.close();
 			}
 
 		}
 	}
 	
-	private VertexFormat uploadVertexBuffer(BufferBuilder.DrawState drawState, ByteBuffer vertexBuffer)
+	private VertexFormat uploadVertexBuffer(MeshData.DrawState drawState, ByteBuffer vertexBuffer)
 	{
 		boolean formatEquals = false;
 		if(!drawState.format().equals(this.format))
@@ -86,7 +87,7 @@ public class StarBuffer implements AutoCloseable
 	}
 	
 	@Nullable
-	private RenderSystem.AutoStorageIndexBuffer uploadIndexBuffer(BufferBuilder.DrawState drawState, ByteBuffer indexBuffer)
+	private RenderSystem.AutoStorageIndexBuffer uploadIndexBuffer(MeshData.DrawState drawState, ByteBuffer indexBuffer)
 	{
 		if(!drawState.sequentialIndex())
 		{
