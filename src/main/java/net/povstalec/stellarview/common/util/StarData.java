@@ -144,35 +144,18 @@ public class StarData
 			double height = deformations[i][0] * (aLocation * cosRandom - bLocation * sinRandom);
 			double width = deformations[i][1] * (bLocation * cosRandom + aLocation * sinRandom);
 
-			addStarPos(builder, (float) starCoords[i][0], (float) starCoords[i][1], (float) starCoords[i][2]);
-			addStarColor(builder, (byte) starRGBA[i][0], (byte) starRGBA[i][1], (byte) starRGBA[i][2], (byte) starRGBA[i][3]);
+			builder.addVertex((float) starCoords[i][0], (float) starCoords[i][1], (float) starCoords[i][2])
+					.setColor((byte) starRGBA[i][0], (byte) starRGBA[i][1], (byte) starRGBA[i][2], (byte) starRGBA[i][3]);
 			addStarHeightWidthSize(builder, (float) height, (float) width, (float) starSizes[i]);
 		}
 	}
 
-	public static void addStarPos(BufferBuilder builder, float x, float y, float z) {
-		long i = builder.beginElement(StellarViewVertexFormat.ELEMENT_STAR_POS);
-		if (i != -1L) {
-			MemoryUtil.memPutFloat(i, x);
-			MemoryUtil.memPutFloat(i + Float.BYTES, y);
-			MemoryUtil.memPutFloat(i + Float.BYTES * 2, z);
-		}
-	}
 	public static void addStarHeightWidthSize(BufferBuilder builder, float height, float width, float size) {
 		long i = builder.beginElement(StellarViewVertexFormat.ELEMENT_HEIGHT_WIDTH_SIZE);
 		if (i != -1L) {
 			MemoryUtil.memPutFloat(i, height);
 			MemoryUtil.memPutFloat(i + Float.BYTES, width);
 			MemoryUtil.memPutFloat(i + Float.BYTES * 2, size);
-		}
-	}
-	public static void addStarColor(BufferBuilder builder, byte r, byte g, byte b, byte a) {
-		long i = builder.beginElement(StellarViewVertexFormat.ELEMENT_COLOR);
-		if (i != -1L) {
-			MemoryUtil.memPutByte(i, r);
-			MemoryUtil.memPutByte(i + Byte.BYTES, g);
-			MemoryUtil.memPutByte(i + Byte.BYTES * 2, b);
-			MemoryUtil.memPutByte(i + Byte.BYTES * 3, a);
 		}
 	}
 }

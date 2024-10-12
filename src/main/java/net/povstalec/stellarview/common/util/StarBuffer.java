@@ -76,7 +76,7 @@ public class StarBuffer implements AutoCloseable
 			formatEquals = true;
 		}
 		
-		if(mesh.indexBuffer() != null /*TODO: !drawState.indexOnly()*/)
+		if(mesh.indexBuffer() == null)
 		{
 			if(!formatEquals)
 				GlStateManager._glBindBuffer(GL15C.GL_ARRAY_BUFFER, this.vertexBufferId);
@@ -91,7 +91,7 @@ public class StarBuffer implements AutoCloseable
 	private RenderSystem.AutoStorageIndexBuffer uploadIndexBuffer(MeshData mesh, ByteBuffer indexBuffer)
 	{
 		final var drawState = mesh.drawState();
-		if(false /*TODO: !drawState.sequentialIndex()*/)
+		if(mesh.vertexBuffer() == null)
 		{
 			GlStateManager._glBindBuffer(GL15C.GL_ELEMENT_ARRAY_BUFFER, this.indexBufferId);
 			RenderSystem.glBufferData(GL15C.GL_ELEMENT_ARRAY_BUFFER, indexBuffer, GL15C.GL_STATIC_DRAW);
