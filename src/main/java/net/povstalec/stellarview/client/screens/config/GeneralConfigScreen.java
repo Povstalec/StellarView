@@ -18,10 +18,10 @@ public class GeneralConfigScreen extends Screen
     private static final int BACK_BUTTON_WIDTH = 200;
     private static final int BACK_BUTTON_HEIGHT = 20;
     private static final int BACK_BUTTON_TOP_OFFSET = 26;
-    
-    private static final int OPTIONS_LIST_TOP_HEIGHT = 24;
-    private static final int OPTIONS_LIST_BOTTOM_OFFSET = 32;
-    private static final int OPTIONS_LIST_ITEM_HEIGHT = 25;
+
+	private static final int OPTIONS_LIST_HEADER_HEIGHT = 24;
+	private static final int OPTIONS_LIST_BOTTOM_OFFSET = 32;
+	private static final int OPTIONS_LIST_ITEM_HEIGHT = 25;
 
 	
 	public GeneralConfigScreen(@Nullable Screen parentScreen)
@@ -35,9 +35,9 @@ public class GeneralConfigScreen extends Screen
     public void init()
     {
 		super.init();
-		
-		this.configList = new ConfigList(minecraft, this.width, this.height, 
-				OPTIONS_LIST_TOP_HEIGHT, this.height - OPTIONS_LIST_BOTTOM_OFFSET, OPTIONS_LIST_ITEM_HEIGHT);
+
+		this.configList = new ConfigList(minecraft, this.width,
+				this.height - OPTIONS_LIST_HEADER_HEIGHT - OPTIONS_LIST_BOTTOM_OFFSET, OPTIONS_LIST_HEADER_HEIGHT, OPTIONS_LIST_ITEM_HEIGHT);
 
 		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.disable_view_center_rotation"), 
 				this.width, GeneralConfig.disable_view_center_rotation));
