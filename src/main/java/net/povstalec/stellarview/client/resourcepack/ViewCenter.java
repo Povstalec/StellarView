@@ -315,7 +315,7 @@ public class ViewCenter
 			transformedModelView.rotate(Axis.ZP.rotation((float) getZRotation(level, camera, partialTicks)));
 		}
 		
-		viewCenterObject.renderFrom(this, level, partialTicks, modelViewMatrix, camera, projectionMatrix, StellarViewFogEffects.isFoggy(minecraft, camera), setupFog, tesselator);
+		viewCenterObject.renderFrom(this, level, partialTicks, transformedModelView, camera, projectionMatrix, StellarViewFogEffects.isFoggy(minecraft, camera), setupFog, tesselator);
 
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		renderSkyEvents(level, camera, partialTicks, modelViewMatrix, tesselator);
