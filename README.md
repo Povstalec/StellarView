@@ -7,7 +7,7 @@ Stellar View helps your sky look just a bit better while keeping the Vanilla fee
 This mod is purely Client-side and **does not** need to be installed on a Server to work.
 Which also means it **will not** physically change anything on the server-side and all changes it does make are purely visual.
 
-<iframe src="https://www.youtube-nocookie.com/embed/asiFL_mAE4M?si=IwrAzAAkvYSCbqsP" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/asiFL_mAE4M/0.jpg)](https://www.youtube.com/watch?v=asiFL_mAE4M)
 
 Current Features
 
