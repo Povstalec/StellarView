@@ -1,23 +1,11 @@
 package net.povstalec.stellarview.client.resourcepack;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-
-import javax.annotation.Nullable;
-
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
-
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexBuffer;
 import com.mojang.math.Axis;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -37,6 +25,13 @@ import net.povstalec.stellarview.client.resourcepack.objects.SpaceObject;
 import net.povstalec.stellarview.common.config.GeneralConfig;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.SpaceCoords;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+
+import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 
 public class ViewCenter
 {
@@ -261,23 +256,23 @@ public class ViewCenter
 		return false;
 	}
 	
-	private boolean renderSkybox(ClientLevel level, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder)
+	private boolean renderSkybox(ClientLevel level, float partialTicks, Matrix4f modelViewMatrix, Tesselator tesselator)
 	{
 		if(skyboxes == null)
 			return false;
 		
 		for(Skybox skybox : skyboxes)
 		{
-			skybox.render(level, partialTicks, stack, bufferbuilder);
+			skybox.render(level, partialTicks, modelViewMatrix, tesselator);
 		}
 		
 		return true;
 	}
 	
-	private void renderSkyEvents(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder)
+	private void renderSkyEvents(ClientLevel level, Camera camera, float partialTicks, Matrix4f modelViewMatrix, Tesselator tesselator)
 	{
-		shootingStar.render(this, level, camera, partialTicks, stack, bufferbuilder);
-		meteorShower.render(this, level, camera, partialTicks, stack, bufferbuilder);
+		shootingStar.render(this, level, camera, partialTicks, modelViewMatrix, tesselator);
+		meteorShower.render(this, level, camera, partialTicks, modelViewMatrix, tesselator);
 	}
 	
 	private float getTimeOfDay(ClientLevel level, float partialTicks)
@@ -291,14 +286,14 @@ public class ViewCenter
 		return (float) (d0 * 2.0D + d1) / 3.0F;
 	}
 	
-	private boolean renderSkyObjectsFrom(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, Matrix4f projectionMatrix, Runnable setupFog, BufferBuilder bufferbuilder)
+	private boolean renderSkyObjectsFrom(ClientLevel level, Camera camera, float partialTicks, Matrix4f modelViewMatrix, Matrix4f projectionMatrix, Runnable setupFog, Tesselator tesselator)
 	{
 		if(viewCenterObject == null)
 			return false;
 		
 		coords = viewCenterObject.getCoords();
-		
-		stack.pushPose();
+
+		final var transformedModelView = new Matrix4f(modelViewMatrix);
 		
 		if(!GeneralConfig.disable_view_center_rotation.get())
 		{
@@ -306,31 +301,29 @@ public class ViewCenter
 			
 			if(viewCenterObject instanceof OrbitingObject orbitingObject && orbitingObject.getOrbitInfo().isPresent())
 				rotation -= orbitingObject.getOrbitInfo().get().meanAnomaly(level.getDayTime() % orbitingObject.getOrbitInfo().get().orbitalPeriod().ticks(), partialTicks);
+
+			transformedModelView.rotate(Axis.YP.rotation((float) getAxisRotation().yAxis()));
+			transformedModelView.rotate(Axis.ZP.rotation((float) getAxisRotation().zAxis()));
+			transformedModelView.rotate(Axis.XP.rotation((float) getAxisRotation().xAxis()));
 			
-			stack.mulPose(Axis.YP.rotation((float) getAxisRotation().yAxis()));
-			stack.mulPose(Axis.ZP.rotation((float) getAxisRotation().zAxis()));
-			stack.mulPose(Axis.XP.rotation((float) getAxisRotation().xAxis()));
-			
-			stack.mulPose(Axis.YP.rotation((float) rotation));
-			stack.mulPose(Axis.ZP.rotation((float) getZRotation(level, camera, partialTicks)));
+			transformedModelView.rotate(Axis.YP.rotation((float) rotation));
+			transformedModelView.rotate(Axis.ZP.rotation((float) getZRotation(level, camera, partialTicks)));
 		}
 		
-		viewCenterObject.renderFrom(this, level, partialTicks, stack, camera, projectionMatrix, StellarViewFogEffects.isFoggy(minecraft, camera), setupFog, bufferbuilder);
-
-		stack.popPose();
+		viewCenterObject.renderFrom(this, level, partialTicks, transformedModelView, camera, projectionMatrix, StellarViewFogEffects.isFoggy(minecraft, camera), setupFog, tesselator);
 
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
-		renderSkyEvents(level, camera, partialTicks, stack, bufferbuilder);
+		renderSkyEvents(level, camera, partialTicks, modelViewMatrix, tesselator);
 		return true;
 	}
 	
-	public void renderSkyObjects(SpaceObject masterParent, ClientLevel level, float partialTicks, PoseStack stack, Camera camera, 
-			Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder)
+	public void renderSkyObjects(SpaceObject masterParent, ClientLevel level, float partialTicks, Matrix4f modelViewMatrix, Camera camera,
+			Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, Tesselator tesselator)
 	{
-		Space.render(this, masterParent, level, camera, partialTicks, stack, projectionMatrix, isFoggy, setupFog, bufferbuilder);
+		Space.render(this, masterParent, level, camera, partialTicks, modelViewMatrix, projectionMatrix, isFoggy, setupFog, tesselator);
 	}
 	
-	public boolean renderSky(ClientLevel level, int ticks, float partialTicks, PoseStack stack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
+	public boolean renderSky(ClientLevel level, int ticks, float partialTicks, Matrix4f modelViewMatrix, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
 	{
 		if(viewCenterObject == null && skyboxes == null)
 			return false;
@@ -345,7 +338,7 @@ public class ViewCenter
 	        float skyY = (float)skyColor.y;
 	        float skyZ = (float)skyColor.z;
 	        FogRenderer.levelFogColor();
-			BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
+			Tesselator tesselator = Tesselator.getInstance();
 			RenderSystem.depthMask(false);
 			RenderSystem.setShaderColor(skyX, skyY, skyZ, 1.0F);
 			ShaderInstance shaderinstance = RenderSystem.getShader();
@@ -353,23 +346,23 @@ public class ViewCenter
 			if(createHorizon)
 			{
 				this.skyBuffer.bind();
-				this.skyBuffer.drawWithShader(stack.last().pose(), projectionMatrix, shaderinstance);
+				this.skyBuffer.drawWithShader(modelViewMatrix, projectionMatrix, shaderinstance);
 			}
 			
 			VertexBuffer.unbind();
 			RenderSystem.enableBlend();
 			RenderSystem.defaultBlendFunc();
 			
-			StellarViewSkyEffects.renderSunrise(level, partialTicks, stack, projectionMatrix, bufferbuilder);
+			StellarViewSkyEffects.renderSunrise(level, partialTicks, modelViewMatrix, projectionMatrix, tesselator);
 			
 			//RenderSystem.enableTexture();
 
 			RenderSystem.setShader(GameRenderer::getPositionTexShader);
 			
-			renderSkybox(level, partialTicks, stack, bufferbuilder);
+			renderSkybox(level, partialTicks, modelViewMatrix, tesselator);
 			
 			RenderSystem.setShaderColor(skyX, skyY, skyZ, 1.0F); // Added this here
-			renderSkyObjectsFrom(level, camera, partialTicks, stack, projectionMatrix, setupFog, bufferbuilder);
+			renderSkyObjectsFrom(level, camera, partialTicks, modelViewMatrix, projectionMatrix, setupFog, tesselator);
 	        
 	        //RenderSystem.disableTexture();
 	        //RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
@@ -382,12 +375,11 @@ public class ViewCenter
 	        	double height = this.minecraft.player.getEyePosition(partialTicks).y - level.getLevelData().getHorizonHeight(level);
 		        if(height < 0.0D)
 		        {
-		        	stack.pushPose();
-		        	stack.translate(0.0F, 12.0F, 0.0F);
+					final var transformedModelView = new Matrix4f(modelViewMatrix);
+					transformedModelView.translate(0.0F, 12.0F, 0.0F);
 		        	this.darkBuffer.bind();
-		        	this.darkBuffer.drawWithShader(stack.last().pose(), projectionMatrix, shaderinstance);
+		        	this.darkBuffer.drawWithShader(transformedModelView, projectionMatrix, shaderinstance);
 		        	VertexBuffer.unbind();
-		        	stack.popPose();
 		        }
 	        }
 	        

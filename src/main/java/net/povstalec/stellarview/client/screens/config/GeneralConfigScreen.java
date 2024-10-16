@@ -1,7 +1,5 @@
 package net.povstalec.stellarview.client.screens.config;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -9,6 +7,8 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.povstalec.stellarview.client.screens.config.ConfigList.BooleanConfigEntry;
 import net.povstalec.stellarview.common.config.GeneralConfig;
+
+import javax.annotation.Nullable;
 
 public class GeneralConfigScreen extends Screen
 {
@@ -18,10 +18,10 @@ public class GeneralConfigScreen extends Screen
     private static final int BACK_BUTTON_WIDTH = 200;
     private static final int BACK_BUTTON_HEIGHT = 20;
     private static final int BACK_BUTTON_TOP_OFFSET = 26;
-    
-    private static final int OPTIONS_LIST_TOP_HEIGHT = 24;
-    private static final int OPTIONS_LIST_BOTTOM_OFFSET = 32;
-    private static final int OPTIONS_LIST_ITEM_HEIGHT = 25;
+
+	private static final int OPTIONS_LIST_HEADER_HEIGHT = 24;
+	private static final int OPTIONS_LIST_BOTTOM_OFFSET = 32;
+	private static final int OPTIONS_LIST_ITEM_HEIGHT = 25;
 
 	
 	public GeneralConfigScreen(@Nullable Screen parentScreen)
@@ -35,9 +35,9 @@ public class GeneralConfigScreen extends Screen
     public void init()
     {
 		super.init();
-		
-		this.configList = new ConfigList(minecraft, this.width, this.height, 
-				OPTIONS_LIST_TOP_HEIGHT, this.height - OPTIONS_LIST_BOTTOM_OFFSET, OPTIONS_LIST_ITEM_HEIGHT);
+
+		this.configList = new ConfigList(minecraft, this.width,
+				this.height - OPTIONS_LIST_HEADER_HEIGHT - OPTIONS_LIST_BOTTOM_OFFSET, OPTIONS_LIST_HEADER_HEIGHT, OPTIONS_LIST_ITEM_HEIGHT);
 
 		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.disable_view_center_rotation"), 
 				this.width, GeneralConfig.disable_view_center_rotation));
@@ -63,10 +63,9 @@ public class GeneralConfigScreen extends Screen
 	@Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
-        this.renderBackground(graphics);
+		super.render(graphics, mouseX, mouseY, partialTick);
         this.configList.render(graphics, mouseX, mouseY, partialTick);
-        graphics.drawString(this.font, this.title, this.width / 2, 8, 16777215);
-        super.render(graphics, mouseX, mouseY, partialTick);
+		graphics.drawString(this.font, this.title, (this.width - font.width(this.title)) / 2, 8, 16777215);
     }
 	
 }

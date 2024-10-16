@@ -1,6 +1,6 @@
 package net.povstalec.stellarview.common.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class GeneralConfig
 {
@@ -11,7 +11,7 @@ public class GeneralConfig
 	public static StellarViewConfigValue.BooleanValue disable_stars;
 	public static StellarViewConfigValue.BooleanValue bright_stars;
 	
-	public static void init(ForgeConfigSpec.Builder client)
+	public static void init(ModConfigSpec.Builder client)
 	{
 
 		disable_view_center_rotation = new StellarViewConfigValue.BooleanValue(client, "client.disable_view_center_rotation", 

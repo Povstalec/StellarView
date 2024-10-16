@@ -1,10 +1,11 @@
 package net.povstalec.stellarview.common.util;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
-
 import net.minecraft.util.RandomSource;
+import net.povstalec.stellarview.client.render.shader.StellarViewVertexFormat;
 import net.povstalec.stellarview.client.resourcepack.StarInfo;
 import net.povstalec.stellarview.client.resourcepack.objects.StarLike;
+import org.lwjgl.system.MemoryUtil;
 
 public class StarData
 {
@@ -141,15 +142,19 @@ public class StarData
 			 */
 			double height = deformations[i][0] * (aLocation * cosRandom - bLocation * sinRandom);
 			double width = deformations[i][1] * (bLocation * cosRandom + aLocation * sinRandom);
-			
-			builder.vertex(starCoords[i][0], starCoords[i][1], starCoords[i][2]).color(starRGBA[i][0], starRGBA[i][1], starRGBA[i][2], starRGBA[i][3]);
-			// These next few lines add a "custom" element defined as HeightWidthSize in StellarViewVertexFormat
-			builder.putFloat(0, (float) height);
-			builder.putFloat(4, (float) width);
-			builder.putFloat(8, (float) starSizes[i]);
-			builder.nextElement();
-			
-			builder.endVertex();
+
+			builder.addVertex((float) starCoords[i][0], (float) starCoords[i][1], (float) starCoords[i][2])
+					.setColor((byte) starRGBA[i][0], (byte) starRGBA[i][1], (byte) starRGBA[i][2], (byte) starRGBA[i][3]);
+			addStarHeightWidthSize(builder, (float) height, (float) width, (float) starSizes[i]);
+		}
+	}
+
+	public static void addStarHeightWidthSize(BufferBuilder builder, float height, float width, float size) {
+		long i = builder.beginElement(StellarViewVertexFormat.ELEMENT_HEIGHT_WIDTH_SIZE.get());
+		if (i != -1L) {
+			MemoryUtil.memPutFloat(i, height);
+			MemoryUtil.memPutFloat(i + Float.BYTES, width);
+			MemoryUtil.memPutFloat(i + Float.BYTES * 2, size);
 		}
 	}
 }

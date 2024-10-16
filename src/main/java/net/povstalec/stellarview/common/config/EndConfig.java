@@ -1,6 +1,6 @@
 package net.povstalec.stellarview.common.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class EndConfig
 {
@@ -14,7 +14,7 @@ public class EndConfig
 	public static StellarViewConfigValue.IntValue meteor_shower_chance;
 	public static StellarViewConfigValue.IntValue shooting_star_chance;
 	
-	public static void init(ForgeConfigSpec.Builder client)
+	public static void init(ModConfigSpec.Builder client)
 	{
 		replace_vanilla = new StellarViewConfigValue.BooleanValue(client, PREFIX + "replace_vanilla", 
 				true, 

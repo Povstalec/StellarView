@@ -1,27 +1,10 @@
 package net.povstalec.stellarview.client.resourcepack.objects;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import javax.annotation.Nullable;
-
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
-import org.joml.Vector3d;
-import org.joml.Vector3f;
-
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferBuilder.RenderedBuffer;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexBuffer;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.*;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.FogRenderer;
@@ -33,12 +16,16 @@ import net.povstalec.stellarview.client.render.shader.StellarViewVertexFormat;
 import net.povstalec.stellarview.client.resourcepack.StarInfo;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.config.GeneralConfig;
-import net.povstalec.stellarview.common.util.AxisRotation;
-import net.povstalec.stellarview.common.util.SpaceCoords;
-import net.povstalec.stellarview.common.util.SphericalCoords;
-import net.povstalec.stellarview.common.util.StarBuffer;
-import net.povstalec.stellarview.common.util.StarData;
-import net.povstalec.stellarview.common.util.StellarCoordinates;
+import net.povstalec.stellarview.common.util.*;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3d;
+import org.joml.Vector3f;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class StarField extends SpaceObject
 {
@@ -202,10 +189,10 @@ public class StarField extends SpaceObject
 		}
 	}
 	
-	protected RenderedBuffer generateStarBuffer(BufferBuilder bufferBuilder)
+	protected MeshData generateStarBuffer(Tesselator tesselator)
 	{
 		RandomSource randomsource = RandomSource.create(seed);
-		bufferBuilder.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR_POS_COLOR_LY);
+		final var bufferBuilder = tesselator.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR_POS_COLOR_LY.get());
 		
 		double sizeMultiplier = diameter / 30D;
 		
@@ -220,18 +207,18 @@ public class StarField extends SpaceObject
 			numberOfStars += arm.armStars();
 		}
 		
-		return bufferBuilder.end();
+		return bufferBuilder.build();
 	}
 	
-	protected RenderedBuffer getStarBuffer(BufferBuilder bufferBuilder)
+	protected MeshData getStarBuffer(Tesselator tesselator)
 	{
-		bufferBuilder.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR_POS_COLOR_LY);
+		final var bufferBuilder = tesselator.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR_POS_COLOR_LY.get());
 		
 		for(int i = 0; i < totalStars; i++)
 		{
 			starData.createStar(bufferBuilder, i);
 		}
-		return bufferBuilder.end();
+		return bufferBuilder.build();
 	}
 	
 	public StarField setStarBuffer()
@@ -241,14 +228,12 @@ public class StarField extends SpaceObject
 		
 		starBuffer = new StarBuffer();
 		Tesselator tesselator = Tesselator.getInstance();
-		BufferBuilder bufferBuilder = tesselator.getBuilder();
 		RenderSystem.setShader(GameRenderer::getPositionShader);
-		BufferBuilder.RenderedBuffer bufferbuilder$renderedbuffer;
 		
-		bufferbuilder$renderedbuffer = getStarBuffer(bufferBuilder);
+		MeshData mesh = getStarBuffer(tesselator);
 		
 		starBuffer.bind();
-		starBuffer.upload(bufferbuilder$renderedbuffer);
+		starBuffer.upload(mesh);
 		VertexBuffer.unbind();
 		
 		return this;
@@ -261,22 +246,20 @@ public class StarField extends SpaceObject
 		
 		starBuffer = new StarBuffer();
 		Tesselator tesselator = Tesselator.getInstance();
-		BufferBuilder bufferBuilder = tesselator.getBuilder();
 		RenderSystem.setShader(GameRenderer::getPositionShader);
-		BufferBuilder.RenderedBuffer bufferbuilder$renderedbuffer;
 		
-		bufferbuilder$renderedbuffer = generateStarBuffer(bufferBuilder);
+		MeshData mesh = generateStarBuffer(tesselator);
 		
 		starBuffer.bind();
-		starBuffer.upload(bufferbuilder$renderedbuffer);
+		starBuffer.upload(mesh);
 		VertexBuffer.unbind();
 		
 		return this;
 	}
 	
 	@Override
-	public void render(ViewCenter viewCenter, ClientLevel level, float partialTicks, PoseStack stack, Camera camera,
-			Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder,
+	public void render(ViewCenter viewCenter, ClientLevel level, float partialTicks, Matrix4f modelViewMatrix, Camera camera,
+			Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, Tesselator tesselator,
 			Vector3f parentVector, AxisRotation parentRotation)
 	{
 		//System.out.println(this + " " + viewCenter.getCoords());
@@ -291,7 +274,7 @@ public class StarField extends SpaceObject
 		
 		if(!GeneralConfig.disable_stars.get() && starBrightness > 0.0F)
 		{
-			stack.pushPose();
+			final var transformedModelView = new Matrix4f(modelViewMatrix);
 			
 			//stack.translate(0, 0, 0);
 			RenderSystem.setShaderColor(1, 1, 1, starBrightness);
@@ -300,19 +283,18 @@ public class StarField extends SpaceObject
 			
 			Quaternionf q = SpaceCoords.getQuaternionf(level, viewCenter, partialTicks);
 			
-			stack.mulPose(q);
+			transformedModelView.rotate(q);
 			this.starBuffer.bind();
-			this.starBuffer.drawWithShader(stack.last().pose(), projectionMatrix, difference, StellarViewShaders.starShader());
-			//this.starBuffer.drawWithShader(stack.last().pose(), projectionMatrix, GameRenderer.getPositionColorTexShader());
+			this.starBuffer.drawWithShader(transformedModelView, projectionMatrix, difference, StellarViewShaders.starShader());
+			//this.starBuffer.drawWithShader(transformedModelView, projectionMatrix, GameRenderer.getPositionColorTexShader());
 			VertexBuffer.unbind();
 			
 			setupFog.run();
-			stack.popPose();
 		}
 		
 		for(SpaceObject child : children)
 		{
-			child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, parentVector, new AxisRotation(0, 0, 0));
+			child.render(viewCenter, level, partialTicks, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog, tesselator, parentVector, new AxisRotation(0, 0, 0));
 		}
 	}
 	

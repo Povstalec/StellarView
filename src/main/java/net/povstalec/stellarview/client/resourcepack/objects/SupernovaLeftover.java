@@ -1,18 +1,13 @@
 package net.povstalec.stellarview.client.resourcepack.objects;
 
-import java.util.List;
-import java.util.Optional;
-
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-
 import net.minecraft.resources.ResourceKey;
-import net.povstalec.stellarview.common.util.AxisRotation;
-import net.povstalec.stellarview.common.util.Color;
-import net.povstalec.stellarview.common.util.SpaceCoords;
-import net.povstalec.stellarview.common.util.StellarCoordinates;
-import net.povstalec.stellarview.common.util.TextureLayer;
+import net.povstalec.stellarview.common.util.*;
+
+import java.util.List;
+import java.util.Optional;
 
 public class SupernovaLeftover extends StarLike
 {

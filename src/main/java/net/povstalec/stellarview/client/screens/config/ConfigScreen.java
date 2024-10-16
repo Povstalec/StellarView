@@ -1,12 +1,12 @@
 package net.povstalec.stellarview.client.screens.config;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+
+import javax.annotation.Nullable;
 
 public class ConfigScreen extends Screen
 {
@@ -50,9 +50,8 @@ public class ConfigScreen extends Screen
 	@Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
-        this.renderBackground(graphics);
-        graphics.drawString(this.font, this.title, this.width / 2, 8, 16777215);
-        super.render(graphics, mouseX, mouseY, partialTick);
+		super.render(graphics, mouseX, mouseY, partialTick);
+		graphics.drawString(this.font, this.title, (this.width - font.width(this.title)) / 2, 8, 16777215);
     }
 	
 }

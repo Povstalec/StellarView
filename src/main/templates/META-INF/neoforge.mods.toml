@@ -1,0 +1,35 @@
+modLoader="javafml"
+loaderVersion="${loader_version_range}"
+license="${mod_license}"
+issueTrackerURL="https://github.com/Povstalec/StellarView/issues"
+
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+#logoFile="stellarview_large.png"
+credits="Noobly Walker, tehgreatdoge"
+authors="${mod_authors}"
+description="""${mod_description}"""
+
+[[accessTransformers]]
+file="META-INF/accesstransformer.cfg"
+
+[[dependencies."${mod_id}"]]
+    modId="neoforge"
+    type="required"
+    versionRange="${neo_version_range}"
+    ordering="NONE"
+    side="CLIENT"
+[[dependencies."${mod_id}"]]
+    modId="minecraft"
+    type="required"
+    versionRange="${minecraft_version_range}"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies."${mod_id}"]]
+    modId="enhancedcelestials"
+    type="optional"
+    versionRange="${ec_version_range}"
+    ordering="BEFORE"
+    side="BOTH"

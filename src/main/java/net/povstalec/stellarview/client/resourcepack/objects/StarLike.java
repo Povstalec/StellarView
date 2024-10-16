@@ -1,28 +1,21 @@
 package net.povstalec.stellarview.client.resourcepack.objects;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-
-import org.joml.Matrix4f;
-
-import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceKey;
 import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.config.GeneralConfig;
-import net.povstalec.stellarview.common.util.AxisRotation;
-import net.povstalec.stellarview.common.util.Color;
-import net.povstalec.stellarview.common.util.SpaceCoords;
-import net.povstalec.stellarview.common.util.SphericalCoords;
-import net.povstalec.stellarview.common.util.StellarCoordinates;
-import net.povstalec.stellarview.common.util.TextureLayer;
+import net.povstalec.stellarview.common.util.*;
+import org.joml.Matrix4f;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 
 public abstract class StarLike extends OrbitingObject
 {
@@ -87,7 +80,7 @@ public abstract class StarLike extends OrbitingObject
 	
 	
 	@Override
-	protected void renderTextureLayer(TextureLayer textureLayer, ViewCenter viewCenter, ClientLevel level, Camera camera, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)
+	protected void renderTextureLayer(TextureLayer textureLayer, ViewCenter viewCenter, ClientLevel level, Camera camera, Tesselator tesselator, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)
 	{
 		double lyDistance = distance / SpaceCoords.KM_PER_LY;
 
@@ -112,7 +105,7 @@ public abstract class StarLike extends OrbitingObject
 		}
 		
 		renderOnSphere(textureLayer.rgba(), starRGBA, textureLayer.texture(), textureLayer.uv(),
-				level, camera, bufferbuilder, lastMatrix, sphericalCoords,
+				level, camera, tesselator, lastMatrix, sphericalCoords,
 				ticks, distance, partialTicks, dayBrightness(viewCenter, size, ticks, level, camera, partialTicks), size, (float) textureLayer.rotation(), textureLayer.shoulBlend());
 	}
 	

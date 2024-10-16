@@ -1,9 +1,9 @@
 package net.povstalec.stellarview.common.util;
 
-import javax.annotation.Nullable;
-
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+
+import javax.annotation.Nullable;
 
 public class UV
 {

@@ -1,15 +1,14 @@
 package net.povstalec.stellarview.client.resourcepack;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.povstalec.stellarview.client.resourcepack.objects.StarLike;
+import net.povstalec.stellarview.common.util.Color;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-
-import net.povstalec.stellarview.client.resourcepack.objects.StarLike;
-import net.povstalec.stellarview.common.util.Color;
 
 public class StarInfo
 {

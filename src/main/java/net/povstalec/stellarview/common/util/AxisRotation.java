@@ -1,11 +1,10 @@
 package net.povstalec.stellarview.common.util;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import org.joml.Math;
 import org.joml.Quaterniond;
 import org.joml.Quaternionf;
-
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 public class AxisRotation
 {
