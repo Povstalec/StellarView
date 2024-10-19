@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import net.povstalec.stellarview.client.resourcepack.objects.OrbitingObject;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -50,6 +51,15 @@ public final class Space
 	public static void addSpaceObject(SpaceObject spaceObject)
 	{
 		SPACE_OBJECTS.add(spaceObject);
+	}
+	
+	public static void setupSynodicOrbits()
+	{
+		for(SpaceObject spaceObject : SPACE_OBJECTS)
+		{
+			if(spaceObject instanceof OrbitingObject orbitingObject)
+				orbitingObject.setupSynodicOrbit(null);
+		}
 	}
 	
 	public static void render(ViewCenter viewCenter, SpaceObject masterParent, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder)
