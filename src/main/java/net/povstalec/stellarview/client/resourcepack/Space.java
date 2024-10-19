@@ -13,6 +13,8 @@ import com.mojang.math.Vector3f;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.povstalec.stellarview.StellarView;
+
+import net.povstalec.stellarview.client.resourcepack.objects.OrbitingObject;
 import net.povstalec.stellarview.client.resourcepack.objects.SpaceObject;
 import net.povstalec.stellarview.client.resourcepack.objects.StarField;
 import net.povstalec.stellarview.client.resourcepack.objects.distinct.Sol;
@@ -49,6 +51,15 @@ public final class Space
 	public static void addSpaceObject(SpaceObject spaceObject)
 	{
 		SPACE_OBJECTS.add(spaceObject);
+	}
+	
+	public static void setupSynodicOrbits()
+	{
+		for(SpaceObject spaceObject : SPACE_OBJECTS)
+		{
+			if(spaceObject instanceof OrbitingObject orbitingObject)
+				orbitingObject.setupSynodicOrbit(null);
+		}
 	}
 	
 	public static void render(ViewCenter viewCenter, SpaceObject masterParent, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder)

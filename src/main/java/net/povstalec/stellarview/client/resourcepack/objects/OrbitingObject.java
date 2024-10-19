@@ -53,6 +53,29 @@ public class OrbitingObject extends TexturedObject
 		return Optional.empty();
 	}
 	
+	public void setupSynodicOrbit(@Nullable OrbitalPeriod parentOrbitalPeriod)
+	{
+		if(getOrbitInfo().isPresent())
+		{
+			getOrbitInfo().get().orbitalPeriod().updateFromParentPeriod(parentOrbitalPeriod);
+			getOrbitInfo().get().setupSweep();
+			
+			for(SpaceObject child : children)
+			{
+				if(child instanceof OrbitingObject orbitingObject)
+					orbitingObject.setupSynodicOrbit(getOrbitInfo().get().orbitalPeriod());
+			}
+		}
+		else
+		{
+			for(SpaceObject child : children)
+			{
+				if(child instanceof OrbitingObject orbitingObject)
+					orbitingObject.setupSynodicOrbit(null);
+			}
+		}
+	}
+	
 	@Override
 	public Vector3f getPosition(ViewCenter viewCenter, AxisRotation axisRotation, long ticks, float partialTicks)
 	{
@@ -77,17 +100,19 @@ public class OrbitingObject extends TexturedObject
 	
 	public static class OrbitalPeriod
 	{
-		private final long ticks;
-		private final int orbits; // The number of full orbital revolutions the object will complete in a given number of ticks
+		private long ticks;
+		private double orbits; // The number of full orbital revolutions the object will complete in a given number of ticks
+		private boolean synodic;
 		
-		private final double period;
+		private double frequency;
 		
 		public static final Codec<OrbitalPeriod> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				Codec.LONG.fieldOf("ticks").forGetter(OrbitalPeriod::ticks),
-				Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("orbits", 1).forGetter(OrbitalPeriod::orbits)
+				Codec.doubleRange(Double.MIN_NORMAL, Double.MAX_VALUE).optionalFieldOf("orbits", 1D).forGetter(OrbitalPeriod::orbits),
+				Codec.BOOL.optionalFieldOf("synodic", false).forGetter(OrbitalPeriod::synodic)
 				).apply(instance, OrbitalPeriod::new));
 		
-		public OrbitalPeriod(long ticks, int orbits)
+		public OrbitalPeriod(long ticks, double orbits, boolean synodic)
 		{
 			if(ticks <= 0)
 				throw(new IllegalArgumentException("Value ticks outside of range [" + 1 + ':' + Integer.MAX_VALUE + ']'));
@@ -95,7 +120,22 @@ public class OrbitingObject extends TexturedObject
 			this.ticks = ticks;
 			this.orbits = orbits;
 			
-			this.period = (double) orbits / ticks;
+			this.synodic = synodic;
+			
+			this.frequency = orbits / ticks;
+		}
+		
+		public void updateFromParentPeriod(OrbitalPeriod parentPeriod)
+		{
+			if(!synodic)
+				return;
+			
+			this.ticks = parentPeriod.ticks;
+			this.orbits = this.frequency * this.ticks + 1;
+			
+			this.frequency = this.orbits / this.ticks;
+			
+			this.synodic = false;
 		}
 		
 		public long ticks()
@@ -103,14 +143,19 @@ public class OrbitingObject extends TexturedObject
 			return ticks;
 		}
 		
-		public int orbits()
+		public double orbits()
 		{
 			return orbits;
 		}
 		
-		public double period()
+		public boolean synodic()
 		{
-			return period;
+			return synodic;
+		}
+		
+		public double frequency()
+		{
+			return frequency;
 		}
 	}
 	
@@ -145,7 +190,7 @@ public class OrbitingObject extends TexturedObject
 		
 		private final float epochMeanAnomaly;
 		
-		private final float sweep;
+		private float sweep;
 		
 		private final float eccentricity;
 		
@@ -169,7 +214,7 @@ public class OrbitingObject extends TexturedObject
 			this.longtitudeOfAscendingNode = (float) Math.toRadians(longtitudeOfAscendingNode);
 			
 			this.epochMeanAnomaly = (float) Math.toRadians(meanAnomaly);
-			this.sweep = (float) ((2 * Math.PI) * orbitalPeriod().period());
+			setupSweep();
 			
 			this.eccentricity = (apoapsis - periapsis) / (apoapsis + periapsis);
 			
@@ -189,6 +234,11 @@ public class OrbitingObject extends TexturedObject
 		public float orbitClampNumber()
 		{
 			return orbitClampDistance;
+		}
+		
+		public void setupSweep()
+		{
+			this.sweep = (float) ((2 * Math.PI) * orbitalPeriod().frequency());;
 		}
 		
 		public OrbitalPeriod orbitalPeriod()
