@@ -8,17 +8,7 @@
 	"texture_layers":
 	[
 		{
-			"texture": "stellarview:textures/environment/halo_template.png",
-			"rgba": {"red": 255, "green": 0, "blue": 0, "alpha": 255},
-			"blend": true,
-			"size": 4488626469,
-			"min_size": 0.9,
-			"clamp_at_min_size": true,
-			"rotation": 0,
-			"uv": { "flip_uv": false }
-		},
-		{
-			"texture": "stellarview:textures/environment/star/red_star.png",
+			"texture": "stellarview:textures/environment/star/betelgeuse.png",
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": true,
 			"size": 4488626469,
@@ -67,7 +57,7 @@
 		},
 		
 		"max_size_multiplier": 15,
-		"start_ticks": 980000,
+		"start_ticks": 5588000,
 		"duration_ticks": 576000
 	}
 }
