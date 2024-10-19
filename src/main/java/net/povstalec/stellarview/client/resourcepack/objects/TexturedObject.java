@@ -5,23 +5,31 @@ import java.util.List;
 import java.util.Optional;
 
 import org.joml.Matrix4f;
+import org.joml.Quaterniond;
 import org.joml.Vector3f;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.datafixers.util.Either;
 
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.util.AxisRotation;
+import net.povstalec.stellarview.common.util.Color;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 import net.povstalec.stellarview.common.util.SphericalCoords;
 import net.povstalec.stellarview.common.util.StellarCoordinates;
 import net.povstalec.stellarview.common.util.TextureLayer;
+import net.povstalec.stellarview.common.util.UV;
 
 public abstract class TexturedObject extends SpaceObject
 {
@@ -38,6 +46,76 @@ public abstract class TexturedObject extends SpaceObject
 	public ArrayList<TextureLayer> getTextureLayers()
 	{
 		return textureLayers;
+	}
+	
+	
+	public static void renderOnSphere(Color.FloatRGBA rgba, Color.FloatRGBA secondaryRGBA, ResourceLocation texture, UV.Quad uv,
+			ClientLevel level, Camera camera, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords,
+			long ticks, double distance, float partialTicks, float brightness, float size, float rotation, boolean shouldBlend)
+	{
+		Vector3f corner00 = new Vector3f(size, DEFAULT_DISTANCE, size);
+		Vector3f corner10 = new Vector3f(-size, DEFAULT_DISTANCE, size);
+		Vector3f corner11 = new Vector3f(-size, DEFAULT_DISTANCE, -size);
+		Vector3f corner01 = new Vector3f(size, DEFAULT_DISTANCE, -size);
+		
+		Quaterniond quaternionX = new Quaterniond().rotateY(sphericalCoords.theta);
+		quaternionX.mul(new Quaterniond().rotateX(sphericalCoords.phi));
+		quaternionX.mul(new Quaterniond().rotateY(rotation));
+		
+		quaternionX.transform(corner00);
+		quaternionX.transform(corner10);
+		quaternionX.transform(corner11);
+		quaternionX.transform(corner01);
+		
+		if(shouldBlend)
+			RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+		else
+			RenderSystem.defaultBlendFunc();
+		
+		RenderSystem.setShaderColor(rgba.red() * secondaryRGBA.red(), rgba.green() * secondaryRGBA.green(), rgba.blue() * secondaryRGBA.blue(), brightness * rgba.alpha() * secondaryRGBA.alpha());
+		
+		RenderSystem.setShaderTexture(0, texture);
+        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        
+        bufferbuilder.vertex(lastMatrix, corner00.x, corner00.y, corner00.z).uv(uv.topRight().u(ticks), uv.topRight().v(ticks)).endVertex();
+        bufferbuilder.vertex(lastMatrix, corner10.x, corner10.y, corner10.z).uv(uv.bottomRight().u(ticks), uv.bottomRight().v(ticks)).endVertex();
+        bufferbuilder.vertex(lastMatrix, corner11.x, corner11.y, corner11.z).uv(uv.bottomLeft().u(ticks), uv.bottomLeft().v(ticks)).endVertex();
+        bufferbuilder.vertex(lastMatrix, corner01.x, corner01.y, corner01.z).uv(uv.topLeft().u(ticks), uv.topLeft().v(ticks)).endVertex();
+        
+        BufferUploader.drawWithShader(bufferbuilder.end());
+        
+        RenderSystem.defaultBlendFunc();
+	}
+	
+	/**
+	 * Method for rendering an individual texture layer, override to change details of how this object's texture layers are rendered
+	 * @param textureLayer
+	 * @param level
+	 * @param bufferbuilder
+	 * @param lastMatrix
+	 * @param sphericalCoords
+	 * @param ticks
+	 * @param distance
+	 * @param partialTicks
+	 */
+	protected void renderTextureLayer(TextureLayer textureLayer, ViewCenter viewCenter, ClientLevel level, Camera camera, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)
+	{
+		if(textureLayer.rgba().alpha() <= 0)
+			return;
+		
+		float size = (float) textureLayer.mulSize(distanceSize(distance));
+		
+		if(size < textureLayer.minSize())
+		{
+			if(textureLayer.clampAtMinSize())
+				size = (float) textureLayer.minSize();
+			else
+				return;
+		}
+		
+		renderOnSphere(textureLayer.rgba(), Color.FloatRGBA.DEFAULT, textureLayer.texture(), textureLayer.uv(),
+				level, camera, bufferbuilder, lastMatrix, sphericalCoords,
+				ticks, distance, partialTicks, dayBrightness(viewCenter, size, ticks, level, camera, partialTicks), size, (float) textureLayer.rotation(), textureLayer.shoulBlend());
 	}
 	
 	protected void renderTextureLayers(ViewCenter viewCenter, ClientLevel level, Camera camera, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)
