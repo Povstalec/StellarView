@@ -92,6 +92,7 @@ public class ResourcepackReloadListener
 			}
 
 			setSpaceObjects(spaceObjects);
+			Space.setupSynodicOrbits();
 			setViewCenters(spaceObjects, viewCenters);
 		}
 		
