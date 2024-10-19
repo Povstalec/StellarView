@@ -16,44 +16,24 @@
 	"texture_layers":
 	[
 		{
-			"texture": "stellarview:textures/environment/planet_phases/enceladus_halo_phases.png",
+			"texture": "stellarview:textures/environment/halo_template.png",
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": true,
 			"size": 252100,
 			"min_size": 0.1,
 			"clamp_at_min_size": true,
 			"rotation": 90,
-			"uv":
-			{
-				"phase_handler":
-				{
-					"ticks_per_phase": 1083,
-					"phase_tick_offset": 0,
-					"columns": 4,
-					"rows": 2
-				},
-				"flip_uv": true
-			}
+			"uv": { "flip_uv": false }
 		},
 		{
-			"texture": "stellarview:textures/environment/planet_phases/enceladus_phases.png",
+			"texture": "stellarview:textures/environment/planet/enceladus.png",
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": false,
 			"size": 252100,
 			"min_size": 0.1,
 			"clamp_at_min_size": true,
 			"rotation": 90,
-			"uv":
-			{
-				"phase_handler":
-				{
-					"ticks_per_phase": 1083,
-					"phase_tick_offset": 0,
-					"columns": 4,
-					"rows": 2
-				},
-				"flip_uv": true
-			}
+			"uv": { "flip_uv": false }
 		}
 	]
 }
