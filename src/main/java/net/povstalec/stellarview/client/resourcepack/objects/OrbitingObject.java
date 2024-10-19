@@ -59,6 +59,7 @@ public class OrbitingObject extends TexturedObject
 		if(getOrbitInfo().isPresent())
 		{
 			getOrbitInfo().get().orbitalPeriod().updateFromParentPeriod(parentOrbitalPeriod);
+			getOrbitInfo().get().setupSweep();
 			
 			for(SpaceObject child : children)
 			{
@@ -109,7 +110,7 @@ public class OrbitingObject extends TexturedObject
 		public static final Codec<OrbitalPeriod> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				Codec.LONG.fieldOf("ticks").forGetter(OrbitalPeriod::ticks),
 				Codec.doubleRange(Double.MIN_NORMAL, Double.MAX_VALUE).optionalFieldOf("orbits", 1D).forGetter(OrbitalPeriod::orbits),
-				Codec.BOOL.optionalFieldOf("orbits", false).forGetter(OrbitalPeriod::synodic)
+				Codec.BOOL.optionalFieldOf("synodic", false).forGetter(OrbitalPeriod::synodic)
 				).apply(instance, OrbitalPeriod::new));
 		
 		public OrbitalPeriod(long ticks, double orbits, boolean synodic)
@@ -131,7 +132,7 @@ public class OrbitingObject extends TexturedObject
 				return;
 			
 			this.ticks = parentPeriod.ticks;
-			this.orbits = this.frequency * parentPeriod.ticks + 1;
+			this.orbits = this.frequency * this.ticks + 1;
 			
 			this.frequency = this.orbits / this.ticks;
 			
@@ -190,7 +191,7 @@ public class OrbitingObject extends TexturedObject
 		
 		private final float epochMeanAnomaly;
 		
-		private final float sweep;
+		private float sweep;
 		
 		private final float eccentricity;
 		
@@ -214,7 +215,7 @@ public class OrbitingObject extends TexturedObject
 			this.longtitudeOfAscendingNode = (float) Math.toRadians(longtitudeOfAscendingNode);
 			
 			this.epochMeanAnomaly = (float) Math.toRadians(meanAnomaly);
-			this.sweep = (float) ((2 * Math.PI) * orbitalPeriod().frequency());
+			setupSweep();
 			
 			this.eccentricity = (apoapsis - periapsis) / (apoapsis + periapsis);
 			
@@ -234,6 +235,11 @@ public class OrbitingObject extends TexturedObject
 		public float orbitClampNumber()
 		{
 			return orbitClampDistance;
+		}
+		
+		public void setupSweep()
+		{
+			this.sweep = (float) ((2 * Math.PI) * orbitalPeriod().frequency());;
 		}
 		
 		public OrbitalPeriod orbitalPeriod()
