@@ -9,6 +9,7 @@
 	"gui.stellarview.disable_stars": "Disable Stars",
 	"gui.stellarview.day_stars": "Stars During Day",
 	"gui.stellarview.bright_stars": "Bright Stars",
+	"gui.stellarview.textured_stars": "Textured Stars",
 
 	"gui.stellarview.replace_vanilla": "Replace Vanilla",
 	"gui.stellarview.config_priority": "Prioritize Config",

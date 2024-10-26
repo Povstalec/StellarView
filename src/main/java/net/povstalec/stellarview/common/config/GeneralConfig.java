@@ -10,6 +10,7 @@ public class GeneralConfig
 	
 	public static StellarViewConfigValue.BooleanValue disable_stars;
 	public static StellarViewConfigValue.BooleanValue bright_stars;
+	public static StellarViewConfigValue.BooleanValue textured_stars;
 	
 	public static void init(ForgeConfigSpec.Builder client)
 	{
@@ -27,5 +28,9 @@ public class GeneralConfig
 		bright_stars = new StellarViewConfigValue.BooleanValue(client, "client.bright_stars", 
 				true, 
 				"Makes Stars brighter");
+		
+		textured_stars = new StellarViewConfigValue.BooleanValue(client, "client.textured_stars",
+				false,
+				"Enables the use of textures for stars");
 	}
 }

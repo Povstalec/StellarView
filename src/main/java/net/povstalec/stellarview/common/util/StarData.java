@@ -47,7 +47,7 @@ public class StarData
 	 * @param z Z coordinate of the star
 	 * @param i Index of the star
 	 */
-	public void newStar(StarInfo starInfo, BufferBuilder builder, RandomSource randomSource, double x, double y, double z, int i)
+	public void newStar(StarInfo starInfo, BufferBuilder builder, RandomSource randomSource, double x, double y, double z, boolean hasTexture, int i)
 	{
 		long seed = randomSource.nextLong();
 		
@@ -81,10 +81,10 @@ public class StarData
 		randoms[i][0] = Math.sin(random); // sin random
 		randoms[i][1] = Math.cos(random); // cos random
 		
-		this.createStar(builder, i);
+		this.createStar(builder, hasTexture, i);
 	}
 	
-	public void createStar(BufferBuilder builder, int i)
+	public void createStar(BufferBuilder builder, boolean hasTexture, int i)
 	{
 		double sinRandom = randoms[i][0];
 		double cosRandom = randoms[i][1];
@@ -148,6 +148,9 @@ public class StarData
 			builder.putFloat(4, (float) width);
 			builder.putFloat(8, (float) starSizes[i]);
 			builder.nextElement();
+			
+			if(hasTexture)
+				builder.uv( (float) (aLocation + 1) / 2F, (float) (bLocation + 1) / 2F);
 			
 			builder.endVertex();
 		}

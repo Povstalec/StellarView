@@ -47,6 +47,8 @@ public class GeneralConfigScreen extends Screen
 				this.width, GeneralConfig.disable_stars));
 		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.bright_stars"), 
 				this.width, GeneralConfig.bright_stars));
+		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.textured_stars"),
+				this.width, GeneralConfig.textured_stars));
 		
 		this.addWidget(this.configList);
 

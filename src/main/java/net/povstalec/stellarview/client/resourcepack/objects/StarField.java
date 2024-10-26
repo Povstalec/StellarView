@@ -6,6 +6,9 @@ import java.util.Optional;
 
 import javax.annotation.Nullable;
 
+import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.resources.ResourceLocation;
+import net.povstalec.stellarview.StellarView;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3d;
@@ -61,6 +64,8 @@ public class StarField extends SpaceObject
 	protected final ArrayList<SpiralArm> spiralArms;
 	
 	protected final int totalStars;
+	
+	protected boolean hasTexture = GeneralConfig.textured_stars.get();
 	
 	public static final Codec<StarField> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			RESOURCE_KEY_CODEC.optionalFieldOf("parent").forGetter(StarField::getParentKey),
@@ -176,6 +181,11 @@ public class StarField extends SpaceObject
 		return starBuffer == null;
 	}
 	
+	public boolean requiresReset()
+	{
+		return hasTexture != GeneralConfig.textured_stars.get();
+	}
+	
 	public void reset()
 	{
 		starBuffer = null;
@@ -198,14 +208,14 @@ public class StarField extends SpaceObject
 			
 			axisRotation.quaterniond().transform(cartesian);
 
-			starData.newStar(starInfo, bufferBuilder, randomsource, cartesian.x, cartesian.y, cartesian.z, i);
+			starData.newStar(starInfo, bufferBuilder, randomsource, cartesian.x, cartesian.y, cartesian.z, hasTexture, i);
 		}
 	}
 	
 	protected RenderedBuffer generateStarBuffer(BufferBuilder bufferBuilder)
 	{
 		RandomSource randomsource = RandomSource.create(seed);
-		bufferBuilder.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR_POS_COLOR_LY);
+		bufferBuilder.begin(VertexFormat.Mode.QUADS, hasTexture ? StellarViewVertexFormat.STAR_POS_COLOR_LY_TEX : StellarViewVertexFormat.STAR_POS_COLOR_LY);
 		
 		double sizeMultiplier = diameter / 30D;
 		
@@ -216,7 +226,7 @@ public class StarField extends SpaceObject
 		int numberOfStars = stars;
 		for(SpiralArm arm : spiralArms) //Draw each arm
 		{
-			arm.generateStars(bufferBuilder, axisRotation, starData, starInfo, randomsource, numberOfStars, sizeMultiplier);
+			arm.generateStars(bufferBuilder, axisRotation, starData, starInfo, randomsource, numberOfStars, sizeMultiplier, hasTexture);
 			numberOfStars += arm.armStars();
 		}
 		
@@ -225,11 +235,11 @@ public class StarField extends SpaceObject
 	
 	protected RenderedBuffer getStarBuffer(BufferBuilder bufferBuilder)
 	{
-		bufferBuilder.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR_POS_COLOR_LY);
+		bufferBuilder.begin(VertexFormat.Mode.QUADS, hasTexture ? StellarViewVertexFormat.STAR_POS_COLOR_LY_TEX : StellarViewVertexFormat.STAR_POS_COLOR_LY);
 		
 		for(int i = 0; i < totalStars; i++)
 		{
-			starData.createStar(bufferBuilder, i);
+			starData.createStar(bufferBuilder, hasTexture, i);
 		}
 		return bufferBuilder.end();
 	}
@@ -238,6 +248,8 @@ public class StarField extends SpaceObject
 	{
 		if(starBuffer != null)
 			starBuffer.close();
+		
+		hasTexture = GeneralConfig.textured_stars.get();
 		
 		starBuffer = new StarBuffer();
 		Tesselator tesselator = Tesselator.getInstance();
@@ -279,13 +291,12 @@ public class StarField extends SpaceObject
 			Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder,
 			Vector3f parentVector, AxisRotation parentRotation)
 	{
-		//System.out.println(this + " " + viewCenter.getCoords());
 		SpaceCoords difference = viewCenter.getCoords().sub(getCoords());
 		
 		if(requiresSetup())
 			setupBuffer(difference);
-		//else
-		//	setStarBuffer(difference); // This could be viable with fewer stars
+		else if(requiresReset())
+			setStarBuffer(); // This could be viable with fewer stars
 		
 		float starBrightness = StarLike.getStarBrightness(viewCenter, level, camera, partialTicks);
 		
@@ -294,16 +305,18 @@ public class StarField extends SpaceObject
 			stack.pushPose();
 			
 			//stack.translate(0, 0, 0);
+			if(hasTexture)
+				RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 			RenderSystem.setShaderColor(1, 1, 1, starBrightness);
-			//RenderSystem.setShaderTexture(0, new ResourceLocation("textures/environment/sun.png"));
+			if(hasTexture)
+				RenderSystem.setShaderTexture(0, new ResourceLocation(StellarView.MODID,"textures/environment/star.png"));
 			FogRenderer.setupNoFog();
 			
 			Quaternionf q = SpaceCoords.getQuaternionf(level, viewCenter, partialTicks);
 			
 			stack.mulPose(q);
 			this.starBuffer.bind();
-			this.starBuffer.drawWithShader(stack.last().pose(), projectionMatrix, difference, StellarViewShaders.starShader());
-			//this.starBuffer.drawWithShader(stack.last().pose(), projectionMatrix, GameRenderer.getPositionColorTexShader());
+			this.starBuffer.drawWithShader(stack.last().pose(), projectionMatrix, difference, hasTexture ? StellarViewShaders.starTexShader() : StellarViewShaders.starShader());
 			VertexBuffer.unbind();
 			
 			setupFog.run();
@@ -367,7 +380,7 @@ public class StarField extends SpaceObject
 			return clumpStarsInCenter;
 		}
 		
-		protected void generateStars(BufferBuilder bufferBuilder, AxisRotation axisRotation, StarData starData, StarInfo starInfo, RandomSource randomsource, int numberOfStars, double sizeMultiplier)
+		protected void generateStars(BufferBuilder bufferBuilder, AxisRotation axisRotation, StarData starData, StarInfo starInfo, RandomSource randomsource, int numberOfStars, double sizeMultiplier, boolean hasTexture)
 		{
 			for(int i = 0; i < armStars; i++)
 			{
@@ -395,7 +408,7 @@ public class StarField extends SpaceObject
 				
 				axisRotation.quaterniond().transform(cartesian);
 				
-				starData.newStar(starInfo, bufferBuilder, randomsource, cartesian.x, cartesian.y, cartesian.z, numberOfStars + i);
+				starData.newStar(starInfo, bufferBuilder, randomsource, cartesian.x, cartesian.y, cartesian.z, hasTexture, numberOfStars + i);
 			}
 		}
 	}
