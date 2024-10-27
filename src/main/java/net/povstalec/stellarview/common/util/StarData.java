@@ -11,8 +11,6 @@ public class StarData
 	private double[][] starCoords;
 	private double[] starSizes;
 	
-	private double deformations[][];
-	
 	private short[][] starRGBA;
 	
 	private double[][] randoms;
@@ -21,8 +19,6 @@ public class StarData
 	{
 		this.starCoords = new double[stars][3];
 		this.starSizes = new double[stars];
-
-		this.deformations = new double[stars][2];
 		
 		this.randoms = new double[stars][2];
 		
@@ -56,10 +52,6 @@ public class StarData
 		starCoords[i][0] = x;
 		starCoords[i][1] = y;
 		starCoords[i][2] = z;
-		
-		//TODO Set up deformation
-		deformations[i][0] = 1; // Height deformation
-		deformations[i][1] = 1;// Width deformation
 		
 		StarLike.StarType starType = starInfo.getRandomStarType(seed);
 		Color.IntRGB rgb = starType.getRGB();
@@ -117,8 +109,8 @@ public class StarData
 			 * Which corresponds to:
 			 * UV:	00	01	11	10
 			 */
-			double aLocation = (double) ((j & 2) - 1);
-			double bLocation = (double) ((j + 1 & 2) - 1);
+			double aLocation = (j & 2) - 1;
+			double bLocation = (j + 1 & 2) - 1;
 			
 			/* These are the values for cos(random) = sin(random)
 			 * (random is simply there to randomize the star rotation)
@@ -139,8 +131,8 @@ public class StarData
 			 *           (0,-2)
 			 * 
 			 */
-			double height = deformations[i][0] * (aLocation * cosRandom - bLocation * sinRandom);
-			double width = deformations[i][1] * (bLocation * cosRandom + aLocation * sinRandom);
+			double height = aLocation * cosRandom - bLocation * sinRandom;
+			double width = bLocation * cosRandom + aLocation * sinRandom;
 			
 			builder.vertex(starCoords[i][0], starCoords[i][1], starCoords[i][2]).color(starRGBA[i][0], starRGBA[i][1], starRGBA[i][2], starRGBA[i][3]);
 			// These next few lines add a "custom" element defined as HeightWidthSize in StellarViewVertexFormat

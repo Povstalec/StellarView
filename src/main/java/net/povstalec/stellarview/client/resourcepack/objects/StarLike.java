@@ -141,13 +141,13 @@ public abstract class StarLike extends OrbitingObject
 	}
 	
 	//TODO Use this again
-	/*public double starWidthFunction(double aLocation, double bLocation, double sinRandom, double cosRandom, double sinTheta, double cosTheta, double sinPhi, double cosPhi)
+	public double starWidthFunction(double aLocation, double bLocation, double sinRandom, double cosRandom, double sinTheta, double cosTheta, double sinPhi, double cosPhi)
 	{
-		if(StellarViewConfig.enable_black_hole.get())
-			return cosPhi  > 0.0 ? cosPhi * 8 *(bLocation * cosRandom + aLocation * sinRandom) : bLocation * cosRandom + aLocation * sinRandom;
+		if(true)
+			return cosPhi  > 0.0 ? cosPhi * 8 * (bLocation * cosRandom + aLocation * sinRandom) : bLocation * cosRandom + aLocation * sinRandom;
 		
 		return bLocation * cosRandom + aLocation * sinRandom;
-	}*/
+	}
 	
 	
 	

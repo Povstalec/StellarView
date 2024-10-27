@@ -266,7 +266,7 @@ public class StarField extends SpaceObject
 		return this;
 	}
 	
-	public StarField setupBuffer(SpaceCoords relativeCoords)
+	public StarField setupBuffer()
 	{
 		if(starBuffer != null)
 			starBuffer.close();
@@ -294,9 +294,9 @@ public class StarField extends SpaceObject
 		SpaceCoords difference = viewCenter.getCoords().sub(getCoords());
 		
 		if(requiresSetup())
-			setupBuffer(difference);
+			setupBuffer();
 		else if(requiresReset())
-			setStarBuffer(); // This could be viable with fewer stars
+			setStarBuffer();
 		
 		float starBrightness = StarLike.getStarBrightness(viewCenter, level, camera, partialTicks);
 		
