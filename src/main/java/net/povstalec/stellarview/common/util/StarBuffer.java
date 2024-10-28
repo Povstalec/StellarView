@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 
 import javax.annotation.Nullable;
 
+import net.povstalec.stellarview.client.resourcepack.Space;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL15C;
@@ -195,6 +196,15 @@ public class StarBuffer implements AutoCloseable
 
 		if(shaderInstance.RELATIVE_SPACE_KM != null)
 			shaderInstance.RELATIVE_SPACE_KM.set(relativeSpaceKm);
+		
+		if(shaderInstance.LENSING_MAT != null)
+			shaderInstance.LENSING_MAT.set(Space.lensingMatrix);
+		
+		if(shaderInstance.LENSING_MAT_INV != null)
+			shaderInstance.LENSING_MAT_INV.set(Space.lensingMatrixInv);
+		
+		if(shaderInstance.LENSING_INTENSITY != null)
+			shaderInstance.LENSING_INTENSITY.set(Space.lensingIntensity);
 		
 		RenderSystem.setupShaderLights(shaderInstance);
 		shaderInstance.apply();

@@ -15,7 +15,15 @@ public class StarShaderInstance extends ShaderInstance
 {
 	@Nullable
 	public final Uniform RELATIVE_SPACE_LY;
+	@Nullable
 	public final Uniform RELATIVE_SPACE_KM;
+	
+	@Nullable
+	public final Uniform LENSING_MAT;
+	@Nullable
+	public final Uniform LENSING_MAT_INV;
+	@Nullable
+	public final Uniform LENSING_INTENSITY;
 	
 	public StarShaderInstance(ResourceProvider provider, ResourceLocation shaderLocation, VertexFormat format)
 			throws IOException
@@ -23,5 +31,9 @@ public class StarShaderInstance extends ShaderInstance
 		super(provider, shaderLocation, format);
 		this.RELATIVE_SPACE_LY = this.getUniform("RelativeSpaceLy");
 		this.RELATIVE_SPACE_KM = this.getUniform("RelativeSpaceKm");
+		
+		this.LENSING_MAT = this.getUniform("LensingMat");
+		this.LENSING_MAT_INV = this.getUniform("LensingMatInv");
+		this.LENSING_INTENSITY = this.getUniform("LensingIntensity");
 	}
 }

@@ -2,10 +2,13 @@ package net.povstalec.stellarview.client.resourcepack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nullable;
 
+import net.povstalec.stellarview.client.resourcepack.objects.GravityLense;
 import net.povstalec.stellarview.client.resourcepack.objects.OrbitingObject;
+import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -28,6 +31,13 @@ public final class Space
 	private static final Vector3f NULL_VECTOR = new Vector3f();
 	
 	private static final List<StarField> STAR_FIELDS = new ArrayList<StarField>();
+	private static final List<GravityLense> GRAVITY_LENSES = new ArrayList<GravityLense>();
+	
+	public static final Matrix3f IDENTITY_MATRIX = new Matrix3f();
+	
+	public static Matrix3f lensingMatrix = IDENTITY_MATRIX;
+	public static Matrix3f lensingMatrixInv = IDENTITY_MATRIX;
+	public static float lensingIntensity = 0;
 	
 	@Nullable
 	private static Sol sol = null;
@@ -46,6 +56,7 @@ public final class Space
 		
 		SPACE_OBJECTS.clear();
 		STAR_FIELDS.clear();
+		GRAVITY_LENSES.clear();
 	}
 	
 	public static void addSpaceObject(SpaceObject spaceObject)
@@ -64,6 +75,8 @@ public final class Space
 	
 	public static void render(ViewCenter viewCenter, SpaceObject masterParent, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder)
 	{
+		setBestLensing();
+		
 		for(SpaceObject spaceObject : SPACE_OBJECTS)
 		{
 			if(spaceObject != masterParent) // Makes sure the master parent (usually galaxy) is rendered last, that way stars from other galaxies don't get rendered over planets
@@ -71,6 +84,21 @@ public final class Space
 		}
 		
 		masterParent.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, NULL_VECTOR, new AxisRotation(0, 0, 0));
+	}
+	
+	
+	
+	private static void setBestLensing()
+	{
+		lensingMatrix = IDENTITY_MATRIX;
+		lensingMatrixInv = IDENTITY_MATRIX;
+		lensingIntensity = 0;
+		
+		for(GravityLense gravityLense : GRAVITY_LENSES)
+		{
+			if(gravityLense.getLensingIntensity() > lensingIntensity)
+				gravityLense.setupLensing();
+		}
 	}
 	
 	
@@ -86,6 +114,13 @@ public final class Space
 		{
 			starField.reset();
 		}
+	}
+	
+	
+	
+	public static void addGravityLense(GravityLense gravityLense)
+	{
+		GRAVITY_LENSES.add(gravityLense);
 	}
 	
 	
