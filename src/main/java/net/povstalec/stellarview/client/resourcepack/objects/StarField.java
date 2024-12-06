@@ -73,7 +73,7 @@ public class StarField extends SpaceObject
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(StarField::getAxisRotation),
 
 			SpaceObject.FadeOutHandler.CODEC.optionalFieldOf("fade_out_handler", SpaceObject.FadeOutHandler.DEFAULT_STAR_FIELD_HANDLER).forGetter(StarField::getFadeOutHandler),
-
+			
 			StarInfo.CODEC.optionalFieldOf("star_info", StarInfo.DEFAULT_STAR_INFO).forGetter(StarField::getStarInfo),
 			Codec.LONG.fieldOf("seed").forGetter(StarField::getSeed),
 			Codec.INT.fieldOf("diameter_ly").forGetter(StarField::getDiameter),
@@ -309,7 +309,7 @@ public class StarField extends SpaceObject
 				RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 			RenderSystem.setShaderColor(1, 1, 1, starBrightness);
 			if(hasTexture)
-				RenderSystem.setShaderTexture(0, new ResourceLocation(StellarView.MODID,"textures/environment/star.png"));
+				RenderSystem.setShaderTexture(0, getStarInfo().getStarTexture());
 			FogRenderer.setupNoFog();
 			
 			Quaternionf q = SpaceCoords.getQuaternionf(level, viewCenter, partialTicks);
