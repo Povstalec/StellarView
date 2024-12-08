@@ -50,6 +50,9 @@ public class StarInfo
 	
 	public StarLike.StarType getRandomStarType(long seed)
 	{
+		if(starTypes.isEmpty())
+			return WHITE_STAR;
+		
 		Random random = new Random(seed);
 		
 		int i = 0;

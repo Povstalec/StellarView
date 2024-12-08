@@ -6,8 +6,8 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-import net.povstalec.stellarview.client.resourcepack.objects.GravityLense;
-import net.povstalec.stellarview.client.resourcepack.objects.OrbitingObject;
+import net.povstalec.stellarview.client.resourcepack.objects.*;
+import net.povstalec.stellarview.common.config.GeneralConfig;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -18,8 +18,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.povstalec.stellarview.StellarView;
-import net.povstalec.stellarview.client.resourcepack.objects.SpaceObject;
-import net.povstalec.stellarview.client.resourcepack.objects.StarField;
 import net.povstalec.stellarview.client.resourcepack.objects.distinct.Sol;
 import net.povstalec.stellarview.common.config.OverworldConfig;
 import net.povstalec.stellarview.common.util.AxisRotation;
@@ -76,6 +74,15 @@ public final class Space
 	public static void render(ViewCenter viewCenter, SpaceObject masterParent, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder)
 	{
 		setBestLensing();
+		
+		if(GeneralConfig.dust_clouds.get())
+		{
+			float dustCloudBrightness = StarField.dustCloudBrightness(viewCenter, level, camera, partialTicks);
+			for(StarField starField : STAR_FIELDS)
+			{
+				starField.renderDustClouds(viewCenter, level, partialTicks, stack, camera, projectionMatrix, setupFog, dustCloudBrightness);
+			}
+		}
 		
 		for(SpaceObject spaceObject : SPACE_OBJECTS)
 		{

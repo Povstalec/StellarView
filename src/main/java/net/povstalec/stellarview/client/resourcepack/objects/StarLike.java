@@ -133,7 +133,7 @@ public abstract class StarLike extends OrbitingObject
 			starBrightness = 0.5F;
 		
 		if(GeneralConfig.bright_stars.get())
-			starBrightness = starBrightness * StellarView.lightSourceDimming(level, camera);
+			starBrightness = starBrightness * StellarView.lightSourceStarDimming(level, camera);
 		
 		starBrightness = starBrightness * StellarView.rainDimming(level, partialTicks);
 		
