@@ -1,12 +1,12 @@
 {
-	"coords": { "x": {"ly": 0}, "y": {"ly": 0}, "z": {"ly": 28000} },
+	"coords": { "right_ascension": {"hours": 17, "minutes": 45, "seconds": 40.0409}, "declination": {"degrees": -29, "minutes": 0, "seconds": 28.118}, "distance": {"ly": 26996} },
 	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
 	
 	"seed": 10842,
 	"diameter_ly": 90000,
 	
 	"stars": 2000,
-	"dust_clouds": 200,
+	"dust_clouds": 10,
 	
 	"x_stretch": 0.5,
 	"y_stretch": 0.25,
@@ -14,10 +14,10 @@
 	
 	"spiral_arms":
 	[
-		{ "dust_clouds": 150, "stars": 1500, "arm_rotation": 0, "arm_length": 1.6298770314100501, "arm_thickness": 2.0 },
-		{ "dust_clouds": 150, "stars": 1500, "arm_rotation": 90, "arm_length": 1.6941251689586823, "arm_thickness": 2.0 },
-		{ "dust_clouds": 150, "stars": 1500, "arm_rotation": 180, "arm_length": 1.9660513834462778, "arm_thickness": 2.0 },
-		{ "dust_clouds": 150, "stars": 1500, "arm_rotation": 270, "arm_length": 1.8086568638593041, "arm_thickness": 2.0 }
+		{ "dust_clouds": 100, "stars": 1500, "arm_rotation": 0, "arm_length": 1.6298770314100501, "arm_thickness": 2.0 },
+		{ "dust_clouds": 100, "stars": 1500, "arm_rotation": 90, "arm_length": 1.6941251689586823, "arm_thickness": 2.0 },
+		{ "dust_clouds": 100, "stars": 1500, "arm_rotation": 180, "arm_length": 1.9660513834462778, "arm_thickness": 2.0 },
+		{ "dust_clouds": 100, "stars": 1500, "arm_rotation": 270, "arm_length": 1.8086568638593041, "arm_thickness": 2.0 }
 	],
 	
 	"dust_cloud_info":

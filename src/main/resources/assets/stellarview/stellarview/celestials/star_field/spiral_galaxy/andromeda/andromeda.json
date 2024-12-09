@@ -6,7 +6,7 @@
 	"diameter_ly": 152000,
 	
 	"stars": 4000,
-	"dust_clouds": 300,
+	"dust_clouds": 100,
 	
 	"x_stretch": 0.5,
 	"y_stretch": 0.25,

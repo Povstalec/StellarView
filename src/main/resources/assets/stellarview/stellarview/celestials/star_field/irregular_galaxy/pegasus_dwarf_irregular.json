@@ -6,7 +6,7 @@
 	"diameter_ly": 26093,
 	
 	"stars": 1000,
-	"dust_clouds": 100,
+	"dust_clouds": 0,
 	
 	"x_stretch": 0.5,
 	"y_stretch": 0.25,
@@ -14,8 +14,8 @@
 	
 	"spiral_arms":
 	[
-		{ "dust_clouds": 100, "stars": 1000, "arm_rotation": 0, "arm_length": 2.1, "arm_thickness": 2.5 },
-		{ "dust_clouds": 100, "stars": 500, "arm_rotation": 156, "arm_length": 1.2, "arm_thickness": 2.5 }
+		{ "dust_clouds": 60, "stars": 1000, "arm_rotation": 0, "arm_length": 2.1, "arm_thickness": 2.5 },
+		{ "dust_clouds": 10, "stars": 500, "arm_rotation": 156, "arm_length": 1.2, "arm_thickness": 2.5 }
 	],
 	
 	"dust_cloud_info":

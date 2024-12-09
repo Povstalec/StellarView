@@ -23,17 +23,19 @@ out vec2 texCoord0;
 
 float clampStar(float size, float distance)
 {
+	float minSize = size * 0.04;
+
 	size = 100000 * size / distance;
 	
 	if(size > MAX_SIZE)
 		return MAX_SIZE;
 	
-	return size;
+	return size < minSize ? minSize : size;
 }
 
 float clampAlpha(float alpha, float distance)
 {
-	float minAlpha = alpha * 0.1;
+	float minAlpha = alpha * 0.005;
 	
 	// Stars appear dimmer the further away they are
 	//alpha -= distance / 100000;
