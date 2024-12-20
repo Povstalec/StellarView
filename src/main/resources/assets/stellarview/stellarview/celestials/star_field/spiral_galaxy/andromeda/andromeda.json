@@ -14,16 +14,35 @@
 	
 	"spiral_arms":
 	[
-		{ "dust_clouds": 400, "stars": 4000, "arm_rotation": 0, "arm_length": 2.92, "arm_thickness": 2.5 },
-		{ "dust_clouds": 400, "stars": 4000, "arm_rotation": 180, "arm_length": 2.56, "arm_thickness": 2.5 }
+		{
+			"dust_clouds": 400, "stars": 4000, "arm_rotation": 0, "arm_length": 2.92, "arm_thickness": 2.5,
+			"dust_cloud_info":
+			{
+				"dust_cloud_types":
+				[
+					{ "rgb": {"red": 107, "green": 107, "blue": 107}, "min_size": 2.0, "max_size": 7.0, "min_brightness": 255, "max_brightness": 255, "weight": 1 },
+					{ "rgb": {"red": 140, "green": 160, "blue": 255}, "min_size": 2.0, "max_size": 7.0, "min_brightness": 255, "max_brightness": 255, "weight": 4 }
+				]
+			}
+		},
+		{
+			"dust_clouds": 400, "stars": 4000, "arm_rotation": 180, "arm_length": 2.56, "arm_thickness": 2.5,
+			"dust_cloud_info":
+			{
+				"dust_cloud_types":
+				[
+					{ "rgb": {"red": 107, "green": 107, "blue": 107}, "min_size": 2.0, "max_size": 7.0, "min_brightness": 255, "max_brightness": 255, "weight": 1 },
+					{ "rgb": {"red": 140, "green": 160, "blue": 255}, "min_size": 2.0, "max_size": 7.0, "min_brightness": 255, "max_brightness": 255, "weight": 4 }
+				]
+			}
+		}
 	],
 	
 	"dust_cloud_info":
 	{
 		"dust_cloud_types":
 		[
-			{ "rgb": {"red": 107, "green": 107, "blue": 107}, "min_size": 3.0, "max_size": 7.5, "min_brightness": 255, "max_brightness": 255, "weight": 1 },
-			{ "rgb": {"red": 40, "green": 60, "blue": 107}, "min_size": 3.0, "max_size": 7.5, "min_brightness": 255, "max_brightness": 255, "weight": 4 }
+			{ "rgb": {"red": 255, "green": 255, "blue": 0}, "min_size": 3.0, "max_size": 7.5, "min_brightness": 255, "max_brightness": 255, "weight": 1 }
 		]
 	},
 	

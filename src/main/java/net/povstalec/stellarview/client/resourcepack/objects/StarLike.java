@@ -26,7 +26,7 @@ import net.povstalec.stellarview.common.util.TextureLayer;
 
 public abstract class StarLike extends OrbitingObject
 {
-	public static final float MIN_SIZE = 0.2F;
+	public static final float MIN_SIZE = 0.08F;
 	
 	public static final float MAX_ALPHA = 1F;
 	public static final float MIN_ALPHA = MAX_ALPHA * 0.1F; // Previously used (MAX_ALPHA - 0.66F) * 2 / 5;

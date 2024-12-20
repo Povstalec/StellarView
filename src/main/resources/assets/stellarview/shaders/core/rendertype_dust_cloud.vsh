@@ -16,7 +16,7 @@ uniform float LensingIntensity;
 
 float DEFAULT_DISTANCE = 100;
 float MAX_SIZE = 50;
-float MAX_ALPHA = 0.05;
+float MAX_ALPHA = 0.025;
 
 out vec4 vertexColor;
 out vec2 texCoord0;

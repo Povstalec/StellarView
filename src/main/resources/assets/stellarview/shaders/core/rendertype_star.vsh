@@ -14,6 +14,7 @@ uniform mat3 LensingMatInv;
 uniform float LensingIntensity;
 
 float DEFAULT_DISTANCE = 100;
+float MIN_STAR_SIZE = 0.02;
 
 out vec4 vertexColor;
 
@@ -23,8 +24,8 @@ float clampStar(float starSize, float distance)
 	
 	starSize -= starSize * distance / 1000000.0;
 	
-	if(starSize < 0.04)
-		return 0.04;
+	if(starSize < MIN_STAR_SIZE)
+		return MIN_STAR_SIZE;
 	
 	return starSize;// > maxStarSize ? maxStarSize : starSize;
 }
