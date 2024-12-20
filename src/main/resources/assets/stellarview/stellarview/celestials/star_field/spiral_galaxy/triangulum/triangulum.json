@@ -45,7 +45,7 @@
 			}
 		},
 		{
-			"dust_clouds": 70, "stars": 600, "arm_rotation": 0, "arm_length": 2.02, "arm_thickness": 2.5,
+			"dust_clouds": 70, "stars": 600, "arm_rotation": 180, "arm_length": 2.02, "arm_thickness": 2.5,
 			"dust_cloud_info":
 			{
 				"dust_cloud_types":
@@ -55,7 +55,7 @@
 			}
 		},
 		{
-			"dust_clouds": 30, "stars": 300, "arm_rotation": 60, "arm_length": 1.5, "arm_thickness": 1.5,
+			"dust_clouds": 30, "stars": 300, "arm_rotation": 240, "arm_length": 1.5, "arm_thickness": 1.5,
 			"dust_cloud_info":
 			{
 				"dust_cloud_types":
@@ -65,7 +65,7 @@
 			}
 		},
 		{
-			"dust_clouds": 30, "stars": 300, "arm_rotation": 60, "arm_length": 1.5, "arm_thickness": 1.5,
+			"dust_clouds": 30, "stars": 300, "arm_rotation": 300, "arm_length": 1.5, "arm_thickness": 1.5,
 			"dust_cloud_info":
 			{
 				"dust_cloud_types":
