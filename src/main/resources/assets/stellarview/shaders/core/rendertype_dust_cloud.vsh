@@ -3,6 +3,7 @@
 in vec3 StarPos;
 in vec4 Color;
 in vec3 HeightWidthSize;
+in vec2 UV0;
 
 uniform mat4 ModelViewMat;
 uniform mat4 ProjMat;
@@ -14,20 +15,36 @@ uniform mat3 LensingMatInv;
 uniform float LensingIntensity;
 
 float DEFAULT_DISTANCE = 100;
-float MIN_STAR_SIZE = 0.02;
+float MAX_SIZE = 50;
+float MAX_ALPHA = 0.025;
 
 out vec4 vertexColor;
+out vec2 texCoord0;
 
-float clampStar(float starSize, float distance)
+float clampStar(float size, float distance)
 {
-	//float maxStarSize = 0.2 + starSize / 5;
+	float minSize = size * 0.04;
+
+	size = 100000 * size / distance;
 	
-	starSize -= starSize * distance / 1000000.0;
+	if(size > MAX_SIZE)
+		return MAX_SIZE;
 	
-	if(starSize < MIN_STAR_SIZE)
-		return MIN_STAR_SIZE;
+	return size < minSize ? minSize : size;
+}
+
+float clampAlpha(float alpha, float distance)
+{
+	float minAlpha = alpha * 0.005;
 	
-	return starSize;// > maxStarSize ? maxStarSize : starSize;
+	// Stars appear dimmer the further away they are
+	//alpha -= distance / 100000;
+	alpha = 100000 * alpha / distance;
+	
+	if(alpha < minAlpha)
+		return minAlpha;
+		
+	return alpha > MAX_ALPHA ? MAX_ALPHA : alpha;
 }
 
 void main()
@@ -39,56 +56,18 @@ void main()
 	// COLOR START - Adjusts the brightness (alpha) of the star based on its distance
 	
 	float alpha = Color.w;
-	float minAlpha = alpha * 0.1;
-	
-	// Stars appear dimmer the further away they are
-	alpha -= distance / 100000;
-	
-	if(alpha < minAlpha)
-	{
-		alpha = minAlpha;
-		
-		/*if(distance > 3000000)
-		{
-			if(minAlpha < 0.08)
-			{
-				if(distance < 4000000)
-				{
-					alpha = ( minAlpha * (4000000 - distance) ) / 1000000;
-					
-					if(alpha < 0)
-						alpha = 0;
-				}
-				else
-					alpha = 0;
-			}
-			else
-			{
-				float lowerAlpha = minAlpha * 0.5; // TODO This should ideally be a value provided for the vertex format
-				
-				if(distance < 4000000)
-				{
-					alpha = ( minAlpha * (4000000 - distance) ) / 1000000;
-					
-					if(alpha < lowerAlpha)
-						alpha = lowerAlpha;
-				}
-				else
-					alpha = lowerAlpha;
-			}
-		}*/
-	}
+	alpha = clampAlpha(alpha, distance);
 	
 	// COLOR END
 	
-	float starSize = clampStar(HeightWidthSize.z, distance);
+	float starSize = clampStar(HeightWidthSize.z * 4, distance);
 	
 	distance = 1.0 / distance;
 	xyz.x *= distance;
 	xyz.y *= distance;
 	xyz.z *= distance;
 	
-	if(LensingIntensity > 0.0)
+	if(LensingIntensity > 1.0)
 		xyz = LensingMat * xyz;
 	
 	// This effectively pushes the Star away from the camera
@@ -149,9 +128,10 @@ void main()
 	float projectedX = heightProjectionXZ * sinTheta - width * cosTheta;
 	float projectedZ = width * sinTheta + heightProjectionXZ * cosTheta;
 	
-	vec3 pos =  LensingIntensity > 0.0 ? LensingMatInv * vec3(projectedX + starX, heightProjectionY + starY, projectedZ + starZ) : vec3(projectedX + starX, heightProjectionY + starY, projectedZ + starZ);
+	vec3 pos = LensingIntensity > 1.0 ? LensingMatInv * vec3(projectedX + starX, heightProjectionY + starY, projectedZ + starZ) : vec3(projectedX + starX, heightProjectionY + starY, projectedZ + starZ);
 	
 	gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
 	
 	vertexColor = vec4(Color.x, Color.y, Color.z, alpha);
+    texCoord0 = UV0;
 }

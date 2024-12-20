@@ -4,14 +4,16 @@
         "srcrgb": "srcalpha",
         "dstrgb": "1-srcalpha"
     },
-    "vertex": "stellarview:rendertype_star",
-    "fragment": "stellarview:rendertype_star",
+    "vertex": "stellarview:rendertype_star_tex",
+    "fragment": "stellarview:rendertype_star_tex",
     "attributes": [
 	"StarPos",
         "Color",
-        "HeightWidthSize"
+        "HeightWidthSize",
+        "UV0"
     ],
     "samplers": [
+	{ "name": "Sampler0" }
     ],
     "uniforms": [
         { "name": "ModelViewMat", "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
