@@ -1,6 +1,7 @@
 package net.povstalec.stellarview.client.render.shader;
 
 import com.google.common.collect.ImmutableMap;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
 
@@ -12,4 +13,6 @@ public class StellarViewVertexFormat
 	
 	// NOTE: The order of elements very much MATTERS!!!
 	public static final VertexFormat STAR_POS_COLOR_LY = new VertexFormat(ImmutableMap.<String, VertexFormatElement>builder().put("StarPos", ELEMENT_STAR_POS).put("Color", ELEMENT_COLOR).put("HeightWidthSize", ELEMENT_HEIGHT_WIDTH_SIZE).build());
+	
+	public static final VertexFormat STAR_POS_COLOR_LY_TEX = new VertexFormat(ImmutableMap.<String, VertexFormatElement>builder().put("StarPos", ELEMENT_STAR_POS).put("Color", ELEMENT_COLOR).put("HeightWidthSize", ELEMENT_HEIGHT_WIDTH_SIZE).put("UV0", DefaultVertexFormat.ELEMENT_UV0).build());
 }

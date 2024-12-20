@@ -25,7 +25,7 @@ import net.povstalec.stellarview.common.util.TextureLayer;
 
 public abstract class StarLike extends OrbitingObject
 {
-	public static final float MIN_SIZE = 0.2F;
+	public static final float MIN_SIZE = 0.08F;
 	
 	public static final float MAX_ALPHA = 1F;
 	public static final float MIN_ALPHA = MAX_ALPHA * 0.1F; // Previously used (MAX_ALPHA - 0.66F) * 2 / 5;
@@ -132,7 +132,7 @@ public abstract class StarLike extends OrbitingObject
 			starBrightness = 0.5F;
 		
 		if(GeneralConfig.bright_stars.get())
-			starBrightness = starBrightness * StellarView.lightSourceDimming(level, camera);
+			starBrightness = starBrightness * StellarView.lightSourceStarDimming(level, camera);
 		
 		starBrightness = starBrightness * StellarView.rainDimming(level, partialTicks);
 		
@@ -140,13 +140,13 @@ public abstract class StarLike extends OrbitingObject
 	}
 	
 	//TODO Use this again
-	/*public double starWidthFunction(double aLocation, double bLocation, double sinRandom, double cosRandom, double sinTheta, double cosTheta, double sinPhi, double cosPhi)
+	public double starWidthFunction(double aLocation, double bLocation, double sinRandom, double cosRandom, double sinTheta, double cosTheta, double sinPhi, double cosPhi)
 	{
-		if(StellarViewConfig.enable_black_hole.get())
-			return cosPhi  > 0.0 ? cosPhi * 8 *(bLocation * cosRandom + aLocation * sinRandom) : bLocation * cosRandom + aLocation * sinRandom;
+		if(true)
+			return cosPhi  > 0.0 ? cosPhi * 8 * (bLocation * cosRandom + aLocation * sinRandom) : bLocation * cosRandom + aLocation * sinRandom;
 		
 		return bLocation * cosRandom + aLocation * sinRandom;
-	}*/
+	}
 	
 	
 	

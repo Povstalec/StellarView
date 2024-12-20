@@ -117,12 +117,12 @@ public abstract class SpaceObject
 	public static float dayBrightness(ViewCenter viewCenter, float size, long ticks, ClientLevel level, Camera camera, float partialTicks)
 	{
 		if(viewCenter.starsAlwaysVisible())
-			return GeneralConfig.bright_stars.get() ? 0.5F * StellarView.lightSourceDimming(level, camera) : 0.5F;
+			return GeneralConfig.bright_stars.get() ? 0.5F * StellarView.lightSourceStarDimming(level, camera) : 0.5F;
 		
 		float brightness = level.getStarBrightness(partialTicks) * 2;
 		
 		if(GeneralConfig.bright_stars.get())
-			brightness = brightness * StellarView.lightSourceDimming(level, camera);
+			brightness = brightness * StellarView.lightSourceStarDimming(level, camera);
 		
 		if(brightness < viewCenter.dayMaxBrightness && size > viewCenter.dayMinVisibleSize)
 		{

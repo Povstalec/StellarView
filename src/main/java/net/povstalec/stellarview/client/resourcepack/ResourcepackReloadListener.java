@@ -172,6 +172,7 @@ public class ResourcepackReloadListener
 				BlackHole blackHole = BlackHole.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Star", msg));
 				
 				spaceObjects.put(location, blackHole);
+				Space.addGravityLense(blackHole);
 				StellarView.LOGGER.debug("Parsed " + location.toString() + " as Black Hole");
 			}
 			catch(RuntimeException e)

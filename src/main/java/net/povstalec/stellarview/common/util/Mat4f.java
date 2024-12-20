@@ -3,6 +3,7 @@ package net.povstalec.stellarview.common.util;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
+import com.mojang.math.Matrix4f;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 
@@ -167,6 +168,12 @@ public class Mat4f
         
         return vec;
     }
+	
+	public Matrix4f toMatrix4f()
+	{
+		float[] values = new float[] {m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33};
+		return new Matrix4f(values);
+	}
     
     @Override
     public String toString()
