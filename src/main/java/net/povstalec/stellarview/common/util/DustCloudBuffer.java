@@ -1,25 +1,23 @@
 package net.povstalec.stellarview.common.util;
 
-import java.nio.ByteBuffer;
-
-import javax.annotation.Nullable;
-
-import net.povstalec.stellarview.client.resourcepack.Space;
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
-import org.lwjgl.opengl.GL15C;
-
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.VertexFormat;
-
 import net.minecraft.client.Minecraft;
+import net.povstalec.stellarview.client.render.shader.DustCloudShaderInstance;
 import net.povstalec.stellarview.client.render.shader.StarShaderInstance;
+import net.povstalec.stellarview.client.resourcepack.Space;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.lwjgl.opengl.GL15C;
 
-public class StarBuffer implements AutoCloseable
+import javax.annotation.Nullable;
+import java.nio.ByteBuffer;
+
+public class DustCloudBuffer implements AutoCloseable
 {
 	private int vertexBufferId;
 	private int indexBufferId;
@@ -32,7 +30,7 @@ public class StarBuffer implements AutoCloseable
 	private int indexCount;
 	private VertexFormat.Mode mode;
 	
-	public StarBuffer()
+	public DustCloudBuffer()
 	{
 		RenderSystem.assertOnRenderThread();
 		this.vertexBufferId = GlStateManager._glGenBuffers();
@@ -128,7 +126,7 @@ public class StarBuffer implements AutoCloseable
 		return rendersystem$autostorageindexbuffer != null ? rendersystem$autostorageindexbuffer.type() : this.indexType;
 	}
 	
-	public void drawWithShader(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, SpaceCoords relativeSpacePos, StarShaderInstance shaderInstance)
+	public void drawWithShader(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, SpaceCoords relativeSpacePos, DustCloudShaderInstance shaderInstance)
 	{
 		Vector3f relativeVectorLy = new Vector3f((float) relativeSpacePos.x().ly(), (float) relativeSpacePos.y().ly(), (float) relativeSpacePos.z().ly());
 		Vector3f relativeVectorKm = new Vector3f((float) relativeSpacePos.x().km(), (float) relativeSpacePos.y().km(), (float) relativeSpacePos.z().km());
@@ -144,7 +142,7 @@ public class StarBuffer implements AutoCloseable
 			this._drawWithShader(modelViewMatrix, projectionMatrix, relativeVectorLy, relativeVectorKm, shaderInstance);
 	}
 	
-	private void _drawWithShader(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, Vector3f relativeSpaceLy, Vector3f relativeSpaceKm, StarShaderInstance shaderInstance)
+	private void _drawWithShader(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, Vector3f relativeSpaceLy, Vector3f relativeSpaceKm, DustCloudShaderInstance shaderInstance)
 	{
 		for(int i = 0; i < 12; ++i)
 		{

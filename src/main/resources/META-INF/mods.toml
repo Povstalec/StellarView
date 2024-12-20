@@ -4,7 +4,7 @@ license="Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
 issueTrackerURL="https://github.com/Povstalec/StellarView/issues"
 [[mods]]
 modId="stellarview"
-version="0.3.1"
+version="0.3.2"
 displayName="Stellar View"
 #logoFile="stellarview_large.png"
 credits="Noobly Walker, tehgreatdoge"

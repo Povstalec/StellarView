@@ -128,13 +128,16 @@ public class SpaceCoords
 	 * @param r The radius of the sphere onto which the sky position is projected
 	 * @return Returns the sky position at which the coordinates of this would appear on the sky when viewed from the viewCenter
 	 */
-	public SphericalCoords skyPosition(ClientLevel level, ViewCenter viewCenter, float radius, float partialTicks)
+	public SphericalCoords skyPosition(ClientLevel level, ViewCenter viewCenter, float radius, float partialTicks, boolean adjustForRotation)
 	{
 		SpaceCoords viewCenterCoords = viewCenter.getCoords();
 		Vector3d positionVector = new Vector3d(this.x.sub(viewCenterCoords.x).toKm(), this.y.sub(viewCenterCoords.y).toKm(), this.z.sub(viewCenterCoords.z).toKm());
 		
-		Quaterniond q = getQuaterniond(level, viewCenter, partialTicks);
-		q.transform(positionVector);
+		if(adjustForRotation)
+		{
+			Quaterniond q = getQuaterniond(level, viewCenter, partialTicks);
+			q.transform(positionVector);
+		}
 		
 		return new SphericalCoords(positionVector, radius);
 	}
@@ -143,13 +146,16 @@ public class SpaceCoords
 	 * @param viewCenter The coordinates this object is viewed from
 	 * @return Returns the sky position at which the coordinates of this would appear on the sky when viewed from the viewCenter
 	 */
-	public SphericalCoords skyPosition(ClientLevel level, ViewCenter viewCenter, float partialTicks)
+	public SphericalCoords skyPosition(ClientLevel level, ViewCenter viewCenter, float partialTicks, boolean adjustForRotation)
 	{
 		SpaceCoords viewCenterCoords = viewCenter.getCoords();
 		Vector3d positionVector = new Vector3d(this.x.sub(viewCenterCoords.x).toKm(), this.y.sub(viewCenterCoords.y).toKm(), this.z.sub(viewCenterCoords.z).toKm());
 		
-		Quaterniond q = getQuaterniond(level, viewCenter, partialTicks);
-		q.transform(positionVector);
+		if(adjustForRotation)
+		{
+			Quaterniond q = getQuaterniond(level, viewCenter, partialTicks);
+			q.transform(positionVector);
+		}
 		
 		return new SphericalCoords(positionVector);
 	}
