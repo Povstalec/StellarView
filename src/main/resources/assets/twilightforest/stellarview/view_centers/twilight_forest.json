@@ -1,0 +1,110 @@
+{
+	"view_center": "twilightforest:planet/twilight_forest",
+	
+	"axis_rotation": { "x_axis": -23, "y_axis": -67, "z_axis": -128 },
+	"rotation_period": 0,
+	
+	"create_void": false,
+	
+	"stars_always_visible": true,
+	
+	"shooting_star":
+	{
+		"meteor_types":
+		[
+			{
+				"weight": 5,
+				"texture_layers":
+				[
+					{
+						"texture": "stellarview:textures/environment/sky_effect/meteor/meteor_cyan.png",
+						"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
+						"blend": true,
+						"size": 1,
+						"rotation": 0,
+						"uv": { "flip_uv": false }
+					}
+				]
+			},
+			{
+				"weight": 5,
+				"texture_layers":
+				[
+					{
+						"texture": "stellarview:textures/environment/sky_effect/meteor/meteor_blue.png",
+						"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
+						"blend": true,
+						"size": 1,
+						"rotation": 0,
+						"uv": { "flip_uv": false }
+					}
+				]
+			},
+			{
+				"weight": 5,
+				"texture_layers":
+				[
+					{
+						"texture": "stellarview:textures/environment/sky_effect/meteor/meteor_violet.png",
+						"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
+						"blend": true,
+						"size": 1,
+						"rotation": 0,
+						"uv": { "flip_uv": false }
+					}
+				]
+			}
+		],
+		"probability": 10
+	},
+
+	"meteor_shower":
+	{
+		"meteor_types":
+		[
+			{
+				"weight": 5,
+				"texture_layers":
+				[
+					{
+						"texture": "stellarview:textures/environment/sky_effect/meteor/meteor_cyan.png",
+						"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
+						"blend": true,
+						"size": 1,
+						"rotation": 0,
+						"uv": { "flip_uv": false }
+					}
+				]
+			},
+			{
+				"weight": 5,
+				"texture_layers":
+				[
+					{
+						"texture": "stellarview:textures/environment/sky_effect/meteor/meteor_blue.png",
+						"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
+						"blend": true,
+						"size": 1,
+						"rotation": 0,
+						"uv": { "flip_uv": false }
+					}
+				]
+			},
+			{
+				"weight": 5,
+				"texture_layers":
+				[
+					{
+						"texture": "stellarview:textures/environment/sky_effect/meteor/meteor_violet.png",
+						"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
+						"blend": true,
+						"size": 1,
+						"rotation": 0,
+						"uv": { "flip_uv": false }
+					}
+				]
+			}
+		],
+		"probability": 10
+	}
+}

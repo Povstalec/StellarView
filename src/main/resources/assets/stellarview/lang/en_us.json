@@ -4,6 +4,7 @@
 	"gui.stellarview.config.overworld": "Stellar View - Overworld Config",
 	"gui.stellarview.config.nether": "Stellar View - Nether Config",
 	"gui.stellarview.config.end": "Stellar View - End Config",
+	"gui.stellarview.config.twilight_forest": "Stellar View - Twilight Forest Config",
 
 	"gui.stellarview.disable_view_center_rotation": "Disable View Center Rotation",
 	"gui.stellarview.disable_stars": "Disable Stars",
@@ -13,6 +14,7 @@
 	"gui.stellarview.dust_clouds": "Dust Clouds",
 
 	"gui.stellarview.replace_vanilla": "Replace Vanilla",
+	"gui.stellarview.replace_default": "Replace Default",
 	"gui.stellarview.config_priority": "Prioritize Config",
 	
 	"gui.stellarview.overworld_z_rotation_multiplier": "Sky Rotation Multiplier",
