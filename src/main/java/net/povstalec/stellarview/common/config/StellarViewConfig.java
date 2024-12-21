@@ -49,5 +49,9 @@ public class StellarViewConfig
 		CLIENT_BUILDER.push("End Config");
 		EndConfig.init(client);
 		CLIENT_BUILDER.pop();
+		
+		CLIENT_BUILDER.push("Twilight Forest Config");
+		TwilightForestConfig.init(client);
+		CLIENT_BUILDER.pop();
 	}
 }
