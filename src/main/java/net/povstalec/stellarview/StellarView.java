@@ -24,6 +24,7 @@ import net.povstalec.stellarview.client.resourcepack.Space;
 import net.povstalec.stellarview.client.screens.config.ConfigScreen;
 import net.povstalec.stellarview.common.config.StellarViewConfig;
 import net.povstalec.stellarview.common.util.KeyBindings;
+import net.povstalec.stellarview.compatibility.aether.StellarViewAetherEffects;
 import net.povstalec.stellarview.compatibility.twilightforest.StellarViewTwilightForestEffects;
 import org.slf4j.Logger;
 
@@ -36,9 +37,11 @@ public class StellarView
 	
 	public static final String ENHANCED_CELESTIALS_MODID = "enhancedcelestials";
 	public static final String TWILIGHT_FOREST_MODID = "twilightforest";
+	public static final String AETHER_MODID = "aether";
     
     private static Optional<Boolean> isEnhancedCelestialsLoaded = Optional.empty();
 	private static Optional<Boolean> isTwilightForestLoaded = Optional.empty();
+	private static Optional<Boolean> isAetherLoaded = Optional.empty();
     
     public static final Logger LOGGER = LogUtils.getLogger();
     
@@ -49,6 +52,7 @@ public class StellarView
     public static StellarViewEndEffects end;
 	
 	public static StellarViewTwilightForestEffects twilightForest;
+	public static StellarViewAetherEffects aether;
 	
 	private static float starBrightness = 0F;
 	private static float dustCloudBrightness = 0F;
@@ -69,6 +73,7 @@ public class StellarView
 			overworld = new StellarViewOverworldEffects();
 			nether = new StellarViewNetherEffects();
 			end = new StellarViewEndEffects();
+			aether = new StellarViewAetherEffects();
 			
 			event.register(StellarViewOverworldEffects.OVERWORLD_EFFECTS, overworld);
 			event.register(StellarViewNetherEffects.NETHER_EFFECTS, nether);
@@ -78,6 +83,12 @@ public class StellarView
 			{
 				twilightForest = new StellarViewTwilightForestEffects();
 				event.register(StellarViewTwilightForestEffects.TWILIGHT_FOREST_EFFECTS, twilightForest);
+			}
+			
+			if(isAetherLoaded())
+			{
+				aether = new StellarViewAetherEffects();
+				event.register(StellarViewAetherEffects.AETHER_EFFECTS, aether);
 			}
         }
     	
@@ -109,6 +120,14 @@ public class StellarView
 			isTwilightForestLoaded = Optional.of(ModList.get().isLoaded(TWILIGHT_FOREST_MODID));
 		
 		return isTwilightForestLoaded.get();
+	}
+	
+	public static boolean isAetherLoaded()
+	{
+		if(isAetherLoaded.isEmpty())
+			isAetherLoaded = Optional.of(ModList.get().isLoaded(AETHER_MODID));
+		
+		return isAetherLoaded.get();
 	}
     
     public static void updateSpaceObjects()
