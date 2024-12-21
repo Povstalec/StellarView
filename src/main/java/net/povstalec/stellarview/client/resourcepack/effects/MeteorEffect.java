@@ -299,7 +299,7 @@ public abstract class MeteorEffect
 			if(!canRender(viewCenter))
 				return;
 			
-			long dailySeed = level.getDayTime() / viewCenter.getRotationPeriod();
+			long dailySeed = level.getDayTime() / (viewCenter.getRotationPeriod() == 0 ? 24000L : viewCenter.getRotationPeriod());
 			
 			if(shouldAppear(viewCenter, dailySeed))
 			{

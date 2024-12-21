@@ -134,6 +134,12 @@ repositories {
             includeGroup "maven.modrinth"
         }
     }
+
+    repositories {
+        maven {
+            url "https://cursemaven.com"
+        }
+    }
 }
 
 dependencies {
@@ -159,6 +165,7 @@ dependencies {
     
     compileOnly fg.deobf("maven.modrinth:enhanced-celestials:${mc_version}-${enhanced_celestials_version}-forge")
     runtimeOnly fg.deobf("maven.modrinth:enhanced-celestials:${mc_version}-${enhanced_celestials_version}-forge")
+    implementation fg.deobf("curse.maven:the-twilight-forest-227639:4389567")
 }
 
 // Example for how to get properties into the manifest for reading at runtime.
