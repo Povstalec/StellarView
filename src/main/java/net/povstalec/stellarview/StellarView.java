@@ -3,6 +3,8 @@ package net.povstalec.stellarview;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.povstalec.stellarview.compatibility.twilightforest.StellarViewTwilightForestEffects;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -37,8 +39,10 @@ public class StellarView
 	public static final String MODID = "stellarview";
 	
 	public static final String ENHANCED_CELESTIALS_MODID = "enhancedcelestials";
+	public static final String TWILIGHT_FOREST_MODID = "twilightforest";
     
     private static Optional<Boolean> isEnhancedCelestialsLoaded = Optional.empty();
+	private static Optional<Boolean> isTwilightForestLoaded = Optional.empty();
     
     public static final Logger LOGGER = LogUtils.getLogger();
     
@@ -47,6 +51,8 @@ public class StellarView
     public static StellarViewOverworldEffects overworld;
     public static StellarViewNetherEffects nether;
     public static StellarViewEndEffects end;
+	
+	public static StellarViewTwilightForestEffects twilightForest;
 	
 	private static float starBrightness = 0F;
 	private static float dustCloudBrightness = 0F;
@@ -71,16 +77,22 @@ public class StellarView
     @Mod.EventBusSubscriber(modid = StellarView.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents
     {
-    	@SubscribeEvent
+    	@SubscribeEvent(priority = EventPriority.HIGH)
         public static void registerDimensionEffects(RegisterDimensionSpecialEffectsEvent event)
-        {
-    		overworld = new StellarViewOverworldEffects();
-    		nether = new StellarViewNetherEffects();
-    		end = new StellarViewEndEffects();
-    		
-        	event.register(StellarViewOverworldEffects.OVERWORLD_EFFECTS, overworld);
-        	event.register(StellarViewNetherEffects.NETHER_EFFECTS, nether);
-        	event.register(StellarViewEndEffects.END_EFFECTS, end);
+		{
+			overworld = new StellarViewOverworldEffects();
+			nether = new StellarViewNetherEffects();
+			end = new StellarViewEndEffects();
+			
+			event.register(StellarViewOverworldEffects.OVERWORLD_EFFECTS, overworld);
+			event.register(StellarViewNetherEffects.NETHER_EFFECTS, nether);
+			event.register(StellarViewEndEffects.END_EFFECTS, end);
+			
+			if(isTwilightForestLoaded())
+			{
+				twilightForest = new StellarViewTwilightForestEffects();
+				event.register(StellarViewTwilightForestEffects.TWILIGHT_FOREST_EFFECTS, twilightForest);
+			}
         }
     	
 
@@ -104,6 +116,14 @@ public class StellarView
     	
     	return isEnhancedCelestialsLoaded.get();	
     }
+	
+	public static boolean isTwilightForestLoaded()
+	{
+		if(isTwilightForestLoaded.isEmpty())
+			isTwilightForestLoaded = Optional.of(ModList.get().isLoaded(TWILIGHT_FOREST_MODID));
+		
+		return isTwilightForestLoaded.get();
+	}
     
     public static void updateSpaceObjects()
     {
