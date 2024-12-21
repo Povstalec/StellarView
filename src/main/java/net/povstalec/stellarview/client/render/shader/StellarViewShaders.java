@@ -29,13 +29,13 @@ public class StellarViewShaders
             			rendertypeStarShader = (StarShaderInstance) shaderInstance;
             		});
 			
-			event.registerShader(new StarShaderInstance(event.getResourceProvider(), new ResourceLocation(StellarView.MODID,"rendertype_star_tex"), StellarViewVertexFormat.STAR_POS_COLOR_LY_TEX),
+			event.registerShader(new StarShaderInstance(event.getResourceProvider(), ResourceLocation.fromNamespaceAndPath(StellarView.MODID,"rendertype_star_tex"), StellarViewVertexFormat.STAR_POS_COLOR_LY_TEX.get()),
 					(shaderInstance) ->
 					{
 						rendertypeStarTexShader = (StarShaderInstance) shaderInstance;
 					});
 			
-			event.registerShader(new DustCloudShaderInstance(event.getResourceProvider(), new ResourceLocation(StellarView.MODID,"rendertype_dust_cloud"), StellarViewVertexFormat.STAR_POS_COLOR_LY_TEX),
+			event.registerShader(new DustCloudShaderInstance(event.getResourceProvider(), ResourceLocation.fromNamespaceAndPath(StellarView.MODID,"rendertype_dust_cloud"), StellarViewVertexFormat.STAR_POS_COLOR_LY_TEX.get()),
 					(shaderInstance) ->
 					{
 						rendertypeDustCloudShader = (DustCloudShaderInstance) shaderInstance;

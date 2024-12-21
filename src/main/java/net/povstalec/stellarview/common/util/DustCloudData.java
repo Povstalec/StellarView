@@ -132,16 +132,12 @@ public class DustCloudData
 			double height = aLocation * cosRandom - bLocation * sinRandom;
 			double width = bLocation * cosRandom + aLocation * sinRandom;
 			
-			builder.vertex(dustCloudCoords[i][0], dustCloudCoords[i][1], dustCloudCoords[i][2]).color(dustCloudRGBA[i][0], dustCloudRGBA[i][1], dustCloudRGBA[i][2], dustCloudRGBA[i][3]);
-			// These next few lines add a "custom" element defined as HeightWidthSize in StellarViewVertexFormat
-			builder.putFloat(0, (float) height);
-			builder.putFloat(4, (float) width);
-			builder.putFloat(8, (float) dustCloudSizes[i]);
-			builder.nextElement();
+			builder.addVertex((float) dustCloudCoords[i][0], (float) dustCloudCoords[i][1], (float) dustCloudCoords[i][2])
+					.setColor((byte) dustCloudRGBA[i][0], (byte) dustCloudRGBA[i][1], (byte) dustCloudRGBA[i][2], (byte) dustCloudRGBA[i][3]);
 			
-			builder.uv( (float) (aLocation + 1) / 2F, (float) (bLocation + 1) / 2F);
+			StarData.addStarHeightWidthSize(builder, (float) height, (float) width, (float) dustCloudSizes[i]);
 			
-			builder.endVertex();
+			builder.setUv( (float) (aLocation + 1) / 2F, (float) (bLocation + 1) / 2F);
 		}
 	}
 }

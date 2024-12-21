@@ -1,6 +1,6 @@
 modLoader="javafml"
 loaderVersion="[44,)"
-license="Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License"
+license="MIT License"
 issueTrackerURL="https://github.com/Povstalec/StellarView/issues"
 [[mods]]
 modId="stellarview"

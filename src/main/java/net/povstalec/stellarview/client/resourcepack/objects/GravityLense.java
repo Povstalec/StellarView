@@ -3,6 +3,7 @@ package net.povstalec.stellarview.client.resourcepack.objects;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -78,7 +79,7 @@ public abstract class GravityLense extends StarLike
 	}
 	
 	@Override
-	protected void renderTextureLayer(TextureLayer textureLayer, ViewCenter viewCenter, ClientLevel level, Camera camera, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)
+	protected void renderTextureLayer(TextureLayer textureLayer, ViewCenter viewCenter, ClientLevel level, Camera camera, Tesselator tesselator, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)
 	{
 		double lyDistance = distance / SpaceCoords.KM_PER_LY;
 		
@@ -103,13 +104,13 @@ public abstract class GravityLense extends StarLike
 		}
 		
 		renderOnSphere(textureLayer.rgba(), starRGBA, textureLayer.texture(), textureLayer.uv(),
-				level, camera, bufferbuilder, lastMatrix, sphericalCoords,
+				level, camera, tesselator, lastMatrix, sphericalCoords,
 				ticks, distance, partialTicks, dayBrightness(viewCenter, size, ticks, level, camera, partialTicks), size, (float) textureLayer.rotation(), textureLayer.shoulBlend());
 	}
 	
 	@Override
-	public void render(ViewCenter viewCenter, ClientLevel level, float partialTicks, PoseStack stack, Camera camera,
-					   Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder,
+	public void render(ViewCenter viewCenter, ClientLevel level, float partialTicks, Matrix4f modelViewMatrix, Camera camera,
+					   Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, Tesselator tesselator,
 					   Vector3f parentVector, AxisRotation parentRotation)
 	{
 		long ticks = level.getDayTime();
@@ -132,13 +133,13 @@ public abstract class GravityLense extends StarLike
 			{
 				// Render child behind the parent
 				if(child.lastDistance >= this.lastDistance)
-					child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, positionVector, this.axisRotation);
+					child.render(viewCenter, level, partialTicks, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog, tesselator, positionVector, this.axisRotation);
 			}
 		}
 		
 		// If the object isn't the same we're viewing everything from and it isn't too far away, render it
 		if(!viewCenter.objectEquals(this) && getFadeOutHandler().getFadeOutEndDistance().toKm() > lastDistance)
-			renderTextureLayers(viewCenter, level, camera, bufferbuilder, stack.last().pose(), sphericalCoords, ticks, lastDistance, partialTicks);
+			renderTextureLayers(viewCenter, level, camera, tesselator, modelViewMatrix, sphericalCoords, ticks, lastDistance, partialTicks);
 		
 		if(getFadeOutHandler().getMaxChildRenderDistance().toKm() > lastDistance)
 		{
@@ -146,7 +147,7 @@ public abstract class GravityLense extends StarLike
 			{
 				// Render child in front of the parent
 				if(child.lastDistance < this.lastDistance)
-					child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, positionVector, this.axisRotation);
+					child.render(viewCenter, level, partialTicks, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog, tesselator, positionVector, this.axisRotation);
 			}
 		}
 	}

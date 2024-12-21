@@ -290,6 +290,9 @@ public class StarField extends SpaceObject
 		
 		MeshData mesh = getStarBuffer(tesselator);
 		
+		if(mesh == null)
+			return this;
+		
 		starBuffer.bind();
 		starBuffer.upload(mesh);
 		VertexBuffer.unbind();
@@ -307,6 +310,9 @@ public class StarField extends SpaceObject
 		RenderSystem.setShader(GameRenderer::getPositionShader);
 		
 		MeshData mesh = generateStarBuffer(tesselator);
+		
+		if(mesh == null)
+			return this;
 		
 		starBuffer.bind();
 		starBuffer.upload(mesh);
@@ -349,6 +355,9 @@ public class StarField extends SpaceObject
 		
 		MeshData mesh = generateDustCloudBuffer(tesselator);
 		
+		if(mesh == null)
+			return this;
+		
 		dustCloudBuffer.bind();
 		dustCloudBuffer.upload(mesh);
 		VertexBuffer.unbind();
@@ -366,7 +375,7 @@ public class StarField extends SpaceObject
 		if(dustCloudBuffer == null)
 			setupDustCloudBuffer();
 		
-		if(brightness > 0.0F)
+		if(brightness > 0.0F && totalDustClouds > 0)
 		{
 			final var transformedModelView = new Matrix4f(modelViewMatrix);
 			
@@ -400,7 +409,7 @@ public class StarField extends SpaceObject
 		
 		float starBrightness = StarLike.getStarBrightness(viewCenter, level, camera, partialTicks);
 		
-		if(!GeneralConfig.disable_stars.get() && starBrightness > 0.0F)
+		if(!GeneralConfig.disable_stars.get() && starBrightness > 0.0F && totalStars > 0)
 		{
 			final var transformedModelView = new Matrix4f(modelViewMatrix);
 			
