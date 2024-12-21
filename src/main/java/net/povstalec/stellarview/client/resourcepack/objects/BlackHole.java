@@ -20,16 +20,19 @@ public class BlackHole extends SupernovaLeftover
 			
 			SpaceObject.FadeOutHandler.CODEC.optionalFieldOf("fade_out_handler", SpaceObject.FadeOutHandler.DEFAULT_STAR_HANDLER).forGetter(BlackHole::getFadeOutHandler),
 			
-			Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("min_star_size", MIN_SIZE).forGetter(BlackHole::getMinStarSize),
-			Codec.floatRange(0, Color.MAX_FLOAT_VALUE).optionalFieldOf("max_star_alpha", MAX_ALPHA).forGetter(BlackHole::getMaxStarAlpha),
-			Codec.floatRange(0, Color.MAX_FLOAT_VALUE).optionalFieldOf("min_star_alpha", MIN_ALPHA).forGetter(BlackHole::getMinStarAlpha)
+			Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("min_black_hole_size", MIN_SIZE).forGetter(BlackHole::getMinStarSize),
+			Codec.floatRange(0, Color.MAX_FLOAT_VALUE).optionalFieldOf("max_black_hole_alpha", MAX_ALPHA).forGetter(BlackHole::getMaxStarAlpha),
+			Codec.floatRange(0, Color.MAX_FLOAT_VALUE).optionalFieldOf("min_black_hole_alpha", MIN_ALPHA).forGetter(BlackHole::getMinStarAlpha),
+			
+			Codec.floatRange(1F, Float.MAX_VALUE).optionalFieldOf("lensing_intensity", 8F).forGetter(BlackHole::getLensingIntensity),
+			Codec.DOUBLE.optionalFieldOf("max_lensing_distance", 10000000000D).forGetter(BlackHole::getMaxLensingDistance)
 			).apply(instance, BlackHole::new));
 	
-	//TODO Black Holes should visually bend space around them
 	public BlackHole(Optional<ResourceKey<SpaceObject>> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
 			Optional<OrbitInfo> orbitInfo, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler,
-			float minStarSize, float maxStarAlpha, float minStarAlpha)
+			float minStarSize, float maxStarAlpha, float minStarAlpha,
+					 float lensingIntensity, double maxLensingDistance)
 	{
-		super(parent, coords, axisRotation, orbitInfo, textureLayers, fadeOutHandler, minStarSize, maxStarAlpha, minStarAlpha);
+		super(parent, coords, axisRotation, orbitInfo, textureLayers, fadeOutHandler, minStarSize, maxStarAlpha, minStarAlpha, lensingIntensity, maxLensingDistance);
 	}
 }

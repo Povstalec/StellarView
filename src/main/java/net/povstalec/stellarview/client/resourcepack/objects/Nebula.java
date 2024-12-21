@@ -7,7 +7,10 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceKey;
+
+import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
+import net.povstalec.stellarview.common.config.GeneralConfig;
 import net.povstalec.stellarview.common.util.*;
 import org.joml.Matrix4f;
 
@@ -117,5 +120,26 @@ public class Nebula extends TexturedObject
 		renderOnSphere(textureLayer.rgba(), nebulaRGBA, textureLayer.texture(), textureLayer.uv(),
 				level, camera, tesselator, lastMatrix, sphericalCoords,
 				ticks, distance, partialTicks, dayBrightness(viewCenter, size, ticks, level, camera, partialTicks), size, (float) textureLayer.rotation(), textureLayer.shoulBlend());
+	}
+	
+	public static float dayBrightness(ViewCenter viewCenter, float size, long ticks, ClientLevel level, Camera camera, float partialTicks)
+	{
+		if(viewCenter.starsAlwaysVisible())
+			return GeneralConfig.bright_stars.get() ? 0.5F * StellarView.lightSourceStarDimming(level, camera) : 0.5F;
+		
+		float brightness = level.getStarBrightness(partialTicks) * 2;
+		
+		if(GeneralConfig.bright_stars.get())
+			brightness = brightness * StellarView.lightSourceDustCloudDimming(level, camera);
+		
+		if(brightness < viewCenter.dayMaxBrightness && size > viewCenter.dayMinVisibleSize)
+		{
+			float aboveSize = size >= viewCenter.dayMaxVisibleSize ? viewCenter.dayVisibleSizeRange : size - viewCenter.dayMinVisibleSize;
+			float brightnessPercentage = aboveSize / viewCenter.dayVisibleSizeRange;
+			
+			brightness = brightnessPercentage * viewCenter.dayMaxBrightness;
+		}
+		
+		return brightness * StellarView.rainDimming(level, partialTicks);
 	}
 }

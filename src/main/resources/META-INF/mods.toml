@@ -1,0 +1,34 @@
+modLoader="javafml"
+loaderVersion="[44,)"
+license="Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License"
+issueTrackerURL="https://github.com/Povstalec/StellarView/issues"
+[[mods]]
+modId="stellarview"
+version="0.3.2"
+displayName="Stellar View"
+#logoFile="stellarview_large.png"
+credits="Noobly Walker, tehgreatdoge"
+authors="Woldericz_Junior"
+displayTest="IGNORE_ALL_VERSION"
+
+description='''
+Enjoy a Stellar View of the Sky
+'''
+[[dependencies.stellarview]]
+    modId="forge"
+    mandatory=true
+    versionRange="[44,)"
+    ordering="NONE"
+    side="CLIENT"
+[[dependencies.stellarview]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.19.3,1.20)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.stellarview]]
+    modId="enhancedcelestials"
+    mandatory=false
+    versionRange="[3.0.0.1,)"
+    ordering="BEFORE"
+    side="BOTH"

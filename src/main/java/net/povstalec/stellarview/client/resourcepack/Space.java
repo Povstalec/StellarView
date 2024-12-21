@@ -4,25 +4,26 @@ import com.mojang.blaze3d.vertex.Tesselator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nullable;
 
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.povstalec.stellarview.StellarView;
+import net.povstalec.stellarview.client.resourcepack.objects.GravityLense;
 import net.povstalec.stellarview.client.resourcepack.objects.OrbitingObject;
 import net.povstalec.stellarview.client.resourcepack.objects.SpaceObject;
 import net.povstalec.stellarview.client.resourcepack.objects.StarField;
+
 import net.povstalec.stellarview.client.resourcepack.objects.distinct.Sol;
+import net.povstalec.stellarview.common.config.GeneralConfig;
 import net.povstalec.stellarview.common.config.OverworldConfig;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.SpaceCoords;
+import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 
 public final class Space
 {
@@ -30,6 +31,13 @@ public final class Space
 	private static final Vector3f NULL_VECTOR = new Vector3f();
 	
 	private static final List<StarField> STAR_FIELDS = new ArrayList<StarField>();
+	private static final List<GravityLense> GRAVITY_LENSES = new ArrayList<GravityLense>();
+	
+	public static final Matrix3f IDENTITY_MATRIX = new Matrix3f();
+	
+	public static Matrix3f lensingMatrix = IDENTITY_MATRIX;
+	public static Matrix3f lensingMatrixInv = IDENTITY_MATRIX;
+	public static float lensingIntensity = 0;
 	
 	@Nullable
 	private static Sol sol = null;
@@ -48,6 +56,7 @@ public final class Space
 		
 		SPACE_OBJECTS.clear();
 		STAR_FIELDS.clear();
+		GRAVITY_LENSES.clear();
 	}
 	
 	public static void addSpaceObject(SpaceObject spaceObject)
@@ -66,6 +75,17 @@ public final class Space
 	
 	public static void render(ViewCenter viewCenter, SpaceObject masterParent, ClientLevel level, Camera camera, float partialTicks, Matrix4f modelViewMatrix, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, Tesselator tesselator)
 	{
+		setBestLensing();
+		
+		if(GeneralConfig.dust_clouds.get())
+		{
+			float dustCloudBrightness = StarField.dustCloudBrightness(viewCenter, level, camera, partialTicks);
+			for(StarField starField : STAR_FIELDS)
+			{
+				starField.renderDustClouds(viewCenter, level, partialTicks, modelViewMatrix, camera, projectionMatrix, setupFog, dustCloudBrightness);
+			}
+		}
+		
 		for(SpaceObject spaceObject : SPACE_OBJECTS)
 		{
 			if(spaceObject != masterParent) // Makes sure the master parent (usually galaxy) is rendered last, that way stars from other galaxies don't get rendered over planets
@@ -73,6 +93,21 @@ public final class Space
 		}
 		
 		masterParent.render(viewCenter, level, partialTicks, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog, tesselator, NULL_VECTOR, new AxisRotation(0, 0, 0));
+	}
+	
+	
+	
+	private static void setBestLensing()
+	{
+		lensingMatrix = IDENTITY_MATRIX;
+		lensingMatrixInv = IDENTITY_MATRIX;
+		lensingIntensity = 0;
+		
+		for(GravityLense gravityLense : GRAVITY_LENSES)
+		{
+			if(gravityLense.getLensingIntensity() > lensingIntensity)
+				gravityLense.setupLensing();
+		}
 	}
 	
 	
@@ -88,6 +123,13 @@ public final class Space
 		{
 			starField.reset();
 		}
+	}
+	
+	
+	
+	public static void addGravityLense(GravityLense gravityLense)
+	{
+		GRAVITY_LENSES.add(gravityLense);
 	}
 	
 	

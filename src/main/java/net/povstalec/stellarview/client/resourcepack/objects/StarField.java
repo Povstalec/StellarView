@@ -1,5 +1,21 @@
 package net.povstalec.stellarview.client.resourcepack.objects;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import javax.annotation.Nullable;
+
+import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.resources.ResourceLocation;
+import net.povstalec.stellarview.StellarView;
+import net.povstalec.stellarview.client.resourcepack.DustCloudInfo;
+import net.povstalec.stellarview.common.util.*;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3d;
+import org.joml.Vector3f;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.datafixers.util.Either;
@@ -16,24 +32,24 @@ import net.povstalec.stellarview.client.render.shader.StellarViewVertexFormat;
 import net.povstalec.stellarview.client.resourcepack.StarInfo;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.config.GeneralConfig;
-import net.povstalec.stellarview.common.util.*;
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
-import org.joml.Vector3d;
-import org.joml.Vector3f;
-
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 public class StarField extends SpaceObject
 {
+	public static final ResourceLocation DEFAULT_DUST_CLOUD_TEXTURE = ResourceLocation.fromNamespaceAndPath(StellarView.MODID,"textures/environment/dust_cloud.png");
+	
+	@Nullable
+	protected DustCloudBuffer dustCloudBuffer;
+	protected DustCloudData dustCloudData;
+	protected final int dustClouds;
+	protected final int totalDustClouds;
+	protected ResourceLocation dustCloudTexture;
+	
 	@Nullable
 	protected StarBuffer starBuffer;
 	protected StarData starData;
 
 	protected StarInfo starInfo;
+	protected DustCloudInfo dustCloudInfo;
 	
 	protected final long seed;
 	protected final boolean clumpStarsInCenter;
@@ -49,18 +65,24 @@ public class StarField extends SpaceObject
 	
 	protected final int totalStars;
 	
+	protected boolean hasTexture = GeneralConfig.textured_stars.get();
+	
 	public static final Codec<StarField> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			RESOURCE_KEY_CODEC.optionalFieldOf("parent").forGetter(StarField::getParentKey),
 			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf("coords").forGetter(object -> Either.left(object.getCoords())),
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(StarField::getAxisRotation),
 
 			SpaceObject.FadeOutHandler.CODEC.optionalFieldOf("fade_out_handler", SpaceObject.FadeOutHandler.DEFAULT_STAR_FIELD_HANDLER).forGetter(StarField::getFadeOutHandler),
-
+			
+			Codec.intRange(0, 4000).optionalFieldOf("dust_clouds", 0).forGetter(StarField::getDustClouds),
+			DustCloudInfo.CODEC.optionalFieldOf("dust_cloud_info", DustCloudInfo.DEFAULT_DUST_CLOUD_INFO).forGetter(StarField::getDustCloudInfo),
+			ResourceLocation.CODEC.optionalFieldOf("dust_cloud_texture", DEFAULT_DUST_CLOUD_TEXTURE).forGetter(StarField::getDustCloudTexture),
+			
 			StarInfo.CODEC.optionalFieldOf("star_info", StarInfo.DEFAULT_STAR_INFO).forGetter(StarField::getStarInfo),
 			Codec.LONG.fieldOf("seed").forGetter(StarField::getSeed),
 			Codec.INT.fieldOf("diameter_ly").forGetter(StarField::getDiameter),
 			
-			Codec.intRange(1, 30000).fieldOf("stars").forGetter(StarField::getStars),
+			Codec.intRange(0, 30000).fieldOf("stars").forGetter(StarField::getStars),
 			Codec.BOOL.optionalFieldOf("clump_stars_in_center", true).forGetter(StarField::clumpStarsInCenter),
 			
 			Codec.DOUBLE.optionalFieldOf("x_stretch", 1.0).forGetter(StarField::xStretch),
@@ -71,10 +93,14 @@ public class StarField extends SpaceObject
 			).apply(instance, StarField::new));
 	
 	public StarField(Optional<ResourceKey<SpaceObject>> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
-			FadeOutHandler fadeOutHandler, StarInfo starInfo, long seed, int diameter, int numberOfStars, boolean clumpStarsInCenter,
+			FadeOutHandler fadeOutHandler, int dustClouds, DustCloudInfo dustCloudInfo, ResourceLocation dustCloudTexture, StarInfo starInfo, long seed, int diameter, int numberOfStars, boolean clumpStarsInCenter,
 			double xStretch, double yStretch, double zStretch, List<SpiralArm> spiralArms)
 	{
 		super(parent, coords, axisRotation, fadeOutHandler);
+		
+		this.dustClouds = dustClouds;
+		this.dustCloudInfo = dustCloudInfo;
+		this.dustCloudTexture = dustCloudTexture;
 		
 		this.starInfo = starInfo;
 		this.seed = seed;
@@ -91,26 +117,30 @@ public class StarField extends SpaceObject
 
 		// Calculate the total amount of stars
 		int totalStars = stars;
+		int totalDustClouds = dustClouds;
 		for(SpiralArm arm : this.spiralArms)
 		{
 			totalStars += arm.armStars();
+			totalDustClouds += arm.armDustClouds;
 		}
 		
 		this.totalStars = totalStars;
+		this.totalDustClouds = totalDustClouds;
 	}
 	
-	public StarField(Optional<ResourceKey<SpaceObject>> parent, SpaceCoords coords, AxisRotation axisRotation,
-			FadeOutHandler fadeOutHandler, StarInfo starInfo, long seed, int diameter, int numberOfStars, boolean clumpStarsInCenter,
-			double xStretch, double yStretch, double zStretch, List<SpiralArm> spiralArms)
+	public int getDustClouds()
 	{
-		this(parent, Either.left(coords), axisRotation, fadeOutHandler, starInfo, seed, numberOfStars, numberOfStars, clumpStarsInCenter, zStretch, zStretch, zStretch, spiralArms);
+		return dustClouds;
 	}
 	
-	public StarField(Optional<ResourceKey<SpaceObject>> parent, StellarCoordinates.Equatorial coords, AxisRotation axisRotation,
-			FadeOutHandler fadeOutHandler, StarInfo starInfo, long seed, int diameter, int numberOfStars, boolean clumpStarsInCenter,
-			double xStretch, double yStretch, double zStretch, List<SpiralArm> spiralArms)
+	public DustCloudInfo getDustCloudInfo()
 	{
-		this(parent, Either.right(coords), axisRotation, fadeOutHandler, starInfo, seed, numberOfStars, numberOfStars, clumpStarsInCenter, zStretch, zStretch, zStretch, spiralArms);
+		return dustCloudInfo;
+	}
+	
+	public ResourceLocation getDustCloudTexture()
+	{
+		return dustCloudTexture;
 	}
 	
 	public StarInfo getStarInfo()
@@ -163,6 +193,11 @@ public class StarField extends SpaceObject
 		return starBuffer == null;
 	}
 	
+	public boolean requiresReset()
+	{
+		return hasTexture != GeneralConfig.textured_stars.get();
+	}
+	
 	public void reset()
 	{
 		starBuffer = null;
@@ -185,14 +220,35 @@ public class StarField extends SpaceObject
 			
 			axisRotation.quaterniond().transform(cartesian);
 
-			starData.newStar(starInfo, bufferBuilder, randomsource, cartesian.x, cartesian.y, cartesian.z, i);
+			starData.newStar(starInfo, bufferBuilder, randomsource, cartesian.x, cartesian.y, cartesian.z, hasTexture, i);
+		}
+	}
+	
+	protected void generateDustClouds(BufferBuilder bufferBuilder, RandomSource randomsource)
+	{
+		for(int i = 0; i < dustClouds; i++)
+		{
+			// This generates random coordinates for the Star close to the camera
+			double distance = clumpStarsInCenter ? randomsource.nextDouble() : Math.cbrt(randomsource.nextDouble());
+			double theta = randomsource.nextDouble() * 2F * Math.PI;
+			double phi = Math.acos(2F * randomsource.nextDouble() - 1F); // This prevents the formation of that weird streak that normally happens
+			
+			Vector3d cartesian = new SphericalCoords(distance * diameter, theta, phi).toCartesianD();
+			
+			cartesian.x *= xStretch;
+			cartesian.y *= yStretch;
+			cartesian.z *= zStretch;
+			
+			axisRotation.quaterniond().transform(cartesian);
+			
+			dustCloudData.newDustCloud(dustCloudInfo, bufferBuilder, randomsource, cartesian.x, cartesian.y, cartesian.z, 1, i);
 		}
 	}
 	
 	protected MeshData generateStarBuffer(Tesselator tesselator)
 	{
 		RandomSource randomsource = RandomSource.create(seed);
-		final var bufferBuilder = tesselator.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR_POS_COLOR_LY.get());
+		final var bufferBuilder = tesselator.begin(VertexFormat.Mode.QUADS, hasTexture ? StellarViewVertexFormat.STAR_POS_COLOR_LY_TEX.get() : StellarViewVertexFormat.STAR_POS_COLOR_LY.get());
 		
 		double sizeMultiplier = diameter / 30D;
 		
@@ -203,7 +259,7 @@ public class StarField extends SpaceObject
 		int numberOfStars = stars;
 		for(SpiralArm arm : spiralArms) //Draw each arm
 		{
-			arm.generateStars(bufferBuilder, axisRotation, starData, starInfo, randomsource, numberOfStars, sizeMultiplier);
+			arm.generateStars(bufferBuilder, axisRotation, starData, starInfo, randomsource, numberOfStars, sizeMultiplier, hasTexture);
 			numberOfStars += arm.armStars();
 		}
 		
@@ -212,11 +268,11 @@ public class StarField extends SpaceObject
 	
 	protected MeshData getStarBuffer(Tesselator tesselator)
 	{
-		final var bufferBuilder = tesselator.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR_POS_COLOR_LY.get());
+		final var bufferBuilder = tesselator.begin(VertexFormat.Mode.QUADS, hasTexture ? StellarViewVertexFormat.STAR_POS_COLOR_LY_TEX.get() : StellarViewVertexFormat.STAR_POS_COLOR_LY.get());
 		
 		for(int i = 0; i < totalStars; i++)
 		{
-			starData.createStar(bufferBuilder, i);
+			starData.createStar(bufferBuilder, hasTexture, i);
 		}
 		return bufferBuilder.build();
 	}
@@ -225,6 +281,8 @@ public class StarField extends SpaceObject
 	{
 		if(starBuffer != null)
 			starBuffer.close();
+		
+		hasTexture = GeneralConfig.textured_stars.get();
 		
 		starBuffer = new StarBuffer();
 		Tesselator tesselator = Tesselator.getInstance();
@@ -239,7 +297,7 @@ public class StarField extends SpaceObject
 		return this;
 	}
 	
-	public StarField setupBuffer(SpaceCoords relativeCoords)
+	public StarField setupBuffer()
 	{
 		if(starBuffer != null)
 			starBuffer.close();
@@ -257,18 +315,88 @@ public class StarField extends SpaceObject
 		return this;
 	}
 	
+	
+	
+	protected MeshData generateDustCloudBuffer(Tesselator tesselator)
+	{
+		RandomSource randomsource = RandomSource.create(seed);
+		final var bufferBuilder = tesselator.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR_POS_COLOR_LY_TEX.get());
+		
+		double sizeMultiplier = diameter / 30D;
+		
+		dustCloudData = new DustCloudData(totalDustClouds);
+		
+		generateDustClouds(bufferBuilder, randomsource);
+		
+		int numberOfDustClouds = dustClouds;
+		for(SpiralArm arm : spiralArms) //Draw each arm
+		{
+			arm.generateDustClouds(bufferBuilder, axisRotation, dustCloudData, dustCloudInfo, randomsource, numberOfDustClouds, sizeMultiplier);
+			numberOfDustClouds += arm.armDustClouds();
+		}
+		
+		return bufferBuilder.build();
+	}
+	
+	public StarField setupDustCloudBuffer()
+	{
+		if(dustCloudBuffer != null)
+			dustCloudBuffer.close();
+		
+		dustCloudBuffer = new DustCloudBuffer();
+		Tesselator tesselator = Tesselator.getInstance();
+		RenderSystem.setShader(GameRenderer::getPositionShader);
+		
+		MeshData mesh = generateDustCloudBuffer(tesselator);
+		
+		dustCloudBuffer.bind();
+		dustCloudBuffer.upload(mesh);
+		VertexBuffer.unbind();
+		
+		return this;
+	}
+	
+	
+	
+	public void renderDustClouds(ViewCenter viewCenter, ClientLevel level, float partialTicks, Matrix4f modelViewMatrix, Camera camera,
+								 Matrix4f projectionMatrix, Runnable setupFog, float brightness)
+	{
+		SpaceCoords difference = viewCenter.getCoords().sub(getCoords());
+		
+		if(dustCloudBuffer == null)
+			setupDustCloudBuffer();
+		
+		if(brightness > 0.0F)
+		{
+			final var transformedModelView = new Matrix4f(modelViewMatrix);
+			
+			RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+			RenderSystem.setShaderColor(1, 1, 1, brightness);
+			RenderSystem.setShaderTexture(0, getDustCloudTexture());
+			FogRenderer.setupNoFog();
+			
+			Quaternionf q = SpaceCoords.getQuaternionf(level, viewCenter, partialTicks);
+			
+			transformedModelView.rotate(q);
+			this.dustCloudBuffer.bind();
+			this.dustCloudBuffer.drawWithShader(transformedModelView, projectionMatrix, difference, StellarViewShaders.starDustCloudShader());
+			VertexBuffer.unbind();
+			
+			setupFog.run();
+		}
+	}
+	
 	@Override
 	public void render(ViewCenter viewCenter, ClientLevel level, float partialTicks, Matrix4f modelViewMatrix, Camera camera,
 			Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, Tesselator tesselator,
 			Vector3f parentVector, AxisRotation parentRotation)
 	{
-		//System.out.println(this + " " + viewCenter.getCoords());
 		SpaceCoords difference = viewCenter.getCoords().sub(getCoords());
 		
 		if(requiresSetup())
-			setupBuffer(difference);
-		//else
-		//	setStarBuffer(difference); // This could be viable with fewer stars
+			setupBuffer();
+		else if(requiresReset())
+			setStarBuffer();
 		
 		float starBrightness = StarLike.getStarBrightness(viewCenter, level, camera, partialTicks);
 		
@@ -277,16 +405,18 @@ public class StarField extends SpaceObject
 			final var transformedModelView = new Matrix4f(modelViewMatrix);
 			
 			//stack.translate(0, 0, 0);
+			if(hasTexture)
+				RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 			RenderSystem.setShaderColor(1, 1, 1, starBrightness);
-			//RenderSystem.setShaderTexture(0, new ResourceLocation("textures/environment/sun.png"));
+			if(hasTexture)
+				RenderSystem.setShaderTexture(0, getStarInfo().getStarTexture());
 			FogRenderer.setupNoFog();
 			
 			Quaternionf q = SpaceCoords.getQuaternionf(level, viewCenter, partialTicks);
 			
 			transformedModelView.rotate(q);
 			this.starBuffer.bind();
-			this.starBuffer.drawWithShader(transformedModelView, projectionMatrix, difference, StellarViewShaders.starShader());
-			//this.starBuffer.drawWithShader(transformedModelView, projectionMatrix, GameRenderer.getPositionColorTexShader());
+			this.starBuffer.drawWithShader(transformedModelView, projectionMatrix, difference, hasTexture ? StellarViewShaders.starTexShader() : StellarViewShaders.starShader());
 			VertexBuffer.unbind();
 			
 			setupFog.run();
@@ -298,8 +428,27 @@ public class StarField extends SpaceObject
 		}
 	}
 	
+	public static float dustCloudBrightness(ViewCenter viewCenter, ClientLevel level, Camera camera, float partialTicks)
+	{
+		float brightness = level.getStarBrightness(partialTicks);
+		
+		if(viewCenter.starsAlwaysVisible() && brightness < 0.5F)
+			brightness = 0.5F;
+		
+		if(GeneralConfig.bright_stars.get())
+			brightness = brightness * StellarView.lightSourceDustCloudDimming(level, camera);
+		
+		brightness = brightness * StellarView.rainDimming(level, partialTicks);
+		
+		return brightness;
+	}
+	
 	public static class SpiralArm
 	{
+		@Nullable
+		protected final DustCloudInfo dustCloudInfo;
+		protected final int armDustClouds;
+		
 		protected final int armStars;
 		protected final double armRotation;
 		protected final double armLength;
@@ -307,6 +456,9 @@ public class StarField extends SpaceObject
 		protected final boolean clumpStarsInCenter;
 		
 		public static final Codec<SpiralArm> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				Codec.INT.optionalFieldOf("dust_clouds", 0).forGetter(SpiralArm::armDustClouds),
+				DustCloudInfo.CODEC.optionalFieldOf("dust_cloud_info").forGetter(SpiralArm::getDustCloudInfo),
+				
 				Codec.INT.fieldOf("stars").forGetter(SpiralArm::armStars),
 				Codec.DOUBLE.fieldOf("arm_rotation").forGetter(SpiralArm::armRotation),
 				Codec.DOUBLE.fieldOf("arm_length").forGetter(SpiralArm::armLength),
@@ -314,14 +466,30 @@ public class StarField extends SpaceObject
 				Codec.BOOL.optionalFieldOf("clump_stars_in_center", true).forGetter(SpiralArm::clumpStarsInCenter)
 				).apply(instance, SpiralArm::new));
 		
-		public SpiralArm(int armStars, double armRotationDegrees, double armLength, double armThickness, boolean clumpStarsInCenter)
+		public SpiralArm(int armDustClouds, Optional<DustCloudInfo> dustCloudInfo, int armStars, double armRotationDegrees, double armLength, double armThickness, boolean clumpStarsInCenter)
 		{
+			this.armDustClouds = armDustClouds;
+			if(dustCloudInfo.isPresent())
+				this.dustCloudInfo = dustCloudInfo.get();
+			else
+				this.dustCloudInfo = null;
+			
 			this.armStars = armStars;
 			this.armRotation = Math.toRadians(armRotationDegrees);
 			this.armLength = armLength;
 			this.armThickness = armThickness;
 			
 			this.clumpStarsInCenter = clumpStarsInCenter;
+		}
+		
+		public int armDustClouds()
+		{
+			return armDustClouds;
+		}
+		
+		public Optional<DustCloudInfo> getDustCloudInfo()
+		{
+			return Optional.ofNullable(dustCloudInfo);
 		}
 		
 		public int armStars()
@@ -349,7 +517,7 @@ public class StarField extends SpaceObject
 			return clumpStarsInCenter;
 		}
 		
-		protected void generateStars(BufferBuilder bufferBuilder, AxisRotation axisRotation, StarData starData, StarInfo starInfo, RandomSource randomsource, int numberOfStars, double sizeMultiplier)
+		protected void generateStars(BufferBuilder bufferBuilder, AxisRotation axisRotation, StarData starData, StarInfo starInfo, RandomSource randomsource, int numberOfStars, double sizeMultiplier, boolean hasTexture)
 		{
 			for(int i = 0; i < armStars; i++)
 			{
@@ -359,7 +527,7 @@ public class StarField extends SpaceObject
 				
 				double phi = armLength * Math.PI * progress - armRotation;
 				double r = StellarCoordinates.spiralR(5, phi, armRotation);
-
+				
 				// This generates random coordinates for the Star close to the camera
 				double distance = clumpStarsInCenter ? randomsource.nextDouble() : Math.cbrt(randomsource.nextDouble());
 				double theta = randomsource.nextDouble() * 2F * Math.PI;
@@ -377,7 +545,40 @@ public class StarField extends SpaceObject
 				
 				axisRotation.quaterniond().transform(cartesian);
 				
-				starData.newStar(starInfo, bufferBuilder, randomsource, cartesian.x, cartesian.y, cartesian.z, numberOfStars + i);
+				starData.newStar(starInfo, bufferBuilder, randomsource, cartesian.x, cartesian.y, cartesian.z, hasTexture, numberOfStars + i);
+			}
+		}
+		
+		protected void generateDustClouds(BufferBuilder bufferBuilder, AxisRotation axisRotation, DustCloudData dustCloudData, DustCloudInfo dustCloudInfo, RandomSource randomsource, int numberOfDustClouds, double sizeMultiplier)
+		{
+			for(int i = 0; i < armDustClouds; i++)
+			{
+				// Milky Way is 90 000 ly across
+				
+				double progress = (double) i / armDustClouds;
+				
+				double phi = armLength * Math.PI * progress - armRotation;
+				double r = StellarCoordinates.spiralR(5, phi, armRotation);
+				progress++;
+				
+				// This generates random coordinates for the Star close to the camera
+				double distance = clumpStarsInCenter ? randomsource.nextDouble() : Math.cbrt(randomsource.nextDouble());
+				double theta = randomsource.nextDouble() * 2F * Math.PI;
+				double sphericalphi = Math.acos(2F * randomsource.nextDouble() - 1F); // This prevents the formation of that weird streak that normally happens
+				
+				Vector3d cartesian = new SphericalCoords(distance * armThickness, theta, sphericalphi).toCartesianD();
+				
+				double x =  r * Math.cos(phi) + cartesian.x * armThickness / (progress * 1.5);
+				double z =  r * Math.sin(phi) + cartesian.z * armThickness / (progress * 1.5);
+				double y =  cartesian.y * armThickness / (progress * 1.5);
+				
+				cartesian.x = x * sizeMultiplier;
+				cartesian.y = y * sizeMultiplier;
+				cartesian.z = z * sizeMultiplier;
+				
+				axisRotation.quaterniond().transform(cartesian);
+				
+				dustCloudData.newDustCloud(this.dustCloudInfo == null ? dustCloudInfo : this.dustCloudInfo, bufferBuilder, randomsource, cartesian.x, cartesian.y, cartesian.z, (1 / progress) + 0.2, numberOfDustClouds + i);
 			}
 		}
 	}

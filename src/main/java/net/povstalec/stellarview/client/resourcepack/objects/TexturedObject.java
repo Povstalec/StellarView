@@ -131,7 +131,7 @@ public abstract class TexturedObject extends SpaceObject
 		SpaceCoords coords = getCoords().add(positionVector);
 
 		// Subtract coords of this from View Center coords to get relative coords
-		SphericalCoords sphericalCoords = coords.skyPosition(level, viewCenter, partialTicks);
+		SphericalCoords sphericalCoords = coords.skyPosition(level, viewCenter, partialTicks, true);
 		
 		lastDistance = sphericalCoords.r;
 		sphericalCoords.r = DEFAULT_DISTANCE;

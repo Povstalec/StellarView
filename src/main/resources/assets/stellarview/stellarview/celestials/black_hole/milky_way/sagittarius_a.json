@@ -1,0 +1,32 @@
+{
+	"coords": { "right_ascension": {"hours": 17, "minutes": 45, "seconds": 40.0409}, "declination": {"degrees": -29, "minutes": 0, "seconds": 28.118}, "distance": {"ly": 26996} },
+	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
+		
+	"min_black_hole_size": 0.3,
+	
+	"lensing_intensity": 8.0,
+
+	"texture_layers":
+	[
+		{
+			"texture": "stellarview:textures/environment/black_hole/black_hole_halo.png",
+			"rgba": {"red": 100, "green": 200, "blue": 255, "alpha": 255},
+			"blend": true,
+			"size": 4488626469,
+			"min_size": 0.7,
+			"clamp_at_min_size": true,
+			"rotation": 0,
+			"uv": { "flip_uv": false }
+		},
+		{
+			"texture": "stellarview:textures/environment/black_hole/black_hole.png",
+			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
+			"blend": false,
+			"size": 4488626469,
+			"min_size": 0.7,
+			"clamp_at_min_size": true,
+			"rotation": 0,
+			"uv": { "flip_uv": false }
+		}
+	]
+}

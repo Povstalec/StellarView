@@ -2,28 +2,25 @@ package net.povstalec.stellarview.common.util;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import net.minecraft.util.RandomSource;
-import net.povstalec.stellarview.client.render.shader.StellarViewVertexFormat;
-import net.povstalec.stellarview.client.resourcepack.StarInfo;
-import net.povstalec.stellarview.client.resourcepack.objects.StarLike;
-import org.lwjgl.system.MemoryUtil;
+import net.povstalec.stellarview.client.resourcepack.DustCloudInfo;
 
-public class StarData
+public class DustCloudData
 {
-	private double[][] starCoords;
-	private double[] starSizes;
+	private double[][] dustCloudCoords;
+	private double[] dustCloudSizes;
 	
-	private short[][] starRGBA;
+	private short[][] dustCloudRGBA;
 	
 	private double[][] randoms;
 	
-	public StarData(int stars)
+	public DustCloudData(int dustClouds)
 	{
-		this.starCoords = new double[stars][3];
-		this.starSizes = new double[stars];
+		this.dustCloudCoords = new double[dustClouds][3];
+		this.dustCloudSizes = new double[dustClouds];
 		
-		this.randoms = new double[stars][2];
+		this.randoms = new double[dustClouds][2];
 		
-		this.starRGBA = new short[stars][4];
+		this.dustCloudRGBA = new short[dustClouds][4];
 	}
 	
 	public static double clampStar(double starSize, double minStarSize, double maxStarSize)
@@ -44,28 +41,28 @@ public class StarData
 	 * @param z Z coordinate of the star
 	 * @param i Index of the star
 	 */
-	public void newStar(StarInfo starInfo, BufferBuilder builder, RandomSource randomSource, double x, double y, double z, boolean hasTexture, int i)
+	public void newDustCloud(DustCloudInfo dustCloudInfo, BufferBuilder builder, RandomSource randomSource, double x, double y, double z, double sizeMultiplier, int i)
 	{
 		long seed = randomSource.nextLong();
 		
 		// Set up position
 		
-		starCoords[i][0] = x;
-		starCoords[i][1] = y;
-		starCoords[i][2] = z;
+		dustCloudCoords[i][0] = x;
+		dustCloudCoords[i][1] = y;
+		dustCloudCoords[i][2] = z;
 		
-		StarLike.StarType starType = starInfo.getRandomStarType(seed);
-		Color.IntRGB rgb = starType.getRGB();
+		DustCloudInfo.DustCloudType dustCloudType = dustCloudInfo.getRandomDustCloudType(seed);
+		Color.IntRGB rgb = dustCloudType.getRGB();
 		
 		// Set up size
 		
-		starSizes[i] = starType.randomSize(seed); // This randomizes the Star size
+		dustCloudSizes[i] = dustCloudType.randomSize(seed) * sizeMultiplier; // This randomizes the Star size
 		
 		// Set up color and alpha
 		
-		short alpha = starType.randomBrightness(seed); // 0xAA is the default
+		short alpha = dustCloudType.randomBrightness(seed); // 0xAA is the default
 		
-		this.starRGBA[i] = new short[] {(short) rgb.red(), (short) rgb.green(), (short) rgb.blue(), alpha};
+		this.dustCloudRGBA[i] = new short[] {(short) rgb.red(), (short) rgb.green(), (short) rgb.blue(), alpha};
 		
 		// sin and cos are used to effectively clamp the random number between two values without actually clamping it,
 		// wwhich would result in some awkward lines as Stars would be brought to the clamped values
@@ -74,10 +71,10 @@ public class StarData
 		randoms[i][0] = Math.sin(random); // sin random
 		randoms[i][1] = Math.cos(random); // cos random
 		
-		this.createStar(builder, hasTexture, i);
+		this.createDustCloud(builder, i);
 	}
 	
-	public void createStar(BufferBuilder builder, boolean hasTexture, int i)
+	public void createDustCloud(BufferBuilder builder, int i)
 	{
 		double sinRandom = randoms[i][0];
 		double cosRandom = randoms[i][1];
@@ -101,7 +98,7 @@ public class StarData
 			 * 2 & 2 = 010 & 010 = 010 = 2	|	x	x
 			 * 3 & 2 = 011 & 010 = 010 = 2	|	x	x
 			 * 4 & 2 = 100 & 000 = 000 = 0	|		x
-			 * 
+			 *
 			 * After you subtract 1 one from each of them, you get this:
 			 * j:	0	1	2	3
 			 * --------------------
@@ -119,41 +116,32 @@ public class StarData
 			 * -------------------
 			 * A:	0	-2	0	2
 			 * B:	-2	0	2	0
-			 * 
+			 *
 			 * A and B are there to create a diamond effect on the Y-axis and X-axis respectively
 			 * (Pretend it's not as stretched as the slashes make it look)
 			 * Where a coordinate is written as (B,A)
-			 * 
+			 *
 			 *           (0,2)
 			 *          /\
 			 *   (-2,0)/  \(2,0)
 			 *         \  /
 			 *          \/
 			 *           (0,-2)
-			 * 
+			 *
 			 */
 			double height = aLocation * cosRandom - bLocation * sinRandom;
 			double width = bLocation * cosRandom + aLocation * sinRandom;
-
-			builder.addVertex((float) starCoords[i][0], (float) starCoords[i][1], (float) starCoords[i][2])
-					.setColor((byte) starRGBA[i][0], (byte) starRGBA[i][1], (byte) starRGBA[i][2], (byte) starRGBA[i][3]);
 			
-			addStarHeightWidthSize(builder, (float) height, (float) width, (float) starSizes[i]);
+			builder.vertex(dustCloudCoords[i][0], dustCloudCoords[i][1], dustCloudCoords[i][2]).color(dustCloudRGBA[i][0], dustCloudRGBA[i][1], dustCloudRGBA[i][2], dustCloudRGBA[i][3]);
+			// These next few lines add a "custom" element defined as HeightWidthSize in StellarViewVertexFormat
+			builder.putFloat(0, (float) height);
+			builder.putFloat(4, (float) width);
+			builder.putFloat(8, (float) dustCloudSizes[i]);
+			builder.nextElement();
 			
-			if(hasTexture)
-				builder.setUv( (float) (aLocation + 1) / 2F, (float) (bLocation + 1) / 2F);
-		}
-	}
-
-	public static void addStarHeightWidthSize(BufferBuilder builder, float height, float width, float size)
-	{
-		long i = builder.beginElement(StellarViewVertexFormat.ELEMENT_HEIGHT_WIDTH_SIZE.get());
-		
-		if (i != -1L)
-		{
-			MemoryUtil.memPutFloat(i, height);
-			MemoryUtil.memPutFloat(i + Float.BYTES, width);
-			MemoryUtil.memPutFloat(i + Float.BYTES * 2, size);
+			builder.uv( (float) (aLocation + 1) / 2F, (float) (bLocation + 1) / 2F);
+			
+			builder.endVertex();
 		}
 	}
 }

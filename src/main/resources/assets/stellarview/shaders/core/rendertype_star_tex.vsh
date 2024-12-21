@@ -3,6 +3,7 @@
 in vec3 StarPos;
 in vec4 Color;
 in vec3 HeightWidthSize;
+in vec2 UV0;
 
 uniform mat4 ModelViewMat;
 uniform mat4 ProjMat;
@@ -14,9 +15,10 @@ uniform mat3 LensingMatInv;
 uniform float LensingIntensity;
 
 float DEFAULT_DISTANCE = 100;
-float MIN_STAR_SIZE = 0.02;
+float MIN_STAR_SIZE = 0.08;
 
 out vec4 vertexColor;
+out vec2 texCoord0;
 
 float clampStar(float starSize, float distance)
 {
@@ -45,50 +47,18 @@ void main()
 	alpha -= distance / 100000;
 	
 	if(alpha < minAlpha)
-	{
 		alpha = minAlpha;
-		
-		/*if(distance > 3000000)
-		{
-			if(minAlpha < 0.08)
-			{
-				if(distance < 4000000)
-				{
-					alpha = ( minAlpha * (4000000 - distance) ) / 1000000;
-					
-					if(alpha < 0)
-						alpha = 0;
-				}
-				else
-					alpha = 0;
-			}
-			else
-			{
-				float lowerAlpha = minAlpha * 0.5; // TODO This should ideally be a value provided for the vertex format
-				
-				if(distance < 4000000)
-				{
-					alpha = ( minAlpha * (4000000 - distance) ) / 1000000;
-					
-					if(alpha < lowerAlpha)
-						alpha = lowerAlpha;
-				}
-				else
-					alpha = lowerAlpha;
-			}
-		}*/
-	}
 	
 	// COLOR END
 	
-	float starSize = clampStar(HeightWidthSize.z, distance);
+	float starSize = clampStar(HeightWidthSize.z * 4, distance);
 	
 	distance = 1.0 / distance;
 	xyz.x *= distance;
 	xyz.y *= distance;
 	xyz.z *= distance;
 	
-	if(LensingIntensity > 0.0)
+	if(LensingIntensity > 1.0)
 		xyz = LensingMat * xyz;
 	
 	// This effectively pushes the Star away from the camera
@@ -149,9 +119,10 @@ void main()
 	float projectedX = heightProjectionXZ * sinTheta - width * cosTheta;
 	float projectedZ = width * sinTheta + heightProjectionXZ * cosTheta;
 	
-	vec3 pos =  LensingIntensity > 0.0 ? LensingMatInv * vec3(projectedX + starX, heightProjectionY + starY, projectedZ + starZ) : vec3(projectedX + starX, heightProjectionY + starY, projectedZ + starZ);
+	vec3 pos = LensingIntensity > 1.0 ? LensingMatInv * vec3(projectedX + starX, heightProjectionY + starY, projectedZ + starZ) : vec3(projectedX + starX, heightProjectionY + starY, projectedZ + starZ);
 	
 	gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
 	
 	vertexColor = vec4(Color.x, Color.y, Color.z, alpha);
+    texCoord0 = UV0;
 }

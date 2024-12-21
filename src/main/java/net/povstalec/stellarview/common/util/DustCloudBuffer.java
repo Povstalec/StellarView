@@ -3,10 +3,11 @@ package net.povstalec.stellarview.common.util;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.Minecraft;
+import net.povstalec.stellarview.client.render.shader.DustCloudShaderInstance;
 import net.povstalec.stellarview.client.render.shader.StarShaderInstance;
 import net.povstalec.stellarview.client.resourcepack.Space;
 import org.joml.Matrix4f;
@@ -16,7 +17,7 @@ import org.lwjgl.opengl.GL15C;
 import javax.annotation.Nullable;
 import java.nio.ByteBuffer;
 
-public class StarBuffer implements AutoCloseable
+public class DustCloudBuffer implements AutoCloseable
 {
 	private int vertexBufferId;
 	private int indexBufferId;
@@ -29,7 +30,7 @@ public class StarBuffer implements AutoCloseable
 	private int indexCount;
 	private VertexFormat.Mode mode;
 	
-	public StarBuffer()
+	public DustCloudBuffer()
 	{
 		RenderSystem.assertOnRenderThread();
 		this.vertexBufferId = GlStateManager._glGenBuffers();
@@ -37,30 +38,30 @@ public class StarBuffer implements AutoCloseable
 		this.arrayObjectId = GlStateManager._glGenVertexArrays();
 	}
 	
-	public void upload(MeshData mesh)
+	public void upload(BufferBuilder.RenderedBuffer buffer)
 	{
-		if(!this.isInvalid())
+		if (!this.isInvalid())
 		{
 			RenderSystem.assertOnRenderThread();
 			try
 			{
-				final var drawState = mesh.drawState();
-				this.format = this.uploadVertexBuffer(mesh, mesh.vertexBuffer());
-				this.sequentialIndices = this.uploadIndexBuffer(mesh, mesh.indexBuffer());
-				this.indexCount = drawState.indexCount();
-				this.indexType = drawState.indexType();
-				this.mode = drawState.mode();
+				BufferBuilder.DrawState bufferbuilder$drawstate = buffer.drawState();
+				this.format = this.uploadVertexBuffer(bufferbuilder$drawstate, buffer.vertexBuffer());
+				this.sequentialIndices = this.uploadIndexBuffer(bufferbuilder$drawstate, buffer.indexBuffer());
+				this.indexCount = bufferbuilder$drawstate.indexCount();
+				this.indexType = bufferbuilder$drawstate.indexType();
+				this.mode = bufferbuilder$drawstate.mode();
 			}
 			finally
 			{
-				mesh.close();
+				buffer.release();
 			}
+
 		}
 	}
 	
-	private VertexFormat uploadVertexBuffer(MeshData mesh, ByteBuffer vertexBuffer)
+	private VertexFormat uploadVertexBuffer(BufferBuilder.DrawState drawState, ByteBuffer vertexBuffer)
 	{
-		final var drawState = mesh.drawState();
 		boolean formatEquals = false;
 		if(!drawState.format().equals(this.format))
 		{
@@ -72,7 +73,7 @@ public class StarBuffer implements AutoCloseable
 			formatEquals = true;
 		}
 		
-		if(mesh.indexBuffer() == null)
+		if(!drawState.indexOnly())
 		{
 			if(!formatEquals)
 				GlStateManager._glBindBuffer(GL15C.GL_ARRAY_BUFFER, this.vertexBufferId);
@@ -84,10 +85,9 @@ public class StarBuffer implements AutoCloseable
 	}
 	
 	@Nullable
-	private RenderSystem.AutoStorageIndexBuffer uploadIndexBuffer(MeshData mesh, ByteBuffer indexBuffer)
+	private RenderSystem.AutoStorageIndexBuffer uploadIndexBuffer(BufferBuilder.DrawState drawState, ByteBuffer indexBuffer)
 	{
-		final var drawState = mesh.drawState();
-		if(mesh.vertexBuffer() == null)
+		if(!drawState.sequentialIndex())
 		{
 			GlStateManager._glBindBuffer(GL15C.GL_ELEMENT_ARRAY_BUFFER, this.indexBufferId);
 			RenderSystem.glBufferData(GL15C.GL_ELEMENT_ARRAY_BUFFER, indexBuffer, GL15C.GL_STATIC_DRAW);
@@ -126,7 +126,7 @@ public class StarBuffer implements AutoCloseable
 		return rendersystem$autostorageindexbuffer != null ? rendersystem$autostorageindexbuffer.type() : this.indexType;
 	}
 	
-	public void drawWithShader(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, SpaceCoords relativeSpacePos, StarShaderInstance shaderInstance)
+	public void drawWithShader(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, SpaceCoords relativeSpacePos, DustCloudShaderInstance shaderInstance)
 	{
 		Vector3f relativeVectorLy = new Vector3f((float) relativeSpacePos.x().ly(), (float) relativeSpacePos.y().ly(), (float) relativeSpacePos.z().ly());
 		Vector3f relativeVectorKm = new Vector3f((float) relativeSpacePos.x().km(), (float) relativeSpacePos.y().km(), (float) relativeSpacePos.z().km());
@@ -142,7 +142,7 @@ public class StarBuffer implements AutoCloseable
 			this._drawWithShader(modelViewMatrix, projectionMatrix, relativeVectorLy, relativeVectorKm, shaderInstance);
 	}
 	
-	private void _drawWithShader(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, Vector3f relativeSpaceLy, Vector3f relativeSpaceKm, StarShaderInstance shaderInstance)
+	private void _drawWithShader(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, Vector3f relativeSpaceLy, Vector3f relativeSpaceKm, DustCloudShaderInstance shaderInstance)
 	{
 		for(int i = 0; i < 12; ++i)
 		{
@@ -155,6 +155,9 @@ public class StarBuffer implements AutoCloseable
 		
 		if(shaderInstance.PROJECTION_MATRIX != null)
 			shaderInstance.PROJECTION_MATRIX.set(projectionMatrix);
+		
+		if(shaderInstance.INVERSE_VIEW_ROTATION_MATRIX != null)
+			shaderInstance.INVERSE_VIEW_ROTATION_MATRIX.set(RenderSystem.getInverseViewRotationMatrix());
 		
 		if(shaderInstance.COLOR_MODULATOR != null)
 			shaderInstance.COLOR_MODULATOR.set(RenderSystem.getShaderColor());
