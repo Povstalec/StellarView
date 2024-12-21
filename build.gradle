@@ -14,6 +14,13 @@ repositories {
         name 'JTDev-Maven-Repository'
         url 'https://maven.jt-dev.tech/releases'
     }
+    maven {
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven"
+        content {
+            includeGroup "maven.modrinth"
+        }
+    }
 }
 
 base {
@@ -108,7 +115,7 @@ configurations {
 
 dependencies {
     implementation ("corgitaco.corgilib:Corgilib-NeoForge:${minecraft_version}-${corgilib_version}")
-    //implementation fg.deobf("corgitaco.enhancedcelestials:Enhanced-Celestials-Forge:${minecraft_version}-${enhanced_celestials_version}")
+    implementation ("maven.modrinth:enhanced-celestials:${enhanced_celestials_version}-neoforge")
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
