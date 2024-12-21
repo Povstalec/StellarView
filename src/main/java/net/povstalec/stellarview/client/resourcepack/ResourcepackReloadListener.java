@@ -155,8 +155,6 @@ public class ResourcepackReloadListener
 					
 					spaceObjects.put(location, star);
 				}
-				
-				StellarView.LOGGER.debug("Parsed " + location.toString() + " as Star");
 			}
 			catch(RuntimeException e)
 			{
@@ -173,7 +171,6 @@ public class ResourcepackReloadListener
 				
 				spaceObjects.put(location, blackHole);
 				Space.addGravityLense(blackHole);
-				StellarView.LOGGER.debug("Parsed " + location.toString() + " as Black Hole");
 			}
 			catch(RuntimeException e)
 			{
@@ -189,7 +186,6 @@ public class ResourcepackReloadListener
 				Planet planet = Planet.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Planet", msg));
 
 				spaceObjects.put(location, planet);
-				StellarView.LOGGER.debug("Parsed " + location.toString() + " as Planet");
 			}
 			catch(RuntimeException e)
 			{
@@ -222,7 +218,6 @@ public class ResourcepackReloadListener
 
 				spaceObjects.put(location, starField);
 				Space.addStarField(starField);
-				StellarView.LOGGER.debug("Parsed " + location.toString() + " as Star Field");
 			}
 			catch(RuntimeException e)
 			{
@@ -238,7 +233,6 @@ public class ResourcepackReloadListener
 				Nebula nebula = Nebula.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Nebula", msg));
 
 				spaceObjects.put(location, nebula);
-				StellarView.LOGGER.debug("Parsed " + location.toString() + " as Nebula");
 			}
 			catch(RuntimeException e)
 			{

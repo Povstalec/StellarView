@@ -134,13 +134,19 @@ repositories {
             includeGroup "maven.modrinth"
         }
     }
+
+    repositories {
+        maven {
+            url "https://cursemaven.com"
+        }
+    }
 }
 
 dependencies {
     // Specify the version of Minecraft to use. If this is any group other than 'net.minecraft', it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency, and its patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
-    minecraft 'net.minecraftforge:forge:1.19.3-44.1.0'
+    minecraft 'net.minecraftforge:forge:1.19.3-44.1.1'
 
     // Real mod deobf dependency examples - these get remapped to your current mappings
     // implementation fg.deobf("com.tterrag.registrate:Registrate:MC${mc_version}-${registrate_version}") // Adds registrate as a dependency
@@ -157,6 +163,7 @@ dependencies {
     
     compileOnly fg.deobf("maven.modrinth:enhanced-celestials:${mc_version}-${enhanced_celestials_version}-forge")
     runtimeOnly fg.deobf("maven.modrinth:enhanced-celestials:${mc_version}-${enhanced_celestials_version}-forge")
+    implementation fg.deobf("curse.maven:the-twilight-forest-227639:4419066")
 }
 
 // Example for how to get properties into the manifest for reading at runtime.
