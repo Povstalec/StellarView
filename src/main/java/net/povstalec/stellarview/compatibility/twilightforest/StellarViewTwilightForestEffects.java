@@ -17,7 +17,7 @@ import twilightforest.client.TwilightForestRenderInfo;
 
 public class StellarViewTwilightForestEffects extends TwilightForestRenderInfo
 {
-	public static final ResourceLocation TWILIGHT_FOREST_EFFECTS = new ResourceLocation(StellarView.TWILIGHT_FOREST_MODID, "renderer");
+	public static final ResourceLocation TWILIGHT_FOREST_EFFECTS = ResourceLocation.fromNamespaceAndPath(StellarView.TWILIGHT_FOREST_MODID, "renderer");
 	
 	public StellarViewTwilightForestEffects()
 	{
@@ -25,12 +25,12 @@ public class StellarViewTwilightForestEffects extends TwilightForestRenderInfo
 	}
 	
 	@Override
-	public boolean renderSky(ClientLevel level, int ticks, float partialTick, PoseStack poseStack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
+	public boolean renderSky(ClientLevel level, int ticks, float partialTick, Matrix4f modelViewMatrix, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
     {
 		if(TwilightForestConfig.replace_default.get())
-			return ViewCenters.renderViewCenterSky(level, ticks, partialTick, poseStack, camera, projectionMatrix, isFoggy, setupFog);
+			return ViewCenters.renderViewCenterSky(level, ticks, partialTick, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog);
 		
-        return super.renderSky(level, ticks, partialTick, poseStack, camera, projectionMatrix, isFoggy, setupFog);
+        return super.renderSky(level, ticks, partialTick, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog);
     }
 	
 	@Override

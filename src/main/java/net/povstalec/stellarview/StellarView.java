@@ -63,7 +63,7 @@ public class StellarView
     @EventBusSubscriber(modid = StellarView.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents
     {
-    	@SubscribeEvent(priority = EventPriority.HIGH)
+    	@SubscribeEvent(priority = EventPriority.LOWEST)
         public static void registerDimensionEffects(RegisterDimensionSpecialEffectsEvent event)
 		{
 			overworld = new StellarViewOverworldEffects();

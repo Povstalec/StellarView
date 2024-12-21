@@ -19,7 +19,8 @@ public class StellarViewOverworldEffects extends DimensionSpecialEffects.Overwor
 	public StellarViewOverworldEffects() {}
 
 	@Override
-	public boolean renderSky(ClientLevel level, int ticks, float partialTick, Matrix4f modelViewMatrix, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog) {
+	public boolean renderSky(ClientLevel level, int ticks, float partialTick, Matrix4f modelViewMatrix, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
+	{
 		if(OverworldConfig.replace_vanilla.get())
 			return ViewCenters.renderViewCenterSky(level, ticks, partialTick, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog);
 		

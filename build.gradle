@@ -21,6 +21,9 @@ repositories {
             includeGroup "maven.modrinth"
         }
     }
+    maven {
+        url "https://cursemaven.com"
+    }
 }
 
 base {
@@ -116,6 +119,7 @@ configurations {
 dependencies {
     implementation ("corgitaco.corgilib:Corgilib-NeoForge:${minecraft_version}-${corgilib_version}")
     implementation ("maven.modrinth:enhanced-celestials:${enhanced_celestials_version}-neoforge")
+    implementation ("curse.maven:the-twilight-forest-227639:5983260")
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
