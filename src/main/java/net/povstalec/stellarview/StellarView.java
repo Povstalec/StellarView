@@ -81,7 +81,7 @@ public class StellarView
     @Mod.EventBusSubscriber(modid = StellarView.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents
     {
-    	@SubscribeEvent(priority = EventPriority.HIGH)
+    	@SubscribeEvent(priority = EventPriority.HIGHEST)
         public static void registerDimensionEffects(RegisterDimensionSpecialEffectsEvent event)
 		{
 			overworld = new StellarViewOverworldEffects();
@@ -102,6 +102,7 @@ public class StellarView
 			{
 				aether = new StellarViewAetherEffects();
 				event.register(StellarViewAetherEffects.AETHER_EFFECTS, aether);
+				System.out.println("AETHER EFFECTS REGISTERED");
 			}
         }
     	

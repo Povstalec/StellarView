@@ -46,8 +46,8 @@ public class ConfigScreen extends Screen
 		this.addRenderableWidget(Button.builder(Component.translatable("gui.stellarview.config.twilight_forest"),
 				(button) -> this.minecraft.setScreen(new TwilightForestConfigScreen(this))).bounds(this.width / 2 - 100, l + 24 * 5, 200, 20).build());
 		
-		//this.addRenderableWidget(Button.builder(Component.translatable("gui.stellarview.config.aether"),
-		//		(button) -> this.minecraft.setScreen(new AetherConfigScreen(this))).bounds(this.width / 2 - 100, l + 24 * 6, 200, 20).build());
+		this.addRenderableWidget(Button.builder(Component.translatable("gui.stellarview.config.aether"),
+				(button) -> this.minecraft.setScreen(new AetherConfigScreen(this))).bounds(this.width / 2 - 100, l + 24 * 6, 200, 20).build());
 
 		this.addRenderableWidget(Button.builder(CommonComponents.GUI_BACK, 
 				(button) -> this.minecraft.setScreen(this.parentScreen))

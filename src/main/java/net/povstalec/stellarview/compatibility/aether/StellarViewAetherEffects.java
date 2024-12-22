@@ -1,5 +1,6 @@
 package net.povstalec.stellarview.compatibility.aether;
 
+import com.aetherteam.aether.client.renderer.level.AetherSkyRenderEffects;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -13,7 +14,7 @@ import net.povstalec.stellarview.compatibility.enhancedcelestials.EnhancedCelest
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-public class StellarViewAetherEffects extends DimensionSpecialEffects.OverworldEffects
+public class StellarViewAetherEffects extends AetherSkyRenderEffects
 {
 	public static final ResourceLocation AETHER_EFFECTS = new ResourceLocation(StellarView.AETHER_MODID, "the_aether");
 	
