@@ -56,5 +56,9 @@ public class StellarViewConfig
 		CLIENT_BUILDER.push("Twilight Forest Config");
 		TwilightForestConfig.init(client);
 		CLIENT_BUILDER.pop();
+		
+		CLIENT_BUILDER.push("Aether Config");
+		AetherConfig.init(client);
+		CLIENT_BUILDER.pop();
 	}
 }

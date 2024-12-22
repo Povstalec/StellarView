@@ -5,6 +5,7 @@
 	"gui.stellarview.config.nether": "Stellar View - Nether Config",
 	"gui.stellarview.config.end": "Stellar View - End Config",
 	"gui.stellarview.config.twilight_forest": "Stellar View - Twilight Forest Config",
+	"gui.stellarview.config.aether": "Stellar View - Aether Config",
 
 	"gui.stellarview.disable_view_center_rotation": "Disable View Center Rotation",
 	"gui.stellarview.disable_stars": "Disable Stars",
