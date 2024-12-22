@@ -73,7 +73,6 @@ public class StellarView
 			overworld = new StellarViewOverworldEffects();
 			nether = new StellarViewNetherEffects();
 			end = new StellarViewEndEffects();
-			aether = new StellarViewAetherEffects();
 			
 			event.register(StellarViewOverworldEffects.OVERWORLD_EFFECTS, overworld);
 			event.register(StellarViewNetherEffects.NETHER_EFFECTS, nether);

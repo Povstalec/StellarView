@@ -32,3 +32,15 @@ Enjoy a Stellar View of the Sky
     versionRange="[3.0.0.1,)"
     ordering="BEFORE"
     side="BOTH"
+[[dependencies.stellarview]]
+modId="twilightforest"
+mandatory=false
+versionRange="[1.20.1-4.6.2941,)"
+ordering="AFTER"
+side="BOTH"
+[[dependencies.stellarview]]
+modId="aether"
+mandatory=false
+versionRange="[1.5.1,)"
+ordering="AFTER"
+side="BOTH"
