@@ -1,7 +1,6 @@
 package net.povstalec.stellarview.compatibility.twilightforest;
 
-import net.minecraftforge.client.event.RegisterDimensionSpecialEffectsEvent;
-import net.povstalec.stellarview.StellarView;
+import net.neoforged.neoforge.client.event.RegisterDimensionSpecialEffectsEvent;
 
 public class TwilightForestCompatibility
 {

@@ -1,6 +1,6 @@
 package net.povstalec.stellarview.compatibility.aether;
 
-import net.minecraftforge.client.event.RegisterDimensionSpecialEffectsEvent;
+import net.neoforged.neoforge.client.event.RegisterDimensionSpecialEffectsEvent;
 
 public class AetherCompatibility
 {
