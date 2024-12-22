@@ -31,7 +31,7 @@ public class GeneralConfig
 				"Makes Stars brighter");
 		
 		textured_stars = new StellarViewConfigValue.BooleanValue(client, "client.textured_stars",
-				false,
+				true,
 				"Enables the use of textures for stars");
 		
 		dust_clouds = new StellarViewConfigValue.BooleanValue(client, "client.dust_clouds",
