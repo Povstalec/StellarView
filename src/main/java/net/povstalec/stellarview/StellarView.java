@@ -24,8 +24,8 @@ import net.povstalec.stellarview.client.resourcepack.Space;
 import net.povstalec.stellarview.client.screens.config.ConfigScreen;
 import net.povstalec.stellarview.common.config.StellarViewConfig;
 import net.povstalec.stellarview.common.util.KeyBindings;
-import net.povstalec.stellarview.compatibility.aether.StellarViewAetherEffects;
-import net.povstalec.stellarview.compatibility.twilightforest.StellarViewTwilightForestEffects;
+import net.povstalec.stellarview.compatibility.aether.AetherCompatibility;
+import net.povstalec.stellarview.compatibility.twilightforest.TwilightForestCompatibility;
 import org.slf4j.Logger;
 
 import java.util.Optional;
@@ -50,9 +50,6 @@ public class StellarView
     public static StellarViewOverworldEffects overworld;
     public static StellarViewNetherEffects nether;
     public static StellarViewEndEffects end;
-	
-	public static StellarViewTwilightForestEffects twilightForest;
-	public static StellarViewAetherEffects aether;
 	
 	private static float starBrightness = 0F;
 	private static float dustCloudBrightness = 0F;
@@ -79,16 +76,10 @@ public class StellarView
 			event.register(StellarViewEndEffects.END_EFFECTS, end);
 			
 			if(isTwilightForestLoaded())
-			{
-				twilightForest = new StellarViewTwilightForestEffects();
-				event.register(StellarViewTwilightForestEffects.TWILIGHT_FOREST_EFFECTS, twilightForest);
-			}
+				TwilightForestCompatibility.registerTwilightForestEffects(event);
 			
 			if(isAetherLoaded())
-			{
-				aether = new StellarViewAetherEffects();
-				event.register(StellarViewAetherEffects.AETHER_EFFECTS, aether);
-			}
+				AetherCompatibility.registerAetherEffects(event);
         }
     	
 
