@@ -4,6 +4,7 @@ plugins {
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
     id 'org.spongepowered.mixin' version '0.7.+'
+    id 'io.github.0ffz.github-packages' version '1.2.1'
 }
 
 version = mod_version
@@ -130,10 +131,10 @@ repositories {
         url 'https://maven.jt-dev.tech/releases'
     }
 
-    repositories {
-        maven {
-            url "https://cursemaven.com"
-        }
+    maven githubPackage.invoke("The-Aether-Team/The-Aether")
+
+    maven {
+        url "https://cursemaven.com"
     }
 }
 
@@ -164,6 +165,8 @@ dependencies {
     implementation fg.deobf("corgitaco.corgilib:Corgilib-Forge:${minecraft_version}-${corgilib_version}")
     implementation fg.deobf("corgitaco.enhancedcelestials:Enhanced-Celestials-Forge:${minecraft_version}-${enhanced_celestials_version}")
     implementation fg.deobf("curse.maven:the-twilight-forest-227639:5468648")
+
+    implementation fg.deobf("com.aetherteam.aether:aether:${minecraft_version}-${aether_version}-neoforge")
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
