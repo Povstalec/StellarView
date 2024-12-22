@@ -28,7 +28,7 @@ public class ConfigScreen extends Screen
 	@Override
     public void init()
     {
-		int l = this.height / 4;
+		int l = this.height / 4 - 24;
 		
 		super.init();
 		this.addRenderableWidget(new Button(this.width / 2 - 100, l, 200, 20, Component.translatable("gui.stellarview.config.general"), 
@@ -42,6 +42,8 @@ public class ConfigScreen extends Screen
 				(button) -> this.minecraft.setScreen(new EndConfigScreen(this))));
 		this.addRenderableWidget(new Button(this.width / 2 - 100, l + 24 * 5, 200, 20, Component.translatable("gui.stellarview.config.twilight_forest"),
 				(button) -> this.minecraft.setScreen(new TwilightForestConfigScreen(this))));
+		this.addRenderableWidget(new Button(this.width / 2 - 100, l + 24 * 6, 200, 20, Component.translatable("gui.stellarview.config.aether"),
+				(button) -> this.minecraft.setScreen(new AetherConfigScreen(this))));
 
 		this.addRenderableWidget(new Button((this.width - BACK_BUTTON_WIDTH) / 2, this.height - BACK_BUTTON_TOP_OFFSET, BACK_BUTTON_WIDTH, BACK_BUTTON_HEIGHT, 
 				CommonComponents.GUI_BACK, 
