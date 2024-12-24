@@ -48,6 +48,9 @@ public class ResourcepackReloadListener
 	
 	private static final ResourceLocation SOL_LOCATION = new ResourceLocation(StellarView.MODID, "star/milky_way/sol");
 	
+	private static HashMap<ResourceLocation, ViewCenter> viewCenters = new HashMap<>();
+	private static HashMap<ResourceLocation, SpaceObject> spaceObjects = new HashMap<>();
+	
 	@Mod.EventBusSubscriber(modid = StellarView.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 	public static class ReloadListener extends SimpleJsonResourceReloadListener
 	{
@@ -61,9 +64,6 @@ public class ResourcepackReloadListener
 		{
     		Space.clear();
     		ViewCenters.clear();
-    		
-			HashMap<ResourceLocation, ViewCenter> viewCenters = new HashMap<>();
-			HashMap<ResourceLocation, SpaceObject> spaceObjects = new HashMap<>();
     		
 			for(Map.Entry<ResourceLocation, JsonElement> jsonEntry : jsonMap.entrySet())
 			{
@@ -170,7 +170,6 @@ public class ResourcepackReloadListener
 				BlackHole blackHole = BlackHole.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Star", msg));
 				
 				spaceObjects.put(location, blackHole);
-				Space.addGravityLense(blackHole);
 			}
 			catch(RuntimeException e)
 			{
@@ -217,7 +216,6 @@ public class ResourcepackReloadListener
 				StarField starField = StarField.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Star Field", msg));
 
 				spaceObjects.put(location, starField);
-				Space.addStarField(starField);
 			}
 			catch(RuntimeException e)
 			{

@@ -1,11 +1,13 @@
 package net.povstalec.stellarview.client.resourcepack;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
 
+import net.povstalec.stellarview.client.render.ClientSpaceRegion;
 import net.povstalec.stellarview.client.resourcepack.objects.*;
 import net.povstalec.stellarview.common.config.GeneralConfig;
 import org.joml.Matrix3f;
@@ -25,11 +27,9 @@ import net.povstalec.stellarview.common.util.SpaceCoords;
 
 public final class Space
 {
-	private static final List<SpaceObject> SPACE_OBJECTS = new ArrayList<SpaceObject>();
 	private static final Vector3f NULL_VECTOR = new Vector3f();
 	
-	private static final List<StarField> STAR_FIELDS = new ArrayList<StarField>();
-	private static final List<GravityLense> GRAVITY_LENSES = new ArrayList<GravityLense>();
+	private static final HashMap<ClientSpaceRegion.RegionPos, ClientSpaceRegion> SPACE_REGIONS = new HashMap<ClientSpaceRegion.RegionPos, ClientSpaceRegion>();
 	
 	public static final Matrix3f IDENTITY_MATRIX = new Matrix3f();
 	
@@ -52,22 +52,29 @@ public final class Space
 		solCoords = null;
 		solAxisRotation = null;
 		
-		SPACE_OBJECTS.clear();
-		STAR_FIELDS.clear();
-		GRAVITY_LENSES.clear();
+		SPACE_REGIONS.clear();
 	}
 	
 	public static void addSpaceObject(SpaceObject spaceObject)
 	{
-		SPACE_OBJECTS.add(spaceObject);
+		ClientSpaceRegion region = getOrCreateRegion(spaceObject.getCoords());
+		
+		region.addChild(spaceObject);
 	}
 	
 	public static void setupSynodicOrbits()
 	{
-		for(SpaceObject spaceObject : SPACE_OBJECTS)
+		for(Map.Entry<ClientSpaceRegion.RegionPos, ClientSpaceRegion> spaceRegionEntry : SPACE_REGIONS.entrySet())
 		{
-			if(spaceObject instanceof OrbitingObject orbitingObject)
-				orbitingObject.setupSynodicOrbit(null);
+			spaceRegionEntry.getValue().setupSynodicOrbits();
+		}
+	}
+	
+	public static void resetStarFields()
+	{
+		for(Map.Entry<ClientSpaceRegion.RegionPos, ClientSpaceRegion> spaceRegionEntry : SPACE_REGIONS.entrySet())
+		{
+			spaceRegionEntry.getValue().resetStarFields();
 		}
 	}
 	
@@ -78,19 +85,30 @@ public final class Space
 		if(GeneralConfig.dust_clouds.get())
 		{
 			float dustCloudBrightness = StarField.dustCloudBrightness(viewCenter, level, camera, partialTicks);
-			for(StarField starField : STAR_FIELDS)
+			for(Map.Entry<ClientSpaceRegion.RegionPos, ClientSpaceRegion> spaceRegionEntry : SPACE_REGIONS.entrySet())
 			{
-				starField.renderDustClouds(viewCenter, level, partialTicks, stack, camera, projectionMatrix, setupFog, dustCloudBrightness);
+				spaceRegionEntry.getValue().renderDustClouds(viewCenter, level, camera, partialTicks, stack, projectionMatrix, setupFog, dustCloudBrightness);
 			}
 		}
 		
-		for(SpaceObject spaceObject : SPACE_OBJECTS)
+		ClientSpaceRegion.RegionPos pos = new ClientSpaceRegion.RegionPos(viewCenter.getCoords());
+		
+		ClientSpaceRegion centerRegion = null;
+		for(Map.Entry<ClientSpaceRegion.RegionPos, ClientSpaceRegion> spaceRegionEntry : SPACE_REGIONS.entrySet())
 		{
-			if(spaceObject != masterParent) // Makes sure the master parent (usually galaxy) is rendered last, that way stars from other galaxies don't get rendered over planets
-				spaceObject.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, NULL_VECTOR, new AxisRotation(0, 0, 0));
+			if(!spaceRegionEntry.getKey().equals(pos))
+			{
+				if(spaceRegionEntry.getKey().isInRange(pos, getRange()))
+					spaceRegionEntry.getValue().render(viewCenter, masterParent, level, camera, partialTicks, stack, projectionMatrix, isFoggy, setupFog, bufferbuilder);
+			}
+			else
+				centerRegion = spaceRegionEntry.getValue();
 		}
 		
-		masterParent.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, NULL_VECTOR, new AxisRotation(0, 0, 0));
+		if(centerRegion != null)
+			centerRegion.render(viewCenter, masterParent, level, camera, partialTicks, stack, projectionMatrix, isFoggy, setupFog, bufferbuilder);
+		
+		masterParent.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, NULL_VECTOR, new AxisRotation());
 	}
 	
 	
@@ -101,33 +119,10 @@ public final class Space
 		lensingMatrixInv = IDENTITY_MATRIX;
 		lensingIntensity = 0;
 		
-		for(GravityLense gravityLense : GRAVITY_LENSES)
+		for(Map.Entry<ClientSpaceRegion.RegionPos, ClientSpaceRegion> spaceRegionEntry : SPACE_REGIONS.entrySet())
 		{
-			if(gravityLense.getLensingIntensity() > lensingIntensity)
-				gravityLense.setupLensing();
+			spaceRegionEntry.getValue().setBestLensing();
 		}
-	}
-	
-	
-	
-	public static void addStarField(StarField starField)
-	{
-		STAR_FIELDS.add(starField);
-	}
-	
-	public static void resetStarFields()
-	{
-		for(StarField starField : STAR_FIELDS)
-		{
-			starField.reset();
-		}
-	}
-	
-	
-	
-	public static void addGravityLense(GravityLense gravityLense)
-	{
-		GRAVITY_LENSES.add(gravityLense);
 	}
 	
 	
@@ -163,5 +158,39 @@ public final class Space
     	}
 		else
 			sol.setPosAndRotation(solCoords.copy(), solAxisRotation.copy());
+	}
+	
+	//============================================================================================
+	//****************************************Space Regions***************************************
+	//============================================================================================
+	
+	public static int getRange()
+	{
+		return 3; //TODO Make this configurable
+	}
+	
+	@Nullable
+	public static ClientSpaceRegion getRegion(ClientSpaceRegion.RegionPos pos)
+	{
+		if(SPACE_REGIONS.containsKey(pos))
+			return SPACE_REGIONS.get(pos);
+		
+		return null;
+	}
+	
+	@Nullable
+	public static ClientSpaceRegion getRegion(SpaceCoords coords)
+	{
+		return getRegion(new ClientSpaceRegion.RegionPos(coords));
+	}
+	
+	public static ClientSpaceRegion getOrCreateRegion(ClientSpaceRegion.RegionPos pos)
+	{
+		return SPACE_REGIONS.computeIfAbsent(pos, position -> new ClientSpaceRegion(pos));
+	}
+	
+	public static ClientSpaceRegion getOrCreateRegion(SpaceCoords coords)
+	{
+		return getOrCreateRegion(new ClientSpaceRegion.RegionPos(coords));
 	}
 }
