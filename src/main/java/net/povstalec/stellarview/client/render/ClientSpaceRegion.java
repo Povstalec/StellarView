@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.povstalec.stellarview.client.resourcepack.Space;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.client.resourcepack.objects.GravityLense;
 import net.povstalec.stellarview.client.resourcepack.objects.OrbitingObject;
@@ -16,7 +15,6 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 public class ClientSpaceRegion
 {
@@ -93,7 +91,7 @@ public class ClientSpaceRegion
 	{
 		for(GravityLense gravityLense : lensingRenderers)
 		{
-			if(gravityLense.getLensingIntensity() > Space.lensingIntensity)
+			if(gravityLense.getLensingIntensity() > SpaceRenderer.lensingIntensity)
 				gravityLense.setupLensing();
 		}
 	}

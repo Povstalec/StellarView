@@ -17,6 +17,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.povstalec.stellarview.StellarView;
+import net.povstalec.stellarview.client.render.SpaceRenderer;
 import net.povstalec.stellarview.client.render.level.StellarViewEndEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewNetherEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewOverworldEffects;
@@ -62,7 +63,7 @@ public class ResourcepackReloadListener
 		@Override
 		protected void apply(Map<ResourceLocation, JsonElement> jsonMap, ResourceManager manager, ProfilerFiller filler)
 		{
-    		Space.clear();
+    		SpaceRenderer.clear();
     		ViewCenters.clear();
     		
 			for(Map.Entry<ResourceLocation, JsonElement> jsonEntry : jsonMap.entrySet())
@@ -97,7 +98,7 @@ public class ResourcepackReloadListener
 			}
 
 			setSpaceObjects(spaceObjects);
-			Space.setupSynodicOrbits();
+			SpaceRenderer.setupSynodicOrbits();
 			setViewCenters(spaceObjects, viewCenters);
 		}
 		
@@ -144,7 +145,7 @@ public class ResourcepackReloadListener
 				{
 					JsonObject json = GsonHelper.convertToJsonObject(element, "star");
 					Sol sol = Sol.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Star", msg));
-					Space.addSol(sol);
+					SpaceRenderer.addSol(sol);
 					
 					spaceObjects.put(location, sol);
 				}
@@ -263,7 +264,7 @@ public class ResourcepackReloadListener
 						StellarView.LOGGER.error("Failed to find parent for " + spaceObject.toString());
 				}
 				else
-					Space.addSpaceObject(spaceObjectEntry.getValue());
+					SpaceRenderer.addSpaceObject(spaceObjectEntry.getValue());
 			}
 		}
 		

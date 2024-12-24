@@ -1,13 +1,11 @@
-package net.povstalec.stellarview.client.resourcepack;
+package net.povstalec.stellarview.client.render;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
 
-import net.povstalec.stellarview.client.render.ClientSpaceRegion;
+import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.client.resourcepack.objects.*;
 import net.povstalec.stellarview.common.config.GeneralConfig;
 import org.joml.Matrix3f;
@@ -25,7 +23,7 @@ import net.povstalec.stellarview.common.config.OverworldConfig;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 
-public final class Space
+public final class SpaceRenderer
 {
 	private static final Vector3f NULL_VECTOR = new Vector3f();
 	

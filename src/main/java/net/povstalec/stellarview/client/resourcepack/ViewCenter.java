@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import javax.annotation.Nullable;
 
+import net.povstalec.stellarview.client.render.SpaceRenderer;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -327,7 +328,7 @@ public class ViewCenter
 	public void renderSkyObjects(SpaceObject masterParent, ClientLevel level, float partialTicks, PoseStack stack, Camera camera, 
 			Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder)
 	{
-		Space.render(this, masterParent, level, camera, partialTicks, stack, projectionMatrix, isFoggy, setupFog, bufferbuilder);
+		SpaceRenderer.render(this, masterParent, level, camera, partialTicks, stack, projectionMatrix, isFoggy, setupFog, bufferbuilder);
 	}
 	
 	public boolean renderSky(ClientLevel level, int ticks, float partialTicks, PoseStack stack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)

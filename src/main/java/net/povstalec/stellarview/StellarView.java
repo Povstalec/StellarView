@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 
 import net.minecraftforge.eventbus.api.EventPriority;
+import net.povstalec.stellarview.client.render.SpaceRenderer;
 import net.povstalec.stellarview.compatibility.aether.AetherCompatibility;
 import net.povstalec.stellarview.compatibility.twilightforest.TwilightForestCompatibility;
 import org.slf4j.Logger;
@@ -29,7 +30,6 @@ import net.povstalec.stellarview.client.render.level.StellarViewEndEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewNetherEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewOverworldEffects;
 import net.povstalec.stellarview.client.resourcepack.ResourcepackReloadListener;
-import net.povstalec.stellarview.client.resourcepack.Space;
 import net.povstalec.stellarview.client.screens.config.ConfigScreen;
 import net.povstalec.stellarview.common.config.StellarViewConfig;
 import net.povstalec.stellarview.common.util.KeyBindings;
@@ -139,8 +139,8 @@ public class StellarView
 		if(minecraft.level == null)
     		return;
     	
-    	Space.updateSol();
-    	Space.resetStarFields();
+    	SpaceRenderer.updateSol();
+    	SpaceRenderer.resetStarFields();
     }
     
     public static float lightSourceStarDimming(ClientLevel level, Camera camera)
