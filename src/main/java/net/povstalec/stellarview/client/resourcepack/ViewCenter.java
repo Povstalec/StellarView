@@ -47,25 +47,25 @@ public class ViewCenter
 	public static final float DAY_MAX_VISIBLE_SIZE = 10F;
 	
 	@Nullable
-	private ResourceKey<SpaceObject> viewCenterKey;
+	protected ResourceKey<SpaceObject> viewCenterKey;
 	@Nullable
-	private SpaceObject viewCenterObject;
+	protected SpaceObject viewCenterObject;
 	
 	@Nullable
-	private List<Skybox> skyboxes;
+	protected List<Skybox> skyboxes;
 	
-	private Minecraft minecraft = Minecraft.getInstance();
+	protected Minecraft minecraft = Minecraft.getInstance();
 	@Nullable
-	private VertexBuffer skyBuffer;
+	protected VertexBuffer skyBuffer;
 	@Nullable
-	private VertexBuffer darkBuffer;
+	protected VertexBuffer darkBuffer;
 	
-	private SpaceCoords coords;
-	private AxisRotation axisRotation;
-	private long rotationPeriod;
+	protected SpaceCoords coords;
+	protected AxisRotation axisRotation;
+	protected long rotationPeriod;
 	
-	private final MeteorEffect.ShootingStar shootingStar;
-	private final MeteorEffect.MeteorShower meteorShower;
+	protected final MeteorEffect.ShootingStar shootingStar;
+	protected final MeteorEffect.MeteorShower meteorShower;
 	
 	public final float dayMaxBrightness;
 
@@ -136,13 +136,18 @@ public class ViewCenter
 		this.zRotationMultiplier = zRotationMultiplier;
 	}
 	
+	public void setViewCenterObject(SpaceObject object)
+	{
+		viewCenterObject = object;
+	}
+	
 	public boolean setViewCenterObject(HashMap<ResourceLocation, SpaceObject> spaceObjects)
 	{
 		if(viewCenterKey != null)
 		{
 			if(spaceObjects.containsKey(viewCenterKey.location()))
 			{
-				viewCenterObject = spaceObjects.get(viewCenterKey.location());
+				setViewCenterObject(spaceObjects.get(viewCenterKey.location()));
 				return true;
 			}
 			
@@ -262,7 +267,7 @@ public class ViewCenter
 		return false;
 	}
 	
-	private boolean renderSkybox(ClientLevel level, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder)
+	protected boolean renderSkybox(ClientLevel level, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder)
 	{
 		if(skyboxes == null)
 			return false;
@@ -275,13 +280,13 @@ public class ViewCenter
 		return true;
 	}
 	
-	private void renderSkyEvents(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder)
+	protected void renderSkyEvents(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder)
 	{
 		shootingStar.render(this, level, camera, partialTicks, stack, bufferbuilder);
 		meteorShower.render(this, level, camera, partialTicks, stack, bufferbuilder);
 	}
 	
-	private float getTimeOfDay(ClientLevel level, float partialTicks)
+	protected float getTimeOfDay(ClientLevel level, float partialTicks)
 	{
 		if(rotationPeriod <= 0)
 			return 0;
@@ -292,7 +297,7 @@ public class ViewCenter
 		return (float) (d0 * 2.0D + d1) / 3.0F;
 	}
 	
-	private boolean renderSkyObjectsFrom(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, Matrix4f projectionMatrix, Runnable setupFog, BufferBuilder bufferbuilder)
+	protected boolean renderSkyObjectsFrom(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, Matrix4f projectionMatrix, Runnable setupFog, BufferBuilder bufferbuilder)
 	{
 		if(viewCenterObject == null)
 			return false;
