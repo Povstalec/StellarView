@@ -53,6 +53,16 @@ public final class SpaceRenderer
 		SPACE_REGIONS.clear();
 	}
 	
+	public static void addSpaceRegion(ClientSpaceRegion spaceRegion)
+	{
+		SPACE_REGIONS.put(spaceRegion.getRegionPos(), spaceRegion);
+	}
+	
+	public static void removeSpaceRegion(ClientSpaceRegion.RegionPos regionPos)
+	{
+		SPACE_REGIONS.remove(regionPos);
+	}
+	
 	public static void addSpaceObject(SpaceObject spaceObject)
 	{
 		ClientSpaceRegion region = getOrCreateRegion(spaceObject.getCoords());
@@ -164,7 +174,7 @@ public final class SpaceRenderer
 	
 	public static int getRange()
 	{
-		return 3; //TODO Make this configurable
+		return 8; //TODO Make this configurable
 	}
 	
 	@Nullable

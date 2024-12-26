@@ -8,6 +8,7 @@ import java.util.Random;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.client.resourcepack.objects.StarField;
@@ -18,9 +19,13 @@ public class StarInfo
 {
 	public static final ResourceLocation DEFAULT_STAR_TEXTURE = new ResourceLocation(StellarView.MODID,"textures/environment/star.png");
 	
+	public static final String STAR_TEXTURE = "star_texture";
+	public static final String STAR_TYPES = "star_types";
+	public static final String TOTAL_WEIGHT = "total_weight";
+	
 	protected ResourceLocation starTexture;
 	
-	private final ArrayList<StarLike.StarType> starTypes;
+	private ArrayList<StarLike.StarType> starTypes;
 	private int totalWeight = 0;
 	
 	public static final StarLike.StarType WHITE_STAR = new StarLike.StarType(new Color.IntRGB(255, 255, 255), 0.15F, 0.25F, (short) 100, (short) 255, 1);
@@ -41,6 +46,13 @@ public class StarInfo
 		{
 			this.totalWeight += starType.getWeight();
 		}
+	}
+	
+	public StarInfo(ResourceLocation starTexture, List<StarLike.StarType> starTypes, int totalWeight)
+	{
+		this.starTexture = starTexture;
+		this.starTypes = new ArrayList<StarLike.StarType>(starTypes);
+		this.totalWeight = totalWeight;
 	}
 	
 	public ResourceLocation getStarTexture()
@@ -66,5 +78,19 @@ public class StarInfo
 		}
 		
 		return starTypes.get(i);
+	}
+	
+	public static StarInfo fromTag(CompoundTag tag)
+	{
+		ArrayList<StarLike.StarType> starTypes = new ArrayList<StarLike.StarType>();
+		CompoundTag starTypesTag = tag.getCompound(STAR_TYPES);
+		for(int i = 0; i < starTypesTag.size(); i++)
+		{
+			StarLike.StarType starType = StarLike.StarType.fromTag(starTypesTag.getCompound("star_type_" + i));
+			starTypes.add(starType);
+			
+		}
+		
+		return new StarInfo(new ResourceLocation(tag.getString(STAR_TEXTURE)), starTypes, tag.getInt(TOTAL_WEIGHT));
 	}
 }

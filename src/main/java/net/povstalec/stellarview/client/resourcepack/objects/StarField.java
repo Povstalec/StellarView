@@ -7,6 +7,7 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.client.resourcepack.DustCloudInfo;
@@ -43,11 +44,26 @@ public class StarField extends SpaceObject
 {
 	public static final ResourceLocation DEFAULT_DUST_CLOUD_TEXTURE = new ResourceLocation(StellarView.MODID,"textures/environment/dust_cloud.png");
 	
+	public static final String SEED = "seed";
+	public static final String DIAMETER_LY = "diameter_ly";
+	public static final String STARS = "stars";
+	public static final String TOTAL_STARS = "total_stars";
+	public static final String STAR_INFO = "star_info";
+	public static final String SPIRAL_ARMS = "spiral_arms";
+	public static final String CLUMP_STARS_IN_CENTER = "clump_stars_in_center";
+	public static final String X_STRETCH = "x_stretch";
+	public static final String Y_STRETCH = "y_stretch";
+	public static final String Z_STRETCH = "z_stretch";
+	public static final String DUST_CLOUDS = "dust_clouds";
+	public static final String TOTAL_DUST_CLOUDS = "total_dust_clouds";
+	public static final String DUST_CLOUD_INFO = "dust_cloud_info";
+	public static final String DUST_CLOUD_TEXTURE = "dust_cloud_texture";
+	
 	@Nullable
 	protected DustCloudBuffer dustCloudBuffer;
 	protected DustCloudData dustCloudData;
-	protected final int dustClouds;
-	protected final int totalDustClouds;
+	protected int dustClouds;
+	protected int totalDustClouds;
 	protected ResourceLocation dustCloudTexture;
 	
 	@Nullable
@@ -57,24 +73,24 @@ public class StarField extends SpaceObject
 	protected StarInfo starInfo;
 	protected DustCloudInfo dustCloudInfo;
 	
-	protected final long seed;
-	protected final boolean clumpStarsInCenter;
+	protected long seed;
+	protected boolean clumpStarsInCenter;
 	
-	protected final int diameter;
-	protected final int stars;
+	protected int diameter;
+	protected int stars;
 	
-	private final double xStretch;
-	private final double yStretch;
-	private final double zStretch;
+	protected double xStretch;
+	protected double yStretch;
+	protected double zStretch;
 	
-	protected final ArrayList<SpiralArm> spiralArms;
+	protected ArrayList<SpiralArm> spiralArms;
 	
-	protected final int totalStars;
+	protected int totalStars;
 	
 	protected boolean hasTexture = GeneralConfig.textured_stars.get();
 	
 	public static final Codec<StarField> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			RESOURCE_KEY_CODEC.optionalFieldOf("parent").forGetter(StarField::getParentKey),
+			ResourceLocation.CODEC.optionalFieldOf("parent").forGetter(StarField::getParentLocation),
 			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf("coords").forGetter(object -> Either.left(object.getCoords())),
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(StarField::getAxisRotation),
 
@@ -98,7 +114,9 @@ public class StarField extends SpaceObject
 			SpiralArm.CODEC.listOf().optionalFieldOf("spiral_arms", new ArrayList<SpiralArm>()).forGetter(starField -> starField.spiralArms)
 			).apply(instance, StarField::new));
 	
-	public StarField(Optional<ResourceKey<SpaceObject>> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
+	public StarField() {}
+	
+	public StarField(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
 			FadeOutHandler fadeOutHandler, int dustClouds, DustCloudInfo dustCloudInfo, ResourceLocation dustCloudTexture, StarInfo starInfo, long seed, int diameter, int numberOfStars, boolean clumpStarsInCenter,
 			double xStretch, double yStretch, double zStretch, List<SpiralArm> spiralArms)
 	{
@@ -458,28 +476,73 @@ public class StarField extends SpaceObject
 		return brightness;
 	}
 	
+	@Override
+	public void fromTag(CompoundTag tag)
+	{
+		super.fromTag(tag);
+		
+		dustClouds = tag.getInt(DUST_CLOUDS);
+		totalDustClouds = tag.getInt(TOTAL_DUST_CLOUDS);
+		dustCloudTexture = new ResourceLocation(tag.getString(DUST_CLOUD_TEXTURE));
+		
+		seed = tag.getLong(SEED);
+		
+		diameter = tag.getInt(DIAMETER_LY);
+		stars = tag.getInt(STARS);
+		totalStars = tag.getInt(TOTAL_STARS);
+		
+		clumpStarsInCenter = tag.getBoolean(CLUMP_STARS_IN_CENTER);
+		
+		xStretch = tag.getDouble(X_STRETCH);
+		yStretch = tag.getDouble(Y_STRETCH);
+		zStretch = tag.getDouble(Z_STRETCH);
+		
+		this.spiralArms = new ArrayList<SpiralArm>();
+		CompoundTag armsTag = tag.getCompound(SPIRAL_ARMS);
+		for(String key : armsTag.getAllKeys())
+		{
+			SpiralArm arm = new SpiralArm();
+			arm.fromTag(armsTag.getCompound(key));
+			spiralArms.add(arm);
+		}
+		
+		this.starInfo = StarInfo.fromTag(tag.getCompound(STAR_INFO));
+		
+		this.dustCloudInfo = DustCloudInfo.fromTag(tag.getCompound(DUST_CLOUD_INFO));
+	}
+	
+	
+	
 	public static class SpiralArm
 	{
-		@Nullable
-		protected final DustCloudInfo dustCloudInfo;
-		protected final int armDustClouds;
+		public static final String STARS = "stars";
+		public static final String ARM_ROTATION = "arm_rotation";
+		public static final String ARM_LENGTH = "arm_length";
+		public static final String ARM_THICKNESS = "arm_thickness";
+		public static final String CLUMP_STARS_IN_CENTER = "clump_stars_in_center";
 		
-		protected final int armStars;
-		protected final double armRotation;
-		protected final double armLength;
-		protected final double armThickness;
-		protected final boolean clumpStarsInCenter;
+		@Nullable
+		protected DustCloudInfo dustCloudInfo;
+		protected int armDustClouds;
+		
+		protected int armStars;
+		protected double armRotation;
+		protected double armLength;
+		protected double armThickness;
+		protected boolean clumpStarsInCenter;
 		
 		public static final Codec<SpiralArm> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-				Codec.INT.optionalFieldOf("dust_clouds", 0).forGetter(SpiralArm::armDustClouds),
-				DustCloudInfo.CODEC.optionalFieldOf("dust_cloud_info").forGetter(SpiralArm::getDustCloudInfo),
+				Codec.INT.optionalFieldOf(DUST_CLOUDS, 0).forGetter(SpiralArm::armDustClouds),
+				DustCloudInfo.CODEC.optionalFieldOf(DUST_CLOUD_INFO).forGetter(SpiralArm::getDustCloudInfo),
 				
-				Codec.INT.fieldOf("stars").forGetter(SpiralArm::armStars),
-				Codec.DOUBLE.fieldOf("arm_rotation").forGetter(SpiralArm::armRotation),
-				Codec.DOUBLE.fieldOf("arm_length").forGetter(SpiralArm::armLength),
-				Codec.DOUBLE.fieldOf("arm_thickness").forGetter(SpiralArm::armThickness),
-				Codec.BOOL.optionalFieldOf("clump_stars_in_center", true).forGetter(SpiralArm::clumpStarsInCenter)
-				).apply(instance, SpiralArm::new));
+				Codec.INT.fieldOf(STARS).forGetter(SpiralArm::armStars),
+				Codec.DOUBLE.fieldOf(ARM_ROTATION).forGetter(SpiralArm::armRotation),
+				Codec.DOUBLE.fieldOf(ARM_LENGTH).forGetter(SpiralArm::armLength),
+				Codec.DOUBLE.fieldOf(ARM_THICKNESS).forGetter(SpiralArm::armThickness),
+				Codec.BOOL.optionalFieldOf(CLUMP_STARS_IN_CENTER, true).forGetter(SpiralArm::clumpStarsInCenter)
+		).apply(instance, SpiralArm::new));
+		
+		public SpiralArm() {}
 		
 		public SpiralArm(int armDustClouds, Optional<DustCloudInfo> dustCloudInfo, int armStars, double armRotationDegrees, double armLength, double armThickness, boolean clumpStarsInCenter)
 		{
@@ -595,6 +658,24 @@ public class StarField extends SpaceObject
 				
 				dustCloudData.newDustCloud(this.dustCloudInfo == null ? dustCloudInfo : this.dustCloudInfo, bufferBuilder, randomsource, cartesian.x, cartesian.y, cartesian.z, (1 / progress) + 0.2, numberOfDustClouds + i);
 			}
+		}
+		
+		public void fromTag(CompoundTag tag)
+		{
+			armDustClouds = tag.getInt(DUST_CLOUDS);
+			
+			if(tag.contains(DUST_CLOUD_INFO))
+				dustCloudInfo = DustCloudInfo.fromTag(tag.getCompound(DUST_CLOUD_INFO));
+			else
+				dustCloudInfo = null;
+			
+			armStars = tag.getInt(STARS);
+			
+			armRotation = tag.getDouble(ARM_ROTATION);
+			armLength = tag.getDouble(ARM_LENGTH);
+			armThickness = tag.getDouble(ARM_THICKNESS);
+			
+			clumpStarsInCenter = tag.getBoolean(CLUMP_STARS_IN_CENTER);
 		}
 	}
 }

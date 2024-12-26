@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.povstalec.stellarview.client.resourcepack.DustCloudInfo;
 import org.joml.Matrix4f;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -36,9 +39,9 @@ public abstract class StarLike extends OrbitingObject
 	private float maxStarAlpha;
 	private float minStarAlpha;
 	
-	public StarLike(Optional<ResourceKey<SpaceObject>> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation, Optional<OrbitInfo> orbitInfo,
-			List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler,
-			float minStarSize, float maxStarAlpha, float minStarAlpha)
+	public StarLike(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation, Optional<OrbitInfo> orbitInfo,
+					List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler,
+					float minStarSize, float maxStarAlpha, float minStarAlpha)
 	{
 		super(parent, coords, axisRotation, orbitInfo, textureLayers, fadeOutHandler);
 		
@@ -153,6 +156,13 @@ public abstract class StarLike extends OrbitingObject
 	
 	public static class StarType
 	{
+		public static final String RGB = "rgb";
+		public static final String MIN_SIZE = "min_size";
+		public static final String MAX_SIZE = "max_size";
+		public static final String MIN_BRIGHTNESS = "min_brightness";
+		public static final String MAX_BRIGHTNESS = "max_brightness";
+		public static final String WEIGHT = "weight";
+		
 		private final Color.IntRGB rgb;
 
 		private final float minSize;
@@ -216,6 +226,14 @@ public abstract class StarLike extends OrbitingObject
 			Random random = new Random(seed);
 			
 			return (short) random.nextInt(minBrightness, maxBrightness);
+		}
+		
+		public static StarType fromTag(CompoundTag tag)
+		{
+			Color.IntRGB rgb = new Color.IntRGB();
+			rgb.fromTag(tag.getCompound(RGB));
+			
+			return new StarType(rgb, tag.getFloat(MIN_SIZE), tag.getFloat(MAX_SIZE), tag.getShort(MIN_BRIGHTNESS), tag.getShort(MAX_BRIGHTNESS), tag.getInt(WEIGHT));
 		}
 	}
 }

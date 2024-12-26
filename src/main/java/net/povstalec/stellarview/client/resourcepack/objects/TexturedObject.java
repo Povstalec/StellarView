@@ -35,7 +35,7 @@ public abstract class TexturedObject extends SpaceObject
 {
 	protected ArrayList<TextureLayer> textureLayers;
 	
-	public TexturedObject(Optional<ResourceKey<SpaceObject>> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords,
+	public TexturedObject(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords,
 			AxisRotation axisRotation, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler)
 	{
 		super(parent, coords, axisRotation, fadeOutHandler);

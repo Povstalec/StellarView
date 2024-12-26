@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
 
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -31,7 +32,7 @@ public class Star extends StarLike
 	private final SupernovaInfo supernovaInfo;
 	
 	public static final Codec<Star> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			RESOURCE_KEY_CODEC.optionalFieldOf("parent").forGetter(Star::getParentKey),
+			ResourceLocation.CODEC.optionalFieldOf("parent").forGetter(Star::getParentLocation),
 			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf("coords").forGetter(object -> Either.left(object.getCoords())),
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(Star::getAxisRotation),
 			OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(Star::getOrbitInfo),
@@ -46,7 +47,7 @@ public class Star extends StarLike
 			SupernovaInfo.CODEC.optionalFieldOf("supernova_info").forGetter(Star::getSupernovaInfo)
 			).apply(instance, Star::new));
 	
-	public Star(Optional<ResourceKey<SpaceObject>> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
+	public Star(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
 			Optional<OrbitInfo> orbitInfo, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler,
 			float minStarSize, float maxStarAlpha, float minStarAlpha,
 			Optional<SupernovaInfo> supernovaInfo)

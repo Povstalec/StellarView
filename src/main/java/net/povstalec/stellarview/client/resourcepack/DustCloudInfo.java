@@ -2,6 +2,7 @@ package net.povstalec.stellarview.client.resourcepack;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.client.resourcepack.objects.StarLike;
@@ -14,8 +15,10 @@ import java.util.Random;
 
 public class DustCloudInfo
 {
+	public static final String DUST_CLOUD_TYPES = "dust_cloud_types";
+	public static final String TOTAL_WEIGHT = "total_weight";
 	
-	private final ArrayList<DustCloudType> dustCloudTypes;
+	private ArrayList<DustCloudType> dustCloudTypes;
 	private int totalWeight = 0;
 	
 	public static final DustCloudType WHITE_DUST_CLOUD = new DustCloudType(new Color.IntRGB(107, 107, 107), 2.0F, 7.0F, (short) 255, (short) 255, 1);
@@ -25,6 +28,12 @@ public class DustCloudInfo
 	public static final Codec<DustCloudInfo> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			DustCloudType.CODEC.listOf().fieldOf("dust_cloud_types").forGetter(dustCloudInfo -> dustCloudInfo.dustCloudTypes)
 			).apply(instance, DustCloudInfo::new));
+	
+	public DustCloudInfo(List<DustCloudType> dustCloudTypes, int totalWeight)
+	{
+		this.dustCloudTypes = new ArrayList<DustCloudType>(dustCloudTypes);
+		this.totalWeight = totalWeight;
+	}
 	
 	public DustCloudInfo(List<DustCloudType> dustCloudTypes)
 	{
@@ -56,8 +65,30 @@ public class DustCloudInfo
 		return dustCloudTypes.get(i);
 	}
 	
+	public static DustCloudInfo fromTag(CompoundTag tag)
+	{
+		ArrayList<DustCloudType> dustCloudTypes = new ArrayList<DustCloudType>();
+		CompoundTag dustCloudTypesTag = tag.getCompound(DUST_CLOUD_TYPES);
+		for(int i = 0; i < dustCloudTypesTag.size(); i++)
+		{
+			DustCloudType dustCloudType = DustCloudType.fromTag(dustCloudTypesTag.getCompound("dust_cloud_type_" + i));
+			dustCloudTypes.add(dustCloudType);
+		}
+		
+		return new DustCloudInfo(dustCloudTypes, tag.getInt(TOTAL_WEIGHT));
+	}
+	
+	
+	
 	public static class DustCloudType
 	{
+		public static final String RGB = "rgb";
+		public static final String MAX_SIZE = "max_size";
+		public static final String MIN_SIZE = "min_size";
+		public static final String MAX_BRIGHTNESS = "max_brightness";
+		public static final String MIN_BRIGHTNESS = "min_brightness";
+		public static final String WEIGHT = "weight";
+		
 		private final Color.IntRGB rgb;
 		
 		private final float minSize;
@@ -121,6 +152,14 @@ public class DustCloudInfo
 			Random random = new Random(seed);
 			
 			return (short) random.nextInt(minBrightness, maxBrightness);
+		}
+		
+		public static DustCloudType fromTag(CompoundTag tag)
+		{
+			Color.IntRGB rgb = new Color.IntRGB();
+			rgb.fromTag(tag.getCompound(RGB));
+			
+			return new DustCloudType(rgb, tag.getFloat(MIN_SIZE), tag.getFloat(MAX_SIZE), tag.getShort(MIN_BRIGHTNESS), tag.getShort(MAX_BRIGHTNESS), tag.getInt(WEIGHT));
 		}
 	}
 }

@@ -249,11 +249,11 @@ public class ResourcepackReloadListener
 				spaceObject.setResourceLocation(spaceObjectEntry.getKey());
 				
 				// Handle parents
-				if(spaceObject.getParentKey().isPresent())
+				if(spaceObject.getParentLocation().isPresent())
 				{
 					for(Map.Entry<ResourceLocation, SpaceObject> parentEntry : spaceObjects.entrySet())
 					{
-						if(parentEntry.getKey().equals(spaceObject.getParentKey().get().location()))
+						if(parentEntry.getKey().equals(spaceObject.getParentLocation().get()))
 						{
 							parentEntry.getValue().addChild(spaceObject);
 							break;
