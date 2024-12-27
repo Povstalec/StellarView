@@ -90,16 +90,17 @@ public final class SpaceRenderer
 	{
 		setBestLensing();
 		
+		ClientSpaceRegion.RegionPos pos = new ClientSpaceRegion.RegionPos(viewCenter.getCoords());
+		
 		if(GeneralConfig.dust_clouds.get())
 		{
 			float dustCloudBrightness = StarField.dustCloudBrightness(viewCenter, level, camera, partialTicks);
 			for(Map.Entry<ClientSpaceRegion.RegionPos, ClientSpaceRegion> spaceRegionEntry : SPACE_REGIONS.entrySet())
 			{
-				spaceRegionEntry.getValue().renderDustClouds(viewCenter, level, camera, partialTicks, stack, projectionMatrix, setupFog, dustCloudBrightness);
+				if(spaceRegionEntry.getKey().isInRange(pos, getRange()))
+					spaceRegionEntry.getValue().renderDustClouds(viewCenter, level, camera, partialTicks, stack, projectionMatrix, setupFog, dustCloudBrightness);
 			}
 		}
-		
-		ClientSpaceRegion.RegionPos pos = new ClientSpaceRegion.RegionPos(viewCenter.getCoords());
 		
 		ClientSpaceRegion centerRegion = null;
 		for(Map.Entry<ClientSpaceRegion.RegionPos, ClientSpaceRegion> spaceRegionEntry : SPACE_REGIONS.entrySet())
@@ -174,7 +175,7 @@ public final class SpaceRenderer
 	
 	public static int getRange()
 	{
-		return 8; //TODO Make this configurable
+		return GeneralConfig.space_region_render_distance.get();
 	}
 	
 	@Nullable
