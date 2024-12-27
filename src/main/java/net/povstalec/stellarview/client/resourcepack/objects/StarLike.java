@@ -236,7 +236,6 @@ public abstract class StarLike extends OrbitingObject
 		
 		public short randomBrightness(Random random)
 		{
-			System.out.println("Min: " + minBrightness + " Max: " + maxBrightness);
 			if(minBrightness == maxBrightness)
 				return maxBrightness;
 			
