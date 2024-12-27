@@ -3,6 +3,7 @@ package net.povstalec.stellarview.client.resourcepack.objects;
 import java.util.List;
 import java.util.Optional;
 
+import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.common.config.GeneralConfig;
 import org.joml.Matrix4f;
@@ -36,7 +37,7 @@ public class Nebula extends TexturedObject
 	private float minNebulaAlpha;
 	
 	public static final Codec<Nebula> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			RESOURCE_KEY_CODEC.optionalFieldOf("parent").forGetter(Nebula::getParentKey),
+			ResourceLocation.CODEC.optionalFieldOf("parent").forGetter(Nebula::getParentLocation),
 			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf("coords").forGetter(object -> Either.left(object.getCoords())),
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(Nebula::getAxisRotation),
 			TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(Nebula::getTextureLayers),
@@ -48,7 +49,7 @@ public class Nebula extends TexturedObject
 			Codec.floatRange(0, Color.MAX_FLOAT_VALUE).optionalFieldOf("min_nebula_alpha", MIN_ALPHA).forGetter(Nebula::getMinNebulaAlpha)
 			).apply(instance, Nebula::new));
 	
-	public Nebula(Optional<ResourceKey<SpaceObject>> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
+	public Nebula(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
 			List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler, float minNebulaSize, float maxNebulaAlpha, float minNebulaAlpha)
 	{
 		super(parent, coords, axisRotation, textureLayers, fadeOutHandler);

@@ -1,5 +1,6 @@
 package net.povstalec.stellarview.common.util;
 
+import net.minecraft.nbt.CompoundTag;
 import org.joml.Math;
 import org.joml.Quaterniond;
 import org.joml.Quaternionf;
@@ -9,6 +10,10 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 public class AxisRotation
 {
+	public static final String X_AXIS = "x_axis";
+	public static final String Y_AXIS = "y_axis";
+	public static final String Z_AXIS = "z_axis";
+	
 	private boolean inDegrees;
 	
 	private double xAxis;
@@ -42,6 +47,11 @@ public class AxisRotation
 			this.zAxis = zAxis;
 		}
 		
+		setupQuaternions();
+	}
+	
+	private void setupQuaternions()
+	{
 		Quaterniond quaterniondX = rotationdX(this.xAxis);
 		Quaterniond quaterniondY = new Quaterniond().rotationY(this.yAxis);
 		Quaterniond quaterniondZ = new Quaterniond().rotationZ(this.zAxis);
@@ -54,6 +64,11 @@ public class AxisRotation
 		
 		Quaternionf quatf = quaternionfZ.mul(quaternionfY);
 		quaternionf = quaternionfX.mul(quatf);
+	}
+	
+	public static AxisRotation fromTag(CompoundTag tag)
+	{
+		return new AxisRotation(false, tag.getDouble(X_AXIS), tag.getDouble(Y_AXIS), tag.getDouble(Z_AXIS));
 	}
 	
 	// Sooooooo... Quaterniond is kinda wrong, so here's a custom function for rotating around X-axis that works properly

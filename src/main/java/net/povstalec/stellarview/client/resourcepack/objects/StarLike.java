@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.povstalec.stellarview.client.resourcepack.DustCloudInfo;
 import org.joml.Matrix4f;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -26,6 +29,10 @@ import net.povstalec.stellarview.common.util.TextureLayer;
 
 public abstract class StarLike extends OrbitingObject
 {
+	public static final String MIN_STAR_SIZE = "min_star_size";
+	public static final String MAX_STAR_ALPHA = "max_star_alpha";
+	public static final String MIN_STAR_ALPHA = "min_star_alpha";
+	
 	public static final float MIN_SIZE = 0.08F;
 	
 	public static final float MAX_ALPHA = 1F;
@@ -36,9 +43,11 @@ public abstract class StarLike extends OrbitingObject
 	private float maxStarAlpha;
 	private float minStarAlpha;
 	
-	public StarLike(Optional<ResourceKey<SpaceObject>> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation, Optional<OrbitInfo> orbitInfo,
-			List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler,
-			float minStarSize, float maxStarAlpha, float minStarAlpha)
+	public StarLike() {}
+	
+	public StarLike(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation, Optional<OrbitInfo> orbitInfo,
+					List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler,
+					float minStarSize, float maxStarAlpha, float minStarAlpha)
 	{
 		super(parent, coords, axisRotation, orbitInfo, textureLayers, fadeOutHandler);
 		
@@ -140,6 +149,18 @@ public abstract class StarLike extends OrbitingObject
 		return starBrightness;
 	}
 	
+	@Override
+	public void fromTag(CompoundTag tag)
+	{
+		super.fromTag(tag);
+		
+		minStarSize = tag.getFloat(MIN_STAR_SIZE);
+		maxStarAlpha = tag.getFloat(MAX_STAR_ALPHA);
+		minStarAlpha = tag.getFloat(MIN_STAR_ALPHA);
+	}
+	
+	
+	
 	//TODO Use this again
 	public double starWidthFunction(double aLocation, double bLocation, double sinRandom, double cosRandom, double sinTheta, double cosTheta, double sinPhi, double cosPhi)
 	{
@@ -153,6 +174,13 @@ public abstract class StarLike extends OrbitingObject
 	
 	public static class StarType
 	{
+		public static final String RGB = "rgb";
+		public static final String MIN_SIZE = "min_size";
+		public static final String MAX_SIZE = "max_size";
+		public static final String MIN_BRIGHTNESS = "min_brightness";
+		public static final String MAX_BRIGHTNESS = "max_brightness";
+		public static final String WEIGHT = "weight";
+		
 		private final Color.IntRGB rgb;
 
 		private final float minSize;
@@ -183,7 +211,7 @@ public abstract class StarLike extends OrbitingObject
 			this.maxSize = maxSize;
 
 			this.minBrightness = minBrightness;
-			this.maxBrightness = (short) (maxBrightness + 1);
+			this.maxBrightness = maxBrightness;
 
 			this.weight = weight;
 		}
@@ -198,24 +226,28 @@ public abstract class StarLike extends OrbitingObject
 			return weight;
 		}
 		
-		public float randomSize(long seed)
+		public float randomSize(Random random)
 		{
 			if(minSize == maxSize)
 				return maxSize;
 			
-			Random random = new Random(seed);
-			
 			return random.nextFloat(minSize, maxSize);
 		}
 		
-		public short randomBrightness(long seed)
+		public short randomBrightness(Random random)
 		{
 			if(minBrightness == maxBrightness)
 				return maxBrightness;
 			
-			Random random = new Random(seed);
+			return (short) random.nextInt(minBrightness, maxBrightness + 1);
+		}
+		
+		public static StarType fromTag(CompoundTag tag)
+		{
+			Color.IntRGB rgb = new Color.IntRGB();
+			rgb.fromTag(tag.getCompound(RGB));
 			
-			return (short) random.nextInt(minBrightness, maxBrightness);
+			return new StarType(rgb, tag.getFloat(MIN_SIZE), tag.getFloat(MAX_SIZE), tag.getShort(MIN_BRIGHTNESS), tag.getShort(MAX_BRIGHTNESS), tag.getInt(WEIGHT));
 		}
 	}
 }

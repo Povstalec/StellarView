@@ -17,6 +17,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.povstalec.stellarview.StellarView;
+import net.povstalec.stellarview.client.events.StellarViewEvents;
+import net.povstalec.stellarview.client.render.SpaceRenderer;
 import net.povstalec.stellarview.client.render.level.StellarViewEndEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewNetherEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewOverworldEffects;
@@ -48,6 +50,9 @@ public class ResourcepackReloadListener
 	
 	private static final ResourceLocation SOL_LOCATION = new ResourceLocation(StellarView.MODID, "star/milky_way/sol");
 	
+	private static HashMap<ResourceLocation, ViewCenter> viewCenters = new HashMap<>();
+	private static HashMap<ResourceLocation, SpaceObject> spaceObjects = new HashMap<>();
+	
 	@Mod.EventBusSubscriber(modid = StellarView.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 	public static class ReloadListener extends SimpleJsonResourceReloadListener
 	{
@@ -59,11 +64,11 @@ public class ResourcepackReloadListener
 		@Override
 		protected void apply(Map<ResourceLocation, JsonElement> jsonMap, ResourceManager manager, ProfilerFiller filler)
 		{
-    		Space.clear();
+			if(StellarViewEvents.onReload(jsonMap, manager, filler))
+				return;
+			
+    		SpaceRenderer.clear();
     		ViewCenters.clear();
-    		
-			HashMap<ResourceLocation, ViewCenter> viewCenters = new HashMap<>();
-			HashMap<ResourceLocation, SpaceObject> spaceObjects = new HashMap<>();
     		
 			for(Map.Entry<ResourceLocation, JsonElement> jsonEntry : jsonMap.entrySet())
 			{
@@ -97,7 +102,7 @@ public class ResourcepackReloadListener
 			}
 
 			setSpaceObjects(spaceObjects);
-			Space.setupSynodicOrbits();
+			SpaceRenderer.setupSynodicOrbits();
 			setViewCenters(spaceObjects, viewCenters);
 		}
 		
@@ -144,7 +149,7 @@ public class ResourcepackReloadListener
 				{
 					JsonObject json = GsonHelper.convertToJsonObject(element, "star");
 					Sol sol = Sol.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Star", msg));
-					Space.addSol(sol);
+					SpaceRenderer.addSol(sol);
 					
 					spaceObjects.put(location, sol);
 				}
@@ -170,7 +175,6 @@ public class ResourcepackReloadListener
 				BlackHole blackHole = BlackHole.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Star", msg));
 				
 				spaceObjects.put(location, blackHole);
-				Space.addGravityLense(blackHole);
 			}
 			catch(RuntimeException e)
 			{
@@ -217,7 +221,6 @@ public class ResourcepackReloadListener
 				StarField starField = StarField.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Star Field", msg));
 
 				spaceObjects.put(location, starField);
-				Space.addStarField(starField);
 			}
 			catch(RuntimeException e)
 			{
@@ -250,11 +253,11 @@ public class ResourcepackReloadListener
 				spaceObject.setResourceLocation(spaceObjectEntry.getKey());
 				
 				// Handle parents
-				if(spaceObject.getParentKey().isPresent())
+				if(spaceObject.getParentLocation().isPresent())
 				{
 					for(Map.Entry<ResourceLocation, SpaceObject> parentEntry : spaceObjects.entrySet())
 					{
-						if(parentEntry.getKey().equals(spaceObject.getParentKey().get().location()))
+						if(parentEntry.getKey().equals(spaceObject.getParentLocation().get()))
 						{
 							parentEntry.getValue().addChild(spaceObject);
 							break;
@@ -265,7 +268,7 @@ public class ResourcepackReloadListener
 						StellarView.LOGGER.error("Failed to find parent for " + spaceObject.toString());
 				}
 				else
-					Space.addSpaceObject(spaceObjectEntry.getValue());
+					SpaceRenderer.addSpaceObject(spaceObjectEntry.getValue());
 			}
 		}
 		
