@@ -496,10 +496,10 @@ public class StarField extends SpaceObject
 		
 		this.spiralArms = new ArrayList<SpiralArm>();
 		CompoundTag armsTag = tag.getCompound(SPIRAL_ARMS);
-		for(String key : armsTag.getAllKeys())
+		for(int i = 0; i < armsTag.size(); i++)
 		{
 			SpiralArm arm = new SpiralArm();
-			arm.fromTag(armsTag.getCompound(key));
+			arm.fromTag(armsTag.getCompound("spiral_arm_" + i));
 			spiralArms.add(arm);
 		}
 		
