@@ -211,7 +211,7 @@ public abstract class StarLike extends OrbitingObject
 			this.maxSize = maxSize;
 
 			this.minBrightness = minBrightness;
-			this.maxBrightness = (short) (maxBrightness + 1);
+			this.maxBrightness = maxBrightness;
 
 			this.weight = weight;
 		}
@@ -236,10 +236,11 @@ public abstract class StarLike extends OrbitingObject
 		
 		public short randomBrightness(Random random)
 		{
+			System.out.println("Min: " + minBrightness + " Max: " + maxBrightness);
 			if(minBrightness == maxBrightness)
 				return maxBrightness;
 			
-			return (short) random.nextInt(minBrightness, maxBrightness);
+			return (short) random.nextInt(minBrightness, maxBrightness + 1);
 		}
 		
 		public static StarType fromTag(CompoundTag tag)

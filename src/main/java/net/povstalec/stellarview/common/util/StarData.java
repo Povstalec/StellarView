@@ -61,7 +61,9 @@ public class StarData
 		
 		// Set up color and alpha
 		
+		System.out.println("Star[" + i + "]");
 		short alpha = starType.randomBrightness(random); // 0xAA is the default
+		System.out.println("Alpha: " + alpha);
 		
 		this.starRGBA[i] = new short[] {(short) rgb.red(), (short) rgb.green(), (short) rgb.blue(), alpha};
 		
@@ -132,7 +134,7 @@ public class StarData
 			 */
 			double height = aLocation * cosRandom - bLocation * sinRandom;
 			double width = bLocation * cosRandom + aLocation * sinRandom;
-			
+			//System.out.println("Star[" + i + "] at: [" + starCoords[i][0] + ", " + starCoords[i][1] + ", " + starCoords[i][2] + "] Size: " + starSizes[i] + " Alpha: " + starRGBA[i][3]);
 			builder.vertex(starCoords[i][0], starCoords[i][1], starCoords[i][2]).color(starRGBA[i][0], starRGBA[i][1], starRGBA[i][2], starRGBA[i][3]);
 			// These next few lines add a "custom" element defined as HeightWidthSize in StellarViewVertexFormat
 			builder.putFloat(0, (float) height);
