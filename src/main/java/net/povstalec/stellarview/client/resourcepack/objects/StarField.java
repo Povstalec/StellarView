@@ -3,6 +3,7 @@ package net.povstalec.stellarview.client.resourcepack.objects;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 import javax.annotation.Nullable;
 
@@ -32,8 +33,6 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.util.RandomSource;
 import net.povstalec.stellarview.client.render.shader.StellarViewShaders;
 import net.povstalec.stellarview.client.render.shader.StellarViewVertexFormat;
 import net.povstalec.stellarview.client.resourcepack.StarInfo;
@@ -227,16 +226,16 @@ public class StarField extends SpaceObject
 		starBuffer = null;
 	}
 	
-	protected void generateStars(BufferBuilder bufferBuilder, RandomSource randomsource)
+	protected void generateStars(BufferBuilder bufferBuilder, Random random)
 	{
 		for(int i = 0; i < stars; i++)
 		{
 			// This generates random coordinates for the Star close to the camera
-			double distance = clumpStarsInCenter ? randomsource.nextDouble() : Math.cbrt(randomsource.nextDouble());
-			double theta = randomsource.nextDouble() * 2F * Math.PI;
-			double phi = Math.acos(2F * randomsource.nextDouble() - 1F); // This prevents the formation of that weird streak that normally happens
+			double distance = clumpStarsInCenter() ? random.nextDouble() : Math.cbrt(Math.abs(random.nextDouble()));
+			double theta = random.nextDouble() * 2F * Math.PI;
+			double phi = Math.acos(2F * random.nextDouble() - 1F); // This prevents the formation of that weird streak that normally happens
 			
-			Vector3d cartesian = new SphericalCoords(distance * diameter, theta, phi).toCartesianD();
+			Vector3d cartesian = new SphericalCoords(distance * getDiameter(), theta, phi).toCartesianD();
 			
 			cartesian.x *= xStretch;
 			cartesian.y *= yStretch;
@@ -244,20 +243,20 @@ public class StarField extends SpaceObject
 			
 			axisRotation.quaterniond().transform(cartesian);
 
-			starData.newStar(starInfo, bufferBuilder, randomsource, cartesian.x, cartesian.y, cartesian.z, hasTexture, i);
+			starData.newStar(starInfo, bufferBuilder, random, cartesian.x, cartesian.y, cartesian.z, hasTexture, i);
 		}
 	}
 	
-	protected void generateDustClouds(BufferBuilder bufferBuilder, RandomSource randomsource)
+	protected void generateDustClouds(BufferBuilder bufferBuilder, Random random)
 	{
 		for(int i = 0; i < dustClouds; i++)
 		{
 			// This generates random coordinates for the Star close to the camera
-			double distance = clumpStarsInCenter ? randomsource.nextDouble() : Math.cbrt(randomsource.nextDouble());
-			double theta = randomsource.nextDouble() * 2F * Math.PI;
-			double phi = Math.acos(2F * randomsource.nextDouble() - 1F); // This prevents the formation of that weird streak that normally happens
+			double distance = clumpStarsInCenter() ? random.nextDouble() : Math.cbrt(random.nextDouble());
+			double theta = random.nextDouble() * 2F * Math.PI;
+			double phi = Math.acos(2F * random.nextDouble() - 1F); // This prevents the formation of that weird streak that normally happens
 			
-			Vector3d cartesian = new SphericalCoords(distance * diameter, theta, phi).toCartesianD();
+			Vector3d cartesian = new SphericalCoords(distance * getDiameter(), theta, phi).toCartesianD();
 			
 			cartesian.x *= xStretch;
 			cartesian.y *= yStretch;
@@ -265,25 +264,24 @@ public class StarField extends SpaceObject
 			
 			axisRotation.quaterniond().transform(cartesian);
 			
-			dustCloudData.newDustCloud(dustCloudInfo, bufferBuilder, randomsource, cartesian.x, cartesian.y, cartesian.z, 1, i);
+			dustCloudData.newDustCloud(dustCloudInfo, bufferBuilder, random, cartesian.x, cartesian.y, cartesian.z, 1, i);
 		}
 	}
 	
-	protected RenderedBuffer generateStarBuffer(BufferBuilder bufferBuilder)
+	protected RenderedBuffer generateStarBuffer(BufferBuilder bufferBuilder, Random random)
 	{
-		RandomSource randomsource = RandomSource.create(seed);
 		bufferBuilder.begin(VertexFormat.Mode.QUADS, hasTexture ? StellarViewVertexFormat.STAR_POS_COLOR_LY_TEX : StellarViewVertexFormat.STAR_POS_COLOR_LY);
 		
 		double sizeMultiplier = diameter / 30D;
 		
 		starData = new StarData(totalStars);
 		
-		generateStars(bufferBuilder, randomsource);
+		generateStars(bufferBuilder, random);
 		
 		int numberOfStars = stars;
 		for(SpiralArm arm : spiralArms) //Draw each arm
 		{
-			arm.generateStars(bufferBuilder, axisRotation, starData, starInfo, randomsource, numberOfStars, sizeMultiplier, hasTexture);
+			arm.generateStars(bufferBuilder, axisRotation, starData, starInfo, random, numberOfStars, sizeMultiplier, hasTexture);
 			numberOfStars += arm.armStars();
 		}
 		
@@ -334,7 +332,7 @@ public class StarField extends SpaceObject
 		RenderSystem.setShader(GameRenderer::getPositionShader);
 		BufferBuilder.RenderedBuffer bufferbuilder$renderedbuffer;
 		
-		bufferbuilder$renderedbuffer = generateStarBuffer(bufferBuilder);
+		bufferbuilder$renderedbuffer = generateStarBuffer(bufferBuilder, new Random(getSeed()));
 		
 		starBuffer.bind();
 		starBuffer.upload(bufferbuilder$renderedbuffer);
@@ -345,21 +343,20 @@ public class StarField extends SpaceObject
 	
 	
 	
-	protected RenderedBuffer generateDustCloudBuffer(BufferBuilder bufferBuilder)
+	protected RenderedBuffer generateDustCloudBuffer(BufferBuilder bufferBuilder, Random random)
 	{
-		RandomSource randomsource = RandomSource.create(seed);
 		bufferBuilder.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR_POS_COLOR_LY_TEX);
 		
 		double sizeMultiplier = diameter / 30D;
 		
 		dustCloudData = new DustCloudData(totalDustClouds);
 		
-		generateDustClouds(bufferBuilder, randomsource);
+		generateDustClouds(bufferBuilder, random);
 		
 		int numberOfDustClouds = dustClouds;
 		for(SpiralArm arm : spiralArms) //Draw each arm
 		{
-			arm.generateDustClouds(bufferBuilder, axisRotation, dustCloudData, dustCloudInfo, randomsource, numberOfDustClouds, sizeMultiplier);
+			arm.generateDustClouds(bufferBuilder, axisRotation, dustCloudData, dustCloudInfo, random, numberOfDustClouds, sizeMultiplier);
 			numberOfDustClouds += arm.armDustClouds();
 		}
 		
@@ -377,7 +374,7 @@ public class StarField extends SpaceObject
 		RenderSystem.setShader(GameRenderer::getPositionShader);
 		BufferBuilder.RenderedBuffer bufferbuilder$renderedbuffer;
 		
-		bufferbuilder$renderedbuffer = generateDustCloudBuffer(bufferBuilder);
+		bufferbuilder$renderedbuffer = generateDustCloudBuffer(bufferBuilder, new Random(getSeed()));
 		
 		dustCloudBuffer.bind();
 		dustCloudBuffer.upload(bufferbuilder$renderedbuffer);
@@ -595,7 +592,7 @@ public class StarField extends SpaceObject
 			return clumpStarsInCenter;
 		}
 		
-		protected void generateStars(BufferBuilder bufferBuilder, AxisRotation axisRotation, StarData starData, StarInfo starInfo, RandomSource randomsource, int numberOfStars, double sizeMultiplier, boolean hasTexture)
+		protected void generateStars(BufferBuilder bufferBuilder, AxisRotation axisRotation, StarData starData, StarInfo starInfo, Random random, int numberOfStars, double sizeMultiplier, boolean hasTexture)
 		{
 			for(int i = 0; i < armStars; i++)
 			{
@@ -607,15 +604,15 @@ public class StarField extends SpaceObject
 				double r = StellarCoordinates.spiralR(5, phi, armRotation);
 				
 				// This generates random coordinates for the Star close to the camera
-				double distance = clumpStarsInCenter ? randomsource.nextDouble() : Math.cbrt(randomsource.nextDouble());
-				double theta = randomsource.nextDouble() * 2F * Math.PI;
-				double sphericalphi = Math.acos(2F * randomsource.nextDouble() - 1F); // This prevents the formation of that weird streak that normally happens
+				double distance = clumpStarsInCenter() ? random.nextDouble() : Math.cbrt(random.nextDouble());
+				double theta = random.nextDouble() * 2F * Math.PI;
+				double sphericalphi = Math.acos(2F * random.nextDouble() - 1F); // This prevents the formation of that weird streak that normally happens
 
-				Vector3d cartesian = new SphericalCoords(distance * armThickness, theta, sphericalphi).toCartesianD();
+				Vector3d cartesian = new SphericalCoords(distance * armThickness(), theta, sphericalphi).toCartesianD();
 				
-				double x =  r * Math.cos(phi) + cartesian.x * armThickness / (progress * 1.5);
-				double z =  r * Math.sin(phi) + cartesian.z * armThickness / (progress * 1.5);
-				double y =  cartesian.y * armThickness / (progress * 1.5);
+				double x =  r * Math.cos(phi) + cartesian.x * armThickness() / (progress * 1.5);
+				double z =  r * Math.sin(phi) + cartesian.z * armThickness() / (progress * 1.5);
+				double y =  cartesian.y * armThickness() / (progress * 1.5);
 				
 				cartesian.x = x * sizeMultiplier;
 				cartesian.y = y * sizeMultiplier;
@@ -623,11 +620,11 @@ public class StarField extends SpaceObject
 				
 				axisRotation.quaterniond().transform(cartesian);
 				
-				starData.newStar(starInfo, bufferBuilder, randomsource, cartesian.x, cartesian.y, cartesian.z, hasTexture, numberOfStars + i);
+				starData.newStar(starInfo, bufferBuilder, random, cartesian.x, cartesian.y, cartesian.z, hasTexture, numberOfStars + i);
 			}
 		}
 		
-		protected void generateDustClouds(BufferBuilder bufferBuilder, AxisRotation axisRotation, DustCloudData dustCloudData, DustCloudInfo dustCloudInfo, RandomSource randomsource, int numberOfDustClouds, double sizeMultiplier)
+		protected void generateDustClouds(BufferBuilder bufferBuilder, AxisRotation axisRotation, DustCloudData dustCloudData, DustCloudInfo dustCloudInfo, Random random, int numberOfDustClouds, double sizeMultiplier)
 		{
 			for(int i = 0; i < armDustClouds; i++)
 			{
@@ -640,15 +637,15 @@ public class StarField extends SpaceObject
 				progress++;
 				
 				// This generates random coordinates for the Star close to the camera
-				double distance = clumpStarsInCenter ? randomsource.nextDouble() : Math.cbrt(randomsource.nextDouble());
-				double theta = randomsource.nextDouble() * 2F * Math.PI;
-				double sphericalphi = Math.acos(2F * randomsource.nextDouble() - 1F); // This prevents the formation of that weird streak that normally happens
+				double distance = clumpStarsInCenter() ? random.nextDouble() : Math.cbrt(random.nextDouble());
+				double theta = random.nextDouble() * 2F * Math.PI;
+				double sphericalphi = Math.acos(2F * random.nextDouble() - 1F); // This prevents the formation of that weird streak that normally happens
 				
-				Vector3d cartesian = new SphericalCoords(distance * armThickness, theta, sphericalphi).toCartesianD();
+				Vector3d cartesian = new SphericalCoords(distance * armThickness(), theta, sphericalphi).toCartesianD();
 				
-				double x =  r * Math.cos(phi) + cartesian.x * armThickness / (progress * 1.5);
-				double z =  r * Math.sin(phi) + cartesian.z * armThickness / (progress * 1.5);
-				double y =  cartesian.y * armThickness / (progress * 1.5);
+				double x =  r * Math.cos(phi) + cartesian.x * armThickness() / (progress * 1.5);
+				double z =  r * Math.sin(phi) + cartesian.z * armThickness() / (progress * 1.5);
+				double y =  cartesian.y * armThickness() / (progress * 1.5);
 				
 				cartesian.x = x * sizeMultiplier;
 				cartesian.y = y * sizeMultiplier;
@@ -656,7 +653,7 @@ public class StarField extends SpaceObject
 				
 				axisRotation.quaterniond().transform(cartesian);
 				
-				dustCloudData.newDustCloud(this.dustCloudInfo == null ? dustCloudInfo : this.dustCloudInfo, bufferBuilder, randomsource, cartesian.x, cartesian.y, cartesian.z, (1 / progress) + 0.2, numberOfDustClouds + i);
+				dustCloudData.newDustCloud(this.dustCloudInfo == null ? dustCloudInfo : this.dustCloudInfo, bufferBuilder, random, cartesian.x, cartesian.y, cartesian.z, (1 / progress) + 0.2, numberOfDustClouds + i);
 			}
 		}
 		

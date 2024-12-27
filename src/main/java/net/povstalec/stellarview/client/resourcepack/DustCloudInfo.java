@@ -3,9 +3,6 @@ package net.povstalec.stellarview.client.resourcepack;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
-import net.povstalec.stellarview.StellarView;
-import net.povstalec.stellarview.client.resourcepack.objects.StarLike;
 import net.povstalec.stellarview.common.util.Color;
 
 import java.util.ArrayList;
@@ -45,16 +42,14 @@ public class DustCloudInfo
 		}
 	}
 	
-	public DustCloudType getRandomDustCloudType(long seed)
+	public DustCloudType getRandomDustCloudType(Random random)
 	{
 		if(dustCloudTypes.isEmpty())
 			return WHITE_DUST_CLOUD;
 		
-		Random random = new Random(seed);
-		
 		int i = 0;
 		
-		for(int weight = random.nextInt(0, totalWeight); i < dustCloudTypes.size() - 1; i++)
+		for(int weight = random.nextInt(0, totalWeight + 1); i < dustCloudTypes.size() - 1; i++)
 		{
 			weight -= dustCloudTypes.get(i).getWeight();
 			
@@ -134,22 +129,18 @@ public class DustCloudInfo
 			return weight;
 		}
 		
-		public float randomSize(long seed)
+		public float randomSize(Random random)
 		{
 			if(minSize == maxSize)
 				return maxSize;
 			
-			Random random = new Random(seed);
-			
 			return random.nextFloat(minSize, maxSize);
 		}
 		
-		public short randomBrightness(long seed)
+		public short randomBrightness(Random random)
 		{
 			if(minBrightness == maxBrightness)
 				return maxBrightness;
-			
-			Random random = new Random(seed);
 			
 			return (short) random.nextInt(minBrightness, maxBrightness);
 		}

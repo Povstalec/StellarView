@@ -60,12 +60,10 @@ public class StarInfo
 		return starTexture;
 	}
 	
-	public StarLike.StarType getRandomStarType(long seed)
+	public StarLike.StarType getRandomStarType(Random random)
 	{
 		if(starTypes.isEmpty())
 			return WHITE_STAR;
-		
-		Random random = new Random(seed);
 		
 		int i = 0;
 		

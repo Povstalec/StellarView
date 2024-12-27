@@ -226,22 +226,18 @@ public abstract class StarLike extends OrbitingObject
 			return weight;
 		}
 		
-		public float randomSize(long seed)
+		public float randomSize(Random random)
 		{
 			if(minSize == maxSize)
 				return maxSize;
 			
-			Random random = new Random(seed);
-			
 			return random.nextFloat(minSize, maxSize);
 		}
 		
-		public short randomBrightness(long seed)
+		public short randomBrightness(Random random)
 		{
 			if(minBrightness == maxBrightness)
 				return maxBrightness;
-			
-			Random random = new Random(seed);
 			
 			return (short) random.nextInt(minBrightness, maxBrightness);
 		}
