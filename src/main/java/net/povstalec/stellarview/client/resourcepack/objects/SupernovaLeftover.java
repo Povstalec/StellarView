@@ -34,6 +34,8 @@ public class SupernovaLeftover extends GravityLense
 			Codec.DOUBLE.optionalFieldOf("max_lensing_distance", 10000000000D).forGetter(SupernovaLeftover::getMaxLensingDistance)
 	).apply(instance, SupernovaLeftover::new));
 	
+	public SupernovaLeftover() {}
+	
 	public SupernovaLeftover(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
 			Optional<OrbitInfo> orbitInfo, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler,
 			float minStarSize, float maxStarAlpha, float minStarAlpha,

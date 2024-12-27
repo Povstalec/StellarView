@@ -20,10 +20,12 @@ import java.util.Optional;
 
 public abstract class GravityLense extends StarLike
 {
-	protected final float lensingIntensity;
-	protected final double maxLensingDistance;
+	protected float lensingIntensity;
+	protected double maxLensingDistance;
 	
 	protected SphericalCoords sphericalCoords = new SphericalCoords(0, 0, 0);
+	
+	public GravityLense() {}
 	
 	public GravityLense(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
 						Optional<OrbitInfo> orbitInfo, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler,

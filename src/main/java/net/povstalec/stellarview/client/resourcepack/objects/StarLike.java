@@ -29,6 +29,10 @@ import net.povstalec.stellarview.common.util.TextureLayer;
 
 public abstract class StarLike extends OrbitingObject
 {
+	public static final String MIN_STAR_SIZE = "min_star_size";
+	public static final String MAX_STAR_ALPHA = "max_star_alpha";
+	public static final String MIN_STAR_ALPHA = "min_star_alpha";
+	
 	public static final float MIN_SIZE = 0.08F;
 	
 	public static final float MAX_ALPHA = 1F;
@@ -38,6 +42,8 @@ public abstract class StarLike extends OrbitingObject
 
 	private float maxStarAlpha;
 	private float minStarAlpha;
+	
+	public StarLike() {}
 	
 	public StarLike(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation, Optional<OrbitInfo> orbitInfo,
 					List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler,
@@ -142,6 +148,18 @@ public abstract class StarLike extends OrbitingObject
 		
 		return starBrightness;
 	}
+	
+	@Override
+	public void fromTag(CompoundTag tag)
+	{
+		super.fromTag(tag);
+		
+		minStarSize = tag.getFloat(MIN_STAR_SIZE);
+		maxStarAlpha = tag.getFloat(MAX_STAR_ALPHA);
+		minStarAlpha = tag.getFloat(MIN_STAR_ALPHA);
+	}
+	
+	
 	
 	//TODO Use this again
 	public double starWidthFunction(double aLocation, double bLocation, double sinRandom, double cosRandom, double sinTheta, double cosTheta, double sinPhi, double cosPhi)
