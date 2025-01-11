@@ -38,8 +38,8 @@ public class EnhancedCelestialsCompatibility
             {
                 LunarForecast lunarForecast = enhancedCelestialsContext.getLunarForecast();
                 
-                ColorSettings lastColorSettings = lunarForecast.getMostRecentEvent().value().getClientSettings().colorSettings();
-                ColorSettings currentColorSettings = lunarForecast.getCurrentEvent(level.getRainLevel(1) < 1).value().getClientSettings().colorSettings();
+                ColorSettings lastColorSettings = lunarForecast.lastLunarEvent().value().getClientSettings().colorSettings();
+                ColorSettings currentColorSettings = lunarForecast.currentLunarEvent().value().getClientSettings().colorSettings();
                 
                 Vector3f lastGLColor = lastColorSettings.getGLMoonColor();
                 Vector3f currentGLColor = currentColorSettings.getGLMoonColor();
@@ -84,8 +84,8 @@ public class EnhancedCelestialsCompatibility
 				if(enhancedCelestialsContext != null)
 				{
 					LunarForecast lunarForecast = enhancedCelestialsContext.getLunarForecast();
-					LunarEvent lastEvent = lunarForecast.getMostRecentEvent().value();
-					LunarEvent currentEvent = lunarForecast.getCurrentEvent(level.getRainLevel(1) < 1).value();
+					LunarEvent lastEvent = lunarForecast.lastLunarEvent().value();
+					LunarEvent currentEvent = lunarForecast.currentLunarEvent().value();
 
 					ColorSettings colorSettings = currentEvent.getClientSettings().colorSettings();
 					ColorSettings lastColorSettings = lastEvent.getClientSettings().colorSettings();
