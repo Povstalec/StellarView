@@ -77,6 +77,11 @@ public class SpaceCoords
 	//************************************Relative coordinates************************************
 	//============================================================================================
 	
+	public long lyDistanceSquared()
+	{
+		return this.x.ly * this.x.ly + this.y.ly * this.y.ly + this.z.ly * this.z.ly;
+	}
+	
 	/**
 	 * @param other The other coordinates that are compared to these coordinates
 	 * @return Returns squared distance between two coordinate values (mainly for use in checks, since square root operation is costly)
