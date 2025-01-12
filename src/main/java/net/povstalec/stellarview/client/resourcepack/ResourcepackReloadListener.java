@@ -205,7 +205,6 @@ public class ResourcepackReloadListener
 				Moon moon = Moon.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Moon", msg));
 
 				spaceObjects.put(location, moon);
-				StellarView.LOGGER.debug("Parsed " + location.toString() + " as Moon");
 			}
 			catch(RuntimeException e)
 			{

@@ -41,6 +41,59 @@ import net.povstalec.stellarview.common.config.GeneralConfig;
 
 public class StarField extends SpaceObject
 {
+	public enum LevelOfDetail
+	{
+		LOD1((short) 225, 10000000L), // Very far away, most stars can't be seen
+		LOD2((short) 190, 5000000L), // Middle point, some stars can be seen
+		LOD3((short) 0, 0); // Very close, even the dimmest stars are seen
+		
+		short minBrightness;
+		long minDistanceSquared;
+		
+		LevelOfDetail(short minBrightness, long minDistance)
+		{
+			this.minBrightness = minBrightness;
+			this.minDistanceSquared = minDistance * minDistance;
+		}
+		
+		public static LevelOfDetail fromBrightness(short brightness) // Majority of stars should be dim, so we're starting with LOD3
+		{
+			if(brightness < LOD2.minBrightness)
+				return LOD3;
+			
+			if(brightness < LOD1.minBrightness)
+				return LOD2;
+			
+			return LOD1;
+		}
+		
+		public static LevelOfDetail fromDistance(long distance) // Majority of galaxies should be far away, so we're starting with LOD1
+		{
+			long distanceSquared = distance * distance;
+			
+			if(distanceSquared >= LOD1.minDistanceSquared)
+				return LOD1;
+			
+			if(distanceSquared >= LOD2.minDistanceSquared)
+				return LOD2;
+			
+			return LOD3;
+		}
+		
+		public static LevelOfDetail fromDistance(SpaceCoords difference) // Majority of galaxies should be far away, so we're starting with LOD1
+		{
+			long distanceSquared = difference.lyDistanceSquared();
+			
+			if(distanceSquared >= LOD1.minDistanceSquared)
+				return LOD1;
+			
+			if(distanceSquared >= LOD2.minDistanceSquared)
+				return LOD2;
+			
+			return LOD3;
+		}
+	}
+	
 	public static final ResourceLocation DEFAULT_DUST_CLOUD_TEXTURE = new ResourceLocation(StellarView.MODID,"textures/environment/dust_cloud.png");
 	
 	public static final String SEED = "seed";
@@ -65,8 +118,6 @@ public class StarField extends SpaceObject
 	protected int totalDustClouds;
 	protected ResourceLocation dustCloudTexture;
 	
-	@Nullable
-	protected StarBuffer starBuffer;
 	protected StarData starData;
 
 	protected StarInfo starInfo;
@@ -77,6 +128,8 @@ public class StarField extends SpaceObject
 	
 	protected int diameter;
 	protected int stars;
+	protected int lod1stars = 0;
+	protected int lod2stars = 0;
 	
 	protected double xStretch;
 	protected double yStretch;
@@ -84,6 +137,9 @@ public class StarField extends SpaceObject
 	
 	protected ArrayList<SpiralArm> spiralArms;
 	
+	
+	protected int totalLOD1stars;
+	protected int totalLOD2stars;
 	protected int totalStars;
 	
 	protected boolean hasTexture = GeneralConfig.textured_stars.get();
@@ -137,17 +193,22 @@ public class StarField extends SpaceObject
 		this.zStretch = zStretch;
 		
 		this.spiralArms = new ArrayList<SpiralArm>(spiralArms);
+		
+		this.totalStars = stars;
+		setupLOD(starInfo);
 
 		// Calculate the total amount of stars
-		int totalStars = stars;
 		int totalDustClouds = dustClouds;
 		for(SpiralArm arm : this.spiralArms)
 		{
-			totalStars += arm.armStars();
+			arm.setupLOD(starInfo);
+			this.totalStars += arm.armStars();
+			this.totalLOD1stars += arm.lod1stars;
+			this.totalLOD2stars += arm.lod2stars;
+			
 			totalDustClouds += arm.armDustClouds;
 		}
 		
-		this.totalStars = totalStars;
 		this.totalDustClouds = totalDustClouds;
 	}
 	
@@ -211,9 +272,13 @@ public class StarField extends SpaceObject
 		return spiralArms;
 	}
 	
-	public boolean requiresSetup()
+	protected void setupLOD(StarInfo starInfo)
 	{
-		return starBuffer == null;
+		this.lod1stars = (int) (stars * ((float) starInfo.lod1Weight() / starInfo.totalWeight()));
+		this.lod2stars = (int) (stars * ((float) starInfo.lod2Weight() / starInfo.totalWeight()));
+		
+		this.totalLOD1stars = this.lod1stars;
+		this.totalLOD2stars = this.lod2stars;
 	}
 	
 	public boolean requiresReset()
@@ -223,11 +288,26 @@ public class StarField extends SpaceObject
 	
 	public void reset()
 	{
-		starBuffer = null;
+		if(starData != null)
+			starData.reset();
 	}
 	
-	protected void generateStars(BufferBuilder bufferBuilder, Random random)
+	protected void generateStars(StarData.LOD lod, LevelOfDetail levelOfDetail, Random random)
 	{
+		int stars;
+		
+		switch(levelOfDetail)
+		{
+			case LOD1:
+				stars = lod1stars;
+				break;
+			case LOD2:
+				stars = lod2stars;
+				break;
+			default:
+				stars = this.stars - lod1stars - lod2stars;
+		}
+		
 		for(int i = 0; i < stars; i++)
 		{
 			// This generates random coordinates for the Star close to the camera
@@ -242,8 +322,18 @@ public class StarField extends SpaceObject
 			cartesian.z *= zStretch;
 			
 			axisRotation.quaterniond().transform(cartesian);
-
-			starData.newStar(starInfo, bufferBuilder, random, cartesian.x, cartesian.y, cartesian.z, hasTexture, i);
+			
+			switch(levelOfDetail)
+			{
+				case LOD1:
+					lod.newStar(starInfo.randomLOD1StarType(random), random, cartesian.x, cartesian.y, cartesian.z, hasTexture);
+					break;
+				case LOD2:
+					lod.newStar(starInfo.randomLOD2StarType(random), random, cartesian.x, cartesian.y, cartesian.z, hasTexture);
+					break;
+				default:
+					lod.newStar(starInfo.randomLOD3StarType(random), random, cartesian.x, cartesian.y, cartesian.z, hasTexture);
+			}
 		}
 	}
 	
@@ -268,77 +358,44 @@ public class StarField extends SpaceObject
 		}
 	}
 	
-	protected RenderedBuffer generateStarBuffer(BufferBuilder bufferBuilder, Random random)
+	protected void setStars()
 	{
-		bufferBuilder.begin(VertexFormat.Mode.QUADS, hasTexture ? StellarViewVertexFormat.STAR_POS_COLOR_LY_TEX : StellarViewVertexFormat.STAR_POS_COLOR_LY);
-		
 		double sizeMultiplier = diameter / 30D;
 		
-		starData = new StarData(totalStars);
-		
-		generateStars(bufferBuilder, random);
-		
-		int numberOfStars = stars;
-		for(SpiralArm arm : spiralArms) //Draw each arm
+		starData = new StarData()
 		{
-			arm.generateStars(bufferBuilder, axisRotation, starData, starInfo, random, numberOfStars, sizeMultiplier, hasTexture);
-			numberOfStars += arm.armStars();
-		}
-		
-		return bufferBuilder.end();
-	}
-	
-	protected RenderedBuffer getStarBuffer(BufferBuilder bufferBuilder)
-	{
-		bufferBuilder.begin(VertexFormat.Mode.QUADS, hasTexture ? StellarViewVertexFormat.STAR_POS_COLOR_LY_TEX : StellarViewVertexFormat.STAR_POS_COLOR_LY);
-		
-		for(int i = 0; i < totalStars; i++)
-		{
-			starData.createStar(bufferBuilder, hasTexture, i);
-		}
-		return bufferBuilder.end();
-	}
-	
-	public StarField setStarBuffer()
-	{
-		if(starBuffer != null)
-			starBuffer.close();
-		
-		hasTexture = GeneralConfig.textured_stars.get();
-		
-		starBuffer = new StarBuffer();
-		Tesselator tesselator = Tesselator.getInstance();
-		BufferBuilder bufferBuilder = tesselator.getBuilder();
-		RenderSystem.setShader(GameRenderer::getPositionShader);
-		BufferBuilder.RenderedBuffer bufferbuilder$renderedbuffer;
-		
-		bufferbuilder$renderedbuffer = getStarBuffer(bufferBuilder);
-		
-		starBuffer.bind();
-		starBuffer.upload(bufferbuilder$renderedbuffer);
-		VertexBuffer.unbind();
-		
-		return this;
-	}
-	
-	public StarField setupBuffer()
-	{
-		if(starBuffer != null)
-			starBuffer.close();
-		
-		starBuffer = new StarBuffer();
-		Tesselator tesselator = Tesselator.getInstance();
-		BufferBuilder bufferBuilder = tesselator.getBuilder();
-		RenderSystem.setShader(GameRenderer::getPositionShader);
-		BufferBuilder.RenderedBuffer bufferbuilder$renderedbuffer;
-		
-		bufferbuilder$renderedbuffer = generateStarBuffer(bufferBuilder, new Random(getSeed()));
-		
-		starBuffer.bind();
-		starBuffer.upload(bufferbuilder$renderedbuffer);
-		VertexBuffer.unbind();
-		
-		return this;
+			@Override
+			protected LOD newStars(StarField.LevelOfDetail levelOfDetail)
+			{
+				Random random;
+				int stars;
+				
+				switch(levelOfDetail)
+				{
+					case LOD1:
+						random = new Random(getSeed());
+						stars = totalLOD1stars;
+						break;
+					case LOD2:
+						random = new Random(getSeed() + 1);
+						stars = totalLOD2stars;
+						break;
+					default:
+						random = new Random(getSeed() + 2);
+						stars = totalStars - totalLOD1stars - totalLOD2stars;
+				}
+				LOD lod = new LOD(stars);
+				
+				generateStars(lod, levelOfDetail, random);
+				
+				for(SpiralArm arm : spiralArms) //Draw each arm
+				{
+					arm.generateStars(lod, levelOfDetail, axisRotation, starInfo, random, sizeMultiplier, hasTexture);
+				}
+				
+				return lod;
+			}
+		};
 	}
 	
 	
@@ -422,10 +479,10 @@ public class StarField extends SpaceObject
 	{
 		SpaceCoords difference = viewCenter.getCoords().sub(getCoords());
 		
-		if(requiresSetup())
-			setupBuffer();
+		if(starData == null)
+			setStars();
 		else if(requiresReset())
-			setStarBuffer();
+			starData.reset();
 		
 		float starBrightness = StarLike.getStarBrightness(viewCenter, level, camera, partialTicks);
 		
@@ -444,9 +501,7 @@ public class StarField extends SpaceObject
 			Quaternionf q = SpaceCoords.getQuaternionf(level, viewCenter, partialTicks);
 			
 			stack.mulPose(q);
-			this.starBuffer.bind();
-			this.starBuffer.drawWithShader(stack.last().pose(), projectionMatrix, difference, hasTexture ? StellarViewShaders.starTexShader() : StellarViewShaders.starShader());
-			VertexBuffer.unbind();
+			this.starData.renderStars(LevelOfDetail.fromDistance(difference), stack.last().pose(), projectionMatrix, difference, hasTexture);
 			
 			setupFog.run();
 			stack.popPose();
@@ -478,6 +533,8 @@ public class StarField extends SpaceObject
 	{
 		super.fromTag(tag);
 		
+		this.starInfo = StarInfo.fromTag(tag.getCompound(STAR_INFO));
+		
 		dustClouds = tag.getInt(DUST_CLOUDS);
 		totalDustClouds = tag.getInt(TOTAL_DUST_CLOUDS);
 		dustCloudTexture = new ResourceLocation(tag.getString(DUST_CLOUD_TEXTURE));
@@ -487,6 +544,7 @@ public class StarField extends SpaceObject
 		diameter = tag.getInt(DIAMETER_LY);
 		stars = tag.getInt(STARS);
 		totalStars = tag.getInt(TOTAL_STARS);
+		setupLOD(starInfo);
 		
 		clumpStarsInCenter = tag.getBoolean(CLUMP_STARS_IN_CENTER);
 		
@@ -500,10 +558,11 @@ public class StarField extends SpaceObject
 		{
 			SpiralArm arm = new SpiralArm();
 			arm.fromTag(armsTag.getCompound("spiral_arm_" + i));
+			arm.setupLOD(starInfo);
 			spiralArms.add(arm);
+			this.totalLOD1stars += arm.lod1stars;
+			this.totalLOD2stars += arm.lod2stars;
 		}
-		
-		this.starInfo = StarInfo.fromTag(tag.getCompound(STAR_INFO));
 		
 		this.dustCloudInfo = DustCloudInfo.fromTag(tag.getCompound(DUST_CLOUD_INFO));
 	}
@@ -523,6 +582,9 @@ public class StarField extends SpaceObject
 		protected int armDustClouds;
 		
 		protected int armStars;
+		protected int lod1stars = 0;
+		protected int lod2stars = 0;
+		
 		protected double armRotation;
 		protected double armLength;
 		protected double armThickness;
@@ -592,13 +654,33 @@ public class StarField extends SpaceObject
 			return clumpStarsInCenter;
 		}
 		
-		protected void generateStars(BufferBuilder bufferBuilder, AxisRotation axisRotation, StarData starData, StarInfo starInfo, Random random, int numberOfStars, double sizeMultiplier, boolean hasTexture)
+		protected void setupLOD(StarInfo starInfo)
 		{
-			for(int i = 0; i < armStars; i++)
+			this.lod1stars = (int) (armStars * ((float) starInfo.lod1Weight() / starInfo.totalWeight()));
+			this.lod2stars = (int) (armStars * ((float) starInfo.lod2Weight() / starInfo.totalWeight()));
+		}
+		
+		protected void generateStars(StarData.LOD lod, LevelOfDetail levelOfDetail, AxisRotation axisRotation, StarInfo starInfo, Random random, double sizeMultiplier, boolean hasTexture)
+		{
+			int stars;
+			
+			switch(levelOfDetail)
+			{
+			case LOD1:
+				stars = lod1stars;
+				break;
+			case LOD2:
+				stars = lod2stars;
+				break;
+			default:
+				stars = armStars - lod1stars - lod2stars;
+			}
+			
+			for(int i = 0; i < stars; i++)
 			{
 				// Milky Way is 90 000 ly across
 				
-				double progress = (double) i / armStars;
+				double progress = (double) i / stars;
 				
 				double phi = armLength * Math.PI * progress - armRotation;
 				double r = StellarCoordinates.spiralR(5, phi, armRotation);
@@ -620,7 +702,17 @@ public class StarField extends SpaceObject
 				
 				axisRotation.quaterniond().transform(cartesian);
 				
-				starData.newStar(starInfo, bufferBuilder, random, cartesian.x, cartesian.y, cartesian.z, hasTexture, numberOfStars + i);
+				switch(levelOfDetail)
+				{
+					case LOD1:
+						lod.newStar(starInfo.randomLOD1StarType(random), random, cartesian.x, cartesian.y, cartesian.z, hasTexture);
+						break;
+					case LOD2:
+						lod.newStar(starInfo.randomLOD2StarType(random), random, cartesian.x, cartesian.y, cartesian.z, hasTexture);
+						break;
+					default:
+						lod.newStar(starInfo.randomLOD3StarType(random), random, cartesian.x, cartesian.y, cartesian.z, hasTexture);
+				}
 			}
 		}
 		

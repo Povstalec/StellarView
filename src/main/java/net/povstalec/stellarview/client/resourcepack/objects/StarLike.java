@@ -179,6 +179,7 @@ public abstract class StarLike extends OrbitingObject
 		public static final String MAX_SIZE = "max_size";
 		public static final String MIN_BRIGHTNESS = "min_brightness";
 		public static final String MAX_BRIGHTNESS = "max_brightness";
+		public static final String MAX_VISIBLE_DISTANCE = "max_visible_distance";
 		public static final String WEIGHT = "weight";
 		
 		private final Color.IntRGB rgb;
@@ -189,21 +190,25 @@ public abstract class StarLike extends OrbitingObject
 		private final short minBrightness;
 		private final short maxBrightness;
 		
+		public final long maxVisibleDistance;
+		
 		public final int weight;
 		
 		public static final Codec<StarType> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-				Color.IntRGB.CODEC.fieldOf("rgb").forGetter(StarType::getRGB),
+				Color.IntRGB.CODEC.fieldOf(RGB).forGetter(StarType::getRGB),
 				
-				Codec.FLOAT.fieldOf("min_size").forGetter(starType -> starType.minSize),
-				Codec.FLOAT.fieldOf("max_size").forGetter(starType -> starType.maxSize),
+				Codec.FLOAT.fieldOf(MIN_SIZE).forGetter(starType -> starType.minSize),
+				Codec.FLOAT.fieldOf(MAX_SIZE).forGetter(starType -> starType.maxSize),
 				
-				Codec.SHORT.fieldOf("min_brightness").forGetter(starType -> starType.minBrightness),
-				Codec.SHORT.fieldOf("max_brightness").forGetter(starType -> starType.maxBrightness),
+				Codec.SHORT.fieldOf(MIN_BRIGHTNESS).forGetter(starType -> starType.minBrightness),
+				Codec.SHORT.fieldOf(MAX_BRIGHTNESS).forGetter(starType -> starType.maxBrightness),
 				
-				Codec.intRange(1, Integer.MAX_VALUE).fieldOf("weight").forGetter(StarType::getWeight)
+				Codec.LONG.optionalFieldOf(MAX_VISIBLE_DISTANCE, Long.MAX_VALUE).forGetter(StarType::getMaxVisibleDistance),
+				
+				Codec.intRange(1, Integer.MAX_VALUE).fieldOf(WEIGHT).forGetter(StarType::getWeight)
 				).apply(instance, StarType::new));
 		
-		public StarType(Color.IntRGB rgb, float minSize, float maxSize, short minBrightness, short maxBrightness, int weight)
+		public StarType(Color.IntRGB rgb, float minSize, float maxSize, short minBrightness, short maxBrightness, long maxVisibleDistance, int weight)
 		{
 			this.rgb = rgb;
 			
@@ -212,6 +217,8 @@ public abstract class StarLike extends OrbitingObject
 
 			this.minBrightness = minBrightness;
 			this.maxBrightness = maxBrightness;
+			
+			this.maxVisibleDistance = maxVisibleDistance;
 
 			this.weight = weight;
 		}
@@ -242,12 +249,17 @@ public abstract class StarLike extends OrbitingObject
 			return (short) random.nextInt(minBrightness, maxBrightness + 1);
 		}
 		
+		public long getMaxVisibleDistance()
+		{
+			return maxVisibleDistance;
+		}
+		
 		public static StarType fromTag(CompoundTag tag)
 		{
 			Color.IntRGB rgb = new Color.IntRGB();
 			rgb.fromTag(tag.getCompound(RGB));
 			
-			return new StarType(rgb, tag.getFloat(MIN_SIZE), tag.getFloat(MAX_SIZE), tag.getShort(MIN_BRIGHTNESS), tag.getShort(MAX_BRIGHTNESS), tag.getInt(WEIGHT));
+			return new StarType(rgb, tag.getFloat(MIN_SIZE), tag.getFloat(MAX_SIZE), tag.getShort(MIN_BRIGHTNESS), tag.getShort(MAX_BRIGHTNESS), tag.getLong(MAX_VISIBLE_DISTANCE), tag.getInt(WEIGHT));
 		}
 	}
 }

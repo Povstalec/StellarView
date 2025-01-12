@@ -27,6 +27,8 @@ public final class SpaceRenderer
 {
 	private static final Vector3f NULL_VECTOR = new Vector3f();
 	
+	private static final int STAR_LIMIT = 100000;
+	
 	private static final HashMap<ClientSpaceRegion.RegionPos, ClientSpaceRegion> SPACE_REGIONS = new HashMap<ClientSpaceRegion.RegionPos, ClientSpaceRegion>();
 	
 	public static final Matrix3f IDENTITY_MATRIX = new Matrix3f();
@@ -42,7 +44,17 @@ public final class SpaceRenderer
 	@Nullable
 	private static AxisRotation solAxisRotation = null;
 	
+	private static int starsPerTick = 0;
 	
+	public static boolean loadNewStars()
+	{
+		return starsPerTick < STAR_LIMIT;
+	}
+	
+	public static void loadedStars(int starCount)
+	{
+		starsPerTick += starCount;
+	}
 	
 	public static void clear()
 	{
@@ -80,6 +92,7 @@ public final class SpaceRenderer
 	
 	public static void resetStarFields()
 	{
+		starsPerTick = 0;
 		for(Map.Entry<ClientSpaceRegion.RegionPos, ClientSpaceRegion> spaceRegionEntry : SPACE_REGIONS.entrySet())
 		{
 			spaceRegionEntry.getValue().resetStarFields();
@@ -88,6 +101,7 @@ public final class SpaceRenderer
 	
 	public static void render(ViewCenter viewCenter, SpaceObject masterParent, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder)
 	{
+		starsPerTick = 0;
 		setBestLensing();
 		
 		ClientSpaceRegion.RegionPos pos = new ClientSpaceRegion.RegionPos(viewCenter.getCoords());
