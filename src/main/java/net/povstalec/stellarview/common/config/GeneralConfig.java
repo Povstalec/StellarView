@@ -13,6 +13,8 @@ public class GeneralConfig
 	public static StellarViewConfigValue.BooleanValue textured_stars;
 	public static StellarViewConfigValue.BooleanValue dust_clouds;
 	
+	public static StellarViewConfigValue.IntValue space_region_render_distance;
+	
 	public static void init(ModConfigSpec.Builder client)
 	{
 
@@ -37,5 +39,9 @@ public class GeneralConfig
 		dust_clouds = new StellarViewConfigValue.BooleanValue(client, "client.dust_clouds",
 				true,
 				"Enables dust cloud rendering");
+		
+		space_region_render_distance = new StellarViewConfigValue.IntValue(client, "client.space_region_render_distance",
+				8, 1, 12,
+				"Specifies the max distance at which a Space Region can render");
 	}
 }

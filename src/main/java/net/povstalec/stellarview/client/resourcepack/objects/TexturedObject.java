@@ -1,5 +1,13 @@
 package net.povstalec.stellarview.client.resourcepack.objects;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import net.minecraft.nbt.CompoundTag;
+import org.joml.Matrix4f;
+import org.joml.Quaterniond;
+import org.joml.Vector3f;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferUploader;
@@ -10,23 +18,22 @@ import com.mojang.datafixers.util.Either;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.util.*;
-import org.joml.Matrix4f;
-import org.joml.Quaterniond;
-import org.joml.Vector3f;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 public abstract class TexturedObject extends SpaceObject
 {
+	public static final String TEXTURE_LAYERS = "texture_layers";
+	
 	protected ArrayList<TextureLayer> textureLayers;
 	
-	public TexturedObject(Optional<ResourceKey<SpaceObject>> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords,
+	public TexturedObject()
+	{
+		textureLayers = new ArrayList<TextureLayer>();
+	}
+	
+	public TexturedObject(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords,
 			AxisRotation axisRotation, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler)
 	{
 		super(parent, coords, axisRotation, fadeOutHandler);
@@ -158,6 +165,19 @@ public abstract class TexturedObject extends SpaceObject
 				if(child.lastDistance < this.lastDistance)
 					child.render(viewCenter, level, partialTicks, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog, tesselator, positionVector, this.axisRotation);
 			}
+		}
+	}
+	
+	@Override
+	public void fromTag(CompoundTag tag)
+	{
+		super.fromTag(tag);
+		
+		// Deserialize Texture Layers
+		CompoundTag textureLayerTag = tag.getCompound(TEXTURE_LAYERS);
+		for(int i = 0; i < textureLayerTag.size(); i++)
+		{
+			textureLayers.add(TextureLayer.fromTag(textureLayerTag.getCompound(String.valueOf(i))));
 		}
 	}
 }

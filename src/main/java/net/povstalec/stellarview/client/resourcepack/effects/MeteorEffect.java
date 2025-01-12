@@ -166,7 +166,7 @@ public abstract class MeteorEffect
 			if(textureLayer.shoulBlend())
 				RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 			
-			RenderSystem.setShaderColor(rgba.red() * textureLayer.rgba().red() / 255F, rgba.green() * textureLayer.rgba().green() / 255F, rgba.blue() * textureLayer.rgba().blue() / 255F, rgba.alpha() * textureLayer.rgba().alpha() / 255F);
+			RenderSystem.setShaderColor(rgba.red() * textureLayer.rgba().red(), rgba.green() * textureLayer.rgba().green(), rgba.blue() * textureLayer.rgba().blue(), rgba.alpha() * textureLayer.rgba().alpha());
 			
 			RenderSystem.setShaderTexture(0, textureLayer.texture());
 	        final var bufferbuilder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);

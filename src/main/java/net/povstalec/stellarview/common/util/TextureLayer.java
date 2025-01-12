@@ -2,10 +2,25 @@ package net.povstalec.stellarview.common.util;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 
 public class TextureLayer
 {
+	public static final String TEXTURE = "texture";
+	public static final String RGBA = "rgba";
+	
+	public static final String BLEND = "blend";
+	
+	public static final String SIZE = "size";
+	public static final String MIN_SIZE = "min_size";
+	public static final String CLAMP_AT_MIN_SIZE = "clamp_at_min_size";
+	
+	public static final String ROTATION = "rotation";
+	
+	public static final String UV_QUAD = "uv";
+	
 	public static final double MIN_VISUAL_SIZE = 0.05;
 	
 	private final ResourceLocation texture;
@@ -20,21 +35,21 @@ public class TextureLayer
 	private final double rotation;
 	
 	private final UV.Quad uv;
-    
-    public static final Codec<TextureLayer> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-    		ResourceLocation.CODEC.fieldOf("texture").forGetter(TextureLayer::texture),
-    		Color.FloatRGBA.INT_CODEC.fieldOf("rgba").forGetter(TextureLayer::rgba),
-    		
-    		Codec.BOOL.fieldOf("blend").forGetter(TextureLayer::shoulBlend),
-    		
-    		Codec.DOUBLE.fieldOf("size").forGetter(TextureLayer::size),
-    		Codec.doubleRange(MIN_VISUAL_SIZE, Double.MAX_VALUE).optionalFieldOf("min_size", MIN_VISUAL_SIZE).forGetter(TextureLayer::minSize),
-    		Codec.BOOL.optionalFieldOf("clamp_at_min_size", false).forGetter(TextureLayer::clampAtMinSize),
-    		
-    		Codec.DOUBLE.fieldOf("rotation").forGetter(TextureLayer::rotation),
-    		
-    		UV.Quad.CODEC.optionalFieldOf("uv", UV.Quad.DEFAULT_QUAD_UV).forGetter(TextureLayer::uv)
-			).apply(instance, TextureLayer::new));
+	
+	public static final Codec<TextureLayer> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+			ResourceLocation.CODEC.fieldOf(TEXTURE).forGetter(TextureLayer::texture),
+			Color.FloatRGBA.INT_CODEC.fieldOf(RGBA).forGetter(TextureLayer::rgba),
+			
+			Codec.BOOL.fieldOf(BLEND).forGetter(TextureLayer::shoulBlend),
+			
+			Codec.DOUBLE.fieldOf(SIZE).forGetter(TextureLayer::size),
+			Codec.doubleRange(MIN_VISUAL_SIZE, Double.MAX_VALUE).optionalFieldOf(MIN_SIZE, MIN_VISUAL_SIZE).forGetter(TextureLayer::minSize),
+			Codec.BOOL.optionalFieldOf(CLAMP_AT_MIN_SIZE, false).forGetter(TextureLayer::clampAtMinSize),
+			
+			Codec.DOUBLE.fieldOf(ROTATION).forGetter(TextureLayer::rotation),
+			
+			UV.Quad.CODEC.optionalFieldOf(UV_QUAD, UV.Quad.DEFAULT_QUAD_UV).forGetter(TextureLayer::uv)
+	).apply(instance, TextureLayer::new));
 	
 	public TextureLayer(ResourceLocation texture, Color.FloatRGBA rgba, boolean blend,
 			double size, double minSize, boolean clampAtMinSize,
@@ -107,5 +122,26 @@ public class TextureLayer
 	public String toString()
 	{
 		return texture.toString();
+	}
+	
+	public static TextureLayer fromTag(CompoundTag tag)
+	{
+		ResourceLocation texture = ResourceLocation.parse(tag.getString(TEXTURE));
+		
+		Color.FloatRGBA rgba = new Color.FloatRGBA(0, 0, 0);
+		rgba.fromTag(tag.getCompound(RGBA));
+		
+		boolean blend = tag.getBoolean(BLEND);
+		
+		double size = tag.getDouble(SIZE);
+		double minSize = tag.getDouble(MIN_SIZE);
+		boolean clampAtMinSize = tag.getBoolean(CLAMP_AT_MIN_SIZE);
+		
+		double rotation = tag.getDouble(ROTATION);
+		
+		UV.Quad uv = UV.Quad.fromTag(tag.getCompound(UV_QUAD));
+		
+		
+		return new TextureLayer(texture, rgba, blend, size, minSize, clampAtMinSize, rotation, uv);
 	}
 }

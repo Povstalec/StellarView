@@ -1,21 +1,23 @@
 package net.povstalec.stellarview.client.resourcepack.objects;
 
+import java.util.List;
+import java.util.Optional;
+
+import javax.annotation.Nullable;
+
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import com.mojang.datafixers.util.Either;
 import com.mojang.math.Axis;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.resources.ResourceKey;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 import net.povstalec.stellarview.common.util.StellarCoordinates;
 import net.povstalec.stellarview.common.util.TextureLayer;
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
-
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Optional;
 
 public class OrbitingObject extends TexturedObject
 {
@@ -25,7 +27,7 @@ public class OrbitingObject extends TexturedObject
 	private OrbitInfo orbitInfo;
 	
 	public static final Codec<OrbitingObject> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			RESOURCE_KEY_CODEC.optionalFieldOf("parent").forGetter(OrbitingObject::getParentKey),
+			ResourceLocation.CODEC.optionalFieldOf("parent").forGetter(OrbitingObject::getParentLocation),
 			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf("coords").forGetter(object -> Either.left(object.getCoords())),
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(OrbitingObject::getAxisRotation),
 			OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(OrbitingObject::getOrbitInfo),
@@ -34,7 +36,9 @@ public class OrbitingObject extends TexturedObject
 			SpaceObject.FadeOutHandler.CODEC.optionalFieldOf("fade_out_handler", SpaceObject.FadeOutHandler.DEFAULT_PLANET_HANDLER).forGetter(OrbitingObject::getFadeOutHandler)
 			).apply(instance, OrbitingObject::new));
 	
-	public OrbitingObject(Optional<ResourceKey<SpaceObject>> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation, Optional<OrbitInfo> orbitInfo,
+	public OrbitingObject() {}
+	
+	public OrbitingObject(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation, Optional<OrbitInfo> orbitInfo,
 			List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler)
 	{
 		super(parent, coords, axisRotation, textureLayers, fadeOutHandler);
@@ -92,6 +96,14 @@ public class OrbitingObject extends TexturedObject
 		}
 		else
 			return super.getPosition(viewCenter, ticks, partialTicks);
+	}
+	
+	@Override
+	public void fromTag(CompoundTag tag)
+	{
+		super.fromTag(tag);
+		
+		orbitInfo = null; //TODO
 	}
 	
 	

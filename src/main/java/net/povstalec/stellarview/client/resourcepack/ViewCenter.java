@@ -1,5 +1,14 @@
 package net.povstalec.stellarview.client.resourcepack;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
+
+import javax.annotation.Nullable;
+
+import net.povstalec.stellarview.client.render.SpaceRenderer;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexBuffer;
@@ -41,25 +50,25 @@ public class ViewCenter
 	public static final float DAY_MAX_VISIBLE_SIZE = 10F;
 	
 	@Nullable
-	private ResourceKey<SpaceObject> viewCenterKey;
+	protected ResourceKey<SpaceObject> viewCenterKey;
 	@Nullable
-	private SpaceObject viewCenterObject;
+	protected SpaceObject viewCenterObject;
 	
 	@Nullable
-	private List<Skybox> skyboxes;
+	protected List<Skybox> skyboxes;
 	
-	private Minecraft minecraft = Minecraft.getInstance();
+	protected Minecraft minecraft = Minecraft.getInstance();
 	@Nullable
-	private VertexBuffer skyBuffer;
+	protected VertexBuffer skyBuffer;
 	@Nullable
-	private VertexBuffer darkBuffer;
+	protected VertexBuffer darkBuffer;
 	
-	private SpaceCoords coords;
-	private AxisRotation axisRotation;
-	private long rotationPeriod;
+	protected SpaceCoords coords;
+	protected AxisRotation axisRotation;
+	protected long rotationPeriod;
 	
-	private final MeteorEffect.ShootingStar shootingStar;
-	private final MeteorEffect.MeteorShower meteorShower;
+	protected final MeteorEffect.ShootingStar shootingStar;
+	protected final MeteorEffect.MeteorShower meteorShower;
 	
 	public final float dayMaxBrightness;
 
@@ -130,13 +139,18 @@ public class ViewCenter
 		this.zRotationMultiplier = zRotationMultiplier;
 	}
 	
+	public void setViewCenterObject(SpaceObject object)
+	{
+		viewCenterObject = object;
+	}
+	
 	public boolean setViewCenterObject(HashMap<ResourceLocation, SpaceObject> spaceObjects)
 	{
 		if(viewCenterKey != null)
 		{
 			if(spaceObjects.containsKey(viewCenterKey.location()))
 			{
-				viewCenterObject = spaceObjects.get(viewCenterKey.location());
+				setViewCenterObject(spaceObjects.get(viewCenterKey.location()));
 				return true;
 			}
 			
@@ -275,7 +289,7 @@ public class ViewCenter
 		meteorShower.render(this, level, camera, partialTicks, modelViewMatrix, tesselator);
 	}
 	
-	private float getTimeOfDay(ClientLevel level, float partialTicks)
+	protected float getTimeOfDay(ClientLevel level, float partialTicks)
 	{
 		if(rotationPeriod <= 0)
 			return 0;
@@ -320,7 +334,7 @@ public class ViewCenter
 	public void renderSkyObjects(SpaceObject masterParent, ClientLevel level, float partialTicks, Matrix4f modelViewMatrix, Camera camera,
 			Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, Tesselator tesselator)
 	{
-		Space.render(this, masterParent, level, camera, partialTicks, modelViewMatrix, projectionMatrix, isFoggy, setupFog, tesselator);
+		SpaceRenderer.render(this, masterParent, level, camera, partialTicks, modelViewMatrix, projectionMatrix, isFoggy, setupFog, tesselator);
 	}
 	
 	public boolean renderSky(ClientLevel level, int ticks, float partialTicks, Matrix4f modelViewMatrix, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)

@@ -1,11 +1,14 @@
 package net.povstalec.stellarview.client.resourcepack.objects;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import java.util.ArrayList;
+import java.util.Optional;
+
+import javax.annotation.Nullable;
+
+import net.minecraft.nbt.CompoundTag;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -19,24 +22,26 @@ import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.config.GeneralConfig;
 import net.povstalec.stellarview.common.util.*;
 import net.povstalec.stellarview.common.util.SpaceCoords.SpaceDistance;
-import org.joml.Matrix4f;
-import org.joml.Quaterniond;
-import org.joml.Vector3f;
-
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Optional;
 
 public abstract class SpaceObject
 {
 	public static final float DEFAULT_DISTANCE = 100.0F;
+	
+	public static final String PARENT_LOCATION = "parent";
+	
+	public static final String COORDS = "coords";
+	public static final String AXIS_ROTATION = "axis_rotation";
+	
+	public static final String FADE_OUT_HANDLER = "fade_out_handler";
+	
+	public static final String ID = "id";
 	
 	public static final ResourceLocation SPACE_OBJECT_LOCATION = ResourceLocation.fromNamespaceAndPath(StellarView.MODID, "space_object");
 	public static final ResourceKey<Registry<SpaceObject>> REGISTRY_KEY = ResourceKey.createRegistryKey(SPACE_OBJECT_LOCATION);
 	public static final Codec<ResourceKey<SpaceObject>> RESOURCE_KEY_CODEC = ResourceKey.codec(REGISTRY_KEY);
 	
 	@Nullable
-	protected ResourceKey<SpaceObject> parentKey;
+	protected ResourceLocation parentLocation;
 
 	@Nullable
 	protected SpaceObject parent;
@@ -51,10 +56,12 @@ public abstract class SpaceObject
 	protected ResourceLocation location;
 	protected double lastDistance = 0; // Last known distance of this object from the View Center, used for sorting
 	
-	public SpaceObject(Optional<ResourceKey<SpaceObject>> parentKey, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation, FadeOutHandler fadeOutHandler)
+	public SpaceObject() {}
+	
+	public SpaceObject(Optional<ResourceLocation> parentLocation, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation, FadeOutHandler fadeOutHandler)
 	{
-		if(parentKey.isPresent())
-				this.parentKey = parentKey.get();
+		if(parentLocation.isPresent())
+				this.parentLocation = parentLocation.get();
 		
 		if(coords.left().isPresent())
 			this.coords = coords.left().get();
@@ -86,9 +93,9 @@ public abstract class SpaceObject
 		return axisRotation;
 	}
 	
-	public Optional<ResourceKey<SpaceObject>> getParentKey()
+	public Optional<ResourceLocation> getParentLocation()
 	{
-		return Optional.ofNullable(parentKey);
+		return Optional.ofNullable(parentLocation);
 	}
 	
 	public Optional<SpaceObject> getParent()
@@ -219,10 +226,29 @@ public abstract class SpaceObject
 		return this.getClass().toString();
 	}
 	
+	public void fromTag(CompoundTag tag)
+	{
+		if(tag.contains(ID))
+			this.location = ResourceLocation.parse(tag.getString(ID));
+		
+		if(tag.contains(PARENT_LOCATION))
+			this.parentLocation = ResourceLocation.parse(tag.getString(PARENT_LOCATION));
+		
+		this.coords = SpaceCoords.fromTag(tag.getCompound(COORDS));
+		
+		this.axisRotation = AxisRotation.fromTag(tag.getCompound(AXIS_ROTATION));
+		
+		this.fadeOutHandler = FadeOutHandler.fromTag(tag.getCompound(FADE_OUT_HANDLER));
+	}
+	
 	
 	
 	public static class FadeOutHandler
 	{
+		public static final String FADE_OUT_START_DISTANCE = "fade_out_start_distance";
+		public static final String FADE_OUT_END_DISTANCE = "fade_out_end_distance";
+		public static final String MAX_CHILD_RENDER_DISTANCE = "max_child_render_distance";
+		
 		public static final FadeOutHandler DEFAULT_PLANET_HANDLER = new FadeOutHandler(new SpaceDistance(70000000000D), new SpaceDistance(100000000000D), new SpaceDistance(100000000000D));
 		public static final FadeOutHandler DEFAULT_STAR_HANDLER = new FadeOutHandler(new SpaceDistance(3000000L), new SpaceDistance(5000000L), new SpaceDistance(100000000000D));
 		public static final FadeOutHandler DEFAULT_STAR_FIELD_HANDLER = new FadeOutHandler(new SpaceDistance(3000000L), new SpaceDistance(5000000L), new SpaceDistance(5000000L));
@@ -232,9 +258,9 @@ public abstract class SpaceObject
 		private SpaceDistance maxChildRenderDistance;
 		
 		public static final Codec<FadeOutHandler> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-				SpaceDistance.CODEC.fieldOf("fade_out_start_distance").forGetter(FadeOutHandler::getFadeOutStartDistance),
-				SpaceDistance.CODEC.fieldOf("fade_out_end_distance").forGetter(FadeOutHandler::getFadeOutEndDistance),
-				SpaceDistance.CODEC.fieldOf("max_child_render_distance").forGetter(FadeOutHandler::getMaxChildRenderDistance)
+				SpaceDistance.CODEC.fieldOf(FADE_OUT_START_DISTANCE).forGetter(FadeOutHandler::getFadeOutStartDistance),
+				SpaceDistance.CODEC.fieldOf(FADE_OUT_END_DISTANCE).forGetter(FadeOutHandler::getFadeOutEndDistance),
+				SpaceDistance.CODEC.fieldOf(MAX_CHILD_RENDER_DISTANCE).forGetter(FadeOutHandler::getMaxChildRenderDistance)
 				).apply(instance, FadeOutHandler::new));
 		
 		public FadeOutHandler(SpaceDistance fadeOutStartDistance, SpaceDistance fadeOutEndDistance, SpaceDistance maxChildRenderDistance)
@@ -257,6 +283,11 @@ public abstract class SpaceObject
 		public SpaceDistance getMaxChildRenderDistance()
 		{
 			return maxChildRenderDistance;
+		}
+		
+		public static FadeOutHandler fromTag(CompoundTag tag)
+		{
+			return new FadeOutHandler(SpaceDistance.fromTag(tag.getCompound(FADE_OUT_START_DISTANCE)), SpaceDistance.fromTag(tag.getCompound(FADE_OUT_END_DISTANCE)), SpaceDistance.fromTag(tag.getCompound(MAX_CHILD_RENDER_DISTANCE)));
 		}
 	}
 }

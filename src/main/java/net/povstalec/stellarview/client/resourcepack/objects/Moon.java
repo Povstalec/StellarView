@@ -1,6 +1,13 @@
 package net.povstalec.stellarview.client.resourcepack.objects;
 
 import com.mojang.blaze3d.vertex.Tesselator;
+import java.util.List;
+import java.util.Optional;
+
+import javax.annotation.Nullable;
+
+import net.minecraft.resources.ResourceLocation;
+import org.joml.Matrix4f;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -12,11 +19,6 @@ import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.util.*;
 import net.povstalec.stellarview.compatibility.enhancedcelestials.EnhancedCelestialsCompatibility;
-import org.joml.Matrix4f;
-
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * A subtype of planet that should be compatible with enhanced celestials
@@ -27,7 +29,7 @@ public class Moon extends Planet
 	private Compatibility compatibility;
 	
 	public static final Codec<Moon> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			RESOURCE_KEY_CODEC.optionalFieldOf("parent").forGetter(Moon::getParentKey),
+			ResourceLocation.CODEC.optionalFieldOf("parent").forGetter(Moon::getParentLocation),
 			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf("coords").forGetter(object -> Either.left(object.getCoords())),
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(Moon::getAxisRotation),
 			OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(Moon::getOrbitInfo),
@@ -38,9 +40,9 @@ public class Moon extends Planet
 			Compatibility.CODEC.optionalFieldOf("compatibility").forGetter(Moon::getCompatibility)
 			).apply(instance, Moon::new));
 	
-	public Moon(Optional<ResourceKey<SpaceObject>> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
-			Optional<OrbitInfo> orbitInfo, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler,
-			Optional<Compatibility> compatibility)
+	public Moon(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
+				Optional<OrbitInfo> orbitInfo, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler,
+				Optional<Compatibility> compatibility)
 	{
 		super(parent, coords, axisRotation, orbitInfo, textureLayers, fadeOutHandler);
 

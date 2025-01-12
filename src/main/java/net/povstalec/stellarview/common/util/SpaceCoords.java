@@ -5,6 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.config.GeneralConfig;
+import net.minecraft.nbt.CompoundTag;
 import org.joml.Quaterniond;
 import org.joml.Quaternionf;
 import org.joml.Vector3d;
@@ -65,9 +66,19 @@ public class SpaceCoords
 		this(0, 0, 0, 0, 0, 0);
 	}
 	
+	public static SpaceCoords fromTag(CompoundTag tag)
+	{
+		return new SpaceCoords(SpaceDistance.fromTag(tag.getCompound(X)), SpaceDistance.fromTag(tag.getCompound(Y)), SpaceDistance.fromTag(tag.getCompound(Z)));
+	}
+	
 	//============================================================================================
 	//************************************Relative coordinates************************************
 	//============================================================================================
+	
+	public long lyDistanceSquared()
+	{
+		return this.x.ly * this.x.ly + this.y.ly * this.y.ly + this.z.ly * this.z.ly;
+	}
 	
 	/**
 	 * @param other The other coordinates that are compared to these coordinates
@@ -244,6 +255,11 @@ public class SpaceCoords
 		public SpaceDistance(double kilometers)
 		{
 			this(0, kilometers);
+		}
+		
+		public static SpaceDistance fromTag(CompoundTag tag)
+		{
+			return new SpaceDistance(tag.getLong(LY), tag.getDouble(KM));
 		}
 		
 		private void handleKmOverflow()
