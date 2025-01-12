@@ -1,16 +1,13 @@
 package net.povstalec.stellarview.client.resourcepack.objects;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Either;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceKey;
-import net.povstalec.stellarview.client.resourcepack.Space;
+import net.minecraft.resources.ResourceLocation;
+import net.povstalec.stellarview.client.render.SpaceRenderer;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.util.*;
 import org.joml.Matrix3f;
@@ -18,18 +15,19 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
 public abstract class GravityLense extends StarLike
 {
-	protected final float lensingIntensity;
-	protected final double maxLensingDistance;
+	protected float lensingIntensity;
+	protected double maxLensingDistance;
 	
 	protected SphericalCoords sphericalCoords = new SphericalCoords(0, 0, 0);
 	
-	public GravityLense(Optional<ResourceKey<SpaceObject>> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
+	public GravityLense() {}
+	
+	public GravityLense(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
 						Optional<OrbitInfo> orbitInfo, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler,
 						float minStarSize, float maxStarAlpha, float minStarAlpha,
 						float lensingIntensity, double maxLensingDistance)
@@ -44,7 +42,7 @@ public abstract class GravityLense extends StarLike
 	{
 		float intensity = (float) getLensingIntensity(lastDistance);
 		
-		if(intensity < Space.lensingIntensity)
+		if(intensity < SpaceRenderer.lensingIntensity)
 			return;
 		
 		Quaternionf lensingQuat = new Quaternionf().rotateY((float) sphericalCoords.theta);
@@ -53,9 +51,9 @@ public abstract class GravityLense extends StarLike
 		Matrix3f lensingMatrixInv = new Matrix3f().rotate(lensingQuat);
 		Matrix3f lensingMatrix = new Matrix3f().rotate(lensingQuat.invert());
 		
-		Space.lensingIntensity = intensity;
-		Space.lensingMatrixInv = lensingMatrixInv;
-		Space.lensingMatrix = lensingMatrix;
+		SpaceRenderer.lensingIntensity = intensity;
+		SpaceRenderer.lensingMatrixInv = lensingMatrixInv;
+		SpaceRenderer.lensingMatrix = lensingMatrix;
 	}
 	
 	public float getLensingIntensity()

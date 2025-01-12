@@ -13,6 +13,8 @@
 	"gui.stellarview.bright_stars": "Bright Stars",
 	"gui.stellarview.textured_stars": "Textured Stars",
 	"gui.stellarview.dust_clouds": "Dust Clouds",
+	
+	"gui.stellarview.space_region_render_distance": "Space Region Render Distance",
 
 	"gui.stellarview.replace_vanilla": "Replace Vanilla",
 	"gui.stellarview.replace_default": "Replace Default",

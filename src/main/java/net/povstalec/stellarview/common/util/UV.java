@@ -4,9 +4,13 @@ import javax.annotation.Nullable;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.nbt.CompoundTag;
 
 public class UV
 {
+	public static final String U = "u";
+	public static final String V = "v";
+	
 	@Nullable
 	private UV.PhaseHandler phaseHandler;
 	
@@ -52,10 +56,24 @@ public class UV
 		return phaseHandler != null ? (float) (v + phaseHandler.v(ticks)) / phaseHandler.rows() : v;
 	}
 	
+	public static UV fromTag(CompoundTag tag, UV.PhaseHandler phaseHandler)
+	{
+		return new UV(phaseHandler, tag.getFloat(U), tag.getFloat(V));
+	}
+	
 	
 	
 	public static class Quad
 	{
+		public static final String PHASE_HANDLER = "phase_handler";
+		
+		public static final String TOP_LEFT = "top_left";
+		public static final String BOTTOM_LEFT = "bottom_left";
+		public static final String BOTTOM_RIGHT = "bottom_right";
+		public static final String TOP_RIGHT = "top_right";
+		
+		public static final String FLIP_UV = "flip_uv";
+		
 		public static final Quad DEFAULT_QUAD_UV = new Quad(false);
 		
 		private final UV.PhaseHandler phaseHandler;
@@ -179,10 +197,23 @@ public class UV
 		{
 			return topRight;
 		}
+		
+		public static Quad fromTag(CompoundTag tag)
+		{
+			PhaseHandler phaseHandler = PhaseHandler.fromTag(tag.getCompound(PHASE_HANDLER));
+			
+			return new Quad(phaseHandler, UV.fromTag(tag.getCompound(TOP_LEFT), phaseHandler), UV.fromTag(tag.getCompound(BOTTOM_LEFT), phaseHandler),
+					UV.fromTag(tag.getCompound(BOTTOM_RIGHT), phaseHandler), UV.fromTag(tag.getCompound(TOP_RIGHT), phaseHandler));
+		}
 	}
 	
 	public static class PhaseHandler
 	{
+		public static final String TICKS_PER_PHASE = "ticks_per_phase";
+		public static final String PHASE_TICK_OFFSET = "phase_tick_offset";
+		public static final String COLUMNS = "columns";
+		public static final String ROWS = "rows";
+		
 		private final int ticksPerPhase;
 		private final int phaseTickOffset;
 		private final int columns;
@@ -244,5 +275,10 @@ public class UV
 	    {
 	    	return doPhases;
 	    }
+		
+		public static PhaseHandler fromTag(CompoundTag tag)
+		{
+			return new PhaseHandler(tag.getInt(TICKS_PER_PHASE), tag.getInt(PHASE_TICK_OFFSET), tag.getInt(COLUMNS), tag.getInt(ROWS));
+		}
 	}
 }
