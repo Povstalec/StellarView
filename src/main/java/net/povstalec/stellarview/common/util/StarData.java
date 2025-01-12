@@ -17,18 +17,13 @@ import org.joml.Matrix4f;
 import javax.annotation.Nullable;
 import java.util.Random;
 
-public class StarData
+public abstract class StarData
 {
 	private LOD lod1;
 	private LOD lod2;
 	private LOD lod3;
 	
-	public StarData(int stars)
-	{
-		this.lod1 = new LOD(stars);
-		this.lod2 = new LOD(stars);
-		this.lod3 = new LOD(stars);
-	}
+	public StarData() {}
 	
 	private LOD getLOD(StarField.LevelOfDetail lod)
 	{
@@ -42,66 +37,34 @@ public class StarData
 	
 	public void reset()
 	{
-		lod1.reset();
-		lod2.reset();
-		lod3.reset();
+		if(lod1 != null)
+			lod1.reset();
+		if(lod2 != null)
+			lod2.reset();
+		if(lod3 != null)
+			lod3.reset();
 	}
 	
-	public void renderStars(StarField.LevelOfDetail lod, Matrix4f pose, Matrix4f projectionMatrix, SpaceCoords difference, boolean hasTexture)
+	public void renderStars(StarField.LevelOfDetail levelOfDetail, Matrix4f pose, Matrix4f projectionMatrix, SpaceCoords difference, boolean hasTexture)
 	{
-		switch(lod)
+		switch(levelOfDetail)
 		{
 		case LOD3:
+			if(lod3 == null)
+				lod3 = newStars(StarField.LevelOfDetail.LOD3);
 			lod3.renderStarBuffer(pose, projectionMatrix, difference, hasTexture);
 		case LOD2:
+			if(lod2 == null)
+				lod2 = newStars(StarField.LevelOfDetail.LOD2);
 			lod2.renderStarBuffer(pose, projectionMatrix, difference, hasTexture);
 		case LOD1:
+			if(lod1 == null)
+				lod1 = newStars(StarField.LevelOfDetail.LOD1);
 			lod1.renderStarBuffer(pose, projectionMatrix, difference, hasTexture);
 		}
 	}
 	
-	/**
-	 * Creates information for a completely new star
-	 * @param starInfo StarInfo used for obtaining information about what star to create
-	 * @param random Random used for randomizing the star information
-	 * @param x X coordinate of the star
-	 * @param y Y coordinate of the star
-	 * @param z Z coordinate of the star
-	 * @param hasTexture Whether or not the star has a texture
-	 */
-	public void newStar(StarInfo starInfo/*, BufferBuilder builder*/, Random random, double x, double y, double z, boolean hasTexture)
-	{
-		StarLike.StarType starType = starInfo.getRandomStarType(random);
-		short alpha = starType.randomBrightness(random); // 0xAA is the default
-		
-		LOD lod = getLOD(StarField.LevelOfDetail.fromBrightness(alpha));
-		
-		// Set up position
-		
-		lod.starCoords[lod.size][0] = x;
-		lod.starCoords[lod.size][1] = y;
-		lod.starCoords[lod.size][2] = z;
-		
-		Color.IntRGB rgb = starType.getRGB();
-		
-		// Set up size
-		
-		lod.starSizes[lod.size] = starType.randomSize(random); // This randomizes the Star size
-		
-		// Set up color and alpha
-		
-		lod.starRGBA[lod.size] = new short[] {(short) rgb.red(), (short) rgb.green(), (short) rgb.blue(), alpha};
-		
-		// sin and cos are used to effectively clamp the random number between two values without actually clamping it,
-		// wwhich would result in some awkward lines as Stars would be brought to the clamped values
-		// Both affect Star size and rotation
-		double randomValue = random.nextDouble() * Math.PI * 2.0D;
-		lod.randoms[lod.size][0] = Math.sin(randomValue); // sin random
-		lod.randoms[lod.size][1] = Math.cos(randomValue); // cos random
-		
-		//lod.createStar(builder, hasTexture, lod.size);
-		lod.size++;
-	}
+	protected abstract LOD newStars(StarField.LevelOfDetail lod);
 	
 	
 	
@@ -117,7 +80,7 @@ public class StarData
 		
 		private double[][] randoms;
 		
-		private int size;
+		private int stars;
 		
 		public LOD(int stars)
 		{
@@ -128,7 +91,7 @@ public class StarData
 			
 			this.starRGBA = new short[stars][4];
 			
-			this.size = 0;
+			this.stars = 0;
 		}
 		
 		public void reset()
@@ -138,6 +101,45 @@ public class StarData
 			
 			starBuffer.close();
 			starBuffer = null;
+		}
+		
+		/**
+		 * Creates information for a completely new star
+		 * @param starType StarType used for obtaining information about what star to create
+		 * @param random Random used for randomizing the star information
+		 * @param x X coordinate of the star
+		 * @param y Y coordinate of the star
+		 * @param z Z coordinate of the star
+		 * @param hasTexture Whether or not the star has a texture
+		 */
+		public void newStar(StarLike.StarType starType, Random random, double x, double y, double z, boolean hasTexture)
+		{
+			// Set up position
+			
+			starCoords[stars][0] = x;
+			starCoords[stars][1] = y;
+			starCoords[stars][2] = z;
+			
+			short alpha = starType.randomBrightness(random); // 0xAA is the default
+			Color.IntRGB rgb = starType.getRGB();
+			
+			// Set up size
+			
+			starSizes[stars] = starType.randomSize(random); // This randomizes the Star size
+			
+			// Set up color and alpha
+			
+			starRGBA[stars] = new short[] {(short) rgb.red(), (short) rgb.green(), (short) rgb.blue(), alpha};
+			
+			// sin and cos are used to effectively clamp the random number between two values without actually clamping it,
+			// wwhich would result in some awkward lines as Stars would be brought to the clamped values
+			// Both affect Star size and rotation
+			double randomValue = random.nextDouble() * Math.PI * 2.0D;
+			randoms[stars][0] = Math.sin(randomValue); // sin random
+			randoms[stars][1] = Math.cos(randomValue); // cos random
+			
+			//lod.createStar(builder, hasTexture, lod.size);
+			stars++;
 		}
 		
 		public void createStar(BufferBuilder builder, boolean hasTexture, int i)
@@ -216,7 +218,7 @@ public class StarData
 		{
 			bufferBuilder.begin(VertexFormat.Mode.QUADS, hasTexture ? StellarViewVertexFormat.STAR_POS_COLOR_LY_TEX : StellarViewVertexFormat.STAR_POS_COLOR_LY);
 			
-			for(int i = 0; i < size; i++)
+			for(int i = 0; i < stars; i++)
 			{
 				createStar(bufferBuilder, hasTexture, i);
 			}
@@ -225,6 +227,9 @@ public class StarData
 		
 		private void renderStarBuffer(Matrix4f pose, Matrix4f projectionMatrix, SpaceCoords difference, boolean hasTexture)
 		{
+			if(stars == 0)
+				return;
+			
 			if(starBuffer == null) // Buffer requires setup
 			{
 				if(!SpaceRenderer.loadNewStars())
@@ -244,7 +249,7 @@ public class StarData
 				starBuffer.drawWithShader(pose, projectionMatrix, difference, hasTexture ? StellarViewShaders.starTexShader() : StellarViewShaders.starShader());
 				VertexBuffer.unbind();
 				
-				SpaceRenderer.loadedStars(size);
+				SpaceRenderer.loadedStars(stars);
 			}
 			else
 			{
