@@ -4,13 +4,12 @@ import com.google.gson.JsonElement;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.neoforged.bus.api.Event;
+import net.neoforged.bus.api.ICancellableEvent;
 
 import java.util.Map;
 
-@Cancelable
-public class StellarViewReloadEvent extends Event
+public class StellarViewReloadEvent extends Event implements ICancellableEvent
 {
 	private final Map<ResourceLocation, JsonElement> jsonMap;
 	private final ResourceManager manager;

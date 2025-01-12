@@ -2,6 +2,7 @@ package net.povstalec.stellarview.client.render;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
@@ -70,20 +71,20 @@ public class ClientSpaceRegion
 		return true;
 	}
 	
-	public void renderDustClouds(ViewCenter viewCenter, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, Matrix4f projectionMatrix, Runnable setupFog, float brightness)
+	public void renderDustClouds(ViewCenter viewCenter, ClientLevel level, Camera camera, float partialTicks, Matrix4f modelViewMatrix, Matrix4f projectionMatrix, Runnable setupFog, float brightness)
 	{
 		for(StarField starField : starFieldRenderers)
 		{
-			starField.renderDustClouds(viewCenter, level, partialTicks, stack, camera, projectionMatrix, setupFog, brightness);
+			starField.renderDustClouds(viewCenter, level, partialTicks, modelViewMatrix, camera, projectionMatrix, setupFog, brightness);
 		}
 	}
 	
-	public void render(ViewCenter viewCenter, SpaceObject masterParent, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder)
+	public void render(ViewCenter viewCenter, SpaceObject masterParent, ClientLevel level, Camera camera, float partialTicks, Matrix4f modelViewMatrix, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, Tesselator tesselator)
 	{
 		for(SpaceObject spaceObject : children)
 		{
 			if(spaceObject != masterParent) // Makes sure the master parent (usually galaxy) is rendered last, that way stars from other galaxies don't get rendered over planets
-				spaceObject.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, NULL_VECTOR, new AxisRotation());
+				spaceObject.render(viewCenter, level, partialTicks, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog, tesselator, NULL_VECTOR, new AxisRotation());
 		}
 	}
 	

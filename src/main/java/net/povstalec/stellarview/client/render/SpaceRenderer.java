@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
+import com.mojang.blaze3d.vertex.Tesselator;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.client.resourcepack.objects.*;
 import net.povstalec.stellarview.common.config.GeneralConfig;
@@ -99,7 +100,7 @@ public final class SpaceRenderer
 		}
 	}
 	
-	public static void render(ViewCenter viewCenter, SpaceObject masterParent, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder)
+	public static void render(ViewCenter viewCenter, SpaceObject masterParent, ClientLevel level, Camera camera, float partialTicks, Matrix4f modelViewMatrix, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, Tesselator tesselator)
 	{
 		starsPerTick = 0;
 		setBestLensing();
@@ -114,7 +115,7 @@ public final class SpaceRenderer
 				for(Map.Entry<ClientSpaceRegion.RegionPos, ClientSpaceRegion> spaceRegionEntry : SPACE_REGIONS.entrySet())
 				{
 					if(spaceRegionEntry.getKey().isInRange(pos, getRange()))
-						spaceRegionEntry.getValue().renderDustClouds(viewCenter, level, camera, partialTicks, stack, projectionMatrix, setupFog, dustCloudBrightness);
+						spaceRegionEntry.getValue().renderDustClouds(viewCenter, level, camera, partialTicks, modelViewMatrix, projectionMatrix, setupFog, dustCloudBrightness);
 				}
 			}
 		}
@@ -125,16 +126,16 @@ public final class SpaceRenderer
 			if(!spaceRegionEntry.getKey().equals(pos))
 			{
 				if(spaceRegionEntry.getKey().isInRange(pos, getRange()))
-					spaceRegionEntry.getValue().render(viewCenter, masterParent, level, camera, partialTicks, stack, projectionMatrix, isFoggy, setupFog, bufferbuilder);
+					spaceRegionEntry.getValue().render(viewCenter, masterParent, level, camera, partialTicks, modelViewMatrix, projectionMatrix, isFoggy, setupFog, tesselator);
 			}
 			else
 				centerRegion = spaceRegionEntry.getValue();
 		}
 		
 		if(centerRegion != null)
-			centerRegion.render(viewCenter, masterParent, level, camera, partialTicks, stack, projectionMatrix, isFoggy, setupFog, bufferbuilder);
+			centerRegion.render(viewCenter, masterParent, level, camera, partialTicks, modelViewMatrix, projectionMatrix, isFoggy, setupFog, tesselator);
 		
-		masterParent.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, NULL_VECTOR, new AxisRotation());
+		masterParent.render(viewCenter, level, partialTicks, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog, tesselator, NULL_VECTOR, new AxisRotation());
 	}
 	
 	
