@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.resources.ResourceLocation;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.datafixers.util.Either;
 import com.mojang.math.Matrix4f;
@@ -34,7 +35,7 @@ public class Moon extends Planet
 	private Compatibility compatibility;
 	
 	public static final Codec<Moon> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			RESOURCE_KEY_CODEC.optionalFieldOf("parent").forGetter(Moon::getParentKey),
+			ResourceLocation.CODEC.optionalFieldOf("parent").forGetter(Moon::getParentLocation),
 			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf("coords").forGetter(object -> Either.left(object.getCoords())),
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(Moon::getAxisRotation),
 			OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(Moon::getOrbitInfo),
@@ -45,9 +46,9 @@ public class Moon extends Planet
 			Compatibility.CODEC.optionalFieldOf("compatibility").forGetter(Moon::getCompatibility)
 			).apply(instance, Moon::new));
 	
-	public Moon(Optional<ResourceKey<SpaceObject>> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
-			Optional<OrbitInfo> orbitInfo, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler,
-			Optional<Compatibility> compatibility)
+	public Moon(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
+				Optional<OrbitInfo> orbitInfo, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler,
+				Optional<Compatibility> compatibility)
 	{
 		super(parent, coords, axisRotation, orbitInfo, textureLayers, fadeOutHandler);
 

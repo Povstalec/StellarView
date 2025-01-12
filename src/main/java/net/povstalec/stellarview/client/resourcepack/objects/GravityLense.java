@@ -8,24 +8,24 @@ import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.resources.ResourceKey;
-import net.povstalec.stellarview.client.resourcepack.Space;
+import net.minecraft.resources.ResourceLocation;
+import net.povstalec.stellarview.client.render.SpaceRenderer;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.util.*;
 
 import java.util.List;
 import java.util.Optional;
 
-import static com.ibm.icu.impl.ValidIdentifiers.Datatype.x;
-
 public abstract class GravityLense extends StarLike
 {
-	protected final float lensingIntensity;
-	protected final double maxLensingDistance;
+	protected float lensingIntensity;
+	protected double maxLensingDistance;
 	
 	protected SphericalCoords sphericalCoords = new SphericalCoords(0, 0, 0);
 	
-	public GravityLense(Optional<ResourceKey<SpaceObject>> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
+	public GravityLense() {}
+	
+	public GravityLense(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
 						Optional<OrbitInfo> orbitInfo, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler,
 						float minStarSize, float maxStarAlpha, float minStarAlpha,
 						float lensingIntensity, double maxLensingDistance)
@@ -72,7 +72,7 @@ public abstract class GravityLense extends StarLike
 	{
 		float intensity = (float) getLensingIntensity(lastDistance);
 		
-		if(intensity < Space.lensingIntensity)
+		if(intensity < SpaceRenderer.lensingIntensity)
 			return;
 		
 		Quaternion lensingQuat = new Quaternion(0, 0, 0, 1);
@@ -84,9 +84,9 @@ public abstract class GravityLense extends StarLike
 		Mat3f lensingMatrixInv = new Mat3f().rotate(lensingQuat);
 		Mat3f lensingMatrix = new Mat3f().rotate(invert(lensingQuat));
 		
-		Space.lensingIntensity = intensity;
-		Space.lensingMatrixInv = lensingMatrixInv;
-		Space.lensingMatrix = lensingMatrix;
+		SpaceRenderer.lensingIntensity = intensity;
+		SpaceRenderer.lensingMatrixInv = lensingMatrixInv;
+		SpaceRenderer.lensingMatrix = lensingMatrix;
 	}
 	
 	public float getLensingIntensity()

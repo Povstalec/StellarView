@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.datafixers.util.Either;
@@ -15,7 +17,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.resources.ResourceKey;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.Color;
@@ -27,10 +28,10 @@ import net.povstalec.stellarview.common.util.TextureLayer;
 public class Star extends StarLike
 {
 	@Nullable
-	private final SupernovaInfo supernovaInfo;
+	private SupernovaInfo supernovaInfo;
 	
 	public static final Codec<Star> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			RESOURCE_KEY_CODEC.optionalFieldOf("parent").forGetter(Star::getParentKey),
+			ResourceLocation.CODEC.optionalFieldOf("parent").forGetter(Star::getParentLocation),
 			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf("coords").forGetter(object -> Either.left(object.getCoords())),
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(Star::getAxisRotation),
 			OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(Star::getOrbitInfo),
@@ -45,7 +46,9 @@ public class Star extends StarLike
 			SupernovaInfo.CODEC.optionalFieldOf("supernova_info").forGetter(Star::getSupernovaInfo)
 			).apply(instance, Star::new));
 	
-	public Star(Optional<ResourceKey<SpaceObject>> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
+	public Star() {}
+	
+	public Star(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
 			Optional<OrbitInfo> orbitInfo, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler,
 			float minStarSize, float maxStarAlpha, float minStarAlpha,
 			Optional<SupernovaInfo> supernovaInfo)
@@ -153,6 +156,14 @@ public class Star extends StarLike
 		}
 	}
 	
+	@Override
+	public void fromTag(CompoundTag tag)
+	{
+		super.fromTag(tag);
+		
+		supernovaInfo = null; //TODO
+	}
+	
 	
 	
 	public static class SupernovaInfo
@@ -233,5 +244,11 @@ public class Star extends StarLike
 		{
 			return ticks - getStartTicks();
 		}
+		
+		//TODO
+		/*public static SupernovaInfo fromTag(CompoundTag tag)
+		{
+		
+		}*/
 	}
 }

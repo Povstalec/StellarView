@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import net.minecraft.nbt.CompoundTag;
+
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -25,10 +27,17 @@ import net.povstalec.stellarview.common.util.*;
 
 public abstract class TexturedObject extends SpaceObject
 {
+	public static final String TEXTURE_LAYERS = "texture_layers";
+	
 	protected ArrayList<TextureLayer> textureLayers;
 	
-	public TexturedObject(Optional<ResourceKey<SpaceObject>> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords,
-						  AxisRotation axisRotation, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler)
+	public TexturedObject()
+	{
+		textureLayers = new ArrayList<TextureLayer>();
+	}
+	
+	public TexturedObject(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords,
+			AxisRotation axisRotation, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler)
 	{
 		super(parent, coords, axisRotation, fadeOutHandler);
 		
@@ -161,6 +170,19 @@ public abstract class TexturedObject extends SpaceObject
 				if(child.lastDistance < this.lastDistance)
 					child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, positionVector, this.axisRotation);
 			}
+		}
+	}
+	
+	@Override
+	public void fromTag(CompoundTag tag)
+	{
+		super.fromTag(tag);
+		
+		// Deserialize Texture Layers
+		CompoundTag textureLayerTag = tag.getCompound(TEXTURE_LAYERS);
+		for(int i = 0; i < textureLayerTag.size(); i++)
+		{
+			textureLayers.add(TextureLayer.fromTag(textureLayerTag.getCompound(String.valueOf(i))));
 		}
 	}
 }

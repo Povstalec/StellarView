@@ -4,7 +4,9 @@ import java.nio.ByteBuffer;
 
 import javax.annotation.Nullable;
 
-import net.povstalec.stellarview.client.resourcepack.Space;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Vector3f;
+import net.povstalec.stellarview.client.render.SpaceRenderer;
 import org.lwjgl.opengl.GL15C;
 
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -13,8 +15,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
 
 import net.minecraft.client.Minecraft;
 import net.povstalec.stellarview.client.render.shader.StarShaderInstance;
@@ -198,13 +198,13 @@ public class StarBuffer implements AutoCloseable
 			shaderInstance.RELATIVE_SPACE_KM.set(relativeSpaceKm);
 		
 		if(shaderInstance.LENSING_MAT != null)
-			shaderInstance.LENSING_MAT.set(Space.lensingMatrix.toMatrix3f());
+			shaderInstance.LENSING_MAT.set(SpaceRenderer.lensingMatrix.toMatrix3f());
 		
 		if(shaderInstance.LENSING_MAT_INV != null)
-			shaderInstance.LENSING_MAT_INV.set(Space.lensingMatrixInv.toMatrix3f());
+			shaderInstance.LENSING_MAT_INV.set(SpaceRenderer.lensingMatrixInv.toMatrix3f());
 		
 		if(shaderInstance.LENSING_INTENSITY != null)
-			shaderInstance.LENSING_INTENSITY.set(Space.lensingIntensity);
+			shaderInstance.LENSING_INTENSITY.set(SpaceRenderer.lensingIntensity);
 		
 		RenderSystem.setupShaderLights(shaderInstance);
 		shaderInstance.apply();

@@ -1,11 +1,16 @@
 package net.povstalec.stellarview.common.util;
 
 import com.mojang.math.Quaternion;
+import net.minecraft.nbt.CompoundTag;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 public class AxisRotation
 {
+	public static final String X_AXIS = "x_axis";
+	public static final String Y_AXIS = "y_axis";
+	public static final String Z_AXIS = "z_axis";
+	
 	private boolean inDegrees;
 	
 	private double xAxis;
@@ -39,7 +44,12 @@ public class AxisRotation
 			this.zAxis = zAxis;
 		}
 		
-		Quaterniond quaterniondX = new Quaterniond().rotationX(this.xAxis);
+		setupQuaternions();
+	}
+	
+	private void setupQuaternions()
+	{
+		Quaterniond quaterniondX =new Quaterniond().rotationX(this.xAxis);
 		Quaterniond quaterniondY = new Quaterniond().rotationY(this.yAxis);
 		Quaterniond quaterniondZ = new Quaterniond().rotationZ(this.zAxis);
 		
@@ -53,6 +63,11 @@ public class AxisRotation
 		quatf.mul(quaternionfY);
 		quaternionfX.mul(quatf);
 		quaternionf = quaternionfX;
+	}
+	
+	public static AxisRotation fromTag(CompoundTag tag)
+	{
+		return new AxisRotation(false, tag.getDouble(X_AXIS), tag.getDouble(Y_AXIS), tag.getDouble(Z_AXIS));
 	}
 	
 	/**

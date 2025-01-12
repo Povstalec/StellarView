@@ -52,6 +52,10 @@ public class GeneralConfigScreen extends Screen
 		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.dust_clouds"),
 				this.width, GeneralConfig.dust_clouds));
 		
+		this.configList.add(new ConfigList.SliderConfigEntry(Component.translatable("gui.stellarview.space_region_render_distance").append(Component.literal(": ")),
+				Component.empty(),
+				this.width, GeneralConfig.space_region_render_distance));
+		
 		this.addWidget(this.configList);
 
 		this.addRenderableWidget(new Button((this.width - BACK_BUTTON_WIDTH) / 2, this.height - BACK_BUTTON_TOP_OFFSET, BACK_BUTTON_WIDTH, BACK_BUTTON_HEIGHT, 

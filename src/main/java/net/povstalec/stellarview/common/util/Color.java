@@ -2,6 +2,7 @@ package net.povstalec.stellarview.common.util;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.nbt.CompoundTag;
 
 public class Color
 {
@@ -43,6 +44,8 @@ public class Color
 				Codec.intRange(MIN_INT_VALUE, MAX_INT_VALUE).fieldOf(GREEN).forGetter(Color.IntRGB::green),
 				Codec.intRange(MIN_INT_VALUE, MAX_INT_VALUE).fieldOf(BLUE).forGetter(Color.IntRGB::blue)
 				).apply(instance, Color.IntRGB::new));
+		
+		public IntRGB() {}
 		
 		public IntRGB(int red, int green, int blue)
 		{
@@ -91,6 +94,13 @@ public class Color
 		{
 			return blue;
 		}
+		
+		public void fromTag(CompoundTag tag)
+		{
+			red = tag.getInt(RED);
+			green = tag.getInt(GREEN);
+			blue = tag.getInt(BLUE);
+		}
 	}
 	
 	public static class IntRGBA extends IntRGB
@@ -103,6 +113,8 @@ public class Color
 				).apply(instance, Color.IntRGBA::new));
 	    
 	    protected int alpha;
+		
+		public IntRGBA() {}
 		
 		public IntRGBA(int red, int green, int blue, int alpha)
 		{
@@ -132,6 +144,14 @@ public class Color
 		{
 			return alpha;
 		}
+		
+		@Override
+		public void fromTag(CompoundTag tag)
+		{
+			super.fromTag(tag);
+			
+			alpha = tag.getInt(ALPHA);
+		}
 	}
 	
 	public static class FloatRGB
@@ -139,6 +159,8 @@ public class Color
 		protected float red;
 		protected float green;
 		protected float blue;
+		
+		public FloatRGB() {}
 		
 		public FloatRGB(int red, int green, int blue)
 		{
@@ -199,6 +221,13 @@ public class Color
 		{
 			return blue;
 		}
+		
+		public void fromTag(CompoundTag tag)
+		{
+			red = tag.getFloat(RED);
+			green = tag.getFloat(GREEN);
+			blue = tag.getFloat(BLUE);
+		}
 	}
 	
 	public static class FloatRGBA extends FloatRGB
@@ -220,6 +249,8 @@ public class Color
 				).apply(instance, Color.FloatRGBA::new));
 	    
 	    protected float alpha;
+		
+		public FloatRGBA() {}
 		
 		public FloatRGBA(int red, int green, int blue, int alpha)
 		{
@@ -265,6 +296,14 @@ public class Color
 		public float alpha()
 		{
 			return alpha;
+		}
+		
+		@Override
+		public void fromTag(CompoundTag tag)
+		{
+			super.fromTag(tag);
+			
+			alpha = tag.getFloat(ALPHA);
 		}
 	}
 }
