@@ -1,6 +1,7 @@
 {
-	"faq": "Frequently Asked Questions (FAQ)"
-	"resourcepacks": "Resourcepacks",
-	"modding": "Modding",
+	"faq.mdx": "Frequently Asked Questions (FAQ)"
+	"resourcepacks.mdx": "Resourcepacks",
+	"modding.mdx": "Modding",
+	"changelog.mdx": "Changelog",
 	"credits.mdx": "Credits"
 }
