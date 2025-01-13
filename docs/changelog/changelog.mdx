@@ -1,0 +1,150 @@
+# Changelog
+The list of changes that have been made during development. This is not an exhaustive list, some changes were most certainly forgotten about.
+
+## 0.3.4 - 2025 Jan 12 - 1.19.2~1.21.1
+- Added:
+  - Level Of Detail (LOD) to Star Fields
+- Fixed:
+  - Invisible Meteor Showers and Shooting Stars
+  - Crash with newest version of Enhanced Celestials
+  - Crash with Iris
+
+
+## 0.3.3 - 2024 Dec 22 - 1.19.2~1.21.1
+- Added:
+  - **Compatibility with Aether**
+  - **Compatibility with Twilight Forest**
+
+
+## 0.3.2 - 2024 Dec 21 - 1.19.2~1.21.1
+**(v1.21.1) Updated to Enhanced Celestials version 6.0.0.0**
+- Added:
+  - Gravitational lensing around Black Holes (still fairly work in progress, only affects Star Fields for now)
+  - Galactic Dust Clouds
+- Changed:
+  - Stars can now use custom textures (for the sake of performance, one texture applies to an entire Star Field)
+
+
+## 0.3.1 - 2024 Oct 19 - 1.19.2~1.21.1
+- **Updated to Minecraft 1.21.1 - HUGE thanks for the port to NeoForge 1.21.1 done entirely by Erdragh**
+- Added:
+  - Supernova 1987A
+  - Synodic orbit JSON parameter to simplify moon orbit creation
+- Changed:
+  - More time between supernovae events
+- Fixed:
+  - Alpha Centauri system not rendering from far away
+
+
+## 0.3.0 - 2024 Oct 06 - 1.19.2~1.20.1
+- Added:
+  - ***Resourcepack compatibility*** - Every single aspect of the mod can now be modified through the use of Resourcepacks. You can even add new objects to the sky.
+  - ***View Center system*** - View Centers (which can be edited through Resourcepacks) can specify which planet (or any other object really) you're viewing the sky from. They will, by default, work with any dimension using dimension effects of Overworld, Nether and End. Any additional custom dimension effects added by mods can be easily edited into being compatible with the View Center system by their respective mod authors, if they choose to do so.
+  - Conversion system for equatorial coordinates, allowing you to write down coordinates for any object using its J2000 epoch coordinates you can easily find for real-life space objects and make them appear where they should in-game.
+  - Nebulae: Crab Nebula, Dumbell Nebula, Eagle Nebula, Lagoon Nebula, Orion Nebula, and Ring Nebula
+  - Andromeda Galaxy
+  - Triangulum Galaxy
+  - Added Pegasus Dwarf Irregular Galaxy
+  - Satellite galaxies: Antila 2, Crater 2 Dwarf, Large Magellanic Cloud, Small Magellanic Cloud, Sagittarius Dwarf Spheroid, M32, and M110
+  - Alpha Centauri system: Rigil Kentaurus, Toliman, and Proxima Centauri, along with Proxima b, c, and d
+- Fixed:
+  - Minimized sky jitter caused by high time values (billions of ticks in the future)
+
+
+## 0.2.4 - 2024 May 26
+- Changed:
+  - Textures no longer use flipped UV by default (the Moon still uses flipped UV, because that's how Vanilla Minecraft does it)
+- Fixed:
+  - Barycenter objects not rendering
+  - Sun showing up at night
+
+
+## 0.2.3 Hotfix - 2024 May 24 - 1.19.2~1.20.1
+- Fixed:
+  - Galaxy API problems that can cause crashes related to compatibility
+  - Galaxy rotation being incorrectly affected by the year length config slider
+
+
+## 0.2.3 - 2024 May 24 - 1.19.2~1.20.1
+***HUGE thanks to Noobly Walker who practically carried most this update***
+- Added:
+  - Dione, Enceladus, Iapetus, Rhea, and Tethys around Saturn
+  - Ariel, Oberon, Titania, and Umbriel around Uranus
+  - Triton around Neptune
+  - Dwarf planets: Ceres, Vesta, Pluto, and Charon
+  - Barycenter object class
+  - Star spectral classes - Stars are now divided into distinct spectral classes (O, B, A, F, G, K, M) which dictate their size and brightness and are by default distributed based on real life (most stars are M-class), the distribution can be made uniform in the config
+  - Added multiple meteor shower colors
+  - Added a bunch of config settings for how stars appear
+- Changed:
+  - Stars now lose brightness with distance, giving a more 3D feel to the Milky Way galaxy
+  - Minimal distance at which Z sky axis is rotated by 90 degrees has been changed from 100 000 blocks to 10 000 blocks
+  - Year length is now configurable
+  - Io, Europa, Callisto, Ganymede, and Titan no longer have placeholder textures
+  - Uranus now has rings
+  - Venus now has an atmosphere
+- Fixed:
+  - The Moon's phases should now properly line up with where it is in the sky
+
+
+## 0.2.2 - 2024 Feb 23 - 1.19.2~1.20.1
+- Added:
+  - Compatibility with Enhanced Celestials
+- Fixed:
+  - Supernova is no longer visible during the day before it has exploded
+
+
+## 0.2.1 - 2024 Jan 08 - 1.19.2~1.20.1
+- Added:
+  - Io, Europa, Callisto, and Ganymede are now orbiting Jupiter
+  - Titan orbiting Saturn
+- Fixed:
+  - Potential crashes related to sky event rarity
+
+
+## 0.2.0 - 2024 Jan 04 - 1.19.2~1.20.1
+- Added:
+  - Orbiting objects (Planets and moons can be seen in the night sky orbiting around each other)
+- Fixes and changes:
+  - Rewrote the entirety of rendering code to make usage easier
+  - Star size now changes with distance
+- Removed:
+  - Alpha, Beta and Gamma effects (there are plans to replace those with a better, more flexible system)
+
+
+## 0.1.5 - 2023 Aug 16 - 1.19.2~1.20.1
+- Added:
+  - Supernovae
+  - Shooting Stars
+  - Meteor Showers
+  - 3 new configurable sky effects ("stellarview:alpha_effects", "stellarview:beta_effects" and "stellarview:gamma_effects"; must be added to the "effects" field of the dimension_type to work)
+- Fixes and changes:
+  - Increased the max configurable distance for the Galaxy
+  - The Moon now blends with the sky during day
+
+
+## 0.1.4 - 2023 Jul 13 - 1.19.2~1.20.1
+- Fixed stars appearing black during twilight
+
+
+## 0.1.3 - 2023 Jun 29 - 1.19.2~1.19.4
+- Fixed insufficient memory crash
+
+
+## 0.1.2 - 2023 Jun 13 - 1.19.2~1.19.4
+- Config options to specify Milky Way position and rotation
+- Config option to specify the rate at which the sky rotates when the Player moves along the Z-Axis
+- Keybind (G by default) to open Stellar View Client Config while in-game
+
+
+## 0.1.1 - 2023 May 24 - 1.19.3
+- Custom Skyboxes can now be made from multiple separate images
+
+
+## 0.1.0 - 2023 May 23 - 1.19.3
+- Milky Way Galaxy
+- Brighter Stars
+- Light interference
+- Location-based Sky rotation
+- Custom Skybox support
+- Client-side Config
