@@ -1,0 +1,9 @@
+{
+	"id": "stellarview",
+	"platforms":
+	{
+        	"curseforge": "stellarview",
+        	"modrinth": "stellarview"
+    	}
+	"slug": "stellarview"
+}
