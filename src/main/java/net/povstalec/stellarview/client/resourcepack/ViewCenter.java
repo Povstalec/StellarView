@@ -7,6 +7,8 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 import net.povstalec.stellarview.client.render.SpaceRenderer;
+import net.povstalec.stellarview.client.resourcepack.objects.StarField;
+import net.povstalec.stellarview.client.resourcepack.objects.StarLike;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -46,6 +48,10 @@ public class ViewCenter
 	public static final float DAY_MIN_VISIBLE_SIZE = 2.5F;
 	public static final float DAY_MAX_VISIBLE_SIZE = 10F;
 	
+	protected long ticks;
+	protected float starBrightness;
+	protected float dustCloudBrightness;
+	
 	@Nullable
 	protected ResourceKey<SpaceObject> viewCenterKey;
 	@Nullable
@@ -64,7 +70,9 @@ public class ViewCenter
 	protected AxisRotation axisRotation;
 	protected long rotationPeriod;
 	
+	@Nullable
 	protected final MeteorEffect.ShootingStar shootingStar;
+	@Nullable
 	protected final MeteorEffect.MeteorShower meteorShower;
 	
 	public final float dayMaxBrightness;
@@ -90,8 +98,8 @@ public class ViewCenter
 			Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("day_min_visible_size", DAY_MIN_VISIBLE_SIZE).forGetter(viewCenter -> viewCenter.dayMinVisibleSize),
 			Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("day_max_visible_size", DAY_MAX_VISIBLE_SIZE).forGetter(viewCenter -> viewCenter.dayMaxVisibleSize),
 			
-			MeteorEffect.ShootingStar.CODEC.optionalFieldOf("shooting_star", new MeteorEffect.ShootingStar()).forGetter(ViewCenter::getShootingStar),
-			MeteorEffect.MeteorShower.CODEC.optionalFieldOf("meteor_shower", new MeteorEffect.MeteorShower()).forGetter(ViewCenter::getMeteorShower),
+			MeteorEffect.ShootingStar.CODEC.optionalFieldOf("shooting_star", null).forGetter(ViewCenter::getShootingStar),
+			MeteorEffect.MeteorShower.CODEC.optionalFieldOf("meteor_shower", null).forGetter(ViewCenter::getMeteorShower),
 			
 			Codec.BOOL.optionalFieldOf("create_horizon", true).forGetter(viewCenter -> viewCenter.createHorizon),
 			Codec.BOOL.optionalFieldOf("create_void", true).forGetter(viewCenter -> viewCenter.createVoid),
@@ -106,6 +114,10 @@ public class ViewCenter
 			boolean createHorizon, boolean createVoid,
 			boolean starsAlwaysVisible, int zRotationMultiplier)
 	{
+		this.ticks = 0;
+		this.starBrightness = 0;
+		this.dustCloudBrightness = 0;
+		
 		if(viewCenterKey.isPresent())
 			this.viewCenterKey = viewCenterKey.get();
 		
@@ -156,6 +168,21 @@ public class ViewCenter
 		}
 		
 		return true;
+	}
+	
+	public long ticks()
+	{
+		return ticks;
+	}
+	
+	public float starBrightness()
+	{
+		return starBrightness;
+	}
+	
+	public float dustCloudBrightness()
+	{
+		return dustCloudBrightness;
 	}
 	
 	public AxisRotation getObjectAxisRotation()
@@ -234,11 +261,13 @@ public class ViewCenter
 		return 2 * Math.atan(zPos / zRotationMultiplier);
 	}
 	
+	@Nullable
 	public MeteorEffect.ShootingStar getShootingStar()
 	{
 		return shootingStar;
 	}
 	
+	@Nullable
 	public MeteorEffect.MeteorShower getMeteorShower()
 	{
 		return meteorShower;
@@ -282,16 +311,19 @@ public class ViewCenter
 	
 	protected void renderSkyEvents(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder)
 	{
-		shootingStar.render(this, level, camera, partialTicks, stack, bufferbuilder);
-		meteorShower.render(this, level, camera, partialTicks, stack, bufferbuilder);
+		if(shootingStar != null)
+			shootingStar.render(this, level, camera, partialTicks, stack, bufferbuilder);
+		
+		if(meteorShower != null)
+			meteorShower.render(this, level, camera, partialTicks, stack, bufferbuilder);
 	}
 	
-	protected float getTimeOfDay(ClientLevel level, float partialTicks)
+	protected float getTimeOfDay(ClientLevel level, long ticks, float partialTicks)
 	{
 		if(rotationPeriod <= 0)
 			return 0;
 		
-		double d0 = Mth.frac((double) (level.getDayTime() % rotationPeriod) / (double) rotationPeriod - 0.25D);
+		double d0 = Mth.frac((double) (ticks % rotationPeriod) / (double) rotationPeriod - 0.25D);
 		double d1 = 0.5D - Math.cos(d0 * Math.PI) / 2.0D;
 		
 		return (float) (d0 * 2.0D + d1) / 3.0F;
@@ -304,14 +336,18 @@ public class ViewCenter
 		
 		coords = viewCenterObject.getCoords();
 		
+		this.ticks = GeneralConfig.tick_multiplier.get() * (GeneralConfig.use_game_ticks.get() ? level.getGameTime() : level.getDayTime());
+		this.starBrightness = StarLike.getStarBrightness(this, level, camera, partialTicks);
+		this.dustCloudBrightness = GeneralConfig.dust_clouds.get() ? StarField.dustCloudBrightness(this, level, camera, partialTicks) : 0;
+		
 		stack.pushPose();
 		
 		if(!GeneralConfig.disable_view_center_rotation.get())
 		{
-			double rotation = 2 * Math.PI * getTimeOfDay(level, partialTicks) + Math.PI;
+			double rotation = 2 * Math.PI * getTimeOfDay(level, level.getDayTime(), partialTicks) + Math.PI;
 			
 			if(viewCenterObject instanceof OrbitingObject orbitingObject && orbitingObject.getOrbitInfo().isPresent())
-				rotation -= orbitingObject.getOrbitInfo().get().meanAnomaly(level.getDayTime() % orbitingObject.getOrbitInfo().get().orbitalPeriod().ticks(), partialTicks);
+				rotation -= orbitingObject.getOrbitInfo().get().meanAnomaly(this.ticks % orbitingObject.getOrbitInfo().get().orbitalPeriod().ticks(), partialTicks);
 			
 			stack.mulPose(Axis.YP.rotation((float) getAxisRotation().yAxis()));
 			stack.mulPose(Axis.ZP.rotation((float) getAxisRotation().zAxis()));
@@ -321,7 +357,7 @@ public class ViewCenter
 			stack.mulPose(Axis.ZP.rotation((float) getZRotation(level, camera, partialTicks)));
 		}
 		
-		viewCenterObject.renderFrom(this, level, partialTicks, stack, camera, projectionMatrix, StellarViewFogEffects.isFoggy(minecraft, camera), setupFog, bufferbuilder);
+		viewCenterObject.renderFrom(this, level, GeneralConfig.tick_multiplier.get() * partialTicks, stack, camera, projectionMatrix, StellarViewFogEffects.isFoggy(minecraft, camera), setupFog, bufferbuilder);
 
 		stack.popPose();
 
@@ -336,7 +372,7 @@ public class ViewCenter
 		SpaceRenderer.render(this, masterParent, level, camera, partialTicks, stack, projectionMatrix, isFoggy, setupFog, bufferbuilder);
 	}
 	
-	public boolean renderSky(ClientLevel level, int ticks, float partialTicks, PoseStack stack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
+	public boolean renderSky(ClientLevel level, long ticks, float partialTicks, PoseStack stack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
 	{
 		if(viewCenterObject == null && skyboxes == null)
 			return false;

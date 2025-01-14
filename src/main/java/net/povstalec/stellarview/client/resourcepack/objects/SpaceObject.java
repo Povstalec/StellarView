@@ -207,13 +207,13 @@ public abstract class SpaceObject
 			Vector3f parentVector, AxisRotation parentRotation);
 	
 	// Sets View Center coords and then renders everything
-	public void renderFrom(ViewCenter viewCenter, ClientLevel level, float partialTicks, PoseStack stack, Camera camera, 
+	public void renderFrom(ViewCenter viewCenter, ClientLevel level, float partialTicks, PoseStack stack, Camera camera,
 			Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder)
 	{
 		if(parent != null)
-			viewCenter.addCoords(getPosition(viewCenter, parent.getAxisRotation(), level.getDayTime(), partialTicks));
+			viewCenter.addCoords(getPosition(viewCenter, parent.getAxisRotation(), viewCenter.ticks(), partialTicks));
 		else
-			viewCenter.addCoords(getPosition(viewCenter, level.getDayTime(), partialTicks));
+			viewCenter.addCoords(getPosition(viewCenter, viewCenter.ticks(), partialTicks));
 		
 		if(parent != null)
 			parent.renderFrom(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder);

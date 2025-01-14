@@ -106,16 +106,12 @@ public final class SpaceRenderer
 		
 		ClientSpaceRegion.RegionPos pos = new ClientSpaceRegion.RegionPos(viewCenter.getCoords());
 		
-		if(GeneralConfig.dust_clouds.get())
+		if(viewCenter.dustCloudBrightness() > 0)
 		{
-			float dustCloudBrightness = StarField.dustCloudBrightness(viewCenter, level, camera, partialTicks);
-			if(dustCloudBrightness > 0)
+			for(Map.Entry<ClientSpaceRegion.RegionPos, ClientSpaceRegion> spaceRegionEntry : SPACE_REGIONS.entrySet())
 			{
-				for(Map.Entry<ClientSpaceRegion.RegionPos, ClientSpaceRegion> spaceRegionEntry : SPACE_REGIONS.entrySet())
-				{
-					if(spaceRegionEntry.getKey().isInRange(pos, getRange()))
-						spaceRegionEntry.getValue().renderDustClouds(viewCenter, level, camera, partialTicks, stack, projectionMatrix, setupFog, dustCloudBrightness);
-				}
+				if(spaceRegionEntry.getKey().isInRange(pos, getRange()))
+					spaceRegionEntry.getValue().renderDustClouds(viewCenter, level, camera, partialTicks, stack, projectionMatrix, setupFog, viewCenter.dustCloudBrightness());
 			}
 		}
 		

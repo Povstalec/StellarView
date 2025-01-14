@@ -484,16 +484,14 @@ public class StarField extends SpaceObject
 		else if(requiresReset())
 			starData.reset();
 		
-		float starBrightness = StarLike.getStarBrightness(viewCenter, level, camera, partialTicks);
-		
-		if(!GeneralConfig.disable_stars.get() && starBrightness > 0.0F)
+		if(!GeneralConfig.disable_stars.get() && viewCenter.starBrightness() > 0.0F)
 		{
 			stack.pushPose();
 			
 			//stack.translate(0, 0, 0);
 			if(hasTexture)
 				RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-			RenderSystem.setShaderColor(1, 1, 1, starBrightness);
+			RenderSystem.setShaderColor(1, 1, 1, viewCenter.starBrightness());
 			if(hasTexture)
 				RenderSystem.setShaderTexture(0, getStarInfo().getStarTexture());
 			FogRenderer.setupNoFog();

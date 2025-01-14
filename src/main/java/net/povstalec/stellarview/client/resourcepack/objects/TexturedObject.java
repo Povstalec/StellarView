@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import net.minecraft.nbt.CompoundTag;
+import net.povstalec.stellarview.common.config.GeneralConfig;
 import org.joml.Matrix4f;
 import org.joml.Quaterniond;
 import org.joml.Vector3f;
@@ -137,13 +138,12 @@ public abstract class TexturedObject extends SpaceObject
 	}
 	
 	
+	@Override
 	public void render(ViewCenter viewCenter, ClientLevel level, float partialTicks, PoseStack stack, Camera camera, 
 			Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder, 
 			Vector3f parentVector, AxisRotation parentRotation)
 	{
-		long ticks = level.getDayTime();
-		
-		Vector3f positionVector = getPosition(viewCenter, parentRotation, ticks, partialTicks).add(parentVector); // Handles orbits 'n stuff
+		Vector3f positionVector = getPosition(viewCenter, parentRotation, viewCenter.ticks(), partialTicks).add(parentVector); // Handles orbits 'n stuff
 
 		// Add parent vector to current coords
 		SpaceCoords coords = getCoords().add(positionVector);
@@ -166,7 +166,7 @@ public abstract class TexturedObject extends SpaceObject
 		
 		// If the object isn't the same we're viewing everything from and it isn't too far away, render it
 		if(!viewCenter.objectEquals(this) && getFadeOutHandler().getFadeOutEndDistance().toKm() > lastDistance)
-			renderTextureLayers(viewCenter, level, camera, bufferbuilder, stack.last().pose(), sphericalCoords, ticks, lastDistance, partialTicks);
+			renderTextureLayers(viewCenter, level, camera, bufferbuilder, stack.last().pose(), sphericalCoords, viewCenter.ticks(), lastDistance, partialTicks);
 		
 		if(getFadeOutHandler().getMaxChildRenderDistance().toKm() > lastDistance)
 		{
