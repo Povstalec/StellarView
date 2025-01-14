@@ -447,6 +447,9 @@ public class StarField extends SpaceObject
 	{
 		SpaceCoords difference = viewCenter.getCoords().sub(getCoords());
 		
+		if(LevelOfDetail.fromDistance(difference) == LevelOfDetail.LOD1)
+			return;
+		
 		if(dustCloudBuffer == null)
 			setupDustCloudBuffer();
 		
