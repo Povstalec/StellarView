@@ -318,12 +318,12 @@ public class ViewCenter
 			meteorShower.render(this, level, camera, partialTicks, stack, bufferbuilder);
 	}
 	
-	protected float getTimeOfDay(ClientLevel level, long ticks, float partialTicks)
+	protected float getTimeOfDay(long ticks, float partialTicks)
 	{
 		if(rotationPeriod <= 0)
 			return 0;
 		
-		double d0 = Mth.frac((double) (ticks % rotationPeriod) / (double) rotationPeriod - 0.25D);
+		double d0 = Mth.frac((double) ((ticks - 1 + partialTicks) % rotationPeriod) / (double) rotationPeriod - 0.25D);
 		double d1 = 0.5D - Math.cos(d0 * Math.PI) / 2.0D;
 		
 		return (float) (d0 * 2.0D + d1) / 3.0F;
@@ -344,10 +344,10 @@ public class ViewCenter
 		
 		if(!GeneralConfig.disable_view_center_rotation.get())
 		{
-			double rotation = 2 * Math.PI * getTimeOfDay(level, level.getDayTime(), partialTicks) + Math.PI;
+			double rotation = 2 * Math.PI * getTimeOfDay(level.getDayTime(), partialTicks) + Math.PI;
 			
 			if(viewCenterObject instanceof OrbitingObject orbitingObject && orbitingObject.getOrbitInfo().isPresent())
-				rotation -= orbitingObject.getOrbitInfo().get().meanAnomaly(this.ticks % orbitingObject.getOrbitInfo().get().orbitalPeriod().ticks(), partialTicks);
+				rotation -= orbitingObject.getOrbitInfo().get().meanAnomaly(this.ticks % orbitingObject.getOrbitInfo().get().orbitalPeriod().ticks(), GeneralConfig.tick_multiplier.get() * partialTicks);
 			
 			stack.mulPose(Axis.YP.rotation((float) getAxisRotation().yAxis()));
 			stack.mulPose(Axis.ZP.rotation((float) getAxisRotation().zAxis()));

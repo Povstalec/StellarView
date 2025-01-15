@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.povstalec.stellarview.common.config.GeneralConfig;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -310,7 +311,7 @@ public class OrbitingObject extends TexturedObject
 		
 		public double meanAnomaly(long ticks, float partialTicks)
 		{
-			return epochMeanAnomaly + sweep * (ticks - 1 + partialTicks);
+			return epochMeanAnomaly + sweep * (ticks - GeneralConfig.tick_multiplier.get() + partialTicks);
 		}
 		
 		public double eccentricAnomaly(long ticks, float partialTicks)
