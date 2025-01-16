@@ -27,7 +27,7 @@ public class Sol extends Star
 			OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(Sol::getOrbitInfo),
 			TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(Sol::getTextureLayers),
 			
-			SpaceObject.FadeOutHandler.CODEC.optionalFieldOf("fade_out_handler", SpaceObject.FadeOutHandler.DEFAULT_STAR_HANDLER).forGetter(Sol::getFadeOutHandler),
+			FadeOutHandler.CODEC.optionalFieldOf("fade_out_handler", FadeOutHandler.DEFAULT_STAR_HANDLER).forGetter(Sol::getFadeOutHandler),
 			
 			Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("min_star_size", MIN_SIZE).forGetter(Sol::getMinStarSize),
 			Codec.floatRange(0, Color.MAX_FLOAT_VALUE).optionalFieldOf("max_star_alpha", MAX_ALPHA).forGetter(Sol::getMaxStarAlpha),

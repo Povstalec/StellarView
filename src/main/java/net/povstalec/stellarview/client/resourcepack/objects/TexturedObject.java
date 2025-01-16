@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.nbt.CompoundTag;
 import net.povstalec.stellarview.common.config.GeneralConfig;
 import org.joml.Matrix4f;
@@ -38,6 +40,7 @@ public abstract class TexturedObject extends SpaceObject
 	public static final String TEXTURE_LAYERS = "texture_layers";
 	
 	protected ArrayList<TextureLayer> textureLayers;
+	protected FadeOutHandler fadeOutHandler;
 	
 	public TexturedObject()
 	{
@@ -47,14 +50,33 @@ public abstract class TexturedObject extends SpaceObject
 	public TexturedObject(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords,
 			AxisRotation axisRotation, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler)
 	{
-		super(parent, coords, axisRotation, fadeOutHandler);
+		super(parent, coords, axisRotation);
 		
 		this.textureLayers = new ArrayList<TextureLayer>(textureLayers);
+		this.fadeOutHandler = fadeOutHandler;
 	}
 	
 	public ArrayList<TextureLayer> getTextureLayers()
 	{
 		return textureLayers;
+	}
+	
+	public FadeOutHandler getFadeOutHandler()
+	{
+		return fadeOutHandler;
+	}
+	
+	public double fadeOut(double distance)
+	{
+		double fadeOutEnd = getFadeOutHandler().getFadeOutEndDistance().toKm();
+		if(distance > fadeOutEnd)
+			return 0;
+		
+		double fadeOutStart = getFadeOutHandler().getFadeOutStartDistance().toKm();
+		if(distance < fadeOutStart)
+			return 1;
+		
+		return (distance - fadeOutStart) / (fadeOutEnd - fadeOutStart);
 	}
 	
 	
@@ -107,7 +129,8 @@ public abstract class TexturedObject extends SpaceObject
 	 * @param distance
 	 * @param partialTicks
 	 */
-	protected void renderTextureLayer(TextureLayer textureLayer, ViewCenter viewCenter, ClientLevel level, Camera camera, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)
+	protected void renderTextureLayer(TextureLayer textureLayer, ViewCenter viewCenter, ClientLevel level, Camera camera, BufferBuilder bufferbuilder,
+									  Matrix4f lastMatrix, SphericalCoords sphericalCoords, double fade, long ticks, double distance, float partialTicks)
 	{
 		if(textureLayer.rgba().alpha() <= 0)
 			return;
@@ -124,16 +147,22 @@ public abstract class TexturedObject extends SpaceObject
 		
 		renderOnSphere(textureLayer.rgba(), Color.FloatRGBA.DEFAULT, textureLayer.texture(), textureLayer.uv(),
 				level, camera, bufferbuilder, lastMatrix, sphericalCoords,
-				ticks, distance, partialTicks, dayBrightness(viewCenter, size, ticks, level, camera, partialTicks), size, (float) textureLayer.rotation(), textureLayer.shoulBlend());
+				ticks, distance, partialTicks, dayBrightness(viewCenter, size, ticks, level, camera, partialTicks) * (float) fade,
+				size, (float) textureLayer.rotation(), textureLayer.shoulBlend());
 	}
 	
 	protected void renderTextureLayers(ViewCenter viewCenter, ClientLevel level, Camera camera, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)
 	{
+		double fade = fadeOut(distance);
+		
+		if(fade <= 0)
+			return;
+		
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
-
+		
 		for(TextureLayer textureLayer : textureLayers)
 		{
-			renderTextureLayer(textureLayer, viewCenter, level, camera, bufferbuilder, lastMatrix, sphericalCoords, ticks, distance, partialTicks);
+			renderTextureLayer(textureLayer, viewCenter, level, camera, bufferbuilder, lastMatrix, sphericalCoords, fade, ticks, distance, partialTicks);
 		}
 	}
 	
@@ -154,7 +183,8 @@ public abstract class TexturedObject extends SpaceObject
 		lastDistance = sphericalCoords.r;
 		sphericalCoords.r = DEFAULT_DISTANCE;
 		
-		if(getFadeOutHandler().getMaxChildRenderDistance().toKm() > lastDistance)
+		double childRenderDistance = getFadeOutHandler().getMaxChildRenderDistance().toKm();
+		if(childRenderDistance > lastDistance)
 		{
 			for(SpaceObject child : children)
 			{
@@ -165,10 +195,10 @@ public abstract class TexturedObject extends SpaceObject
 		}
 		
 		// If the object isn't the same we're viewing everything from and it isn't too far away, render it
-		if(!viewCenter.objectEquals(this) && getFadeOutHandler().getFadeOutEndDistance().toKm() > lastDistance)
+		if(!viewCenter.objectEquals(this))
 			renderTextureLayers(viewCenter, level, camera, bufferbuilder, stack.last().pose(), sphericalCoords, viewCenter.ticks(), lastDistance, partialTicks);
 		
-		if(getFadeOutHandler().getMaxChildRenderDistance().toKm() > lastDistance)
+		if(childRenderDistance > lastDistance)
 		{
 			for(SpaceObject child : children)
 			{
@@ -189,6 +219,58 @@ public abstract class TexturedObject extends SpaceObject
 		for(int i = 0; i < textureLayerTag.size(); i++)
 		{
 			textureLayers.add(TextureLayer.fromTag(textureLayerTag.getCompound(String.valueOf(i))));
+		}
+		
+		this.fadeOutHandler = FadeOutHandler.fromTag(tag.getCompound(FADE_OUT_HANDLER));
+	}
+	
+	
+	
+	public static class FadeOutHandler
+	{
+		public static final String FADE_OUT_START_DISTANCE = "fade_out_start_distance";
+		public static final String FADE_OUT_END_DISTANCE = "fade_out_end_distance";
+		public static final String MAX_CHILD_RENDER_DISTANCE = "max_child_render_distance";
+		
+		public static final FadeOutHandler DEFAULT_PLANET_HANDLER = new FadeOutHandler(new SpaceCoords.SpaceDistance(70000000000D), new SpaceCoords.SpaceDistance(100000000000D), new SpaceCoords.SpaceDistance(100000000000D));
+		public static final FadeOutHandler DEFAULT_STAR_HANDLER = new FadeOutHandler(new SpaceCoords.SpaceDistance(5000000L), new SpaceCoords.SpaceDistance(10000000L), new SpaceCoords.SpaceDistance(100000000000D));
+		public static final FadeOutHandler DEFAULT_NEBULA_HANDLER = new FadeOutHandler(new SpaceCoords.SpaceDistance(1000000L), new SpaceCoords.SpaceDistance(2000000L), new SpaceCoords.SpaceDistance(5000000L));
+		
+		private SpaceCoords.SpaceDistance fadeOutStartDistance;
+		private SpaceCoords.SpaceDistance fadeOutEndDistance;
+		private SpaceCoords.SpaceDistance maxChildRenderDistance;
+		
+		public static final Codec<FadeOutHandler> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				SpaceCoords.SpaceDistance.CODEC.fieldOf(FADE_OUT_START_DISTANCE).forGetter(FadeOutHandler::getFadeOutStartDistance),
+				SpaceCoords.SpaceDistance.CODEC.fieldOf(FADE_OUT_END_DISTANCE).forGetter(FadeOutHandler::getFadeOutEndDistance),
+				SpaceCoords.SpaceDistance.CODEC.fieldOf(MAX_CHILD_RENDER_DISTANCE).forGetter(FadeOutHandler::getMaxChildRenderDistance)
+		).apply(instance, FadeOutHandler::new));
+		
+		public FadeOutHandler(SpaceCoords.SpaceDistance fadeOutStartDistance, SpaceCoords.SpaceDistance fadeOutEndDistance, SpaceCoords.SpaceDistance maxChildRenderDistance)
+		{
+			this.fadeOutStartDistance = fadeOutStartDistance;
+			this.fadeOutEndDistance = fadeOutEndDistance;
+			this.maxChildRenderDistance = maxChildRenderDistance;
+		}
+		
+		public SpaceCoords.SpaceDistance getFadeOutStartDistance()
+		{
+			return fadeOutStartDistance;
+		}
+		
+		public SpaceCoords.SpaceDistance getFadeOutEndDistance()
+		{
+			return fadeOutEndDistance;
+		}
+		
+		public SpaceCoords.SpaceDistance getMaxChildRenderDistance()
+		{
+			return maxChildRenderDistance;
+		}
+		
+		public static FadeOutHandler fromTag(CompoundTag tag)
+		{
+			return new FadeOutHandler(SpaceCoords.SpaceDistance.fromTag(tag.getCompound(FADE_OUT_START_DISTANCE)), SpaceCoords.SpaceDistance.fromTag(tag.getCompound(FADE_OUT_END_DISTANCE)), SpaceCoords.SpaceDistance.fromTag(tag.getCompound(MAX_CHILD_RENDER_DISTANCE)));
 		}
 	}
 }

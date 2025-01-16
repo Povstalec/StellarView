@@ -7,8 +7,7 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 import net.povstalec.stellarview.client.render.SpaceRenderer;
-import net.povstalec.stellarview.client.resourcepack.objects.StarField;
-import net.povstalec.stellarview.client.resourcepack.objects.StarLike;
+import net.povstalec.stellarview.client.resourcepack.objects.*;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -35,8 +34,6 @@ import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.client.render.level.util.StellarViewFogEffects;
 import net.povstalec.stellarview.client.render.level.util.StellarViewSkyEffects;
 import net.povstalec.stellarview.client.resourcepack.effects.MeteorEffect;
-import net.povstalec.stellarview.client.resourcepack.objects.OrbitingObject;
-import net.povstalec.stellarview.client.resourcepack.objects.SpaceObject;
 import net.povstalec.stellarview.common.config.GeneralConfig;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.SpaceCoords;
@@ -55,7 +52,7 @@ public class ViewCenter
 	@Nullable
 	protected ResourceKey<SpaceObject> viewCenterKey;
 	@Nullable
-	protected SpaceObject viewCenterObject;
+	protected ViewCenterObject viewCenterObject;
 	
 	@Nullable
 	protected List<Skybox> skyboxes;
@@ -148,7 +145,7 @@ public class ViewCenter
 		this.zRotationMultiplier = zRotationMultiplier;
 	}
 	
-	public void setViewCenterObject(SpaceObject object)
+	public void setViewCenterObject(ViewCenterObject object)
 	{
 		viewCenterObject = object;
 	}
@@ -159,7 +156,10 @@ public class ViewCenter
 		{
 			if(spaceObjects.containsKey(viewCenterKey.location()))
 			{
-				setViewCenterObject(spaceObjects.get(viewCenterKey.location()));
+				if(spaceObjects.get(viewCenterKey.location()) instanceof ViewCenterObject viewCenterObject)
+					setViewCenterObject(viewCenterObject);
+				else
+				StellarView.LOGGER.error("Failed to register View Center because " + viewCenterKey.location() + " is not an instance of ViewCenterObject");
 				return true;
 			}
 			
@@ -346,8 +346,8 @@ public class ViewCenter
 		{
 			double rotation = 2 * Math.PI * getTimeOfDay(level.getDayTime(), partialTicks) + Math.PI;
 			
-			if(viewCenterObject instanceof OrbitingObject orbitingObject && orbitingObject.getOrbitInfo().isPresent())
-				rotation -= orbitingObject.getOrbitInfo().get().meanAnomaly(this.ticks % orbitingObject.getOrbitInfo().get().orbitalPeriod().ticks(), GeneralConfig.tick_multiplier.get() * partialTicks);
+			if(viewCenterObject.getOrbitInfo().isPresent())
+				rotation -= viewCenterObject.getOrbitInfo().get().meanAnomaly(this.ticks % viewCenterObject.getOrbitInfo().get().orbitalPeriod().ticks(), GeneralConfig.tick_multiplier.get() * partialTicks);
 			
 			stack.mulPose(Axis.YP.rotation((float) getAxisRotation().yAxis()));
 			stack.mulPose(Axis.ZP.rotation((float) getAxisRotation().zAxis()));

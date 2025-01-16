@@ -12,6 +12,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.client.resourcepack.DustCloudInfo;
+import net.povstalec.stellarview.client.util.DustCloudData;
 import net.povstalec.stellarview.common.util.*;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -148,8 +149,6 @@ public class StarField extends SpaceObject
 			ResourceLocation.CODEC.optionalFieldOf("parent").forGetter(StarField::getParentLocation),
 			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf("coords").forGetter(object -> Either.left(object.getCoords())),
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(StarField::getAxisRotation),
-
-			SpaceObject.FadeOutHandler.CODEC.optionalFieldOf("fade_out_handler", SpaceObject.FadeOutHandler.DEFAULT_STAR_FIELD_HANDLER).forGetter(StarField::getFadeOutHandler),
 			
 			Codec.intRange(0, 4000).optionalFieldOf("dust_clouds", 0).forGetter(StarField::getDustClouds),
 			DustCloudInfo.CODEC.optionalFieldOf("dust_cloud_info", DustCloudInfo.DEFAULT_DUST_CLOUD_INFO).forGetter(StarField::getDustCloudInfo),
@@ -171,11 +170,10 @@ public class StarField extends SpaceObject
 	
 	public StarField() {}
 	
-	public StarField(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
-			FadeOutHandler fadeOutHandler, int dustClouds, DustCloudInfo dustCloudInfo, ResourceLocation dustCloudTexture, StarInfo starInfo, long seed, int diameter, int numberOfStars, boolean clumpStarsInCenter,
+	public StarField(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation, int dustClouds, DustCloudInfo dustCloudInfo, ResourceLocation dustCloudTexture, StarInfo starInfo, long seed, int diameter, int numberOfStars, boolean clumpStarsInCenter,
 			double xStretch, double yStretch, double zStretch, List<SpiralArm> spiralArms)
 	{
-		super(parent, coords, axisRotation, fadeOutHandler);
+		super(parent, coords, axisRotation);
 		
 		this.dustClouds = dustClouds;
 		this.dustCloudInfo = dustCloudInfo;

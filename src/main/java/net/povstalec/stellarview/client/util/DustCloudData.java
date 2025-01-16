@@ -1,7 +1,8 @@
-package net.povstalec.stellarview.common.util;
+package net.povstalec.stellarview.client.util;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import net.povstalec.stellarview.client.resourcepack.DustCloudInfo;
+import net.povstalec.stellarview.common.util.Color;
 
 import java.util.Random;
 

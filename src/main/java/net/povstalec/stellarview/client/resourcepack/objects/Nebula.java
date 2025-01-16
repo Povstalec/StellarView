@@ -42,7 +42,7 @@ public class Nebula extends TexturedObject
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(Nebula::getAxisRotation),
 			TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(Nebula::getTextureLayers),
 
-			SpaceObject.FadeOutHandler.CODEC.optionalFieldOf("fade_out_handler", SpaceObject.FadeOutHandler.DEFAULT_STAR_FIELD_HANDLER).forGetter(Nebula::getFadeOutHandler),
+			FadeOutHandler.CODEC.optionalFieldOf("fade_out_handler", FadeOutHandler.DEFAULT_NEBULA_HANDLER).forGetter(Nebula::getFadeOutHandler),
 			
 			Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("min_nebula_size", MIN_SIZE).forGetter(Nebula::getMinNebulaSize),
 			Codec.floatRange(0, Color.MAX_FLOAT_VALUE).optionalFieldOf("max_nebula_alpha", MAX_ALPHA).forGetter(Nebula::getMaxNebulaAlpha),
@@ -100,7 +100,9 @@ public class Nebula extends TexturedObject
 	
 	
 	@Override
-	protected void renderTextureLayer(TextureLayer textureLayer, ViewCenter viewCenter, ClientLevel level, Camera camera, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)
+	protected void renderTextureLayer(TextureLayer textureLayer, ViewCenter viewCenter, ClientLevel level, Camera camera, BufferBuilder bufferbuilder,
+									  Matrix4f lastMatrix, SphericalCoords sphericalCoords,
+									  double fade, long ticks, double distance, float partialTicks)
 	{
 		double lyDistance = distance / SpaceCoords.KM_PER_LY;
 
@@ -126,7 +128,7 @@ public class Nebula extends TexturedObject
 		
 		renderOnSphere(textureLayer.rgba(), nebulaRGBA, textureLayer.texture(), textureLayer.uv(),
 				level, camera, bufferbuilder, lastMatrix, sphericalCoords,
-				ticks, distance, partialTicks, dayBrightness(viewCenter, size, ticks, level, camera, partialTicks), size, (float) textureLayer.rotation(), textureLayer.shoulBlend());
+				ticks, distance, partialTicks, dayBrightness(viewCenter, size, ticks, level, camera, partialTicks) * (float) fade, size, (float) textureLayer.rotation(), textureLayer.shoulBlend());
 	}
 	
 	public static float dayBrightness(ViewCenter viewCenter, float size, long ticks, ClientLevel level, Camera camera, float partialTicks)

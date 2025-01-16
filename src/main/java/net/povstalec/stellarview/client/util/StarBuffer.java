@@ -1,10 +1,11 @@
-package net.povstalec.stellarview.common.util;
+package net.povstalec.stellarview.client.util;
 
 import java.nio.ByteBuffer;
 
 import javax.annotation.Nullable;
 
 import net.povstalec.stellarview.client.render.SpaceRenderer;
+import net.povstalec.stellarview.common.util.SpaceCoords;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL15C;

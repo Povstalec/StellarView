@@ -5,12 +5,11 @@ import com.mojang.blaze3d.vertex.*;
 
 import net.minecraft.client.renderer.GameRenderer;
 import net.povstalec.stellarview.client.render.SpaceRenderer;
-import net.povstalec.stellarview.client.render.shader.StarShaderInstance;
 import net.povstalec.stellarview.client.render.shader.StellarViewShaders;
 import net.povstalec.stellarview.client.render.shader.StellarViewVertexFormat;
-import net.povstalec.stellarview.client.resourcepack.StarInfo;
 import net.povstalec.stellarview.client.resourcepack.objects.StarField;
 import net.povstalec.stellarview.client.resourcepack.objects.StarLike;
+import net.povstalec.stellarview.client.util.StarBuffer;
 import net.povstalec.stellarview.common.config.GeneralConfig;
 import org.joml.Matrix4f;
 

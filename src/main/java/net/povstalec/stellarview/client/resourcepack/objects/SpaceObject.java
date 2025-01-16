@@ -56,14 +56,12 @@ public abstract class SpaceObject
 	protected SpaceCoords coords; // Absolute coordinates of the center (not necessarily the object itself, since it can be orbiting some other object for example)
 	protected AxisRotation axisRotation;
 	
-	protected FadeOutHandler fadeOutHandler;
-	
 	protected ResourceLocation location;
 	protected double lastDistance = 0; // Last known distance of this object from the View Center, used for sorting
 	
 	public SpaceObject() {}
 	
-	public SpaceObject(Optional<ResourceLocation> parentLocation, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation, FadeOutHandler fadeOutHandler)
+	public SpaceObject(Optional<ResourceLocation> parentLocation, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation)
 	{
 		if(parentLocation.isPresent())
 				this.parentLocation = parentLocation.get();
@@ -74,8 +72,6 @@ public abstract class SpaceObject
 			this.coords = coords.right().get().toGalactic().toSpaceCoords();
 		
 		this.axisRotation = axisRotation;
-		
-		this.fadeOutHandler = fadeOutHandler;
 	}
 	
 	public SpaceCoords getCoords()
@@ -106,11 +102,6 @@ public abstract class SpaceObject
 	public Optional<SpaceObject> getParent()
 	{
 		return Optional.ofNullable(parent);
-	}
-	
-	public FadeOutHandler getFadeOutHandler()
-	{
-		return fadeOutHandler;
 	}
 	
 	public void setResourceLocation(ResourceLocation resourceLocation)
@@ -241,57 +232,5 @@ public abstract class SpaceObject
 		this.coords = SpaceCoords.fromTag(tag.getCompound(COORDS));
 		
 		this.axisRotation = AxisRotation.fromTag(tag.getCompound(AXIS_ROTATION));
-		
-		this.fadeOutHandler = FadeOutHandler.fromTag(tag.getCompound(FADE_OUT_HANDLER));
-	}
-	
-	
-	
-	public static class FadeOutHandler
-	{
-		public static final String FADE_OUT_START_DISTANCE = "fade_out_start_distance";
-		public static final String FADE_OUT_END_DISTANCE = "fade_out_end_distance";
-		public static final String MAX_CHILD_RENDER_DISTANCE = "max_child_render_distance";
-		
-		public static final FadeOutHandler DEFAULT_PLANET_HANDLER = new FadeOutHandler(new SpaceDistance(70000000000D), new SpaceDistance(100000000000D), new SpaceDistance(100000000000D));
-		public static final FadeOutHandler DEFAULT_STAR_HANDLER = new FadeOutHandler(new SpaceDistance(3000000L), new SpaceDistance(5000000L), new SpaceDistance(100000000000D));
-		public static final FadeOutHandler DEFAULT_STAR_FIELD_HANDLER = new FadeOutHandler(new SpaceDistance(3000000L), new SpaceDistance(5000000L), new SpaceDistance(5000000L));
-		
-		private SpaceDistance fadeOutStartDistance;
-		private SpaceDistance fadeOutEndDistance;
-		private SpaceDistance maxChildRenderDistance;
-		
-		public static final Codec<FadeOutHandler> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-				SpaceDistance.CODEC.fieldOf(FADE_OUT_START_DISTANCE).forGetter(FadeOutHandler::getFadeOutStartDistance),
-				SpaceDistance.CODEC.fieldOf(FADE_OUT_END_DISTANCE).forGetter(FadeOutHandler::getFadeOutEndDistance),
-				SpaceDistance.CODEC.fieldOf(MAX_CHILD_RENDER_DISTANCE).forGetter(FadeOutHandler::getMaxChildRenderDistance)
-				).apply(instance, FadeOutHandler::new));
-		
-		public FadeOutHandler(SpaceDistance fadeOutStartDistance, SpaceDistance fadeOutEndDistance, SpaceDistance maxChildRenderDistance)
-		{
-			this.fadeOutStartDistance = fadeOutStartDistance;
-			this.fadeOutEndDistance = fadeOutEndDistance;
-			this.maxChildRenderDistance = maxChildRenderDistance;
-		}
-		
-		public SpaceDistance getFadeOutStartDistance()
-		{
-			return fadeOutStartDistance;
-		}
-		
-		public SpaceDistance getFadeOutEndDistance()
-		{
-			return fadeOutEndDistance;
-		}
-		
-		public SpaceDistance getMaxChildRenderDistance()
-		{
-			return maxChildRenderDistance;
-		}
-		
-		public static FadeOutHandler fromTag(CompoundTag tag)
-		{
-			return new FadeOutHandler(SpaceDistance.fromTag(tag.getCompound(FADE_OUT_START_DISTANCE)), SpaceDistance.fromTag(tag.getCompound(FADE_OUT_END_DISTANCE)), SpaceDistance.fromTag(tag.getCompound(MAX_CHILD_RENDER_DISTANCE)));
-		}
 	}
 }

@@ -1,4 +1,4 @@
-package net.povstalec.stellarview.client.events;
+package net.povstalec.stellarview.api.client.events;
 
 import com.google.gson.JsonElement;
 import net.minecraft.resources.ResourceLocation;

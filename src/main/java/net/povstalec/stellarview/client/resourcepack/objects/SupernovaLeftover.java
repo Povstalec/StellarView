@@ -24,7 +24,7 @@ public class SupernovaLeftover extends GravityLense
 			OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(SupernovaLeftover::getOrbitInfo),
 			TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(SupernovaLeftover::getTextureLayers),
 			
-			SpaceObject.FadeOutHandler.CODEC.optionalFieldOf("fade_out_handler", SpaceObject.FadeOutHandler.DEFAULT_STAR_HANDLER).forGetter(SupernovaLeftover::getFadeOutHandler),
+			FadeOutHandler.CODEC.optionalFieldOf("fade_out_handler", FadeOutHandler.DEFAULT_STAR_HANDLER).forGetter(SupernovaLeftover::getFadeOutHandler),
 			
 			Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("min_star_size", MIN_SIZE).forGetter(SupernovaLeftover::getMinStarSize),
 			Codec.floatRange(0, Color.MAX_FLOAT_VALUE).optionalFieldOf("max_star_alpha", MAX_ALPHA).forGetter(SupernovaLeftover::getMaxStarAlpha),
