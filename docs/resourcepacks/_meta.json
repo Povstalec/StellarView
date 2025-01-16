@@ -1,3 +1,10 @@
 {
-	"resourcepacks.mdx": "Resourcepacks"
+	"resourcepacks.mdx": "Resourcepacks",
+	"view_centers.mdx": "View Centers",
+	"space_objects.mdx": "Space Objects",
+	"planets_and_moons.mdx": "Planets and Moons",
+	"stars.mdx": "Stars",
+	"star_fields.mdx": "Star Fields",
+	"black_holes.mdx": "Black Holes",
+	"nebulae.mdx": "Nebulae"
 }
