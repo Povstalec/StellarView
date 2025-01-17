@@ -1,10 +1,9 @@
-package net.povstalec.stellarview.client.resourcepack.objects;
+package net.povstalec.stellarview.api.common.space_objects;
 
 import java.util.List;
 import java.util.Optional;
 
 import net.minecraft.resources.ResourceLocation;
-import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.client.render.LightEffects;
 import net.povstalec.stellarview.common.config.GeneralConfig;
 import org.joml.Matrix4f;
@@ -16,7 +15,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.resources.ResourceKey;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.Color;

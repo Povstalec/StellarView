@@ -1,12 +1,12 @@
-package net.povstalec.stellarview.client.resourcepack.objects;
+package net.povstalec.stellarview.api.common.space_objects;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.povstalec.stellarview.client.render.LightEffects;
 import net.povstalec.stellarview.client.render.SpaceRenderer;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.util.*;
@@ -104,7 +104,7 @@ public abstract class GravityLense extends StarLike
 		
 		renderOnSphere(textureLayer.rgba(), starRGBA, textureLayer.texture(), textureLayer.uv(),
 				level, camera, bufferbuilder, lastMatrix, sphericalCoords,
-				ticks, distance, partialTicks, dayBrightness(viewCenter, size, ticks, level, camera, partialTicks) * (float) fade, size, (float) textureLayer.rotation(), textureLayer.shoulBlend());
+				ticks, distance, partialTicks, LightEffects.dayBrightness(viewCenter, size, ticks, level, camera, partialTicks) * (float) fade, size, (float) textureLayer.rotation(), textureLayer.shoulBlend());
 	}
 	
 	@Override

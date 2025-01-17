@@ -1,4 +1,4 @@
-package net.povstalec.stellarview.client.resourcepack.objects;
+package net.povstalec.stellarview.api.common.space_objects;
 
 import java.util.List;
 import java.util.Optional;
@@ -7,7 +7,6 @@ import java.util.Random;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.client.render.LightEffects;
-import net.povstalec.stellarview.client.resourcepack.DustCloudInfo;
 import org.joml.Matrix4f;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -17,8 +16,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.resources.ResourceKey;
-import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.config.GeneralConfig;
 import net.povstalec.stellarview.common.util.AxisRotation;
@@ -125,7 +122,7 @@ public abstract class StarLike extends OrbitingObject
 		
 		renderOnSphere(textureLayer.rgba(), starRGBA, textureLayer.texture(), textureLayer.uv(),
 				level, camera, bufferbuilder, lastMatrix, sphericalCoords,
-				ticks, distance, partialTicks, dayBrightness(viewCenter, size, ticks, level, camera, partialTicks) * (float) fade, size, (float) textureLayer.rotation(), textureLayer.shoulBlend());
+				ticks, distance, partialTicks, LightEffects.dayBrightness(viewCenter, size, ticks, level, camera, partialTicks) * (float) fade, size, (float) textureLayer.rotation(), textureLayer.shoulBlend());
 	}
 	
 	

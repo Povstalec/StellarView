@@ -1,4 +1,4 @@
-package net.povstalec.stellarview.client.resourcepack.objects;
+package net.povstalec.stellarview.api.common.space_objects;
 
 import java.util.List;
 import java.util.Optional;
@@ -7,7 +7,6 @@ import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.Color;

@@ -1,4 +1,4 @@
-package net.povstalec.stellarview.client.resourcepack.objects;
+package net.povstalec.stellarview.api.common.space_objects;
 
 import java.util.ArrayList;
 import java.util.List;

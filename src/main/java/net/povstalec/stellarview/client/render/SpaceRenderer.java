@@ -6,8 +6,8 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 import net.minecraft.client.Minecraft;
+import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
-import net.povstalec.stellarview.client.resourcepack.objects.*;
 import net.povstalec.stellarview.common.config.GeneralConfig;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
@@ -19,7 +19,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.povstalec.stellarview.StellarView;
-import net.povstalec.stellarview.client.resourcepack.objects.distinct.Sol;
+import net.povstalec.stellarview.api.common.space_objects.distinct.Sol;
 import net.povstalec.stellarview.common.config.OverworldConfig;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.SpaceCoords;

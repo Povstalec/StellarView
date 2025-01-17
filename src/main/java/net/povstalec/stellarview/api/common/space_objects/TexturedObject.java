@@ -1,4 +1,4 @@
-package net.povstalec.stellarview.client.resourcepack.objects;
+package net.povstalec.stellarview.api.common.space_objects;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,7 @@ import java.util.Optional;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.nbt.CompoundTag;
-import net.povstalec.stellarview.common.config.GeneralConfig;
+import net.povstalec.stellarview.client.render.LightEffects;
 import org.joml.Matrix4f;
 import org.joml.Quaterniond;
 import org.joml.Vector3f;
@@ -24,7 +24,6 @@ import com.mojang.datafixers.util.Either;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.util.AxisRotation;
@@ -147,7 +146,7 @@ public abstract class TexturedObject extends SpaceObject
 		
 		renderOnSphere(textureLayer.rgba(), Color.FloatRGBA.DEFAULT, textureLayer.texture(), textureLayer.uv(),
 				level, camera, bufferbuilder, lastMatrix, sphericalCoords,
-				ticks, distance, partialTicks, dayBrightness(viewCenter, size, ticks, level, camera, partialTicks) * (float) fade,
+				ticks, distance, partialTicks, LightEffects.dayBrightness(viewCenter, size, ticks, level, camera, partialTicks) * (float) fade,
 				size, (float) textureLayer.rotation(), textureLayer.shoulBlend());
 	}
 	

@@ -1,4 +1,4 @@
-package net.povstalec.stellarview.client.resourcepack.objects;
+package net.povstalec.stellarview.api.common.space_objects;
 
 import java.util.List;
 import java.util.Optional;
@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.povstalec.stellarview.client.render.LightEffects;
 import org.joml.Matrix4f;
 
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -142,7 +143,7 @@ public class Star extends StarLike
 		
 		renderOnSphere(textureLayer.rgba(), starRGBA, textureLayer.texture(), textureLayer.uv(),
 				level, camera, bufferbuilder, lastMatrix, sphericalCoords,
-				ticks, distance, partialTicks, dayBrightness(viewCenter, size, ticks, level, camera, partialTicks) * (float) fade, size, (float) textureLayer.rotation() + rotation(ticks), textureLayer.shoulBlend());
+				ticks, distance, partialTicks, LightEffects.dayBrightness(viewCenter, size, ticks, level, camera, partialTicks) * (float) fade, size, (float) textureLayer.rotation() + rotation(ticks), textureLayer.shoulBlend());
 	}
 	
 	@Override

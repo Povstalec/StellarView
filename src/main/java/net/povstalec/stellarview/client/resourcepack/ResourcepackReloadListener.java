@@ -23,14 +23,14 @@ import net.povstalec.stellarview.client.render.ViewCenters;
 import net.povstalec.stellarview.client.render.level.StellarViewEndEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewNetherEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewOverworldEffects;
-import net.povstalec.stellarview.client.resourcepack.objects.BlackHole;
-import net.povstalec.stellarview.client.resourcepack.objects.Moon;
-import net.povstalec.stellarview.client.resourcepack.objects.Nebula;
-import net.povstalec.stellarview.client.resourcepack.objects.Planet;
-import net.povstalec.stellarview.client.resourcepack.objects.SpaceObject;
-import net.povstalec.stellarview.client.resourcepack.objects.Star;
-import net.povstalec.stellarview.client.resourcepack.objects.StarField;
-import net.povstalec.stellarview.client.resourcepack.objects.distinct.Sol;
+import net.povstalec.stellarview.api.common.space_objects.BlackHole;
+import net.povstalec.stellarview.api.common.space_objects.Moon;
+import net.povstalec.stellarview.api.common.space_objects.Nebula;
+import net.povstalec.stellarview.api.common.space_objects.Planet;
+import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
+import net.povstalec.stellarview.api.common.space_objects.Star;
+import net.povstalec.stellarview.api.common.space_objects.StarField;
+import net.povstalec.stellarview.api.common.space_objects.distinct.Sol;
 
 public class ResourcepackReloadListener
 {

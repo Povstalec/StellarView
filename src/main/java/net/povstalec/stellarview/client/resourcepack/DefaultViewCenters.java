@@ -8,7 +8,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.resources.ResourceKey;
 import net.povstalec.stellarview.client.resourcepack.effects.MeteorEffect;
-import net.povstalec.stellarview.client.resourcepack.objects.SpaceObject;
+import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
 import net.povstalec.stellarview.common.config.EndConfig;
 import net.povstalec.stellarview.common.config.NetherConfig;
 import net.povstalec.stellarview.common.config.OverworldConfig;

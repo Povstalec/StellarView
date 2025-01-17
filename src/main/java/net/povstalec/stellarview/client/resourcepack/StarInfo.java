@@ -11,8 +11,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.StellarView;
-import net.povstalec.stellarview.client.resourcepack.objects.StarField;
-import net.povstalec.stellarview.client.resourcepack.objects.StarLike;
+import net.povstalec.stellarview.api.common.space_objects.StarField;
+import net.povstalec.stellarview.api.common.space_objects.StarLike;
 import net.povstalec.stellarview.common.util.Color;
 
 public class StarInfo

@@ -6,8 +6,11 @@ import java.util.Optional;
 
 import javax.annotation.Nullable;
 
+import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
+import net.povstalec.stellarview.api.common.space_objects.StarField;
+import net.povstalec.stellarview.api.common.space_objects.StarLike;
+import net.povstalec.stellarview.api.common.space_objects.ViewObject;
 import net.povstalec.stellarview.client.render.SpaceRenderer;
-import net.povstalec.stellarview.client.resourcepack.objects.*;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -52,7 +55,7 @@ public class ViewCenter
 	@Nullable
 	protected ResourceKey<SpaceObject> viewCenterKey;
 	@Nullable
-	protected ViewCenterObject viewCenterObject;
+	protected ViewObject viewObject;
 	
 	@Nullable
 	protected List<Skybox> skyboxes;
@@ -145,9 +148,9 @@ public class ViewCenter
 		this.zRotationMultiplier = zRotationMultiplier;
 	}
 	
-	public void setViewCenterObject(ViewCenterObject object)
+	public void setViewCenterObject(ViewObject object)
 	{
-		viewCenterObject = object;
+		viewObject = object;
 	}
 	
 	public boolean setViewCenterObject(HashMap<ResourceLocation, SpaceObject> spaceObjects)
@@ -156,8 +159,8 @@ public class ViewCenter
 		{
 			if(spaceObjects.containsKey(viewCenterKey.location()))
 			{
-				if(spaceObjects.get(viewCenterKey.location()) instanceof ViewCenterObject viewCenterObject)
-					setViewCenterObject(viewCenterObject);
+				if(spaceObjects.get(viewCenterKey.location()) instanceof ViewObject viewObject)
+					setViewCenterObject(viewObject);
 				else
 				StellarView.LOGGER.error("Failed to register View Center because " + viewCenterKey.location() + " is not an instance of ViewCenterObject");
 				return true;
@@ -187,8 +190,8 @@ public class ViewCenter
 	
 	public AxisRotation getObjectAxisRotation()
 	{
-		if(viewCenterObject != null)
-			return viewCenterObject.getAxisRotation();
+		if(viewObject != null)
+			return viewObject.getAxisRotation();
 		
 		return new AxisRotation();
 	}
@@ -290,8 +293,8 @@ public class ViewCenter
 	
 	public boolean objectEquals(SpaceObject spaceObject)
 	{
-		if(this.viewCenterObject != null)
-			return spaceObject == this.viewCenterObject;
+		if(this.viewObject != null)
+			return spaceObject == this.viewObject;
 		
 		return false;
 	}
@@ -331,10 +334,10 @@ public class ViewCenter
 	
 	protected boolean renderSkyObjectsFrom(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, Matrix4f projectionMatrix, Runnable setupFog, BufferBuilder bufferbuilder)
 	{
-		if(viewCenterObject == null)
+		if(viewObject == null)
 			return false;
 		
-		coords = viewCenterObject.getCoords();
+		coords = viewObject.getCoords();
 		
 		this.ticks = GeneralConfig.tick_multiplier.get() * (GeneralConfig.use_game_ticks.get() ? level.getGameTime() : level.getDayTime());
 		this.starBrightness = StarLike.getStarBrightness(this, level, camera, partialTicks);
@@ -346,8 +349,8 @@ public class ViewCenter
 		{
 			double rotation = 2 * Math.PI * getTimeOfDay(level.getDayTime(), partialTicks) + Math.PI;
 			
-			if(viewCenterObject.getOrbitInfo().isPresent())
-				rotation -= viewCenterObject.getOrbitInfo().get().meanAnomaly(this.ticks % viewCenterObject.getOrbitInfo().get().orbitalPeriod().ticks(), GeneralConfig.tick_multiplier.get() * partialTicks);
+			if(viewObject.getOrbitInfo().isPresent())
+				rotation -= viewObject.getOrbitInfo().get().meanAnomaly(this.ticks % viewObject.getOrbitInfo().get().orbitalPeriod().ticks(), GeneralConfig.tick_multiplier.get() * partialTicks);
 			
 			stack.mulPose(Axis.YP.rotation((float) getAxisRotation().yAxis()));
 			stack.mulPose(Axis.ZP.rotation((float) getAxisRotation().zAxis()));
@@ -357,7 +360,7 @@ public class ViewCenter
 			stack.mulPose(Axis.ZP.rotation((float) getZRotation(level, camera, partialTicks)));
 		}
 		
-		viewCenterObject.renderFrom(this, level, GeneralConfig.tick_multiplier.get() * partialTicks, stack, camera, projectionMatrix, StellarViewFogEffects.isFoggy(minecraft, camera), setupFog, bufferbuilder);
+		viewObject.renderFrom(this, level, GeneralConfig.tick_multiplier.get() * partialTicks, stack, camera, projectionMatrix, StellarViewFogEffects.isFoggy(minecraft, camera), setupFog, bufferbuilder);
 
 		stack.popPose();
 
@@ -374,7 +377,7 @@ public class ViewCenter
 	
 	public boolean renderSky(ClientLevel level, long ticks, float partialTicks, PoseStack stack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
 	{
-		if(viewCenterObject == null && skyboxes == null)
+		if(viewObject == null && skyboxes == null)
 			return false;
 		
 		setupFog.run();
