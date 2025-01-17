@@ -114,12 +114,24 @@ public class Star extends StarLike
 		return starRGBA;
 	}
 	
+	//============================================================================================
+	//*************************************Saving and Loading*************************************
+	//============================================================================================
+	
 	@Override
-	public void fromTag(CompoundTag tag)
+	public CompoundTag serializeNBT()
 	{
-		super.fromTag(tag);
-		
-		supernovaInfo = null; //TODO
+		CompoundTag tag = super.serializeNBT();
+		//TODO Serialize SupernovaInfo
+		return tag;
+	}
+	
+	@Override
+	public void deserializeNBT(CompoundTag tag)
+	{
+		super.deserializeNBT(tag);
+		//TODO Deserialize SupernovaInfo
+		supernovaInfo = null;
 	}
 	
 	

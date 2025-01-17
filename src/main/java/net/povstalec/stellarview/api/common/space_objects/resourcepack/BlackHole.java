@@ -21,9 +21,6 @@ import net.povstalec.stellarview.common.util.TextureLayer;
 
 public class BlackHole extends SupernovaLeftover
 {
-	public static final String LENSING_INTENSITY = "lensing_intensity";
-	public static final String MAX_LENSING_DISTANCE = "max_lensing_distance";
-	
 	public static final Codec<BlackHole> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			ResourceLocation.CODEC.optionalFieldOf("parent").forGetter(BlackHole::getParentLocation),
 			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf("coords").forGetter(object -> Either.left(object.getCoords())),
@@ -49,14 +46,5 @@ public class BlackHole extends SupernovaLeftover
 					 float lensingIntensity, double maxLensingDistance)
 	{
 		super(parent, coords, axisRotation, orbitInfo, textureLayers, fadeOutHandler, minStarSize, maxStarAlpha, minStarAlpha, lensingIntensity, maxLensingDistance);
-	}
-	
-	@Override
-	public void fromTag(CompoundTag tag)
-	{
-		super.fromTag(tag);
-		
-		lensingIntensity = tag.getFloat(LENSING_INTENSITY);
-		maxLensingDistance = tag.getFloat(MAX_LENSING_DISTANCE);
 	}
 }

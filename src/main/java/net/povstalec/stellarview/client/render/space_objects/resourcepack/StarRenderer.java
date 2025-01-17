@@ -58,7 +58,7 @@ public class StarRenderer<T extends Star> extends StarLikeRenderer<T>
 		
 		renderOnSphere(textureLayer.rgba(), starRGBA, textureLayer.texture(), textureLayer.uv(),
 				level, camera, bufferbuilder, lastMatrix, sphericalCoords,
-				ticks, distance, partialTicks, LightEffects.dayBrightness(viewCenter, size, ticks, level, camera, partialTicks) * (float) fade, size, (float) textureLayer.rotation() + renderedObject.rotation(ticks), textureLayer.shoulBlend());
+				ticks, distance, partialTicks, LightEffects.starDayBrightness(viewCenter, size, ticks, level, camera, partialTicks) * (float) fade, size, (float) textureLayer.rotation() + renderedObject.rotation(ticks), textureLayer.shoulBlend());
 	}
 	
 	@Override

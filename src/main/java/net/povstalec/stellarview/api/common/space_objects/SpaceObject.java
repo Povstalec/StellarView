@@ -6,6 +6,7 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraftforge.common.util.INBTSerializable;
 import org.joml.Vector3f;
 
 import com.mojang.datafixers.util.Either;
@@ -19,16 +20,14 @@ import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 import net.povstalec.stellarview.common.util.StellarCoordinates;
 
-public abstract class SpaceObject
+public abstract class SpaceObject implements INBTSerializable<CompoundTag>
 {
 	public static final String PARENT_LOCATION = "parent";
-	
 	public static final String COORDS = "coords";
 	public static final String AXIS_ROTATION = "axis_rotation";
-	
 	public static final String FADE_OUT_HANDLER = "fade_out_handler";
-	
 	public static final String ID = "id";
+	public static final String CHILDREN = "children";
 	
 	public static final ResourceLocation SPACE_OBJECT_LOCATION = new ResourceLocation(StellarView.MODID, "space_object");
 	public static final ResourceKey<Registry<SpaceObject>> REGISTRY_KEY = ResourceKey.createRegistryKey(SPACE_OBJECT_LOCATION);
@@ -158,7 +157,67 @@ public abstract class SpaceObject
 		return this.getClass().toString();
 	}
 	
-	public void fromTag(CompoundTag tag)
+	//============================================================================================
+	//*************************************Saving and Loading*************************************
+	//============================================================================================
+	
+	@Override
+	public CompoundTag serializeNBT()
+	{
+		CompoundTag tag = new CompoundTag();
+		
+		if(location != null)
+			tag.putString(ID, location.toString());
+		
+		if(parentLocation != null)
+			tag.putString(PARENT_LOCATION, parentLocation.toString());
+		
+		tag.put(COORDS, coords.serializeNBT());
+		
+		tag.put(AXIS_ROTATION, axisRotation.serializeNBT());
+		
+		// Serialize Children
+		CompoundTag childrenTag = new CompoundTag();
+		int j = 0;
+		for(SpaceObject spaceObject : children)
+		{
+			childrenTag.put(String.valueOf(j), spaceObject.serializeNBT());
+			j++;
+		}
+		tag.put(CHILDREN, childrenTag);
+		
+		return tag;
+	}
+	
+	@Override
+	public void deserializeNBT(CompoundTag tag)
+	{
+		if(tag.contains(ID))
+			this.location = new ResourceLocation(tag.getString(ID));
+		
+		if(tag.contains(PARENT_LOCATION))
+			this.parentLocation = new ResourceLocation(tag.getString(PARENT_LOCATION));
+		
+		this.coords = new SpaceCoords();
+		coords.deserializeNBT(tag.getCompound(COORDS));
+		
+		this.axisRotation = new AxisRotation();
+		axisRotation.deserializeNBT(tag.getCompound(AXIS_ROTATION));
+		
+		// Deserialize Children
+		/*CompoundTag childrenTag = tag.getCompound(CHILDREN);
+		for(int j = 0; j < childrenTag.size(); j++)
+		{
+			CompoundTag childTag = childrenTag.getCompound(String.valueOf(j));
+			
+			SpaceObject spaceObject = SpaceObjectDeserializer.deserialize(childTag.getString(SpaceObject.OBJECT_TYPE), childTag);
+			
+			if(spaceObject != null && spaceObject.isInitialized())
+				addExistingChild(spaceObject);
+		}*/
+	}
+	
+	/*public void fromTag(CompoundTag tag)
 	{
 		if(tag.contains(ID))
 			this.location = new ResourceLocation(tag.getString(ID));
@@ -169,5 +228,5 @@ public abstract class SpaceObject
 		this.coords = SpaceCoords.fromTag(tag.getCompound(COORDS));
 		
 		this.axisRotation = AxisRotation.fromTag(tag.getCompound(AXIS_ROTATION));
-	}
+	}*/
 }

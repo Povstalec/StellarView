@@ -3,13 +3,14 @@ package net.povstalec.stellarview.common.util;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public class DustCloudInfo
+public class DustCloudInfo implements INBTSerializable<CompoundTag>
 {
 	public static final String DUST_CLOUD_TYPES = "dust_cloud_types";
 	public static final String TOTAL_WEIGHT = "total_weight";
@@ -24,6 +25,8 @@ public class DustCloudInfo
 	public static final Codec<DustCloudInfo> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			DustCloudType.CODEC.listOf().fieldOf("dust_cloud_types").forGetter(dustCloudInfo -> dustCloudInfo.dustCloudTypes)
 			).apply(instance, DustCloudInfo::new));
+	
+	public DustCloudInfo() {}
 	
 	public DustCloudInfo(List<DustCloudType> dustCloudTypes, int totalWeight)
 	{
@@ -59,22 +62,46 @@ public class DustCloudInfo
 		return dustCloudTypes.get(i);
 	}
 	
-	public static DustCloudInfo fromTag(CompoundTag tag)
+	//============================================================================================
+	//*************************************Saving and Loading*************************************
+	//============================================================================================
+	
+	@Override
+	public CompoundTag serializeNBT()
 	{
-		ArrayList<DustCloudType> dustCloudTypes = new ArrayList<DustCloudType>();
+		CompoundTag tag = new CompoundTag();
+		
+		CompoundTag dustCloudTypesTag = new CompoundTag();
+		for(int i = 0; i < dustCloudTypes.size(); i++)
+		{
+			dustCloudTypesTag.put("dust_cloud_type_" + i, dustCloudTypes.get(i).serializeNBT());
+		}
+		tag.put(DUST_CLOUD_TYPES, dustCloudTypesTag);
+		
+		tag.putInt(TOTAL_WEIGHT, totalWeight);
+		
+		return tag;
+	}
+	
+	@Override
+	public void deserializeNBT(CompoundTag tag)
+	{
+		this.dustCloudTypes = new ArrayList<DustCloudType>();
 		CompoundTag dustCloudTypesTag = tag.getCompound(DUST_CLOUD_TYPES);
 		for(int i = 0; i < dustCloudTypesTag.size(); i++)
 		{
-			DustCloudType dustCloudType = DustCloudType.fromTag(dustCloudTypesTag.getCompound("dust_cloud_type_" + i));
-			dustCloudTypes.add(dustCloudType);
+			DustCloudType dustCloudType = new DustCloudType();
+			dustCloudType.deserializeNBT(dustCloudTypesTag.getCompound("dust_cloud_type_" + i));
+			this.dustCloudTypes.add(dustCloudType);
+			
 		}
 		
-		return new DustCloudInfo(dustCloudTypes, tag.getInt(TOTAL_WEIGHT));
+		totalWeight = tag.getInt(TOTAL_WEIGHT);
 	}
 	
 	
 	
-	public static class DustCloudType
+	public static class DustCloudType implements INBTSerializable<CompoundTag>
 	{
 		public static final String RGB = "rgb";
 		public static final String MAX_SIZE = "max_size";
@@ -83,15 +110,15 @@ public class DustCloudInfo
 		public static final String MIN_BRIGHTNESS = "min_brightness";
 		public static final String WEIGHT = "weight";
 		
-		private final Color.IntRGB rgb;
+		private Color.IntRGB rgb;
 		
-		private final float minSize;
-		private final float maxSize;
+		private float minSize;
+		private float maxSize;
 		
-		private final short minBrightness;
-		private final short maxBrightness;
+		private short minBrightness;
+		private short maxBrightness;
 		
-		public final int weight;
+		public int weight;
 		
 		public static final Codec<DustCloudType> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				Color.IntRGB.CODEC.fieldOf("rgb").forGetter(DustCloudType::getRGB),
@@ -104,6 +131,8 @@ public class DustCloudInfo
 				
 				Codec.intRange(1, Integer.MAX_VALUE).fieldOf("weight").forGetter(DustCloudType::getWeight)
 		).apply(instance, DustCloudType::new));
+		
+		public DustCloudType() {}
 		
 		public DustCloudType(Color.IntRGB rgb, float minSize, float maxSize, short minBrightness, short maxBrightness, int weight)
 		{
@@ -144,12 +173,41 @@ public class DustCloudInfo
 			return (short) random.nextInt(minBrightness, maxBrightness + 1);
 		}
 		
-		public static DustCloudType fromTag(CompoundTag tag)
+		//============================================================================================
+		//*************************************Saving and Loading*************************************
+		//============================================================================================
+		
+		@Override
+		public CompoundTag serializeNBT()
 		{
-			Color.IntRGB rgb = new Color.IntRGB();
-			rgb.fromTag(tag.getCompound(RGB));
+			CompoundTag tag = new CompoundTag();
 			
-			return new DustCloudType(rgb, tag.getFloat(MIN_SIZE), tag.getFloat(MAX_SIZE), tag.getShort(MIN_BRIGHTNESS), tag.getShort(MAX_BRIGHTNESS), tag.getInt(WEIGHT));
+			tag.put(RGB, rgb.serializeNBT());
+			
+			tag.putFloat(MIN_SIZE, minSize);
+			tag.putFloat(MAX_SIZE, maxSize);
+			
+			tag.putShort(MIN_BRIGHTNESS, minBrightness);
+			tag.putShort(MAX_BRIGHTNESS, maxBrightness);
+			
+			tag.putInt(WEIGHT, weight);
+			
+			return tag;
+		}
+		
+		@Override
+		public void deserializeNBT(CompoundTag tag)
+		{
+			rgb = new Color.IntRGB();
+			rgb.deserializeNBT(tag.getCompound(RGB));
+			
+			minSize = tag.getFloat(MIN_SIZE);
+			maxSize = tag.getFloat(MAX_SIZE);
+			
+			minBrightness = tag.getShort(MIN_BRIGHTNESS);
+			maxBrightness = tag.getShort(MAX_BRIGHTNESS);
+			
+			weight = tag.getInt(WEIGHT);
 		}
 	}
 }

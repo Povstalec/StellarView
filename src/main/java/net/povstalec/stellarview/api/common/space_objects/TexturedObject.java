@@ -10,6 +10,7 @@ import net.minecraft.nbt.CompoundTag;
 import com.mojang.datafixers.util.Either;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 import net.povstalec.stellarview.common.util.StellarCoordinates;
@@ -59,24 +60,49 @@ public abstract class TexturedObject extends SpaceObject
 		return (distance - fadeOutStart) / (fadeOutEnd - fadeOutStart);
 	}
 	
+	//============================================================================================
+	//*************************************Saving and Loading*************************************
+	//============================================================================================
+	
 	@Override
-	public void fromTag(CompoundTag tag)
+	public CompoundTag serializeNBT()
 	{
-		super.fromTag(tag);
+		CompoundTag tag = super.serializeNBT();
+		
+		// Serialize Texture Layers
+		CompoundTag textureLayerTag = new CompoundTag();
+		int i = 0;
+		for(TextureLayer textureLayer : textureLayers)
+		{
+			textureLayerTag.put(String.valueOf(i), textureLayer.serialize());
+			i++;
+		}
+		tag.put(TEXTURE_LAYERS, textureLayerTag);
+		
+		tag.put(FADE_OUT_HANDLER, fadeOutHandler.serializeNBT());
+		
+		return tag;
+	}
+	
+	@Override
+	public void deserializeNBT(CompoundTag tag)
+	{
+		super.deserializeNBT(tag);
 		
 		// Deserialize Texture Layers
 		CompoundTag textureLayerTag = tag.getCompound(TEXTURE_LAYERS);
 		for(int i = 0; i < textureLayerTag.size(); i++)
 		{
-			textureLayers.add(TextureLayer.fromTag(textureLayerTag.getCompound(String.valueOf(i))));
+			textureLayers.add(TextureLayer.deserialize(textureLayerTag.getCompound(String.valueOf(i))));
 		}
 		
-		this.fadeOutHandler = FadeOutHandler.fromTag(tag.getCompound(FADE_OUT_HANDLER));
+		this.fadeOutHandler = new FadeOutHandler();
+		this.fadeOutHandler.deserializeNBT(tag.getCompound(FADE_OUT_HANDLER));
 	}
 	
 	
 	
-	public static class FadeOutHandler
+	public static class FadeOutHandler implements INBTSerializable<CompoundTag>
 	{
 		public static final String FADE_OUT_START_DISTANCE = "fade_out_start_distance";
 		public static final String FADE_OUT_END_DISTANCE = "fade_out_end_distance";
@@ -95,6 +121,8 @@ public abstract class TexturedObject extends SpaceObject
 				SpaceCoords.SpaceDistance.CODEC.fieldOf(FADE_OUT_END_DISTANCE).forGetter(FadeOutHandler::getFadeOutEndDistance),
 				SpaceCoords.SpaceDistance.CODEC.fieldOf(MAX_CHILD_RENDER_DISTANCE).forGetter(FadeOutHandler::getMaxChildRenderDistance)
 		).apply(instance, FadeOutHandler::new));
+		
+		public FadeOutHandler() {}
 		
 		public FadeOutHandler(SpaceCoords.SpaceDistance fadeOutStartDistance, SpaceCoords.SpaceDistance fadeOutEndDistance, SpaceCoords.SpaceDistance maxChildRenderDistance)
 		{
@@ -118,9 +146,29 @@ public abstract class TexturedObject extends SpaceObject
 			return maxChildRenderDistance;
 		}
 		
-		public static FadeOutHandler fromTag(CompoundTag tag)
+		@Override
+		public CompoundTag serializeNBT()
 		{
-			return new FadeOutHandler(SpaceCoords.SpaceDistance.fromTag(tag.getCompound(FADE_OUT_START_DISTANCE)), SpaceCoords.SpaceDistance.fromTag(tag.getCompound(FADE_OUT_END_DISTANCE)), SpaceCoords.SpaceDistance.fromTag(tag.getCompound(MAX_CHILD_RENDER_DISTANCE)));
+			CompoundTag tag = new CompoundTag();
+			
+			tag.put(FADE_OUT_START_DISTANCE, fadeOutStartDistance.serializeNBT());
+			tag.put(FADE_OUT_END_DISTANCE, fadeOutEndDistance.serializeNBT());
+			tag.put(MAX_CHILD_RENDER_DISTANCE, maxChildRenderDistance.serializeNBT());
+			
+			return tag;
+		}
+		
+		@Override
+		public void deserializeNBT(CompoundTag tag)
+		{
+			fadeOutStartDistance = new SpaceCoords.SpaceDistance();
+			fadeOutStartDistance.deserializeNBT(tag.getCompound(FADE_OUT_START_DISTANCE));
+			
+			fadeOutEndDistance = new SpaceCoords.SpaceDistance();
+			fadeOutEndDistance.deserializeNBT(tag.getCompound(FADE_OUT_END_DISTANCE));
+			
+			maxChildRenderDistance = new SpaceCoords.SpaceDistance();
+			maxChildRenderDistance.deserializeNBT(tag.getCompound(MAX_CHILD_RENDER_DISTANCE));
 		}
 	}
 }

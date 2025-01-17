@@ -78,12 +78,24 @@ public class OrbitingObject extends TexturedObject
 		}
 	}
 	
+	//============================================================================================
+	//*************************************Saving and Loading*************************************
+	//============================================================================================
+	
 	@Override
-	public void fromTag(CompoundTag tag)
+	public CompoundTag serializeNBT()
 	{
-		super.fromTag(tag);
-		
-		orbitInfo = null; //TODO
+		CompoundTag tag = super.serializeNBT();
+		//TODO Serialize OrbitInfo
+		return tag;
+	}
+	
+	@Override
+	public void deserializeNBT(CompoundTag tag)
+	{
+		super.deserializeNBT(tag);
+		//TODO Deserialize OrbitInfo
+		this.orbitInfo = null;
 	}
 	
 	

@@ -63,6 +63,9 @@ public class ViewCenter
 	@Nullable
 	protected List<Skybox> skyboxes;
 	
+	protected DayBlending dayBlending;
+	protected DayBlending sunDayBlending;
+	
 	protected Minecraft minecraft = Minecraft.getInstance();
 	@Nullable
 	protected VertexBuffer skyBuffer;
@@ -78,12 +81,6 @@ public class ViewCenter
 	@Nullable
 	protected final MeteorEffect.MeteorShower meteorShower;
 	
-	public final float dayMaxBrightness;
-
-	public final float dayMinVisibleSize;
-	public final float dayMaxVisibleSize;
-	public final float dayVisibleSizeRange;
-	
 	public final boolean createHorizon;
 	public final boolean createVoid;
 	
@@ -97,9 +94,8 @@ public class ViewCenter
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(ViewCenter::getAxisRotation),
 			Codec.LONG.optionalFieldOf("rotation_period", 0L).forGetter(ViewCenter::getRotationPeriod),
 			
-			Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("day_max_brightness", DAY_MAX_BRIGHTNESS).forGetter(viewCenter -> viewCenter.dayMaxBrightness),
-			Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("day_min_visible_size", DAY_MIN_VISIBLE_SIZE).forGetter(viewCenter -> viewCenter.dayMinVisibleSize),
-			Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("day_max_visible_size", DAY_MAX_VISIBLE_SIZE).forGetter(viewCenter -> viewCenter.dayMaxVisibleSize),
+			DayBlending.CODEC.optionalFieldOf("day_blending", DayBlending.DAY_BLENDING).forGetter(viewCenter -> viewCenter.dayBlending),
+			DayBlending.CODEC.optionalFieldOf("sun_day_blending", DayBlending.SUN_DAY_BLENDING).forGetter(viewCenter -> viewCenter.sunDayBlending),
 			
 			MeteorEffect.ShootingStar.CODEC.optionalFieldOf("shooting_star", null).forGetter(ViewCenter::getShootingStar),
 			MeteorEffect.MeteorShower.CODEC.optionalFieldOf("meteor_shower", null).forGetter(ViewCenter::getMeteorShower),
@@ -112,7 +108,7 @@ public class ViewCenter
 			).apply(instance, ViewCenter::new));
 	
 	public ViewCenter(Optional<ResourceKey<SpaceObject>> viewCenterKey, Optional<List<Skybox>> skyboxes, AxisRotation axisRotation,
-			long rotationPeriod, float dayMaxBrightness, float dayMinVisibleSize, float dayMaxVisibleSize,
+			long rotationPeriod, DayBlending dayBlending, DayBlending sunDayBlending,
 			MeteorEffect.ShootingStar shootingStar, MeteorEffect.MeteorShower meteorShower,
 			boolean createHorizon, boolean createVoid,
 			boolean starsAlwaysVisible, int zRotationMultiplier)
@@ -130,14 +126,11 @@ public class ViewCenter
 		this.axisRotation = axisRotation;
 		this.rotationPeriod = rotationPeriod;
 		
+		this.dayBlending = dayBlending;
+		this.sunDayBlending = sunDayBlending;
+		
 		this.shootingStar = shootingStar;
 		this.meteorShower = meteorShower;
-		
-		this.dayMaxBrightness = dayMaxBrightness;
-		
-		this.dayMinVisibleSize = dayMinVisibleSize;
-		this.dayMaxVisibleSize = dayMaxVisibleSize;
-		this.dayVisibleSizeRange = dayMaxVisibleSize - dayMinVisibleSize;
 		
 		this.createHorizon = createHorizon;
 		this.createVoid = createVoid;
@@ -213,6 +206,16 @@ public class ViewCenter
 			return Optional.of(skyboxes);
 		
 		return Optional.empty();
+	}
+	
+	public DayBlending dayBlending()
+	{
+		return dayBlending;
+	}
+	
+	public DayBlending sunDayBlending()
+	{
+		return sunDayBlending;
 	}
 	
 	public SpaceCoords getCoords()
@@ -449,5 +452,53 @@ public class ViewCenter
 		}
 		
 		return true;
+	}
+	
+	
+	
+	public static class DayBlending
+	{
+		public static final DayBlending DAY_BLENDING = new DayBlending(1, 10, 30);
+		public static final DayBlending SUN_DAY_BLENDING = new DayBlending(1, 10, 20);
+		
+		private final float dayMaxBrightness;
+		
+		private final float dayMinVisibleSize;
+		private final float dayMaxVisibleSize;
+		
+		public static final Codec<DayBlending> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("max_brightness", DAY_MAX_BRIGHTNESS).forGetter(dayBlending -> dayBlending.dayMinVisibleSize),
+				
+				Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("min_visible_size", DAY_MIN_VISIBLE_SIZE).forGetter(dayBlending -> dayBlending.dayMinVisibleSize),
+				Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("max_visible_size", DAY_MAX_VISIBLE_SIZE).forGetter(dayBlending -> dayBlending.dayMaxVisibleSize)
+		).apply(instance, DayBlending::new));
+		
+		public DayBlending(float dayMaxBrightness, float dayMinVisibleSize, final float dayMaxVisibleSize)
+		{
+			this.dayMaxBrightness = dayMaxBrightness;
+			
+			this.dayMinVisibleSize = dayMinVisibleSize;
+			this.dayMaxVisibleSize = dayMaxVisibleSize;
+		}
+		
+		public float dayMaxBrightness()
+		{
+			return dayMaxBrightness;
+		}
+		
+		public float dayMaxVisibleSize()
+		{
+			return dayMaxVisibleSize;
+		}
+		
+		public float dayMinVisibleSize()
+		{
+			return dayMinVisibleSize;
+		}
+		
+		public float dayVisibleRange()
+		{
+			return dayMaxVisibleSize - dayMinVisibleSize;
+		}
 	}
 }

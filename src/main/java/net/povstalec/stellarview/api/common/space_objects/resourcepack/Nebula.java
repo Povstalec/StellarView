@@ -3,6 +3,7 @@ package net.povstalec.stellarview.api.common.space_objects.resourcepack;
 import java.util.List;
 import java.util.Optional;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.api.common.space_objects.TexturedObject;
 
@@ -18,6 +19,10 @@ import net.povstalec.stellarview.common.util.TextureLayer;
 
 public class Nebula extends TexturedObject
 {
+	public static final String MIN_NEBULA_SIZE = "min_nebula_size";
+	public static final String MAX_NEBULA_ALPHA = "max_nebula_alpha";
+	public static final String MIN_NEBULA_ALPHA = "min_nebula_alpha";
+	
 	public static final float MIN_SIZE = 0.4F;
 	
 	public static final float MAX_ALPHA = 1F;
@@ -36,9 +41,9 @@ public class Nebula extends TexturedObject
 
 			FadeOutHandler.CODEC.optionalFieldOf("fade_out_handler", FadeOutHandler.DEFAULT_NEBULA_HANDLER).forGetter(Nebula::getFadeOutHandler),
 			
-			Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("min_nebula_size", MIN_SIZE).forGetter(Nebula::getMinNebulaSize),
-			Codec.floatRange(0, Color.MAX_FLOAT_VALUE).optionalFieldOf("max_nebula_alpha", MAX_ALPHA).forGetter(Nebula::getMaxNebulaAlpha),
-			Codec.floatRange(0, Color.MAX_FLOAT_VALUE).optionalFieldOf("min_nebula_alpha", MIN_ALPHA).forGetter(Nebula::getMinNebulaAlpha)
+			Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf(MIN_NEBULA_SIZE, MIN_SIZE).forGetter(Nebula::getMinNebulaSize),
+			Codec.floatRange(0, Color.MAX_FLOAT_VALUE).optionalFieldOf(MAX_NEBULA_ALPHA, MAX_ALPHA).forGetter(Nebula::getMaxNebulaAlpha),
+			Codec.floatRange(0, Color.MAX_FLOAT_VALUE).optionalFieldOf(MIN_NEBULA_ALPHA, MIN_ALPHA).forGetter(Nebula::getMinNebulaAlpha)
 			).apply(instance, Nebula::new));
 	
 	public Nebula(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
@@ -87,5 +92,31 @@ public class Nebula extends TexturedObject
 				alpha = getMinNebulaAlpha();
 		
 		return new Color.FloatRGBA(1, 1, 1, alpha);
+	}
+	
+	//============================================================================================
+	//*************************************Saving and Loading*************************************
+	//============================================================================================
+	
+	@Override
+	public CompoundTag serializeNBT()
+	{
+		CompoundTag tag = super.serializeNBT();
+		
+		tag.putFloat(MIN_NEBULA_SIZE, minNebulaSize);
+		tag.putFloat(MAX_NEBULA_ALPHA, maxNebulaAlpha);
+		tag.putFloat(MIN_NEBULA_ALPHA, minNebulaAlpha);
+		
+		return tag;
+	}
+	
+	@Override
+	public void deserializeNBT(CompoundTag tag)
+	{
+		super.deserializeNBT(tag);
+		
+		minNebulaSize = tag.getFloat(MIN_NEBULA_SIZE);
+		maxNebulaAlpha = tag.getFloat(MAX_NEBULA_ALPHA);
+		minNebulaAlpha = tag.getFloat(MIN_NEBULA_ALPHA);
 	}
 }

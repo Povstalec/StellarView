@@ -3,18 +3,16 @@ package net.povstalec.stellarview.api.common.space_objects.resourcepack;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
 import javax.annotation.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
 import net.povstalec.stellarview.common.util.*;
-import org.joml.Vector3d;
 
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -217,16 +215,47 @@ public class StarField extends SpaceObject
 		return spiralArms;
 	}
 	
-	
-	
-	
+	//============================================================================================
+	//*************************************Saving and Loading*************************************
+	//============================================================================================
 	
 	@Override
-	public void fromTag(CompoundTag tag)
+	public CompoundTag serializeNBT()
 	{
-		super.fromTag(tag);
+		CompoundTag tag = super.serializeNBT();
 		
-		this.starInfo = StarInfo.fromTag(tag.getCompound(STAR_INFO));
+		tag.putInt(DUST_CLOUDS, dustClouds);
+		tag.putString(DUST_CLOUD_TEXTURE, dustCloudTexture.toString());
+		
+		tag.putLong(SEED, seed);
+		
+		tag.putInt(DIAMETER_LY, diameter);
+		tag.putInt(STARS, stars);
+		
+		tag.putBoolean(CLUMP_STARS_IN_CENTER, clumpStarsInCenter);
+		
+		tag.putDouble(X_STRETCH, xStretch);
+		tag.putDouble(Y_STRETCH, yStretch);
+		tag.putDouble(Z_STRETCH, zStretch);
+		
+		CompoundTag armsTag = new CompoundTag();
+		for(int i = 0; i < spiralArms.size(); i++)
+		{
+			armsTag.put("spiral_arm_" + i, spiralArms.get(i).serializeNBT());
+		}
+		
+		tag.put(SPIRAL_ARMS, armsTag);
+		
+		tag.put(STAR_INFO, starInfo.serializeNBT());
+		tag.put(DUST_CLOUD_INFO, dustCloudInfo.serializeNBT());
+		
+		return tag;
+	}
+	
+	@Override
+	public void deserializeNBT(CompoundTag tag)
+	{
+		super.deserializeNBT(tag);
 		
 		dustClouds = tag.getInt(DUST_CLOUDS);
 		dustCloudTexture = new ResourceLocation(tag.getString(DUST_CLOUD_TEXTURE));
@@ -244,19 +273,23 @@ public class StarField extends SpaceObject
 		
 		this.spiralArms = new ArrayList<SpiralArm>();
 		CompoundTag armsTag = tag.getCompound(SPIRAL_ARMS);
-		for(int i = 0; i < armsTag.size(); i++)
+		for(String key : armsTag.getAllKeys())
 		{
 			SpiralArm arm = new SpiralArm();
-			arm.fromTag(armsTag.getCompound("spiral_arm_" + i));
+			arm.deserializeNBT(armsTag.getCompound(key));
 			spiralArms.add(arm);
 		}
 		
-		this.dustCloudInfo = DustCloudInfo.fromTag(tag.getCompound(DUST_CLOUD_INFO));
+		this.starInfo = new StarInfo();
+		this.starInfo.deserializeNBT(tag.getCompound(STAR_INFO));
+		
+		this.dustCloudInfo = new DustCloudInfo();
+		this.dustCloudInfo.deserializeNBT(tag.getCompound(DUST_CLOUD_INFO));
 	}
 	
 	
 	
-	public static class SpiralArm
+	public static class SpiralArm implements INBTSerializable<CompoundTag>
 	{
 		public static final String STARS = "stars";
 		public static final String ARM_ROTATION = "arm_rotation";
@@ -269,8 +302,6 @@ public class StarField extends SpaceObject
 		protected int armDustClouds;
 		
 		protected int armStars;
-		protected int lod1stars = 0;
-		protected int lod2stars = 0;
 		
 		protected double armRotation;
 		protected double armLength;
@@ -342,45 +373,41 @@ public class StarField extends SpaceObject
 			return clumpStarsInCenter;
 		}
 		
-		protected void generateDustClouds(BufferBuilder bufferBuilder, AxisRotation axisRotation, DustCloudData dustCloudData, DustCloudInfo dustCloudInfo, Random random, int numberOfDustClouds, double sizeMultiplier)
+		//============================================================================================
+		//*************************************Saving and Loading*************************************
+		//============================================================================================
+		
+		@Override
+		public CompoundTag serializeNBT()
 		{
-			for(int i = 0; i < armDustClouds; i++)
-			{
-				// Milky Way is 90 000 ly across
-				
-				double progress = (double) i / armDustClouds;
-				
-				double phi = armLength * Math.PI * progress - armRotation;
-				double r = StellarCoordinates.spiralR(5, phi, armRotation);
-				progress++;
-				
-				// This generates random coordinates for the Star close to the camera
-				double distance = clumpStarsInCenter() ? random.nextDouble() : Math.cbrt(random.nextDouble());
-				double theta = random.nextDouble() * 2F * Math.PI;
-				double sphericalphi = Math.acos(2F * random.nextDouble() - 1F); // This prevents the formation of that weird streak that normally happens
-				
-				Vector3d cartesian = new SphericalCoords(distance * armThickness(), theta, sphericalphi).toCartesianD();
-				
-				double x =  r * Math.cos(phi) + cartesian.x * armThickness() / (progress * 1.5);
-				double z =  r * Math.sin(phi) + cartesian.z * armThickness() / (progress * 1.5);
-				double y =  cartesian.y * armThickness() / (progress * 1.5);
-				
-				cartesian.x = x * sizeMultiplier;
-				cartesian.y = y * sizeMultiplier;
-				cartesian.z = z * sizeMultiplier;
-				
-				axisRotation.quaterniond().transform(cartesian);
-				
-				dustCloudData.newDustCloud(this.dustCloudInfo == null ? dustCloudInfo : this.dustCloudInfo, bufferBuilder, random, cartesian.x, cartesian.y, cartesian.z, (1 / progress) + 0.2, numberOfDustClouds + i);
-			}
+			CompoundTag tag = new CompoundTag();
+			
+			tag.putInt(DUST_CLOUDS, armDustClouds);
+			
+			if(dustCloudInfo != null)
+				tag.put(DUST_CLOUD_INFO, dustCloudInfo.serializeNBT());
+			
+			tag.putInt(STARS, armStars);
+			
+			tag.putDouble(ARM_ROTATION, armRotation);
+			tag.putDouble(ARM_LENGTH, armLength);
+			tag.putDouble(ARM_THICKNESS, armThickness);
+			
+			tag.putBoolean(CLUMP_STARS_IN_CENTER, clumpStarsInCenter);
+			
+			return tag;
 		}
 		
-		public void fromTag(CompoundTag tag)
+		@Override
+		public void deserializeNBT(CompoundTag tag)
 		{
 			armDustClouds = tag.getInt(DUST_CLOUDS);
 			
 			if(tag.contains(DUST_CLOUD_INFO))
-				dustCloudInfo = DustCloudInfo.fromTag(tag.getCompound(DUST_CLOUD_INFO));
+			{
+				dustCloudInfo = new DustCloudInfo();
+				dustCloudInfo.deserializeNBT(tag.getCompound(DUST_CLOUD_INFO));
+			}
 			else
 				dustCloudInfo = null;
 			

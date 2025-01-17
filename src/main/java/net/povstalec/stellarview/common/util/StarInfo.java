@@ -10,11 +10,12 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.api.common.space_objects.resourcepack.StarField;
 import net.povstalec.stellarview.api.common.space_objects.StarLike;
 
-public class StarInfo
+public class StarInfo implements INBTSerializable<CompoundTag>
 {
 	public static final ResourceLocation DEFAULT_STAR_TEXTURE = new ResourceLocation(StellarView.MODID,"textures/environment/star.png");
 	
@@ -43,6 +44,8 @@ public class StarInfo
 			ResourceLocation.CODEC.optionalFieldOf("star_texture", DEFAULT_STAR_TEXTURE).forGetter(StarInfo::getStarTexture),
 			StarLike.StarType.CODEC.listOf().fieldOf("star_types").forGetter(starInfo -> new ArrayList<StarLike.StarType>())
 			).apply(instance, StarInfo::new));
+	
+	public StarInfo() {}
 	
 	public StarInfo(ResourceLocation starTexture, List<StarLike.StarType> starTypes)
 	{
@@ -148,6 +151,21 @@ public class StarInfo
 		return lod3Weight;
 	}
 	
+	//============================================================================================
+	//*************************************Saving and Loading*************************************
+	//============================================================================================
+	
+	private static CompoundTag serializeLODTypes(ArrayList<StarLike.StarType> lodTypes)
+	{
+		CompoundTag starTypesTag = new CompoundTag();
+		for(int i = 0; i < lodTypes.size(); i++)
+		{
+			starTypesTag.put("star_type_" + i, lodTypes.get(i).serializeNBT());
+		}
+		
+		return starTypesTag;
+	}
+	
 	private static ArrayList<StarLike.StarType> getLODTypes(CompoundTag tag, String key)
 	{
 		ArrayList<StarLike.StarType> lodTypes;
@@ -157,7 +175,8 @@ public class StarInfo
 			CompoundTag starTypesTag = tag.getCompound(key);
 			for(int i = 0; i < starTypesTag.size(); i++)
 			{
-				StarLike.StarType starType = StarLike.StarType.fromTag(starTypesTag.getCompound("star_type_" + i));
+				StarLike.StarType starType = new StarLike.StarType();
+				starType.deserializeNBT(starTypesTag.getCompound("star_type_" + i));
 				lodTypes.add(starType);
 			}
 		}
@@ -167,8 +186,38 @@ public class StarInfo
 		return lodTypes;
 	}
 	
-	public static StarInfo fromTag(CompoundTag tag)
+	@Override
+	public CompoundTag serializeNBT()
 	{
-		return new StarInfo(new ResourceLocation(tag.getString(STAR_TEXTURE)), getLODTypes(tag, LOD1_TYPES), getLODTypes(tag, LOD2_TYPES), getLODTypes(tag, LOD3_TYPES), tag.getInt(LOD1_WEIGHT), tag.getInt(LOD2_WEIGHT), tag.getInt(LOD3_WEIGHT));
+		CompoundTag tag = new CompoundTag();
+		
+		tag.putString(STAR_TEXTURE, starTexture.toString());
+		
+		if(this.lod1Types != null)
+			tag.put(LOD1_TYPES, serializeLODTypes(this.lod1Types));
+		if(this.lod2Types != null)
+			tag.put(LOD2_TYPES, serializeLODTypes(this.lod2Types));
+		if(this.lod3Types != null)
+			tag.put(LOD3_TYPES, serializeLODTypes(this.lod3Types));
+		
+		tag.putInt(LOD1_WEIGHT, lod1Weight);
+		tag.putInt(LOD2_WEIGHT, lod2Weight);
+		tag.putInt(LOD3_WEIGHT, lod3Weight);
+		
+		return tag;
+	}
+	
+	@Override
+	public void deserializeNBT(CompoundTag tag)
+	{
+		this.starTexture = new ResourceLocation(tag.getString(STAR_TEXTURE));
+		
+		this.lod1Types = getLODTypes(tag, LOD1_TYPES);
+		this.lod2Types = getLODTypes(tag, LOD2_TYPES);
+		this.lod3Types = getLODTypes(tag, LOD3_TYPES);
+		
+		this.lod1Weight = tag.getInt(LOD1_WEIGHT);
+		this.lod2Weight = tag.getInt(LOD2_WEIGHT);
+		this.lod3Weight = tag.getInt(LOD3_WEIGHT);
 	}
 }

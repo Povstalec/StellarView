@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 
 import com.mojang.datafixers.util.Either;
@@ -72,6 +73,25 @@ public class Moon extends Planet
 			return EnhancedCelestialsCompatibility.getMoonColor(level, partialTicks);
 		
 		return new Color.FloatRGBA(1F, 1F, 1F);
+	}
+	
+	//============================================================================================
+	//*************************************Saving and Loading*************************************
+	//============================================================================================
+	
+	@Override
+	public CompoundTag serializeNBT()
+	{
+		CompoundTag tag = super.serializeNBT();
+		//TODO Serialize Compatibility
+		return tag;
+	}
+	
+	@Override
+	public void deserializeNBT(CompoundTag tag)
+	{
+		super.deserializeNBT(tag);
+		//TODO Deserialize Compatibility
 	}
 	
 	

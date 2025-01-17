@@ -3,6 +3,7 @@ package net.povstalec.stellarview.common.util;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraftforge.common.util.INBTSerializable;
 
 public class Color
 {
@@ -33,7 +34,7 @@ public class Color
 			throw(new IllegalArgumentException("Value may not be lower than 0.0"));
 	}
 	
-	public static class IntRGB
+	public static class IntRGB implements INBTSerializable<CompoundTag>
 	{
 		protected int red;
 		protected int green;
@@ -95,7 +96,24 @@ public class Color
 			return blue;
 		}
 		
-		public void fromTag(CompoundTag tag)
+		//============================================================================================
+		//*************************************Saving and Loading*************************************
+		//============================================================================================
+		
+		@Override
+		public CompoundTag serializeNBT()
+		{
+			CompoundTag tag = new CompoundTag();
+			
+			tag.putInt(RED, red);
+			tag.putInt(GREEN, green);
+			tag.putInt(BLUE, blue);
+			
+			return tag;
+		}
+		
+		@Override
+		public void deserializeNBT(CompoundTag tag)
 		{
 			red = tag.getInt(RED);
 			green = tag.getInt(GREEN);
@@ -145,16 +163,30 @@ public class Color
 			return alpha;
 		}
 		
+		//============================================================================================
+		//*************************************Saving and Loading*************************************
+		//============================================================================================
+		
 		@Override
-		public void fromTag(CompoundTag tag)
+		public CompoundTag serializeNBT()
 		{
-			super.fromTag(tag);
+			CompoundTag tag = super.serializeNBT();
+			
+			tag.putInt(ALPHA, alpha);
+			
+			return tag;
+		}
+		
+		@Override
+		public void deserializeNBT(CompoundTag tag)
+		{
+			super.deserializeNBT(tag);
 			
 			alpha = tag.getInt(ALPHA);
 		}
 	}
 	
-	public static class FloatRGB
+	public static class FloatRGB implements INBTSerializable<CompoundTag>
 	{
 		protected float red;
 		protected float green;
@@ -222,7 +254,24 @@ public class Color
 			return blue;
 		}
 		
-		public void fromTag(CompoundTag tag)
+		//============================================================================================
+		//*************************************Saving and Loading*************************************
+		//============================================================================================
+		
+		@Override
+		public CompoundTag serializeNBT()
+		{
+			CompoundTag tag = new CompoundTag();
+			
+			tag.putFloat(RED, red);
+			tag.putFloat(GREEN, green);
+			tag.putFloat(BLUE, blue);
+			
+			return tag;
+		}
+		
+		@Override
+		public void deserializeNBT(CompoundTag tag)
 		{
 			red = tag.getFloat(RED);
 			green = tag.getFloat(GREEN);
@@ -298,10 +347,24 @@ public class Color
 			return alpha;
 		}
 		
+		//============================================================================================
+		//*************************************Saving and Loading*************************************
+		//============================================================================================
+		
 		@Override
-		public void fromTag(CompoundTag tag)
+		public CompoundTag serializeNBT()
 		{
-			super.fromTag(tag);
+			CompoundTag tag = super.serializeNBT();
+			
+			tag.putFloat(ALPHA, alpha);
+			
+			return tag;
+		}
+		
+		@Override
+		public void deserializeNBT(CompoundTag tag)
+		{
+			super.deserializeNBT(tag);
 			
 			alpha = tag.getFloat(ALPHA);
 		}

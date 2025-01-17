@@ -1,6 +1,7 @@
 package net.povstalec.stellarview.common.util;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraftforge.common.util.INBTSerializable;
 import org.joml.Quaterniond;
 import org.joml.Quaternionf;
 import org.joml.Vector3d;
@@ -13,7 +14,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.config.GeneralConfig;
 
-public class SpaceCoords
+public class SpaceCoords implements INBTSerializable<CompoundTag>
 {
 	public static final String X = "x";
 	public static final String Y = "y";
@@ -66,11 +67,6 @@ public class SpaceCoords
 	public SpaceCoords()
 	{
 		this(0, 0, 0, 0, 0, 0);
-	}
-	
-	public static SpaceCoords fromTag(CompoundTag tag)
-	{
-		return new SpaceCoords(SpaceDistance.fromTag(tag.getCompound(X)), SpaceDistance.fromTag(tag.getCompound(Y)), SpaceDistance.fromTag(tag.getCompound(Z)));
 	}
 	
 	//============================================================================================
@@ -226,7 +222,32 @@ public class SpaceCoords
 		return "( x: " + x.toString() + ", y: " + y.toString() + ", z: " + z.toString() + " )";
 	}
 	
-	public static class SpaceDistance
+	//============================================================================================
+	//*************************************Saving and Loading*************************************
+	//============================================================================================
+	
+	@Override
+	public CompoundTag serializeNBT()
+	{
+		CompoundTag tag = new CompoundTag();
+		tag.put(X, x.serializeNBT());
+		tag.put(Y, y.serializeNBT());
+		tag.put(Z, z.serializeNBT());
+		
+		return tag;
+	}
+	
+	@Override
+	public void deserializeNBT(CompoundTag tag)
+	{
+		x.deserializeNBT(tag.getCompound(X));;
+		y.deserializeNBT(tag.getCompound(Y));;
+		z.deserializeNBT(tag.getCompound(Z));;
+	}
+	
+	
+	
+	public static class SpaceDistance implements INBTSerializable<CompoundTag>
 	{
 		public static final String LY = "ly";
 		public static final String KM = "km";
@@ -254,14 +275,14 @@ public class SpaceCoords
 			this(lightYears, 0);
 		}
 		
+		public SpaceDistance()
+		{
+			this(0, 0);
+		}
+		
 		public SpaceDistance(double kilometers)
 		{
 			this(0, kilometers);
-		}
-		
-		public static SpaceDistance fromTag(CompoundTag tag)
-		{
-			return new SpaceDistance(tag.getLong(LY), tag.getDouble(KM));
 		}
 		
 		private void handleKmOverflow()
@@ -357,6 +378,27 @@ public class SpaceCoords
 		public String toString()
 		{
 			return "[ly: " + ly + ", km: " + km + "]";
+		}
+		
+		//============================================================================================
+		//*************************************Saving and Loading*************************************
+		//============================================================================================
+		
+		@Override
+		public CompoundTag serializeNBT()
+		{
+			CompoundTag tag = new CompoundTag();
+			tag.putLong(LY, ly);
+			tag.putDouble(KM, km);
+			
+			return tag;
+		}
+		
+		@Override
+		public void deserializeNBT(CompoundTag tag)
+		{
+			ly = tag.getLong(LY);
+			km = tag.getDouble(KM);
 		}
 	}
 }
