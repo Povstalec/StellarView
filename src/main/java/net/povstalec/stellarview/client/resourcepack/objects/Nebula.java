@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.StellarView;
+import net.povstalec.stellarview.client.render.LightEffects;
 import net.povstalec.stellarview.common.config.GeneralConfig;
 import org.joml.Matrix4f;
 
@@ -134,12 +135,12 @@ public class Nebula extends TexturedObject
 	public static float dayBrightness(ViewCenter viewCenter, float size, long ticks, ClientLevel level, Camera camera, float partialTicks)
 	{
 		if(viewCenter.starsAlwaysVisible())
-			return GeneralConfig.bright_stars.get() ? 0.5F * StellarView.lightSourceStarDimming(level, camera) : 0.5F;
+			return GeneralConfig.bright_stars.get() ? 0.5F * LightEffects.lightSourceStarDimming(level, camera) : 0.5F;
 		
 		float brightness = level.getStarBrightness(partialTicks) * 2;
 		
 		if(GeneralConfig.bright_stars.get())
-			brightness = brightness * StellarView.lightSourceDustCloudDimming(level, camera);
+			brightness = brightness * LightEffects.lightSourceDustCloudDimming(level, camera);
 		
 		if(brightness < viewCenter.dayMaxBrightness && size > viewCenter.dayMinVisibleSize)
 		{
@@ -149,6 +150,6 @@ public class Nebula extends TexturedObject
 			brightness = brightnessPercentage * viewCenter.dayMaxBrightness;
 		}
 		
-		return brightness * StellarView.rainDimming(level, partialTicks);
+		return brightness * LightEffects.rainDimming(level, partialTicks);
 	}
 }

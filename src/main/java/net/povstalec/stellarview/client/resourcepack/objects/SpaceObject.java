@@ -6,6 +6,7 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
+import net.povstalec.stellarview.client.render.LightEffects;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -117,12 +118,12 @@ public abstract class SpaceObject
 	public static float dayBrightness(ViewCenter viewCenter, float size, long ticks, ClientLevel level, Camera camera, float partialTicks)
 	{
 		if(viewCenter.starsAlwaysVisible())
-			return GeneralConfig.bright_stars.get() ? 0.5F * StellarView.lightSourceStarDimming(level, camera) : 0.5F;
+			return GeneralConfig.bright_stars.get() ? 0.5F * LightEffects.lightSourceStarDimming(level, camera) : 0.5F;
 		
 		float brightness = level.getStarBrightness(partialTicks) * 2;
 		
 		if(GeneralConfig.bright_stars.get())
-			brightness = brightness * StellarView.lightSourceStarDimming(level, camera);
+			brightness = brightness * LightEffects.lightSourceStarDimming(level, camera);
 		
 		if(brightness < viewCenter.dayMaxBrightness && size > viewCenter.dayMinVisibleSize)
 		{
@@ -132,7 +133,7 @@ public abstract class SpaceObject
 			brightness = brightnessPercentage * viewCenter.dayMaxBrightness;
 		}
 		
-		return brightness * StellarView.rainDimming(level, partialTicks);
+		return brightness * LightEffects.rainDimming(level, partialTicks);
 	}
 	
 	public void setPosAndRotation(SpaceCoords coords, AxisRotation axisRotation)

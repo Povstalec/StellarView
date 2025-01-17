@@ -6,6 +6,7 @@ import java.util.Random;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.povstalec.stellarview.client.render.LightEffects;
 import net.povstalec.stellarview.client.resourcepack.DustCloudInfo;
 import org.joml.Matrix4f;
 
@@ -144,9 +145,9 @@ public abstract class StarLike extends OrbitingObject
 			starBrightness = 0.5F;
 		
 		if(GeneralConfig.bright_stars.get())
-			starBrightness = starBrightness * StellarView.lightSourceStarDimming(level, camera);
+			starBrightness = starBrightness * LightEffects.lightSourceStarDimming(level, camera);
 		
-		starBrightness = starBrightness * StellarView.rainDimming(level, partialTicks);
+		starBrightness = starBrightness * LightEffects.rainDimming(level, partialTicks);
 		
 		return starBrightness;
 	}

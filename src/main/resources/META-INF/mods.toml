@@ -19,7 +19,7 @@ Enjoy a Stellar View of the Sky
     mandatory=true
     versionRange="[44,)"
     ordering="NONE"
-    side="CLIENT"
+    side="BOTH"
 [[dependencies.stellarview]]
     modId="minecraft"
     mandatory=true

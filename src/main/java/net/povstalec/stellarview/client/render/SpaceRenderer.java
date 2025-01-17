@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.client.Minecraft;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.client.resourcepack.objects.*;
 import net.povstalec.stellarview.common.config.GeneralConfig;
@@ -45,6 +46,15 @@ public final class SpaceRenderer
 	private static AxisRotation solAxisRotation = null;
 	
 	private static int starsPerTick = 0;
+	
+	public static void updateSpaceObjects()
+	{
+		if(Minecraft.getInstance().level == null)
+			return;
+		
+		SpaceRenderer.updateSol();
+		SpaceRenderer.resetStarFields();
+	}
 	
 	public static boolean loadNewStars()
 	{

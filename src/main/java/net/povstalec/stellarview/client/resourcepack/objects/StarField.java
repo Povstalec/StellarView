@@ -11,6 +11,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.StellarView;
+import net.povstalec.stellarview.client.render.LightEffects;
 import net.povstalec.stellarview.client.resourcepack.DustCloudInfo;
 import net.povstalec.stellarview.client.util.DustCloudData;
 import net.povstalec.stellarview.common.util.*;
@@ -520,9 +521,9 @@ public class StarField extends SpaceObject
 			brightness = 0.5F;
 		
 		if(GeneralConfig.bright_stars.get())
-			brightness = brightness * StellarView.lightSourceDustCloudDimming(level, camera);
+			brightness = brightness * LightEffects.lightSourceDustCloudDimming(level, camera);
 		
-		brightness = brightness * StellarView.rainDimming(level, partialTicks);
+		brightness = brightness * LightEffects.rainDimming(level, partialTicks);
 		
 		return brightness;
 	}
