@@ -4,11 +4,13 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.povstalec.stellarview.client.render.space_objects.GravityLenseRenderer;
+import net.povstalec.stellarview.client.render.space_objects.OrbitingObjectRenderer;
+import net.povstalec.stellarview.client.render.space_objects.SpaceObjectRenderer;
+import net.povstalec.stellarview.client.render.space_objects.resourcepack.StarFieldRenderer;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
-import net.povstalec.stellarview.api.common.space_objects.GravityLense;
 import net.povstalec.stellarview.api.common.space_objects.OrbitingObject;
 import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
-import net.povstalec.stellarview.api.common.space_objects.StarField;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 import org.joml.Matrix4f;
@@ -25,10 +27,10 @@ public class ClientSpaceRegion
 	
 	private RegionPos pos;
 	
-	protected final ArrayList<SpaceObject> children = new ArrayList<SpaceObject>();
+	protected final ArrayList<SpaceObjectRenderer> children = new ArrayList<SpaceObjectRenderer>();
 	
-	protected final ArrayList<GravityLense> lensingRenderers = new ArrayList<GravityLense>();
-	protected final ArrayList<StarField> starFieldRenderers = new ArrayList<StarField>();
+	protected final ArrayList<GravityLenseRenderer> lensingRenderers = new ArrayList<GravityLenseRenderer>();
+	protected final ArrayList<StarFieldRenderer> starFieldRenderers = new ArrayList<StarFieldRenderer>();
 	
 	public ClientSpaceRegion(RegionPos pos)
 	{
@@ -50,21 +52,21 @@ public class ClientSpaceRegion
 		return pos;
 	}
 	
-	public ArrayList<SpaceObject> getChildren()
+	public ArrayList<SpaceObjectRenderer> getChildren()
 	{
 		return children;
 	}
 	
-	public boolean addChild(SpaceObject child)
+	public boolean addChild(SpaceObjectRenderer child)
 	{
 		if(this.children.contains(child))
 			return false;
 		
 		this.children.add(child);
 		
-		if(child instanceof StarField starField)
+		if(child instanceof StarFieldRenderer starField)
 			starFieldRenderers.add(starField);
-		else if(child instanceof GravityLense lense)
+		else if(child instanceof GravityLenseRenderer lense)
 			lensingRenderers.add(lense);
 		
 		return true;
@@ -72,15 +74,15 @@ public class ClientSpaceRegion
 	
 	public void renderDustClouds(ViewCenter viewCenter, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, Matrix4f projectionMatrix, Runnable setupFog, float brightness)
 	{
-		for(StarField starField : starFieldRenderers)
+		for(StarFieldRenderer starField : starFieldRenderers)
 		{
 			starField.renderDustClouds(viewCenter, level, partialTicks, stack, camera, projectionMatrix, setupFog, brightness);
 		}
 	}
 	
-	public void render(ViewCenter viewCenter, SpaceObject masterParent, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder)
+	public void render(ViewCenter viewCenter, SpaceObjectRenderer masterParent, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder)
 	{
-		for(SpaceObject spaceObject : children)
+		for(SpaceObjectRenderer spaceObject : children)
 		{
 			if(spaceObject != masterParent) // Makes sure the master parent (usually galaxy) is rendered last, that way stars from other galaxies don't get rendered over planets
 				spaceObject.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, NULL_VECTOR, new AxisRotation());
@@ -89,25 +91,25 @@ public class ClientSpaceRegion
 	
 	public void setBestLensing()
 	{
-		for(GravityLense gravityLense : lensingRenderers)
+		for(GravityLenseRenderer gravityLense : lensingRenderers)
 		{
-			if(gravityLense.getLensingIntensity() > SpaceRenderer.lensingIntensity)
+			if(gravityLense.lensingIntensity() > SpaceRenderer.lensingIntensity)
 				gravityLense.setupLensing();
 		}
 	}
 	
 	public void setupSynodicOrbits()
 	{
-		for(SpaceObject spaceObject : children)
+		for(SpaceObjectRenderer spaceObject : children)
 		{
-			if(spaceObject instanceof OrbitingObject orbitingObject)
+			if(spaceObject instanceof OrbitingObjectRenderer orbitingObject)
 				orbitingObject.setupSynodicOrbit(null);
 		}
 	}
 	
 	public void resetStarFields()
 	{
-		for(StarField starField : starFieldRenderers)
+		for(StarFieldRenderer starField : starFieldRenderers)
 		{
 			starField.reset();
 		}

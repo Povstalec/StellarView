@@ -1,9 +1,8 @@
-package net.povstalec.stellarview.client.resourcepack;
+package net.povstalec.stellarview.common.util;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.nbt.CompoundTag;
-import net.povstalec.stellarview.common.util.Color;
 
 import java.util.ArrayList;
 import java.util.Arrays;

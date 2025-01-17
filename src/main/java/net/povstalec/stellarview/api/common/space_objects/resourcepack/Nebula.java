@@ -1,25 +1,18 @@
-package net.povstalec.stellarview.api.common.space_objects;
+package net.povstalec.stellarview.api.common.space_objects.resourcepack;
 
 import java.util.List;
 import java.util.Optional;
 
 import net.minecraft.resources.ResourceLocation;
-import net.povstalec.stellarview.client.render.LightEffects;
-import net.povstalec.stellarview.common.config.GeneralConfig;
-import org.joml.Matrix4f;
+import net.povstalec.stellarview.api.common.space_objects.TexturedObject;
 
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.client.Camera;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.Color;
 import net.povstalec.stellarview.common.util.SpaceCoords;
-import net.povstalec.stellarview.common.util.SphericalCoords;
 import net.povstalec.stellarview.common.util.StellarCoordinates;
 import net.povstalec.stellarview.common.util.TextureLayer;
 
@@ -94,60 +87,5 @@ public class Nebula extends TexturedObject
 				alpha = getMinNebulaAlpha();
 		
 		return new Color.FloatRGBA(1, 1, 1, alpha);
-	}
-	
-	
-	
-	@Override
-	protected void renderTextureLayer(TextureLayer textureLayer, ViewCenter viewCenter, ClientLevel level, Camera camera, BufferBuilder bufferbuilder,
-									  Matrix4f lastMatrix, SphericalCoords sphericalCoords,
-									  double fade, long ticks, double distance, float partialTicks)
-	{
-		double lyDistance = distance / SpaceCoords.KM_PER_LY;
-
-		Color.FloatRGBA nebulaRGBA = nebulaRGBA(lyDistance);
-		
-		if(nebulaRGBA.alpha() <= 0.0F || textureLayer.rgba().alpha() <= 0)
-			return;
-		
-		float size = (float) textureLayer.mulSize(distanceSize(distance));
-		
-		if(size < textureLayer.minSize())
-		{
-			if(textureLayer.clampAtMinSize())
-			{
-				size = (float) textureLayer.minSize();
-				
-				// Once the star has reached its usual min size, it will start getting smaller slowly again, but only up to a certain point
-				size = nebulaSize(size, lyDistance);
-			}
-			else
-				return;
-		}
-		
-		renderOnSphere(textureLayer.rgba(), nebulaRGBA, textureLayer.texture(), textureLayer.uv(),
-				level, camera, bufferbuilder, lastMatrix, sphericalCoords,
-				ticks, distance, partialTicks, dayBrightness(viewCenter, size, ticks, level, camera, partialTicks) * (float) fade, size, (float) textureLayer.rotation(), textureLayer.shoulBlend());
-	}
-	
-	public static float dayBrightness(ViewCenter viewCenter, float size, long ticks, ClientLevel level, Camera camera, float partialTicks)
-	{
-		if(viewCenter.starsAlwaysVisible())
-			return GeneralConfig.bright_stars.get() ? 0.5F * LightEffects.lightSourceStarDimming(level, camera) : 0.5F;
-		
-		float brightness = level.getStarBrightness(partialTicks) * 2;
-		
-		if(GeneralConfig.bright_stars.get())
-			brightness = brightness * LightEffects.lightSourceDustCloudDimming(level, camera);
-		
-		if(brightness < viewCenter.dayMaxBrightness && size > viewCenter.dayMinVisibleSize)
-		{
-			float aboveSize = size >= viewCenter.dayMaxVisibleSize ? viewCenter.dayVisibleSizeRange : size - viewCenter.dayMinVisibleSize;
-			float brightnessPercentage = aboveSize / viewCenter.dayVisibleSizeRange;
-			
-			brightness = brightnessPercentage * viewCenter.dayMaxBrightness;
-		}
-		
-		return brightness * LightEffects.rainDimming(level, partialTicks);
 	}
 }

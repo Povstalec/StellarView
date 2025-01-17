@@ -20,7 +20,7 @@ public class SupernovaLeftover extends GravityLense
 			ResourceLocation.CODEC.optionalFieldOf("parent").forGetter(SupernovaLeftover::getParentLocation),
 			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf("coords").forGetter(object -> Either.left(object.getCoords())),
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(SupernovaLeftover::getAxisRotation),
-			OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(SupernovaLeftover::getOrbitInfo),
+			OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(leftover -> Optional.ofNullable(leftover.orbitInfo())),
 			TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(SupernovaLeftover::getTextureLayers),
 			
 			FadeOutHandler.CODEC.optionalFieldOf("fade_out_handler", FadeOutHandler.DEFAULT_STAR_HANDLER).forGetter(SupernovaLeftover::getFadeOutHandler),

@@ -1,4 +1,4 @@
-package net.povstalec.stellarview.api.common.space_objects;
+package net.povstalec.stellarview.api.common.space_objects.resourcepack;
 
 import java.util.List;
 import java.util.Optional;
@@ -7,6 +7,8 @@ import javax.annotation.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.povstalec.stellarview.api.common.space_objects.StarLike;
+import net.povstalec.stellarview.api.common.space_objects.SupernovaLeftover;
 import net.povstalec.stellarview.client.render.LightEffects;
 import org.joml.Matrix4f;
 
@@ -36,7 +38,7 @@ public class Star extends StarLike
 			ResourceLocation.CODEC.optionalFieldOf("parent").forGetter(Star::getParentLocation),
 			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf("coords").forGetter(object -> Either.left(object.getCoords())),
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(Star::getAxisRotation),
-			OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(Star::getOrbitInfo),
+			OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(star -> Optional.ofNullable(star.orbitInfo())),
 			TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(Star::getTextureLayers),
 			
 			FadeOutHandler.CODEC.optionalFieldOf("fade_out_handler", FadeOutHandler.DEFAULT_STAR_HANDLER).forGetter(Star::getFadeOutHandler),
@@ -45,7 +47,7 @@ public class Star extends StarLike
 			Codec.floatRange(0, Color.MAX_FLOAT_VALUE).optionalFieldOf("max_star_alpha", MAX_ALPHA).forGetter(Star::getMaxStarAlpha),
 			Codec.floatRange(0, Color.MAX_FLOAT_VALUE).optionalFieldOf("min_star_alpha", MIN_ALPHA).forGetter(Star::getMinStarAlpha),
 			
-			SupernovaInfo.CODEC.optionalFieldOf("supernova_info").forGetter(Star::getSupernovaInfo)
+			SupernovaInfo.CODEC.optionalFieldOf("supernova_info").forGetter(star -> Optional.ofNullable(star.supernovaInfo()))
 			).apply(instance, Star::new));
 	
 	public Star() {}
@@ -68,9 +70,10 @@ public class Star extends StarLike
 		return this.supernovaInfo != null;
 	}
 	
-	public Optional<SupernovaInfo> getSupernovaInfo()
+	@Nullable
+	public SupernovaInfo supernovaInfo()
 	{
-		return Optional.ofNullable(supernovaInfo);
+		return supernovaInfo;
 	}
 	
 	public float supernovaSize(float size, long ticks, double lyDistance)
@@ -109,57 +112,6 @@ public class Star extends StarLike
 		starRGBA.setAlpha(alpha <= Color.MIN_FLOAT_VALUE ? Color.MIN_FLOAT_VALUE : alpha >= Color.MAX_FLOAT_VALUE ? Color.MAX_FLOAT_VALUE : alpha);
 		
 		return starRGBA;
-	}
-	
-	@Override
-	protected void renderTextureLayer(TextureLayer textureLayer, ViewCenter viewCenter, ClientLevel level, Camera camera, BufferBuilder bufferbuilder,
-									  Matrix4f lastMatrix, SphericalCoords sphericalCoords,
-									  double fade, long ticks, double distance, float partialTicks)
-	{
-		double lyDistance = distance / SpaceCoords.KM_PER_LY;
-		
-		Color.FloatRGBA starRGBA = supernovaRGBA(ticks, lyDistance);
-		
-		if(starRGBA.alpha() <= 0.0F || textureLayer.rgba().alpha() <= 0)
-			return;
-		
-		float size = (float) textureLayer.mulSize(distanceSize(distance));
-		
-		if(size < textureLayer.minSize())
-		{
-			if(textureLayer.clampAtMinSize())
-			{
-				size = (float) textureLayer.minSize();
-				
-				// Once the star has reached its usual min size, it will start getting smaller slowly again, but only up to a certain point
-				size = starSize(size, lyDistance);
-			}
-			else
-				return;
-		}
-		
-		if(isSupernova())
-			size = supernovaSize(size, ticks, lyDistance);
-		
-		renderOnSphere(textureLayer.rgba(), starRGBA, textureLayer.texture(), textureLayer.uv(),
-				level, camera, bufferbuilder, lastMatrix, sphericalCoords,
-				ticks, distance, partialTicks, LightEffects.dayBrightness(viewCenter, size, ticks, level, camera, partialTicks) * (float) fade, size, (float) textureLayer.rotation() + rotation(ticks), textureLayer.shoulBlend());
-	}
-	
-	@Override
-	protected void renderTextureLayers(ViewCenter viewCenter, ClientLevel level, Camera camera, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)
-	{
-		double fade = fadeOut(distance);
-		
-		if(fade <= 0 || isSupernova() && supernovaInfo.supernovaEnded(ticks))
-			return;
-		
-		RenderSystem.setShader(GameRenderer::getPositionTexShader);
-		
-		for(TextureLayer textureLayer : textureLayers)
-		{
-			renderTextureLayer(textureLayer, viewCenter, level, camera, bufferbuilder, lastMatrix, sphericalCoords, fade, ticks, distance, partialTicks);
-		}
 	}
 	
 	@Override

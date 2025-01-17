@@ -5,12 +5,7 @@ import java.util.Optional;
 
 import javax.annotation.Nullable;
 
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Camera;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.nbt.CompoundTag;
-import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import com.mojang.datafixers.util.Either;
@@ -20,15 +15,12 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.StellarView;
-import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 import net.povstalec.stellarview.common.util.StellarCoordinates;
 
 public abstract class SpaceObject
 {
-	public static final float DEFAULT_DISTANCE = 100.0F;
-	
 	public static final String PARENT_LOCATION = "parent";
 	
 	public static final String COORDS = "coords";
@@ -54,7 +46,6 @@ public abstract class SpaceObject
 	protected AxisRotation axisRotation;
 	
 	protected ResourceLocation location;
-	protected double lastDistance = 0; // Last known distance of this object from the View Center, used for sorting
 	
 	public SpaceObject() {}
 	
@@ -74,16 +65,6 @@ public abstract class SpaceObject
 	public SpaceCoords getCoords()
 	{
 		return this.coords;
-	}
-	
-	public Vector3f getPosition(ViewCenter viewCenter, AxisRotation axisRotation, long ticks, float partialTicks)
-	{
-		return new Vector3f();
-	}
-	
-	public Vector3f getPosition(ViewCenter viewCenter, long ticks, float partialTicks)
-	{
-		return new Vector3f();
 	}
 	
 	public AxisRotation getAxisRotation()
@@ -166,27 +147,6 @@ public abstract class SpaceObject
 			
 			childOfChild.removeCoordsAndRotationFromChildren(coords, axisRotation);
 		}
-	}
-	
-	
-	
-	public abstract void render(ViewCenter viewCenter, ClientLevel level, float partialTicks, PoseStack stack, Camera camera,
-								Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder,
-								Vector3f parentVector, AxisRotation parentRotation);
-	
-	// Sets View Center coords and then renders everything
-	public void renderFrom(ViewCenter viewCenter, ClientLevel level, float partialTicks, PoseStack stack, Camera camera,
-						   Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder)
-	{
-		if(parent != null)
-			viewCenter.addCoords(getPosition(viewCenter, parent.getAxisRotation(), viewCenter.ticks(), partialTicks));
-		else
-			viewCenter.addCoords(getPosition(viewCenter, viewCenter.ticks(), partialTicks));
-		
-		if(parent != null)
-			parent.renderFrom(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder);
-		else
-			viewCenter.renderSkyObjects(this, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder);
 	}
 	
 	@Override

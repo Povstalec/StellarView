@@ -8,7 +8,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.resources.ResourceLocation;
-import net.povstalec.stellarview.api.common.space_objects.Star;
+import net.povstalec.stellarview.api.common.space_objects.resourcepack.Star;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.Color;
 import net.povstalec.stellarview.common.util.SpaceCoords;
@@ -22,7 +22,7 @@ public class Sol extends Star
 			ResourceLocation.CODEC.optionalFieldOf("parent").forGetter(Sol::getParentLocation),
 			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf("coords").forGetter(object -> Either.left(object.getCoords())),
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(Sol::getAxisRotation),
-			OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(Sol::getOrbitInfo),
+			OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(sol -> Optional.ofNullable(sol.orbitInfo())),
 			TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(Sol::getTextureLayers),
 			
 			FadeOutHandler.CODEC.optionalFieldOf("fade_out_handler", FadeOutHandler.DEFAULT_STAR_HANDLER).forGetter(Sol::getFadeOutHandler),
@@ -31,7 +31,7 @@ public class Sol extends Star
 			Codec.floatRange(0, Color.MAX_FLOAT_VALUE).optionalFieldOf("max_star_alpha", MAX_ALPHA).forGetter(Sol::getMaxStarAlpha),
 			Codec.floatRange(0, Color.MAX_FLOAT_VALUE).optionalFieldOf("min_star_alpha", MIN_ALPHA).forGetter(Sol::getMinStarAlpha),
 			
-			SupernovaInfo.CODEC.optionalFieldOf("supernova_info").forGetter(Sol::getSupernovaInfo)
+			SupernovaInfo.CODEC.optionalFieldOf("supernova_info").forGetter(sol -> Optional.ofNullable(sol.supernovaInfo()))
 			).apply(instance, Sol::new));
 	
 	public Sol(Optional<ResourceLocation> parent, Either<SpaceCoords, Equatorial> coords,

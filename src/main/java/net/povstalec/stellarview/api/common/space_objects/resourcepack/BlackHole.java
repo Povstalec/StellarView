@@ -1,4 +1,4 @@
-package net.povstalec.stellarview.api.common.space_objects;
+package net.povstalec.stellarview.api.common.space_objects.resourcepack;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,6 +9,10 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.povstalec.stellarview.api.common.space_objects.OrbitingObject;
+import net.povstalec.stellarview.api.common.space_objects.StarLike;
+import net.povstalec.stellarview.api.common.space_objects.SupernovaLeftover;
+import net.povstalec.stellarview.api.common.space_objects.TexturedObject;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.Color;
 import net.povstalec.stellarview.common.util.SpaceCoords;
@@ -24,14 +28,14 @@ public class BlackHole extends SupernovaLeftover
 			ResourceLocation.CODEC.optionalFieldOf("parent").forGetter(BlackHole::getParentLocation),
 			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf("coords").forGetter(object -> Either.left(object.getCoords())),
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(BlackHole::getAxisRotation),
-			OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(BlackHole::getOrbitInfo),
+			OrbitingObject.OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(blackHole -> Optional.ofNullable(blackHole.orbitInfo())),
 			TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(BlackHole::getTextureLayers),
 			
-			FadeOutHandler.CODEC.optionalFieldOf("fade_out_handler", FadeOutHandler.DEFAULT_STAR_HANDLER).forGetter(BlackHole::getFadeOutHandler),
+			TexturedObject.FadeOutHandler.CODEC.optionalFieldOf("fade_out_handler", TexturedObject.FadeOutHandler.DEFAULT_STAR_HANDLER).forGetter(BlackHole::getFadeOutHandler),
 			
-			Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("min_black_hole_size", MIN_SIZE).forGetter(BlackHole::getMinStarSize),
-			Codec.floatRange(0, Color.MAX_FLOAT_VALUE).optionalFieldOf("max_black_hole_alpha", MAX_ALPHA).forGetter(BlackHole::getMaxStarAlpha),
-			Codec.floatRange(0, Color.MAX_FLOAT_VALUE).optionalFieldOf("min_black_hole_alpha", MIN_ALPHA).forGetter(BlackHole::getMinStarAlpha),
+			Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("min_black_hole_size", StarLike.MIN_SIZE).forGetter(BlackHole::getMinStarSize),
+			Codec.floatRange(0, Color.MAX_FLOAT_VALUE).optionalFieldOf("max_black_hole_alpha", StarLike.MAX_ALPHA).forGetter(BlackHole::getMaxStarAlpha),
+			Codec.floatRange(0, Color.MAX_FLOAT_VALUE).optionalFieldOf("min_black_hole_alpha", StarLike.MIN_ALPHA).forGetter(BlackHole::getMinStarAlpha),
 			
 			Codec.floatRange(1F, Float.MAX_VALUE).optionalFieldOf(LENSING_INTENSITY, 8F).forGetter(BlackHole::getLensingIntensity),
 			Codec.DOUBLE.optionalFieldOf(MAX_LENSING_DISTANCE, 10000000000D).forGetter(BlackHole::getMaxLensingDistance)
@@ -40,8 +44,8 @@ public class BlackHole extends SupernovaLeftover
 	public BlackHole() {}
 	
 	public BlackHole(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
-			Optional<OrbitInfo> orbitInfo, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler,
-			float minStarSize, float maxStarAlpha, float minStarAlpha,
+					 Optional<OrbitingObject.OrbitInfo> orbitInfo, List<TextureLayer> textureLayers, TexturedObject.FadeOutHandler fadeOutHandler,
+					 float minStarSize, float maxStarAlpha, float minStarAlpha,
 					 float lensingIntensity, double maxLensingDistance)
 	{
 		super(parent, coords, axisRotation, orbitInfo, textureLayers, fadeOutHandler, minStarSize, maxStarAlpha, minStarAlpha, lensingIntensity, maxLensingDistance);

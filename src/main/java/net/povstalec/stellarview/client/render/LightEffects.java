@@ -86,4 +86,62 @@ public class LightEffects
 		
 		return brightness * LightEffects.rainDimming(level, partialTicks);
 	}
+	
+	public static float dustCloudBrightness(ViewCenter viewCenter, ClientLevel level, Camera camera, float partialTicks)
+	{
+		float brightness = level.getStarBrightness(partialTicks);
+		
+		if(viewCenter.starsAlwaysVisible() && brightness < 0.5F)
+			brightness = 0.5F;
+		
+		if(GeneralConfig.bright_stars.get())
+			brightness = brightness * LightEffects.lightSourceDustCloudDimming(level, camera);
+		
+		brightness = brightness * LightEffects.rainDimming(level, partialTicks);
+		
+		return brightness;
+	}
+	
+	public static float nebulaBrightness(ViewCenter viewCenter, float size, long ticks, ClientLevel level, Camera camera, float partialTicks)
+	{
+		if(viewCenter.starsAlwaysVisible())
+			return GeneralConfig.bright_stars.get() ? 0.5F * LightEffects.lightSourceStarDimming(level, camera) : 0.5F;
+		
+		float brightness = level.getStarBrightness(partialTicks) * 2;
+		
+		if(GeneralConfig.bright_stars.get())
+			brightness = brightness * LightEffects.lightSourceDustCloudDimming(level, camera);
+		
+		if(brightness < viewCenter.dayMaxBrightness && size > viewCenter.dayMinVisibleSize)
+		{
+			float aboveSize = size >= viewCenter.dayMaxVisibleSize ? viewCenter.dayVisibleSizeRange : size - viewCenter.dayMinVisibleSize;
+			float brightnessPercentage = aboveSize / viewCenter.dayVisibleSizeRange;
+			
+			brightness = brightnessPercentage * viewCenter.dayMaxBrightness;
+		}
+		
+		return brightness * LightEffects.rainDimming(level, partialTicks);
+	}
+	
+	/**
+	 * Returns the brightness of stars in the current Player location
+	 * @param level The Level the Player is currently in
+	 * @param camera Player Camera
+	 * @param partialTicks
+	 * @return
+	 */
+	public static float starBrightness(ViewCenter viewCenter, ClientLevel level, Camera camera, float partialTicks)
+	{
+		float starBrightness = level.getStarBrightness(partialTicks);
+		
+		if(viewCenter.starsAlwaysVisible() && starBrightness < 0.5F)
+			starBrightness = 0.5F;
+		
+		if(GeneralConfig.bright_stars.get())
+			starBrightness = starBrightness * LightEffects.lightSourceStarDimming(level, camera);
+		
+		starBrightness = starBrightness * LightEffects.rainDimming(level, partialTicks);
+		
+		return starBrightness;
+	}
 }

@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.client.Minecraft;
 import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
+import net.povstalec.stellarview.client.render.space_objects.SpaceObjectRenderer;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.config.GeneralConfig;
 import org.joml.Matrix3f;
@@ -85,11 +86,11 @@ public final class SpaceRenderer
 		SPACE_REGIONS.remove(regionPos);
 	}
 	
-	public static void addSpaceObject(SpaceObject spaceObject)
+	public static void addSpaceObjectRenderer(SpaceObjectRenderer spaceObjectRenderer)
 	{
-		ClientSpaceRegion region = getOrCreateRegion(spaceObject.getCoords());
+		ClientSpaceRegion region = getOrCreateRegion(spaceObjectRenderer.spaceCoords());
 		
-		region.addChild(spaceObject);
+		region.addChild(spaceObjectRenderer);
 	}
 	
 	public static void setupSynodicOrbits()
@@ -109,7 +110,7 @@ public final class SpaceRenderer
 		}
 	}
 	
-	public static void render(ViewCenter viewCenter, SpaceObject masterParent, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder)
+	public static void render(ViewCenter viewCenter, SpaceObjectRenderer masterParent, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder)
 	{
 		starsPerTick = 0;
 		setBestLensing();

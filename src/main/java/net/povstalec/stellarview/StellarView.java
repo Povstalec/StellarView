@@ -3,17 +3,21 @@ package net.povstalec.stellarview;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.povstalec.stellarview.api.common.space_objects.distinct.Sol;
+import net.povstalec.stellarview.api.common.space_objects.resourcepack.*;
+import net.povstalec.stellarview.client.SpaceObjectRenderers;
+import net.povstalec.stellarview.client.render.space_objects.resourcepack.*;
 import net.povstalec.stellarview.compatibility.aether.AetherCompatibility;
 import net.povstalec.stellarview.compatibility.twilightforest.TwilightForestCompatibility;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 
-import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
@@ -72,6 +76,18 @@ public class StellarView
     @Mod.EventBusSubscriber(modid = StellarView.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents
     {
+		@SubscribeEvent
+		public static void onClientSetup(FMLClientSetupEvent event)
+		{
+			SpaceObjectRenderers.register(Planet.class, PlanetRenderer<Planet>::new);
+			SpaceObjectRenderers.register(Moon.class, MoonRenderer<Moon>::new);
+			SpaceObjectRenderers.register(Star.class, StarRenderer<Star>::new);
+			SpaceObjectRenderers.register(Sol.class, StarRenderer<Sol>::new);
+			SpaceObjectRenderers.register(BlackHole.class, BlackHoleRenderer<BlackHole>::new);
+			SpaceObjectRenderers.register(Nebula.class, NebulaRenderer<Nebula>::new);
+			SpaceObjectRenderers.register(StarField.class, StarFieldRenderer<StarField>::new);
+		}
+		
     	@SubscribeEvent(priority = EventPriority.LOWEST)
         public static void registerDimensionEffects(RegisterDimensionSpecialEffectsEvent event)
 		{

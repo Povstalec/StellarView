@@ -16,7 +16,6 @@ import com.mojang.math.Axis;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 import net.povstalec.stellarview.common.util.StellarCoordinates;
@@ -33,7 +32,7 @@ public class OrbitingObject extends TexturedObject
 			ResourceLocation.CODEC.optionalFieldOf("parent").forGetter(OrbitingObject::getParentLocation),
 			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf("coords").forGetter(object -> Either.left(object.getCoords())),
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(OrbitingObject::getAxisRotation),
-			OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(OrbitingObject::getOrbitInfo),
+			OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(object -> Optional.ofNullable(object.orbitInfo)),
 			TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(OrbitingObject::getTextureLayers),
 			
 			FadeOutHandler.CODEC.optionalFieldOf("fade_out_handler", FadeOutHandler.DEFAULT_PLANET_HANDLER).forGetter(OrbitingObject::getFadeOutHandler)
@@ -50,25 +49,23 @@ public class OrbitingObject extends TexturedObject
 			this.orbitInfo = orbitInfo.get();
 	}
 	
-	public Optional<OrbitInfo> getOrbitInfo()
+	@Nullable
+	public OrbitInfo orbitInfo()
 	{
-		if(orbitInfo != null)
-			return Optional.of(orbitInfo);
-		
-		return Optional.empty();
+		return orbitInfo;
 	}
 	
 	public void setupSynodicOrbit(@Nullable OrbitalPeriod parentOrbitalPeriod)
 	{
-		if(getOrbitInfo().isPresent())
+		if(orbitInfo() != null)
 		{
-			getOrbitInfo().get().orbitalPeriod().updateFromParentPeriod(parentOrbitalPeriod);
-			getOrbitInfo().get().setupSweep();
+			orbitInfo().orbitalPeriod().updateFromParentPeriod(parentOrbitalPeriod);
+			orbitInfo().setupSweep();
 			
 			for(SpaceObject child : children)
 			{
 				if(child instanceof OrbitingObject orbitingObject)
-					orbitingObject.setupSynodicOrbit(getOrbitInfo().get().orbitalPeriod());
+					orbitingObject.setupSynodicOrbit(orbitInfo().orbitalPeriod());
 			}
 		}
 		else
@@ -79,26 +76,6 @@ public class OrbitingObject extends TexturedObject
 					orbitingObject.setupSynodicOrbit(null);
 			}
 		}
-	}
-	
-	@Override
-	public Vector3f getPosition(ViewCenter viewCenter, AxisRotation axisRotation, long ticks, float partialTicks)
-	{
-		return axisRotation.quaterniond().transform(getPosition(viewCenter, ticks, partialTicks));
-	}
-	
-	@Override
-	public Vector3f getPosition(ViewCenter viewCenter, long ticks, float partialTicks)
-	{
-		if(orbitInfo != null)
-		{
-			if(!viewCenter.objectEquals(this) && orbitInfo.orbitClampNumber() > 0 && parent != null)
-				return orbitInfo.getOrbitVector(ticks, partialTicks, parent.lastDistance);
-			else
-				return orbitInfo.getOrbitVector(ticks, partialTicks);
-		}
-		else
-			return super.getPosition(viewCenter, ticks, partialTicks);
 	}
 	
 	@Override

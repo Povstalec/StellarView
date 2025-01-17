@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.povstalec.stellarview.client.render.SpaceRenderer;
 import net.povstalec.stellarview.client.render.shader.StellarViewShaders;
 import net.povstalec.stellarview.client.render.shader.StellarViewVertexFormat;
-import net.povstalec.stellarview.api.common.space_objects.StarField;
+import net.povstalec.stellarview.api.common.space_objects.resourcepack.StarField;
 import net.povstalec.stellarview.api.common.space_objects.StarLike;
 import net.povstalec.stellarview.client.util.StarBuffer;
 import net.povstalec.stellarview.common.config.GeneralConfig;

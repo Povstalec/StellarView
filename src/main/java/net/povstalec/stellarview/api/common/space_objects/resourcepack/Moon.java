@@ -1,4 +1,4 @@
-package net.povstalec.stellarview.api.common.space_objects;
+package net.povstalec.stellarview.api.common.space_objects.resourcepack;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,24 +6,17 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 import net.minecraft.resources.ResourceLocation;
-import net.povstalec.stellarview.client.render.LightEffects;
-import org.joml.Matrix4f;
 
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
-import net.povstalec.stellarview.StellarView;
-import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.Color;
 import net.povstalec.stellarview.common.util.SpaceCoords;
-import net.povstalec.stellarview.common.util.SphericalCoords;
 import net.povstalec.stellarview.common.util.StellarCoordinates;
 import net.povstalec.stellarview.common.util.TextureLayer;
 import net.povstalec.stellarview.compatibility.enhancedcelestials.EnhancedCelestialsCompatibility;
@@ -40,7 +33,7 @@ public class Moon extends Planet
 			ResourceLocation.CODEC.optionalFieldOf("parent").forGetter(Moon::getParentLocation),
 			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf("coords").forGetter(object -> Either.left(object.getCoords())),
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(Moon::getAxisRotation),
-			OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(Moon::getOrbitInfo),
+			OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(moon -> Optional.ofNullable(moon.orbitInfo())),
 			TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(Moon::getTextureLayers),
 			
 			FadeOutHandler.CODEC.optionalFieldOf("fade_out_handler", FadeOutHandler.DEFAULT_PLANET_HANDLER).forGetter(Moon::getFadeOutHandler),
@@ -79,39 +72,6 @@ public class Moon extends Planet
 			return EnhancedCelestialsCompatibility.getMoonColor(level, partialTicks);
 		
 		return new Color.FloatRGBA(1F, 1F, 1F);
-	}
-	
-	@Override
-	protected void renderTextureLayer(TextureLayer textureLayer, ViewCenter viewCenter, ClientLevel level, Camera camera, BufferBuilder bufferbuilder,
-									  Matrix4f lastMatrix, SphericalCoords sphericalCoords,
-									  double fade, long ticks, double distance, float partialTicks)
-	{
-		if(!StellarView.isEnhancedCelestialsLoaded())
-		{
-			super.renderTextureLayer(textureLayer, viewCenter, level, camera, bufferbuilder, lastMatrix, sphericalCoords, fade, ticks, distance, partialTicks);
-			return;
-		}
-		
-		Color.FloatRGBA moonRGBA = moonRGBA(level, partialTicks);
-		
-		if(moonRGBA.alpha() <= 0.0F || textureLayer.rgba().alpha() <= 0)
-			return;
-		
-		float size = (float) textureLayer.mulSize(distanceSize(distance));
-		
-		if(size < textureLayer.minSize())
-		{
-			if(textureLayer.clampAtMinSize())
-				size = (float) textureLayer.minSize();
-			else
-				return;
-		}
-		
-		size *= sizeMultiplier(level);
-		
-		renderOnSphere(textureLayer.rgba(), moonRGBA, textureLayer.texture(), textureLayer.uv(),
-				level, camera, bufferbuilder, lastMatrix, sphericalCoords,
-				ticks, distance, partialTicks, LightEffects.dayBrightness(viewCenter, size, ticks, level, camera, partialTicks) * (float) fade, size, (float) textureLayer.rotation(), textureLayer.shoulBlend());
 	}
 	
 	
