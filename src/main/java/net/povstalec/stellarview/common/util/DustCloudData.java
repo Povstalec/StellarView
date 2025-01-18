@@ -1,6 +1,7 @@
 package net.povstalec.stellarview.common.util;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
+import net.povstalec.stellarview.client.util.StarData;
 
 import java.util.Random;
 
