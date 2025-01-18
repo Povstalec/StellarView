@@ -33,9 +33,7 @@ public abstract class TexturedObjectRenderer<T extends TexturedObject> extends S
 					   Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, Tesselator tesselator,
 					   Vector3f parentVector, AxisRotation parentRotation)
 	{
-		long ticks = level.getDayTime();
-		
-		Vector3f positionVector = getPosition(viewCenter, parentRotation, ticks, partialTicks).add(parentVector); // Handles orbits 'n stuff
+		Vector3f positionVector = getPosition(viewCenter, parentRotation, viewCenter.ticks(), partialTicks).add(parentVector); // Handles orbits 'n stuff
 		
 		// Add parent vector to current coords
 		SpaceCoords coords = renderedObject.getCoords().add(positionVector);
@@ -59,7 +57,7 @@ public abstract class TexturedObjectRenderer<T extends TexturedObject> extends S
 		
 		// If the object isn't the same we're viewing everything from and it isn't too far away, render it
 		if(!viewCenter.objectEquals(this) && renderedObject.getFadeOutHandler().getFadeOutEndDistance().toKm() > lastDistance)
-			renderTextureLayers(viewCenter, level, camera, tesselator, modelViewMatrix, sphericalCoords, ticks, lastDistance, partialTicks);
+			renderTextureLayers(viewCenter, level, camera, tesselator, modelViewMatrix, sphericalCoords, viewCenter.ticks(), lastDistance, partialTicks);
 		
 		if(childRenderDistance > lastDistance)
 		{
