@@ -1,17 +1,16 @@
 {
-	"parent": "stellarview:planet/milky_way/sol/saturn",
+	"parent": "stellarview:star/milky_way/sol",
 	"coords": { "x": {"ly": 0}, "y": {"ly": 0}, "z": {"ly": 0} },
 	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
 	"orbit_info":
 	{
-		"apoapsis": 3560820,
-		"periapsis": 3560820,
-		"orbit_clamp_distance": 100000000,
-		"orbital_period": { "ticks": 504000 },
-		"argument_of_periapsis": 312,
-		"inclination": 17.28,
-		"longtitude_of_ascending_node": 0,
-		"epoch_mean_anomaly": 0
+		"apoapsis": 7717000000,
+		"periapsis": 5183100000,
+		"orbital_period": { "ticks": 2481840000 },
+		"argument_of_periapsis": 239.041,
+		"inclination": 28.2137,
+		"longtitude_of_ascending_node": 122.167,
+		"epoch_mean_anomaly": 218.205
 	},
 	"texture_layers":
 	[
@@ -19,20 +18,20 @@
 			"texture": "stellarview:textures/environment/halo_template.png",
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": true,
-			"size": 734400,
+			"size": 2100000,
 			"min_size": 0.2,
-			"clamp_at_min_size": true,
-			"rotation": -63.27,
+			"clamp_at_min_size": false,
+			"rotation": 90,
 			"uv": { "flip_uv": false }
 		},
 		{
-			"texture": "stellarview:textures/environment/planet/iapetus.png",
+			"texture": "stellarview:textures/environment/planet/haumea.png",
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": false,
-			"size": 734400,
+			"size": 2100000,
 			"min_size": 0.2,
-			"clamp_at_min_size": true,
-			"rotation": -63.27,
+			"clamp_at_min_size": false,
+			"rotation": 90,
 			"uv": { "flip_uv": false }
 		}
 	]

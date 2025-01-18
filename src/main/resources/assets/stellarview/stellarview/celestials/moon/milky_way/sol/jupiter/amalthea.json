@@ -1,0 +1,39 @@
+{
+	"parent": "stellarview:planet/milky_way/sol/jupiter",
+	"coords": { "x": {"ly": 0}, "y": {"ly": 0}, "z": {"ly": 0} },
+	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
+	"orbit_info":
+	{
+		"apoapsis": 182840,
+		"periapsis": 181150,
+		"orbit_clamp_distance": 100000000,
+		"orbital_period": { "ticks": 11956 },
+		"argument_of_periapsis": 0,
+		"inclination": 0.374,
+		"longtitude_of_ascending_node": 0,
+		"epoch_mean_anomaly": 112
+	},
+	"texture_layers":
+	[
+		{
+			"texture": "stellarview:textures/environment/halo_template.png",
+			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 192},
+			"blend": true,
+			"size": 250000,
+			"min_size": 0.08,
+			"clamp_at_min_size": false,
+			"rotation": 90,
+			"uv": { "flip_uv": true	}
+		},
+		{
+			"texture": "stellarview:textures/environment/planet/amalthea.png",
+			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
+			"blend": false,
+			"size": 250000,
+			"min_size": 0.08,
+			"clamp_at_min_size": false,
+			"rotation": 90,
+			"uv": { "flip_uv": true }
+		}
+	]
+}
