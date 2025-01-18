@@ -169,25 +169,4 @@ public class TextureLayer
 		
 		return new TextureLayer(texture, rgba, blend, size, minSize, clampAtMinSize, rotation, uv);
 	}
-	
-	public static TextureLayer fromTag(CompoundTag tag)
-	{
-		ResourceLocation texture = new ResourceLocation(tag.getString(TEXTURE));
-		
-		Color.FloatRGBA rgba = new Color.FloatRGBA(0, 0, 0);
-		rgba.deserializeNBT(tag.getCompound(RGBA));
-		
-		boolean blend = tag.getBoolean(BLEND);
-		
-		double size = tag.getDouble(SIZE);
-		double minSize = tag.getDouble(MIN_SIZE);
-		boolean clampAtMinSize = tag.getBoolean(CLAMP_AT_MIN_SIZE);
-		
-		double rotation = tag.getDouble(ROTATION);
-		
-		UV.Quad uv = UV.Quad.deserialize(tag.getCompound(UV_QUAD));
-		
-		
-		return new TextureLayer(texture, rgba, blend, size, minSize, clampAtMinSize, rotation, uv);
-	}
 }
