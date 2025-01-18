@@ -6,7 +6,7 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 import net.minecraft.client.Minecraft;
-import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
+import net.povstalec.stellarview.api.common.SpaceRegion;
 import net.povstalec.stellarview.client.render.space_objects.SpaceObjectRenderer;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.config.GeneralConfig;
@@ -31,7 +31,7 @@ public final class SpaceRenderer
 	
 	private static final int STAR_LIMIT = 100000;
 	
-	private static final HashMap<ClientSpaceRegion.RegionPos, ClientSpaceRegion> SPACE_REGIONS = new HashMap<ClientSpaceRegion.RegionPos, ClientSpaceRegion>();
+	private static final HashMap<SpaceRegion.RegionPos, SpaceRegionRenderer> SPACE_REGIONS = new HashMap<SpaceRegion.RegionPos, SpaceRegionRenderer>();
 	
 	public static final Matrix3f IDENTITY_MATRIX = new Matrix3f();
 	
@@ -76,26 +76,26 @@ public final class SpaceRenderer
 		SPACE_REGIONS.clear();
 	}
 	
-	public static void addSpaceRegion(ClientSpaceRegion spaceRegion)
+	public static void addSpaceRegion(SpaceRegionRenderer spaceRegion)
 	{
 		SPACE_REGIONS.put(spaceRegion.getRegionPos(), spaceRegion);
 	}
 	
-	public static void removeSpaceRegion(ClientSpaceRegion.RegionPos regionPos)
+	public static void removeSpaceRegion(SpaceRegion.RegionPos regionPos)
 	{
 		SPACE_REGIONS.remove(regionPos);
 	}
 	
 	public static void addSpaceObjectRenderer(SpaceObjectRenderer spaceObjectRenderer)
 	{
-		ClientSpaceRegion region = getOrCreateRegion(spaceObjectRenderer.spaceCoords());
+		SpaceRegionRenderer region = getOrCreateRegion(spaceObjectRenderer.spaceCoords());
 		
 		region.addChild(spaceObjectRenderer);
 	}
 	
 	public static void setupSynodicOrbits()
 	{
-		for(Map.Entry<ClientSpaceRegion.RegionPos, ClientSpaceRegion> spaceRegionEntry : SPACE_REGIONS.entrySet())
+		for(Map.Entry<SpaceRegion.RegionPos, SpaceRegionRenderer> spaceRegionEntry : SPACE_REGIONS.entrySet())
 		{
 			spaceRegionEntry.getValue().setupSynodicOrbits();
 		}
@@ -104,7 +104,7 @@ public final class SpaceRenderer
 	public static void resetStarFields()
 	{
 		starsPerTick = 0;
-		for(Map.Entry<ClientSpaceRegion.RegionPos, ClientSpaceRegion> spaceRegionEntry : SPACE_REGIONS.entrySet())
+		for(Map.Entry<SpaceRegion.RegionPos, SpaceRegionRenderer> spaceRegionEntry : SPACE_REGIONS.entrySet())
 		{
 			spaceRegionEntry.getValue().resetStarFields();
 		}
@@ -115,19 +115,19 @@ public final class SpaceRenderer
 		starsPerTick = 0;
 		setBestLensing();
 		
-		ClientSpaceRegion.RegionPos pos = new ClientSpaceRegion.RegionPos(viewCenter.getCoords());
+		SpaceRegion.RegionPos pos = new SpaceRegion.RegionPos(viewCenter.getCoords());
 		
 		if(viewCenter.dustCloudBrightness() > 0)
 		{
-			for(Map.Entry<ClientSpaceRegion.RegionPos, ClientSpaceRegion> spaceRegionEntry : SPACE_REGIONS.entrySet())
+			for(Map.Entry<SpaceRegion.RegionPos, SpaceRegionRenderer> spaceRegionEntry : SPACE_REGIONS.entrySet())
 			{
 				if(spaceRegionEntry.getKey().isInRange(pos, getRange()))
 					spaceRegionEntry.getValue().renderDustClouds(viewCenter, level, camera, partialTicks, stack, projectionMatrix, setupFog, viewCenter.dustCloudBrightness());
 			}
 		}
 		
-		ClientSpaceRegion centerRegion = null;
-		for(Map.Entry<ClientSpaceRegion.RegionPos, ClientSpaceRegion> spaceRegionEntry : SPACE_REGIONS.entrySet())
+		SpaceRegionRenderer centerRegion = null;
+		for(Map.Entry<SpaceRegion.RegionPos, SpaceRegionRenderer> spaceRegionEntry : SPACE_REGIONS.entrySet())
 		{
 			if(!spaceRegionEntry.getKey().equals(pos))
 			{
@@ -152,7 +152,7 @@ public final class SpaceRenderer
 		lensingMatrixInv = IDENTITY_MATRIX;
 		lensingIntensity = 0;
 		
-		for(Map.Entry<ClientSpaceRegion.RegionPos, ClientSpaceRegion> spaceRegionEntry : SPACE_REGIONS.entrySet())
+		for(Map.Entry<SpaceRegion.RegionPos, SpaceRegionRenderer> spaceRegionEntry : SPACE_REGIONS.entrySet())
 		{
 			spaceRegionEntry.getValue().setBestLensing();
 		}
@@ -203,7 +203,7 @@ public final class SpaceRenderer
 	}
 	
 	@Nullable
-	public static ClientSpaceRegion getRegion(ClientSpaceRegion.RegionPos pos)
+	public static SpaceRegionRenderer getRegion(SpaceRegion.RegionPos pos)
 	{
 		if(SPACE_REGIONS.containsKey(pos))
 			return SPACE_REGIONS.get(pos);
@@ -212,18 +212,18 @@ public final class SpaceRenderer
 	}
 	
 	@Nullable
-	public static ClientSpaceRegion getRegion(SpaceCoords coords)
+	public static SpaceRegionRenderer getRegion(SpaceCoords coords)
 	{
-		return getRegion(new ClientSpaceRegion.RegionPos(coords));
+		return getRegion(new SpaceRegion.RegionPos(coords));
 	}
 	
-	public static ClientSpaceRegion getOrCreateRegion(ClientSpaceRegion.RegionPos pos)
+	public static SpaceRegionRenderer getOrCreateRegion(SpaceRegion.RegionPos pos)
 	{
-		return SPACE_REGIONS.computeIfAbsent(pos, position -> new ClientSpaceRegion(pos));
+		return SPACE_REGIONS.computeIfAbsent(pos, position -> new SpaceRegionRenderer(new SpaceRegion(pos)));
 	}
 	
-	public static ClientSpaceRegion getOrCreateRegion(SpaceCoords coords)
+	public static SpaceRegionRenderer getOrCreateRegion(SpaceCoords coords)
 	{
-		return getOrCreateRegion(new ClientSpaceRegion.RegionPos(coords));
+		return getOrCreateRegion(new SpaceRegion.RegionPos(coords));
 	}
 }

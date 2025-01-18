@@ -49,6 +49,8 @@ public class GeneralConfigScreen extends Screen
 		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.disable_view_center_rotation"),
 				this.width, GeneralConfig.disable_view_center_rotation));
 		
+		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.gravitational_lensing"),
+				this.width, GeneralConfig.gravitational_lensing));
 		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.disable_stars"), 
 				this.width, GeneralConfig.disable_stars));
 		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.bright_stars"), 

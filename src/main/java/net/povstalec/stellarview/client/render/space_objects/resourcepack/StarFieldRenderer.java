@@ -133,13 +133,13 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 			switch(levelOfDetail)
 			{
 				case LOD1:
-					lod.newStar(renderedObject.getStarInfo().randomLOD1StarType(random), random, cartesian.x, cartesian.y, cartesian.z, hasTexture);
+					lod.newStar(renderedObject.getStarInfo().randomLOD1StarType(random), random, cartesian.x, cartesian.y, cartesian.z);
 					break;
 				case LOD2:
-					lod.newStar(renderedObject.getStarInfo().randomLOD2StarType(random), random, cartesian.x, cartesian.y, cartesian.z, hasTexture);
+					lod.newStar(renderedObject.getStarInfo().randomLOD2StarType(random), random, cartesian.x, cartesian.y, cartesian.z);
 					break;
 				default:
-					lod.newStar(renderedObject.getStarInfo().randomLOD3StarType(random), random, cartesian.x, cartesian.y, cartesian.z, hasTexture);
+					lod.newStar(renderedObject.getStarInfo().randomLOD3StarType(random), random, cartesian.x, cartesian.y, cartesian.z);
 			}
 		}
 	}
@@ -189,13 +189,13 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 			switch(levelOfDetail)
 			{
 				case LOD1:
-					lod.newStar(starInfo.randomLOD1StarType(random), random, cartesian.x, cartesian.y, cartesian.z, hasTexture);
+					lod.newStar(starInfo.randomLOD1StarType(random), random, cartesian.x, cartesian.y, cartesian.z);
 					break;
 				case LOD2:
-					lod.newStar(starInfo.randomLOD2StarType(random), random, cartesian.x, cartesian.y, cartesian.z, hasTexture);
+					lod.newStar(starInfo.randomLOD2StarType(random), random, cartesian.x, cartesian.y, cartesian.z);
 					break;
 				default:
-					lod.newStar(starInfo.randomLOD3StarType(random), random, cartesian.x, cartesian.y, cartesian.z, hasTexture);
+					lod.newStar(starInfo.randomLOD3StarType(random), random, cartesian.x, cartesian.y, cartesian.z);
 			}
 		}
 	}
@@ -350,7 +350,10 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 		if(starData == null)
 			setStars();
 		else if(requiresReset())
+		{
+			hasTexture = GeneralConfig.textured_stars.get();
 			starData.reset();
+		}
 		
 		if(!GeneralConfig.disable_stars.get() && viewCenter.starBrightness() > 0.0F)
 		{

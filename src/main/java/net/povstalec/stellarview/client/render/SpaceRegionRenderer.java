@@ -4,52 +4,39 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.povstalec.stellarview.api.common.SpaceRegion;
+import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
 import net.povstalec.stellarview.client.render.space_objects.GravityLenseRenderer;
 import net.povstalec.stellarview.client.render.space_objects.OrbitingObjectRenderer;
 import net.povstalec.stellarview.client.render.space_objects.SpaceObjectRenderer;
 import net.povstalec.stellarview.client.render.space_objects.resourcepack.StarFieldRenderer;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
-import net.povstalec.stellarview.api.common.space_objects.OrbitingObject;
-import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
+import net.povstalec.stellarview.common.config.GeneralConfig;
 import net.povstalec.stellarview.common.util.AxisRotation;
-import net.povstalec.stellarview.common.util.SpaceCoords;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
 
-public class ClientSpaceRegion
+public class SpaceRegionRenderer
 {
-	public static final long LY_PER_REGION = 2000000;
-	public static final long LY_PER_REGION_HALF = LY_PER_REGION / 2;
-	
 	private static final Vector3f NULL_VECTOR = new Vector3f();
 	
-	private RegionPos pos;
+	protected final SpaceRegion region;
 	
 	protected final ArrayList<SpaceObjectRenderer> children = new ArrayList<SpaceObjectRenderer>();
 	
 	protected final ArrayList<GravityLenseRenderer> lensingRenderers = new ArrayList<GravityLenseRenderer>();
 	protected final ArrayList<StarFieldRenderer> starFieldRenderers = new ArrayList<StarFieldRenderer>();
 	
-	public ClientSpaceRegion(RegionPos pos)
+	public SpaceRegionRenderer(SpaceRegion region)
 	{
-		this.pos = pos;
+		this.region = region;
 	}
 	
-	public ClientSpaceRegion(long x, long y, long z)
+	public SpaceRegion.RegionPos getRegionPos()
 	{
-		this(new RegionPos(x, y, z));
-	}
-	
-	public ClientSpaceRegion()
-	{
-		this(0, 0, 0);
-	}
-	
-	public RegionPos getRegionPos()
-	{
-		return pos;
+		return region.getRegionPos();
 	}
 	
 	public ArrayList<SpaceObjectRenderer> getChildren()
@@ -59,7 +46,7 @@ public class ClientSpaceRegion
 	
 	public boolean addChild(SpaceObjectRenderer child)
 	{
-		if(this.children.contains(child))
+		if(!this.region.addChild(child.renderedObject()))
 			return false;
 		
 		this.children.add(child);
@@ -71,6 +58,10 @@ public class ClientSpaceRegion
 		
 		return true;
 	}
+	
+	//============================================================================================
+	//*****************************************Rendering******************************************
+	//============================================================================================
 	
 	public void renderDustClouds(ViewCenter viewCenter, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, Matrix4f projectionMatrix, Runnable setupFog, float brightness)
 	{
@@ -91,10 +82,19 @@ public class ClientSpaceRegion
 	
 	public void setBestLensing()
 	{
-		for(GravityLenseRenderer gravityLense : lensingRenderers)
+		if(!GeneralConfig.gravitational_lensing.get())
 		{
-			if(gravityLense.lensingIntensity() > SpaceRenderer.lensingIntensity)
-				gravityLense.setupLensing();
+			SpaceRenderer.lensingIntensity = 0;
+			SpaceRenderer.lensingMatrixInv = SpaceRenderer.IDENTITY_MATRIX;
+			SpaceRenderer.lensingMatrix = SpaceRenderer.IDENTITY_MATRIX;
+		}
+		else
+		{
+			for(GravityLenseRenderer gravityLense : lensingRenderers)
+			{
+				if(gravityLense.lensingIntensity() > SpaceRenderer.lensingIntensity)
+					gravityLense.setupLensing();
+			}
 		}
 	}
 	
@@ -112,86 +112,6 @@ public class ClientSpaceRegion
 		for(StarFieldRenderer starField : starFieldRenderers)
 		{
 			starField.reset();
-		}
-	}
-	
-	
-	
-	public static class RegionPos
-	{
-		private long x, y, z;
-		
-		public RegionPos(long x, long y, long z)
-		{
-			this.x = x;
-			this.y = y;
-			this.z = z;
-		}
-		
-		public RegionPos(SpaceCoords coords)
-		{
-			this(	(coords.x().ly() - LY_PER_REGION_HALF) / LY_PER_REGION,
-					(coords.y().ly() - LY_PER_REGION_HALF) / LY_PER_REGION,
-					(coords.z().ly() - LY_PER_REGION_HALF) / LY_PER_REGION);
-		}
-		
-		public long x()
-		{
-			return x;
-		}
-		
-		public long y()
-		{
-			return y;
-		}
-		
-		public long z()
-		{
-			return z;
-		}
-		
-		public long lyX()
-		{
-			return x * LY_PER_REGION;
-		}
-		
-		public long lyY()
-		{
-			return y * LY_PER_REGION;
-		}
-		
-		public long lyZ()
-		{
-			return z * LY_PER_REGION;
-		}
-		
-		public boolean isInRange(RegionPos other, int range)
-		{
-			return Math.abs(this.x - other.x) < range && Math.abs(this.y - other.y) < range && Math.abs(this.z - other.z) < range;
-		}
-		
-		@Override
-		public final boolean equals(Object object)
-		{
-			if(object instanceof RegionPos pos)
-				return this.x == pos.x && this.y == pos.y && this.z == pos.z;
-			
-			return false;
-		}
-		
-		@Override
-		public final int hashCode()
-		{
-			int result = (int) x;
-			result = 31 * result + (int) y;
-			result = 31 * result + (int) z;
-			return result;
-		}
-		
-		@Override
-		public String toString()
-		{
-			return "{x: " + x + ", y: " + y + ", z: " + z + "}";
 		}
 	}
 }

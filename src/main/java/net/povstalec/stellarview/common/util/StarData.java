@@ -109,9 +109,8 @@ public abstract class StarData
 		 * @param x X coordinate of the star
 		 * @param y Y coordinate of the star
 		 * @param z Z coordinate of the star
-		 * @param hasTexture Whether or not the star has a texture
 		 */
-		public void newStar(StarLike.StarType starType, Random random, double x, double y, double z, boolean hasTexture)
+		public void newStar(StarLike.StarType starType, Random random, double x, double y, double z)
 		{
 			// Set up position
 			
@@ -241,7 +240,7 @@ public abstract class StarData
 				RenderSystem.setShader(GameRenderer::getPositionShader);
 				BufferBuilder.RenderedBuffer bufferbuilder$renderedbuffer;
 				
-				bufferbuilder$renderedbuffer = getStarBuffer(bufferBuilder, GeneralConfig.textured_stars.get());
+				bufferbuilder$renderedbuffer = getStarBuffer(bufferBuilder, hasTexture);
 				
 				starBuffer.bind();
 				starBuffer.upload(bufferbuilder$renderedbuffer);

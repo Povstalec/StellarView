@@ -11,6 +11,7 @@ public class GeneralConfig
 	
 	public static StellarViewConfigValue.BooleanValue disable_view_center_rotation;
 	
+	public static StellarViewConfigValue.BooleanValue gravitational_lensing;
 	public static StellarViewConfigValue.BooleanValue disable_stars;
 	public static StellarViewConfigValue.BooleanValue bright_stars;
 	public static StellarViewConfigValue.BooleanValue textured_stars;
@@ -35,6 +36,10 @@ public class GeneralConfig
 				"Gets rid of any rotation caused by the view center, making the space XYZ coordinates align with the XYZ directions in Minecraft");
 		
 		
+		
+		gravitational_lensing = new StellarViewConfigValue.BooleanValue(client, "client.gravitational_lensing",
+				true,
+				"Enables gravitational lensing effects");
 		
 		disable_stars = new StellarViewConfigValue.BooleanValue(client, "client.disable_stars", 
 				false, 
