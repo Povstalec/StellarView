@@ -1,11 +1,11 @@
 {
 	"gui.stellarview.config": "Stellar View Config",
-	"gui.stellarview.config.general": "Stellar View - General Config",
-	"gui.stellarview.config.overworld": "Stellar View - Overworld Config",
-	"gui.stellarview.config.nether": "Stellar View - Nether Config",
-	"gui.stellarview.config.end": "Stellar View - End Config",
-	"gui.stellarview.config.twilight_forest": "Stellar View - Twilight Forest Config",
-	"gui.stellarview.config.aether": "Stellar View - Aether Config",
+	"gui.stellarview.config.general": "General Config",
+	"gui.stellarview.config.overworld": "Overworld Config",
+	"gui.stellarview.config.nether": "Nether Config",
+	"gui.stellarview.config.end": "End Config",
+	"gui.stellarview.config.twilight_forest": "Twilight Forest Config",
+	"gui.stellarview.config.aether": "Aether Config",
 	
 	"gui.stellarview.use_game_ticks": "Use Game Ticks",
 	"gui.stellarview.tick_multiplier": "Tick Multiplier",
