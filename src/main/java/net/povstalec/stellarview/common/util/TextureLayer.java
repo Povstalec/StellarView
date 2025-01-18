@@ -3,6 +3,7 @@ package net.povstalec.stellarview.common.util;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 
@@ -128,13 +129,13 @@ public class TextureLayer
 	//*************************************Saving and Loading*************************************
 	//============================================================================================
 	
-	public CompoundTag serialize()
+	public CompoundTag serialize(HolderLookup.Provider provider)
 	{
 		CompoundTag tag = new CompoundTag();
 		
 		tag.putString(TEXTURE, texture.toString());
 		
-		tag.put(RGBA, rgba.serializeNBT());
+		tag.put(RGBA, rgba.serializeNBT(provider));
 		
 		tag.putBoolean(BLEND, blend);
 		
@@ -149,33 +150,12 @@ public class TextureLayer
 		return tag;
 	}
 	
-	public static TextureLayer deserialize(CompoundTag tag)
+	public static TextureLayer deserialize(HolderLookup.Provider provider, CompoundTag tag)
 	{
 		ResourceLocation texture = ResourceLocation.parse(tag.getString(TEXTURE));
 		
 		Color.FloatRGBA rgba = new Color.FloatRGBA(0, 0, 0);
-		rgba.deserializeNBT(tag.getCompound(RGBA));
-		
-		boolean blend = tag.getBoolean(BLEND);
-		
-		double size = tag.getDouble(SIZE);
-		double minSize = tag.getDouble(MIN_SIZE);
-		boolean clampAtMinSize = tag.getBoolean(CLAMP_AT_MIN_SIZE);
-		
-		double rotation = tag.getDouble(ROTATION);
-		
-		UV.Quad uv = UV.Quad.deserialize(tag.getCompound(UV_QUAD));
-		
-		
-		return new TextureLayer(texture, rgba, blend, size, minSize, clampAtMinSize, rotation, uv);
-	}
-	
-	public static TextureLayer fromTag(CompoundTag tag)
-	{
-		ResourceLocation texture = new ResourceLocation(tag.getString(TEXTURE));
-		
-		Color.FloatRGBA rgba = new Color.FloatRGBA(0, 0, 0);
-		rgba.deserializeNBT(tag.getCompound(RGBA));
+		rgba.deserializeNBT(provider, tag.getCompound(RGBA));
 		
 		boolean blend = tag.getBoolean(BLEND);
 		

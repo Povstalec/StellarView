@@ -2,6 +2,7 @@ package net.povstalec.stellarview.client.render.space_objects.resourcepack;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.Tesselator;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.GameRenderer;
@@ -27,9 +28,8 @@ public class StarRenderer<T extends Star> extends StarLikeRenderer<T>
 	//============================================================================================
 	
 	@Override
-	protected void renderTextureLayer(TextureLayer textureLayer, ViewCenter viewCenter, ClientLevel level, Camera camera, BufferBuilder bufferbuilder,
-									  Matrix4f lastMatrix, SphericalCoords sphericalCoords,
-									  double fade, long ticks, double distance, float partialTicks)
+	protected void renderTextureLayer(TextureLayer textureLayer, ViewCenter viewCenter, ClientLevel level, Camera camera, Tesselator tesselator,
+									  Matrix4f lastMatrix,SphericalCoords sphericalCoords, double fade, long ticks, double distance, float partialTicks)
 	{
 		double lyDistance = distance / SpaceCoords.KM_PER_LY;
 		
@@ -57,12 +57,12 @@ public class StarRenderer<T extends Star> extends StarLikeRenderer<T>
 			size = renderedObject.supernovaSize(size, ticks, lyDistance);
 		
 		renderOnSphere(textureLayer.rgba(), starRGBA, textureLayer.texture(), textureLayer.uv(),
-				level, camera, bufferbuilder, lastMatrix, sphericalCoords,
+				level, camera, tesselator, lastMatrix, sphericalCoords,
 				ticks, distance, partialTicks, LightEffects.starDayBrightness(viewCenter, size, ticks, level, camera, partialTicks) * (float) fade, size, (float) textureLayer.rotation() + renderedObject.rotation(ticks), textureLayer.shoulBlend());
 	}
 	
 	@Override
-	protected void renderTextureLayers(ViewCenter viewCenter, ClientLevel level, Camera camera, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)
+	protected void renderTextureLayers(ViewCenter viewCenter, ClientLevel level, Camera camera, Tesselator tesselator, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)
 	{
 		double fade = renderedObject.fadeOut(distance);
 		
@@ -73,7 +73,7 @@ public class StarRenderer<T extends Star> extends StarLikeRenderer<T>
 		
 		for(TextureLayer textureLayer : renderedObject.getTextureLayers())
 		{
-			renderTextureLayer(textureLayer, viewCenter, level, camera, bufferbuilder, lastMatrix, sphericalCoords, fade, ticks, distance, partialTicks);
+			renderTextureLayer(textureLayer, viewCenter, level, camera, tesselator, lastMatrix, sphericalCoords, fade, ticks, distance, partialTicks);
 		}
 	}
 }

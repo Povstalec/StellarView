@@ -2,8 +2,9 @@ package net.povstalec.stellarview.common.util;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraftforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.common.util.INBTSerializable;
 
 public class Color
 {
@@ -101,7 +102,7 @@ public class Color
 		//============================================================================================
 		
 		@Override
-		public CompoundTag serializeNBT()
+		public CompoundTag serializeNBT(HolderLookup.Provider provider)
 		{
 			CompoundTag tag = new CompoundTag();
 			
@@ -113,7 +114,7 @@ public class Color
 		}
 		
 		@Override
-		public void deserializeNBT(CompoundTag tag)
+		public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag)
 		{
 			red = tag.getInt(RED);
 			green = tag.getInt(GREEN);
@@ -168,9 +169,9 @@ public class Color
 		//============================================================================================
 		
 		@Override
-		public CompoundTag serializeNBT()
+		public CompoundTag serializeNBT(HolderLookup.Provider provider)
 		{
-			CompoundTag tag = super.serializeNBT();
+			CompoundTag tag = super.serializeNBT(provider);
 			
 			tag.putInt(ALPHA, alpha);
 			
@@ -178,9 +179,9 @@ public class Color
 		}
 		
 		@Override
-		public void deserializeNBT(CompoundTag tag)
+		public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag)
 		{
-			super.deserializeNBT(tag);
+			super.deserializeNBT(provider, tag);
 			
 			alpha = tag.getInt(ALPHA);
 		}
@@ -259,7 +260,7 @@ public class Color
 		//============================================================================================
 		
 		@Override
-		public CompoundTag serializeNBT()
+		public CompoundTag serializeNBT(HolderLookup.Provider provider)
 		{
 			CompoundTag tag = new CompoundTag();
 			
@@ -271,7 +272,7 @@ public class Color
 		}
 		
 		@Override
-		public void deserializeNBT(CompoundTag tag)
+		public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag)
 		{
 			red = tag.getFloat(RED);
 			green = tag.getFloat(GREEN);
@@ -352,9 +353,9 @@ public class Color
 		//============================================================================================
 		
 		@Override
-		public CompoundTag serializeNBT()
+		public CompoundTag serializeNBT(HolderLookup.Provider provider)
 		{
-			CompoundTag tag = super.serializeNBT();
+			CompoundTag tag = super.serializeNBT(provider);
 			
 			tag.putFloat(ALPHA, alpha);
 			
@@ -362,9 +363,9 @@ public class Color
 		}
 		
 		@Override
-		public void deserializeNBT(CompoundTag tag)
+		public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag)
 		{
-			super.deserializeNBT(tag);
+			super.deserializeNBT(provider, tag);
 			
 			alpha = tag.getFloat(ALPHA);
 		}

@@ -6,9 +6,10 @@ import java.util.Optional;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
 import net.povstalec.stellarview.common.util.*;
@@ -72,7 +73,7 @@ public class StarField extends SpaceObject
 		}
 	}
 	
-	public static final ResourceLocation DEFAULT_DUST_CLOUD_TEXTURE = new ResourceLocation(StellarView.MODID,"textures/environment/dust_cloud.png");
+	public static final ResourceLocation DEFAULT_DUST_CLOUD_TEXTURE = ResourceLocation.fromNamespaceAndPath(StellarView.MODID,"textures/environment/dust_cloud.png");
 	
 	public static final String SEED = "seed";
 	public static final String DIAMETER_LY = "diameter_ly";
@@ -220,9 +221,9 @@ public class StarField extends SpaceObject
 	//============================================================================================
 	
 	@Override
-	public CompoundTag serializeNBT()
+	public CompoundTag serializeNBT(HolderLookup.Provider provider)
 	{
-		CompoundTag tag = super.serializeNBT();
+		CompoundTag tag = super.serializeNBT(provider);
 		
 		tag.putInt(DUST_CLOUDS, dustClouds);
 		tag.putString(DUST_CLOUD_TEXTURE, dustCloudTexture.toString());
@@ -241,24 +242,24 @@ public class StarField extends SpaceObject
 		CompoundTag armsTag = new CompoundTag();
 		for(int i = 0; i < spiralArms.size(); i++)
 		{
-			armsTag.put("spiral_arm_" + i, spiralArms.get(i).serializeNBT());
+			armsTag.put("spiral_arm_" + i, spiralArms.get(i).serializeNBT(provider));
 		}
 		
 		tag.put(SPIRAL_ARMS, armsTag);
 		
-		tag.put(STAR_INFO, starInfo.serializeNBT());
-		tag.put(DUST_CLOUD_INFO, dustCloudInfo.serializeNBT());
+		tag.put(STAR_INFO, starInfo.serializeNBT(provider));
+		tag.put(DUST_CLOUD_INFO, dustCloudInfo.serializeNBT(provider));
 		
 		return tag;
 	}
 	
 	@Override
-	public void deserializeNBT(CompoundTag tag)
+	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag)
 	{
-		super.deserializeNBT(tag);
+		super.deserializeNBT(provider, tag);
 		
 		dustClouds = tag.getInt(DUST_CLOUDS);
-		dustCloudTexture = new ResourceLocation(tag.getString(DUST_CLOUD_TEXTURE));
+		dustCloudTexture = ResourceLocation.parse(tag.getString(DUST_CLOUD_TEXTURE));
 		
 		seed = tag.getLong(SEED);
 		
@@ -276,15 +277,15 @@ public class StarField extends SpaceObject
 		for(String key : armsTag.getAllKeys())
 		{
 			SpiralArm arm = new SpiralArm();
-			arm.deserializeNBT(armsTag.getCompound(key));
+			arm.deserializeNBT(provider, armsTag.getCompound(key));
 			spiralArms.add(arm);
 		}
 		
 		this.starInfo = new StarInfo();
-		this.starInfo.deserializeNBT(tag.getCompound(STAR_INFO));
+		this.starInfo.deserializeNBT(provider, tag.getCompound(STAR_INFO));
 		
 		this.dustCloudInfo = new DustCloudInfo();
-		this.dustCloudInfo.deserializeNBT(tag.getCompound(DUST_CLOUD_INFO));
+		this.dustCloudInfo.deserializeNBT(provider, tag.getCompound(DUST_CLOUD_INFO));
 	}
 	
 	
@@ -378,14 +379,14 @@ public class StarField extends SpaceObject
 		//============================================================================================
 		
 		@Override
-		public CompoundTag serializeNBT()
+		public CompoundTag serializeNBT(HolderLookup.Provider provider)
 		{
 			CompoundTag tag = new CompoundTag();
 			
 			tag.putInt(DUST_CLOUDS, armDustClouds);
 			
 			if(dustCloudInfo != null)
-				tag.put(DUST_CLOUD_INFO, dustCloudInfo.serializeNBT());
+				tag.put(DUST_CLOUD_INFO, dustCloudInfo.serializeNBT(provider));
 			
 			tag.putInt(STARS, armStars);
 			
@@ -399,14 +400,14 @@ public class StarField extends SpaceObject
 		}
 		
 		@Override
-		public void deserializeNBT(CompoundTag tag)
+		public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag)
 		{
 			armDustClouds = tag.getInt(DUST_CLOUDS);
 			
 			if(tag.contains(DUST_CLOUD_INFO))
 			{
 				dustCloudInfo = new DustCloudInfo();
-				dustCloudInfo.deserializeNBT(tag.getCompound(DUST_CLOUD_INFO));
+				dustCloudInfo.deserializeNBT(provider, tag.getCompound(DUST_CLOUD_INFO));
 			}
 			else
 				dustCloudInfo = null;
