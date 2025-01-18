@@ -1,16 +1,26 @@
 {
 	"gui.stellarview.config": "Stellar View Konfiguration",
-	"gui.stellarview.config.general": "Stellar View - Allgemeine Konfiguration",
-	"gui.stellarview.config.overworld": "Stellar View - Oberwelt Konfiguration",
-	"gui.stellarview.config.nether": "Stellar View - Nether Konfiguration",
-	"gui.stellarview.config.end": "Stellar View - Das Ende Konfiguration",
-
+	"gui.stellarview.config.general": "Allgemeine Konfiguration",
+	"gui.stellarview.config.overworld": "Oberwelt Konfiguration",
+	"gui.stellarview.config.nether": "Nether Konfiguration",
+	"gui.stellarview.config.end": "Das Ende Konfiguration",
+	"gui.stellarview.config.twilight_forest": "Twilight Forest Konfiguration",
+	"gui.stellarview.config.aether": "Aether Konfiguration",
+	
+	"gui.stellarview.use_game_ticks": "Spiel Ticks verwenden",
+	"gui.stellarview.tick_multiplier": "Tickmultiplikator",
 	"gui.stellarview.disable_view_center_rotation": "Deaktivieren der Ansichtszentrumrotation",
+	"gui.stellarview.gravitational_lensing": "Gravitationslinseneffekt",
 	"gui.stellarview.disable_stars": "Sterne deaktivieren",
 	"gui.stellarview.day_stars": "Sterne am Tag",
 	"gui.stellarview.bright_stars": "Hellere Sterne",
+	"gui.stellarview.textured_stars": "Sterne mit Texturen",
+	"gui.stellarview.dust_clouds": "Staubwolken",
+	
+	"gui.stellarview.space_region_render_distance": "Raumsichtweite",
 
 	"gui.stellarview.replace_vanilla": "Vanilla Minecraft ersetzen",
+	"gui.stellarview.replace_default": "Default ersetzen",
 	"gui.stellarview.config_priority": "Konfiguration priorisieren",
 	
 	"gui.stellarview.overworld_z_rotation_multiplier": "Himmelsrotationsmultiplikator",
