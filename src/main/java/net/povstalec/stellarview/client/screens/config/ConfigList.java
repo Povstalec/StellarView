@@ -11,6 +11,7 @@ import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.gui.widget.ForgeSlider;
 import net.povstalec.stellarview.StellarView;
+import net.povstalec.stellarview.client.render.SpaceRenderer;
 import net.povstalec.stellarview.common.config.StellarViewConfigValue;
 
 public class ConfigList extends ObjectSelectionList<ConfigList.ConfigEntry>
@@ -63,7 +64,7 @@ public class ConfigList extends ObjectSelectionList<ConfigList.ConfigEntry>
 	    
 	    protected void update()
 	    {
-	    	StellarView.updateSpaceObjects();
+	    	SpaceRenderer.updateSpaceObjects();
 	    }
 
 		@Override

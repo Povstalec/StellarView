@@ -6,7 +6,14 @@ import java.util.Optional;
 
 import javax.annotation.Nullable;
 
+import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
+import net.povstalec.stellarview.api.common.space_objects.resourcepack.StarField;
+import net.povstalec.stellarview.api.common.space_objects.StarLike;
+import net.povstalec.stellarview.api.common.space_objects.ViewObject;
+import net.povstalec.stellarview.client.render.LightEffects;
 import net.povstalec.stellarview.client.render.SpaceRenderer;
+import net.povstalec.stellarview.client.render.space_objects.SpaceObjectRenderer;
+import net.povstalec.stellarview.client.render.space_objects.ViewObjectRenderer;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -33,8 +40,6 @@ import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.client.render.level.util.StellarViewFogEffects;
 import net.povstalec.stellarview.client.render.level.util.StellarViewSkyEffects;
 import net.povstalec.stellarview.client.resourcepack.effects.MeteorEffect;
-import net.povstalec.stellarview.client.resourcepack.objects.OrbitingObject;
-import net.povstalec.stellarview.client.resourcepack.objects.SpaceObject;
 import net.povstalec.stellarview.common.config.GeneralConfig;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.SpaceCoords;
@@ -46,13 +51,20 @@ public class ViewCenter
 	public static final float DAY_MIN_VISIBLE_SIZE = 2.5F;
 	public static final float DAY_MAX_VISIBLE_SIZE = 10F;
 	
+	protected long ticks;
+	protected float starBrightness;
+	protected float dustCloudBrightness;
+	
 	@Nullable
 	protected ResourceKey<SpaceObject> viewCenterKey;
 	@Nullable
-	protected SpaceObject viewCenterObject;
+	protected ViewObjectRenderer viewObject;
 	
 	@Nullable
 	protected List<Skybox> skyboxes;
+	
+	protected DayBlending dayBlending;
+	protected DayBlending sunDayBlending;
 	
 	protected Minecraft minecraft = Minecraft.getInstance();
 	@Nullable
@@ -64,14 +76,10 @@ public class ViewCenter
 	protected AxisRotation axisRotation;
 	protected long rotationPeriod;
 	
+	@Nullable
 	protected final MeteorEffect.ShootingStar shootingStar;
+	@Nullable
 	protected final MeteorEffect.MeteorShower meteorShower;
-	
-	public final float dayMaxBrightness;
-
-	public final float dayMinVisibleSize;
-	public final float dayMaxVisibleSize;
-	public final float dayVisibleSizeRange;
 	
 	public final boolean createHorizon;
 	public final boolean createVoid;
@@ -86,12 +94,11 @@ public class ViewCenter
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(ViewCenter::getAxisRotation),
 			Codec.LONG.optionalFieldOf("rotation_period", 0L).forGetter(ViewCenter::getRotationPeriod),
 			
-			Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("day_max_brightness", DAY_MAX_BRIGHTNESS).forGetter(viewCenter -> viewCenter.dayMaxBrightness),
-			Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("day_min_visible_size", DAY_MIN_VISIBLE_SIZE).forGetter(viewCenter -> viewCenter.dayMinVisibleSize),
-			Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("day_max_visible_size", DAY_MAX_VISIBLE_SIZE).forGetter(viewCenter -> viewCenter.dayMaxVisibleSize),
+			DayBlending.CODEC.optionalFieldOf("day_blending", DayBlending.DAY_BLENDING).forGetter(viewCenter -> viewCenter.dayBlending),
+			DayBlending.CODEC.optionalFieldOf("sun_day_blending", DayBlending.SUN_DAY_BLENDING).forGetter(viewCenter -> viewCenter.sunDayBlending),
 			
-			MeteorEffect.ShootingStar.CODEC.optionalFieldOf("shooting_star", new MeteorEffect.ShootingStar()).forGetter(ViewCenter::getShootingStar),
-			MeteorEffect.MeteorShower.CODEC.optionalFieldOf("meteor_shower", new MeteorEffect.MeteorShower()).forGetter(ViewCenter::getMeteorShower),
+			MeteorEffect.ShootingStar.CODEC.optionalFieldOf("shooting_star", null).forGetter(ViewCenter::getShootingStar),
+			MeteorEffect.MeteorShower.CODEC.optionalFieldOf("meteor_shower", null).forGetter(ViewCenter::getMeteorShower),
 			
 			Codec.BOOL.optionalFieldOf("create_horizon", true).forGetter(viewCenter -> viewCenter.createHorizon),
 			Codec.BOOL.optionalFieldOf("create_void", true).forGetter(viewCenter -> viewCenter.createVoid),
@@ -101,11 +108,15 @@ public class ViewCenter
 			).apply(instance, ViewCenter::new));
 	
 	public ViewCenter(Optional<ResourceKey<SpaceObject>> viewCenterKey, Optional<List<Skybox>> skyboxes, AxisRotation axisRotation,
-			long rotationPeriod, float dayMaxBrightness, float dayMinVisibleSize, float dayMaxVisibleSize,
+			long rotationPeriod, DayBlending dayBlending, DayBlending sunDayBlending,
 			MeteorEffect.ShootingStar shootingStar, MeteorEffect.MeteorShower meteorShower,
 			boolean createHorizon, boolean createVoid,
 			boolean starsAlwaysVisible, int zRotationMultiplier)
 	{
+		this.ticks = 0;
+		this.starBrightness = 0;
+		this.dustCloudBrightness = 0;
+		
 		if(viewCenterKey.isPresent())
 			this.viewCenterKey = viewCenterKey.get();
 		
@@ -115,14 +126,11 @@ public class ViewCenter
 		this.axisRotation = axisRotation;
 		this.rotationPeriod = rotationPeriod;
 		
+		this.dayBlending = dayBlending;
+		this.sunDayBlending = sunDayBlending;
+		
 		this.shootingStar = shootingStar;
 		this.meteorShower = meteorShower;
-		
-		this.dayMaxBrightness = dayMaxBrightness;
-		
-		this.dayMinVisibleSize = dayMinVisibleSize;
-		this.dayMaxVisibleSize = dayMaxVisibleSize;
-		this.dayVisibleSizeRange = dayMaxVisibleSize - dayMinVisibleSize;
 		
 		this.createHorizon = createHorizon;
 		this.createVoid = createVoid;
@@ -136,18 +144,21 @@ public class ViewCenter
 		this.zRotationMultiplier = zRotationMultiplier;
 	}
 	
-	public void setViewCenterObject(SpaceObject object)
+	public void setViewObjectRenderer(ViewObjectRenderer object)
 	{
-		viewCenterObject = object;
+		viewObject = object;
 	}
 	
-	public boolean setViewCenterObject(HashMap<ResourceLocation, SpaceObject> spaceObjects)
+	public boolean setViewObjectRenderer(HashMap<ResourceLocation, SpaceObjectRenderer> spaceObjects)
 	{
 		if(viewCenterKey != null)
 		{
 			if(spaceObjects.containsKey(viewCenterKey.location()))
 			{
-				setViewCenterObject(spaceObjects.get(viewCenterKey.location()));
+				if(spaceObjects.get(viewCenterKey.location()) instanceof ViewObjectRenderer viewObject)
+					setViewObjectRenderer(viewObject);
+				else
+					StellarView.LOGGER.error("Failed to register View Center because " + viewCenterKey.location() + " is not an instance of ViewCenterObject");
 				return true;
 			}
 			
@@ -158,10 +169,25 @@ public class ViewCenter
 		return true;
 	}
 	
+	public long ticks()
+	{
+		return ticks;
+	}
+	
+	public float starBrightness()
+	{
+		return starBrightness;
+	}
+	
+	public float dustCloudBrightness()
+	{
+		return dustCloudBrightness;
+	}
+	
 	public AxisRotation getObjectAxisRotation()
 	{
-		if(viewCenterObject != null)
-			return viewCenterObject.getAxisRotation();
+		if(viewObject != null)
+			return viewObject.axisRotation();
 		
 		return new AxisRotation();
 	}
@@ -180,6 +206,16 @@ public class ViewCenter
 			return Optional.of(skyboxes);
 		
 		return Optional.empty();
+	}
+	
+	public DayBlending dayBlending()
+	{
+		return dayBlending;
+	}
+	
+	public DayBlending sunDayBlending()
+	{
+		return sunDayBlending;
 	}
 	
 	public SpaceCoords getCoords()
@@ -234,11 +270,13 @@ public class ViewCenter
 		return 2 * Math.atan(zPos / zRotationMultiplier);
 	}
 	
+	@Nullable
 	public MeteorEffect.ShootingStar getShootingStar()
 	{
 		return shootingStar;
 	}
 	
+	@Nullable
 	public MeteorEffect.MeteorShower getMeteorShower()
 	{
 		return meteorShower;
@@ -259,10 +297,10 @@ public class ViewCenter
 		return 10;
 	}
 	
-	public boolean objectEquals(SpaceObject spaceObject)
+	public boolean objectEquals(SpaceObjectRenderer spaceObject)
 	{
-		if(this.viewCenterObject != null)
-			return spaceObject == this.viewCenterObject;
+		if(this.viewObject != null)
+			return spaceObject == this.viewObject;
 		
 		return false;
 	}
@@ -282,16 +320,19 @@ public class ViewCenter
 	
 	protected void renderSkyEvents(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder)
 	{
-		shootingStar.render(this, level, camera, partialTicks, stack, bufferbuilder);
-		meteorShower.render(this, level, camera, partialTicks, stack, bufferbuilder);
+		if(shootingStar != null)
+			shootingStar.render(this, level, camera, partialTicks, stack, bufferbuilder);
+		
+		if(meteorShower != null)
+			meteorShower.render(this, level, camera, partialTicks, stack, bufferbuilder);
 	}
 	
-	protected float getTimeOfDay(ClientLevel level, float partialTicks)
+	protected float getTimeOfDay(long ticks, float partialTicks)
 	{
 		if(rotationPeriod <= 0)
 			return 0;
 		
-		double d0 = Mth.frac((double) (level.getDayTime() % rotationPeriod) / (double) rotationPeriod - 0.25D);
+		double d0 = Mth.frac((double) ((ticks - 1 + partialTicks) % rotationPeriod) / (double) rotationPeriod - 0.25D);
 		double d1 = 0.5D - Math.cos(d0 * Math.PI) / 2.0D;
 		
 		return (float) (d0 * 2.0D + d1) / 3.0F;
@@ -299,19 +340,23 @@ public class ViewCenter
 	
 	protected boolean renderSkyObjectsFrom(ClientLevel level, Camera camera, float partialTicks, PoseStack stack, Matrix4f projectionMatrix, Runnable setupFog, BufferBuilder bufferbuilder)
 	{
-		if(viewCenterObject == null)
+		if(viewObject == null)
 			return false;
 		
-		coords = viewCenterObject.getCoords();
+		coords = viewObject.spaceCoords();
+		
+		this.ticks = GeneralConfig.tick_multiplier.get() * (GeneralConfig.use_game_ticks.get() ? level.getGameTime() : level.getDayTime());
+		this.starBrightness = LightEffects.starBrightness(this, level, camera, partialTicks);
+		this.dustCloudBrightness = GeneralConfig.dust_clouds.get() ? LightEffects.dustCloudBrightness(this, level, camera, partialTicks) : 0;
 		
 		stack.pushPose();
 		
 		if(!GeneralConfig.disable_view_center_rotation.get())
 		{
-			double rotation = 2 * Math.PI * getTimeOfDay(level, partialTicks) + Math.PI;
+			double rotation = 2 * Math.PI * getTimeOfDay(level.getDayTime(), partialTicks) + Math.PI;
 			
-			if(viewCenterObject instanceof OrbitingObject orbitingObject && orbitingObject.getOrbitInfo().isPresent())
-				rotation -= orbitingObject.getOrbitInfo().get().meanAnomaly(level.getDayTime() % orbitingObject.getOrbitInfo().get().orbitalPeriod().ticks(), partialTicks);
+			if(viewObject.orbitInfo() != null)
+				rotation -= viewObject.orbitInfo().meanAnomaly(this.ticks % viewObject.orbitInfo().orbitalPeriod().ticks(), GeneralConfig.tick_multiplier.get() * partialTicks);
 			
 			stack.mulPose(Axis.YP.rotation((float) getAxisRotation().yAxis()));
 			stack.mulPose(Axis.ZP.rotation((float) getAxisRotation().zAxis()));
@@ -321,7 +366,7 @@ public class ViewCenter
 			stack.mulPose(Axis.ZP.rotation((float) getZRotation(level, camera, partialTicks)));
 		}
 		
-		viewCenterObject.renderFrom(this, level, partialTicks, stack, camera, projectionMatrix, StellarViewFogEffects.isFoggy(minecraft, camera), setupFog, bufferbuilder);
+		viewObject.renderFrom(this, level, GeneralConfig.tick_multiplier.get() * partialTicks, stack, camera, projectionMatrix, StellarViewFogEffects.isFoggy(minecraft, camera), setupFog, bufferbuilder);
 
 		stack.popPose();
 
@@ -330,15 +375,15 @@ public class ViewCenter
 		return true;
 	}
 	
-	public void renderSkyObjects(SpaceObject masterParent, ClientLevel level, float partialTicks, PoseStack stack, Camera camera, 
+	public void renderSkyObjects(SpaceObjectRenderer masterParent, ClientLevel level, float partialTicks, PoseStack stack, Camera camera,
 			Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder)
 	{
 		SpaceRenderer.render(this, masterParent, level, camera, partialTicks, stack, projectionMatrix, isFoggy, setupFog, bufferbuilder);
 	}
 	
-	public boolean renderSky(ClientLevel level, int ticks, float partialTicks, PoseStack stack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
+	public boolean renderSky(ClientLevel level, long ticks, float partialTicks, PoseStack stack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
 	{
-		if(viewCenterObject == null && skyboxes == null)
+		if(viewObject == null && skyboxes == null)
 			return false;
 		
 		setupFog.run();
@@ -408,5 +453,53 @@ public class ViewCenter
 		}
 		
 		return true;
+	}
+	
+	
+	
+	public static class DayBlending
+	{
+		public static final DayBlending DAY_BLENDING = new DayBlending(1, 10, 30);
+		public static final DayBlending SUN_DAY_BLENDING = new DayBlending(1, 10, 20);
+		
+		private final float dayMaxBrightness;
+		
+		private final float dayMinVisibleSize;
+		private final float dayMaxVisibleSize;
+		
+		public static final Codec<DayBlending> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("max_brightness", DAY_MAX_BRIGHTNESS).forGetter(dayBlending -> dayBlending.dayMinVisibleSize),
+				
+				Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("min_visible_size", DAY_MIN_VISIBLE_SIZE).forGetter(dayBlending -> dayBlending.dayMinVisibleSize),
+				Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("max_visible_size", DAY_MAX_VISIBLE_SIZE).forGetter(dayBlending -> dayBlending.dayMaxVisibleSize)
+		).apply(instance, DayBlending::new));
+		
+		public DayBlending(float dayMaxBrightness, float dayMinVisibleSize, final float dayMaxVisibleSize)
+		{
+			this.dayMaxBrightness = dayMaxBrightness;
+			
+			this.dayMinVisibleSize = dayMinVisibleSize;
+			this.dayMaxVisibleSize = dayMaxVisibleSize;
+		}
+		
+		public float dayMaxBrightness()
+		{
+			return dayMaxBrightness;
+		}
+		
+		public float dayMaxVisibleSize()
+		{
+			return dayMaxVisibleSize;
+		}
+		
+		public float dayMinVisibleSize()
+		{
+			return dayMinVisibleSize;
+		}
+		
+		public float dayVisibleRange()
+		{
+			return dayMaxVisibleSize - dayMinVisibleSize;
+		}
 	}
 }
