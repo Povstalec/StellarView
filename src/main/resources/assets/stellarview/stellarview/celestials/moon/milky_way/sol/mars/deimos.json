@@ -1,0 +1,39 @@
+{
+	"parent": "stellarview:planet/milky_way/sol/mars",
+	"coords": { "x": {"ly": 0}, "y": {"ly": 0}, "z": {"ly": 0} },
+	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
+	"orbit_info":
+	{
+		"apoapsis": 23470.9,
+		"periapsis": 23455.5,
+		"orbit_clamp_distance": 3500000,
+		"orbital_period": { "ticks": 30312 },
+		"argument_of_periapsis": 0,
+		"inclination": 0.93,
+		"longtitude_of_ascending_node": 81.75,
+		"epoch_mean_anomaly": 264
+	},
+	"texture_layers":
+	[
+		{
+			"texture": "stellarview:textures/environment/halo_template.png",
+			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 192},
+			"blend": true,
+			"size": 16080,
+			"min_size": 0.1,
+			"clamp_at_min_size": false,
+			"rotation": 90,
+			"uv": { "flip_uv": true	}
+		},
+		{
+			"texture": "stellarview:textures/environment/planet/deimos.png",
+			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
+			"blend": false,
+			"size": 16080,
+			"min_size": 0.1,
+			"clamp_at_min_size": false,
+			"rotation": 90,
+			"uv": { "flip_uv": true }
+		}
+	]
+}
