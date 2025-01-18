@@ -2,10 +2,11 @@ package net.povstalec.stellarview.common.util;
 
 import com.mojang.math.Quaternion;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraftforge.common.util.INBTSerializable;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-public class AxisRotation
+public class AxisRotation implements INBTSerializable<CompoundTag>
 {
 	public static final String X_AXIS = "x_axis";
 	public static final String Y_AXIS = "y_axis";
@@ -189,5 +190,32 @@ public class AxisRotation
 	private static float lengthSquared(Quaternion quaternion)
 	{
 		return (float) Math.fma(quaternion.i(), quaternion.i(), Math.fma(quaternion.j(), quaternion.j(), Math.fma(quaternion.k(), quaternion.k(), quaternion.r() * quaternion.r())));
+	}
+	
+	//============================================================================================
+	//*************************************Saving and Loading*************************************
+	//============================================================================================
+	
+	@Override
+	public CompoundTag serializeNBT()
+	{
+		CompoundTag tag = new CompoundTag();
+		
+		tag.putDouble(X_AXIS, xAxis);
+		tag.putDouble(Y_AXIS, yAxis);
+		tag.putDouble(Z_AXIS, zAxis);
+		
+		return tag;
+	}
+	
+	@Override
+	public void deserializeNBT(CompoundTag tag)
+	{
+		inDegrees = false;
+		xAxis = tag.getDouble(X_AXIS);
+		yAxis = tag.getDouble(Y_AXIS);
+		zAxis = tag.getDouble(Z_AXIS);
+		
+		setupQuaternions();
 	}
 }

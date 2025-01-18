@@ -116,7 +116,7 @@ public abstract class MeteorEffect
         stack.mulPose(Vector3f.ZP.rotationDegrees(zRotation));
         stack.mulPose(Vector3f.XP.rotationDegrees(xRotation));
 		
-		meteorType.render(bufferbuilder, stack.last().pose(), SPHERICAL_START, rgba(viewCenter, level, camera, level.getDayTime(), partialTicks), level.getDayTime(), mulSize, addRotation);
+		meteorType.render(bufferbuilder, stack.last().pose(), SPHERICAL_START, rgba(viewCenter, level, camera, viewCenter.ticks(), partialTicks), viewCenter.ticks(), mulSize, addRotation);
 		stack.popPose();
 	}
 	
@@ -233,8 +233,8 @@ public abstract class MeteorEffect
 			if(!canRender(viewCenter))
 				return;
 			
-			long tickSeed = level.getDayTime() / TICKS;
-			int specificTime = (int) (level.getDayTime() % TICKS);
+			long tickSeed = viewCenter.ticks() / TICKS;
+			int specificTime = (int) (viewCenter.ticks() % TICKS);
 
 			Random randomizer = new Random(tickSeed);
 			
@@ -242,9 +242,9 @@ public abstract class MeteorEffect
 			
 			if(shouldAppear(viewCenter, tickSeed) && specificTime >= randomStart && specificTime < randomStart + DURATION)
 			{
-				double position = level.getDayTime() % DURATION;
+				double position = viewCenter.ticks() % DURATION;
 				
-				long shootingStarRandomizer = level.getDayTime() / DURATION;
+				long shootingStarRandomizer = viewCenter.ticks() / DURATION;
 				
 				Random random = new Random(shootingStarRandomizer);
 				
@@ -299,13 +299,13 @@ public abstract class MeteorEffect
 			if(!canRender(viewCenter))
 				return;
 			
-			long dailySeed = level.getDayTime() / (viewCenter.getRotationPeriod() == 0 ? 24000L : viewCenter.getRotationPeriod());
+			long dailySeed = viewCenter.ticks() / (viewCenter.getRotationPeriod() == 0 ? 24000L : viewCenter.getRotationPeriod());
 			
 			if(shouldAppear(viewCenter, dailySeed))
 			{
-				double position = level.getDayTime() % DURATION;
+				double position = viewCenter.ticks() % DURATION;
 				
-				long meteorRandomizer = level.getDayTime() / DURATION;
+				long meteorRandomizer = viewCenter.ticks() / DURATION;
 				
 				Random random = new Random(meteorRandomizer);
 				

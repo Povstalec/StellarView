@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.DimensionSpecialEffects;
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.client.render.level.util.StellarViewLightmapEffects;
-import net.povstalec.stellarview.client.resourcepack.ViewCenters;
+import net.povstalec.stellarview.client.render.ViewCenters;
 import net.povstalec.stellarview.common.config.EndConfig;
 import net.povstalec.stellarview.compatibility.enhancedcelestials.EnhancedCelestialsCompatibility;
 
