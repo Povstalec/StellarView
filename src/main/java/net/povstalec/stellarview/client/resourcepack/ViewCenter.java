@@ -54,7 +54,14 @@ public class ViewCenter
 	public static final float DAY_MIN_VISIBLE_SIZE = 2.5F;
 	public static final float DAY_MAX_VISIBLE_SIZE = 10F;
 	
+	protected int levelTicks;
+	protected boolean updateTicks;
+	
 	protected long ticks;
+	protected long oldTicks;
+	protected long dayTicks;
+	protected long oldDayTicks;
+	
 	protected float starBrightness;
 	protected float dustCloudBrightness;
 	
@@ -116,7 +123,12 @@ public class ViewCenter
 			boolean createHorizon, boolean createVoid,
 			boolean starsAlwaysVisible, int zRotationMultiplier)
 	{
+		this.levelTicks = 0;
+		this.updateTicks = false;
+		
 		this.ticks = 0;
+		this.oldDayTicks = 0;
+		
 		this.starBrightness = 0;
 		this.dustCloudBrightness = 0;
 		
@@ -175,6 +187,21 @@ public class ViewCenter
 	public long ticks()
 	{
 		return ticks;
+	}
+	
+	public long tickDifference()
+	{
+		return ticks - oldTicks;
+	}
+	
+	public long dayTicks()
+	{
+		return dayTicks;
+	}
+	
+	public long dayTickDifference()
+	{
+		return dayTicks - oldDayTicks;
 	}
 	
 	public float starBrightness()
@@ -330,12 +357,12 @@ public class ViewCenter
 			meteorShower.render(this, level, camera, partialTicks, modelViewMatrix, tesselator);
 	}
 	
-	protected float getTimeOfDay(long ticks, float partialTicks)
+	protected float getTimeOfDay(float partialTicks)
 	{
 		if(rotationPeriod <= 0)
 			return 0;
 		
-		double d0 = Mth.frac((double) ((ticks - 1 + partialTicks) % rotationPeriod) / (double) rotationPeriod - 0.25D);
+		double d0 = Mth.frac((double) ((this.oldDayTicks + dayTickDifference() * partialTicks) % rotationPeriod) / (double) rotationPeriod - 0.25D);
 		double d1 = 0.5D - Math.cos(d0 * Math.PI) / 2.0D;
 		
 		return (float) (d0 * 2.0D + d1) / 3.0F;
@@ -350,16 +377,25 @@ public class ViewCenter
 		
 		final var transformedModelView = new Matrix4f(modelViewMatrix);
 		
-		this.ticks = GeneralConfig.tick_multiplier.get() * (GeneralConfig.use_game_ticks.get() ? level.getGameTime() : level.getDayTime());
+		if(updateTicks)
+		{
+			this.oldTicks = this.ticks;
+			this.ticks = GeneralConfig.tick_multiplier.get() * (GeneralConfig.use_game_ticks.get() ? level.getGameTime() : level.getDayTime());
+		}
 		this.starBrightness = LightEffects.starBrightness(this, level, camera, partialTicks);
 		this.dustCloudBrightness = GeneralConfig.dust_clouds.get() ? LightEffects.dustCloudBrightness(this, level, camera, partialTicks) : 0;
 		
 		if(!GeneralConfig.disable_view_center_rotation.get())
 		{
-			double rotation = 2 * Math.PI * getTimeOfDay(level.getDayTime(), partialTicks) + Math.PI;
+			if(updateTicks)
+			{
+				this.oldDayTicks = this.dayTicks;
+				this.dayTicks = level.getDayTime();
+			}
+			double rotation = 2 * Math.PI * getTimeOfDay(partialTicks) + Math.PI;
 			
 			if(viewObject.orbitInfo() != null)
-				rotation -= viewObject.orbitInfo().meanAnomaly(this.ticks % viewObject.orbitInfo().orbitalPeriod().ticks(), GeneralConfig.tick_multiplier.get() * partialTicks);
+				rotation -= viewObject.orbitInfo().meanAnomaly(this.ticks % viewObject.orbitInfo().orbitalPeriod().ticks(), tickDifference() * partialTicks);
 			
 			transformedModelView.rotate(Axis.YP.rotation((float) getAxisRotation().yAxis()));
 			transformedModelView.rotate(Axis.ZP.rotation((float) getAxisRotation().zAxis()));
@@ -369,7 +405,7 @@ public class ViewCenter
 			transformedModelView.rotate(Axis.ZP.rotation((float) getZRotation(level, camera, partialTicks)));
 		}
 		
-		viewObject.renderFrom(this, level, GeneralConfig.tick_multiplier.get() * partialTicks, transformedModelView, camera, projectionMatrix, StellarViewFogEffects.isFoggy(minecraft, camera), setupFog, tesselator);
+		viewObject.renderFrom(this, level, tickDifference() * partialTicks, transformedModelView, camera, projectionMatrix, StellarViewFogEffects.isFoggy(minecraft, camera), setupFog, tesselator);
 
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		renderSkyEvents(level, camera, partialTicks, modelViewMatrix, tesselator);
@@ -386,6 +422,14 @@ public class ViewCenter
 	{
 		if(viewObject == null && skyboxes == null)
 			return false;
+		
+		if(this.levelTicks != ticks)
+		{
+			this.updateTicks = true;
+			this.levelTicks = ticks;
+		}
+		this.starBrightness = LightEffects.starBrightness(this, level, camera, partialTicks);
+		this.dustCloudBrightness = GeneralConfig.dust_clouds.get() ? LightEffects.dustCloudBrightness(this, level, camera, partialTicks) : 0;
 		
 		setupFog.run();
 		
@@ -451,6 +495,9 @@ public class ViewCenter
 	        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 	        RenderSystem.depthMask(true);
 		}
+		
+		if(this.updateTicks)
+			this.updateTicks = false;
 		
 		return true;
 	}

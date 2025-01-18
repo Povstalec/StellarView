@@ -13,6 +13,7 @@ import net.povstalec.stellarview.client.render.shader.StellarViewShaders;
 import net.povstalec.stellarview.client.render.shader.StellarViewVertexFormat;
 import net.povstalec.stellarview.client.render.space_objects.SpaceObjectRenderer;
 import net.povstalec.stellarview.client.util.DustCloudBuffer;
+import net.povstalec.stellarview.client.util.StarData;
 import net.povstalec.stellarview.common.util.DustCloudInfo;
 import net.povstalec.stellarview.common.util.StarInfo;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
