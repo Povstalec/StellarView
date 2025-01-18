@@ -9,9 +9,9 @@ import java.util.HashMap;
 
 public class SpaceObjectRenderers
 {
-	private static final HashMap<Class<? extends SpaceObject>, ScreenConstructor> RENDERERS = new HashMap<>();
+	private static final HashMap<Class<? extends SpaceObject>, SpaceObjectConstructor> RENDERERS = new HashMap<>();
 	
-	public static <T extends SpaceObject, U extends SpaceObjectRenderer<T>> void register(Class<T> objectClass, ScreenConstructor<T, U> constructor)
+	public static <T extends SpaceObject, U extends SpaceObjectRenderer<T>> void register(Class<T> objectClass, SpaceObjectConstructor<T, U> constructor)
 	{
 		if(RENDERERS.containsKey(objectClass))
 			throw new IllegalStateException("Duplicate registration for " + objectClass.getName());
@@ -30,7 +30,7 @@ public class SpaceObjectRenderers
 	
 	
 	
-	public interface ScreenConstructor<T extends SpaceObject, U extends SpaceObjectRenderer>
+	public interface SpaceObjectConstructor<T extends SpaceObject, U extends SpaceObjectRenderer>
 	{
 		U create(T object);
 	}
