@@ -1,0 +1,39 @@
+{
+	"parent": "stellarview:planet/milky_way/sol/eris",
+	"coords": { "x": {"ly": 0}, "y": {"ly": 0}, "z": {"ly": 0} },
+	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
+	"orbit_info":
+	{
+		"apoapsis": 37430,
+		"periapsis": 37300,
+		"orbit_clamp_distance": 7000000,
+		"orbital_period": { "ticks": 378862 },
+		"argument_of_periapsis": 180.83,
+		"inclination": 0,
+		"longtitude_of_ascending_node": 126.17,
+		"epoch_mean_anomaly": 0
+	},
+	"texture_layers":
+	[
+		{
+			"texture": "stellarview:textures/environment/halo_template.png",
+			"rgba": {"red": 64, "green": 64, "blue": 64, "alpha": 192},
+			"blend": true,
+			"size": 615000,
+			"min_size": 0.15,
+			"clamp_at_min_size": false,
+			"rotation": 90,
+			"uv": { "flip_uv": true	}
+		},
+		{
+			"texture": "stellarview:textures/environment/planet/dysnomia.png",
+			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
+			"blend": false,
+			"size": 615000,
+			"min_size": 0.15,
+			"clamp_at_min_size": false,
+			"rotation": 90,
+			"uv": { "flip_uv": true }
+		}
+	]
+}

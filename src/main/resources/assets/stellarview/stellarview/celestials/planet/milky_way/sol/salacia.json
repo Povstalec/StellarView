@@ -1,0 +1,38 @@
+{
+	"parent": "stellarview:star/milky_way/sol",
+	"coords": { "x": {"ly": 0}, "y": {"ly": 0}, "z": {"ly": 0} },
+	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
+	"orbit_info":
+	{
+		"apoapsis": 6977000000,
+		"periapsis": 5641000000,
+		"orbital_period": { "ticks": 2401752000 },
+		"argument_of_periapsis": 312.294,
+		"inclination": 23.921,
+		"longtitude_of_ascending_node": 279.880,
+		"epoch_mean_anomaly": 123.138
+	},
+	"texture_layers":
+	[
+		{
+			"texture": "stellarview:textures/environment/halo_template.png",
+			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
+			"blend": true,
+			"size": 866000,
+			"min_size": 0.2,
+			"clamp_at_min_size": false,
+			"rotation": 90,
+			"uv": { "flip_uv": false }
+		},
+		{
+			"texture": "stellarview:textures/environment/planet/salacia.png",
+			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
+			"blend": false,
+			"size": 866000,
+			"min_size": 0.2,
+			"clamp_at_min_size": false,
+			"rotation": 90,
+			"uv": { "flip_uv": false }
+		}
+	]
+}
