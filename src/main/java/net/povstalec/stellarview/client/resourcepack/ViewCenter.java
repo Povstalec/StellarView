@@ -402,8 +402,6 @@ public class ViewCenter
 			stack.mulPose(Axis.ZP.rotation((float) getZRotation(level, camera, partialTicks)));
 		}
 		
-		System.out.println(tickDifference() + " " + GeneralConfig.tick_multiplier.get());
-		
 		viewObject.renderFrom(this, level, tickDifference() * partialTicks, stack, camera, projectionMatrix, StellarViewFogEffects.isFoggy(minecraft, camera), setupFog, bufferbuilder);
 
 		stack.popPose();
