@@ -1,13 +1,14 @@
 package net.povstalec.stellarview.common.util;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraftforge.common.util.INBTSerializable;
 import org.joml.Math;
 import org.joml.Quaterniond;
 import org.joml.Quaternionf;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-public class AxisRotation
+public class AxisRotation implements INBTSerializable<CompoundTag>
 {
 	public static final String X_AXIS = "x_axis";
 	public static final String Y_AXIS = "y_axis";
@@ -63,11 +64,6 @@ public class AxisRotation
 		
 		Quaternionf quatf = quaternionfZ.mul(quaternionfY);
 		quaternionf = quaternionfX.mul(quatf);
-	}
-	
-	public static AxisRotation fromTag(CompoundTag tag)
-	{
-		return new AxisRotation(false, tag.getDouble(X_AXIS), tag.getDouble(Y_AXIS), tag.getDouble(Z_AXIS));
 	}
 	
 	// Sooooooo... Quaterniond is kinda wrong, so here's a custom function for rotating around X-axis that works properly
@@ -154,5 +150,32 @@ public class AxisRotation
 	public String toString()
 	{
 		return "( xAxis: " + Math.toDegrees(xAxis) + "°, yAxis: " + Math.toDegrees(yAxis) + "°, zAxis: " + Math.toDegrees(zAxis) + "° )";
+	}
+	
+	//============================================================================================
+	//*************************************Saving and Loading*************************************
+	//============================================================================================
+	
+	@Override
+	public CompoundTag serializeNBT()
+	{
+		CompoundTag tag = new CompoundTag();
+		
+		tag.putDouble(X_AXIS, xAxis);
+		tag.putDouble(Y_AXIS, yAxis);
+		tag.putDouble(Z_AXIS, zAxis);
+		
+		return tag;
+	}
+	
+	@Override
+	public void deserializeNBT(CompoundTag tag)
+	{
+		inDegrees = false;
+		xAxis = tag.getDouble(X_AXIS);
+		yAxis = tag.getDouble(Y_AXIS);
+		zAxis = tag.getDouble(Z_AXIS);
+		
+		setupQuaternions();
 	}
 }

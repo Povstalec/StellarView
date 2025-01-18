@@ -5,14 +5,15 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 
 import net.minecraft.client.renderer.GameRenderer;
+import net.povstalec.stellarview.api.common.space_objects.StarLike;
 import net.povstalec.stellarview.client.render.SpaceRenderer;
 import net.povstalec.stellarview.client.render.shader.StellarViewShaders;
 import net.povstalec.stellarview.client.render.shader.StellarViewVertexFormat;
-import net.povstalec.stellarview.client.resourcepack.objects.StarField;
-import net.povstalec.stellarview.client.resourcepack.objects.StarLike;
-import org.lwjgl.system.MemoryUtil;
+import net.povstalec.stellarview.api.common.space_objects.resourcepack.StarField;
+import net.povstalec.stellarview.client.util.StarBuffer;
 import net.povstalec.stellarview.common.config.GeneralConfig;
 import org.joml.Matrix4f;
+import org.lwjgl.system.MemoryUtil;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -121,9 +122,8 @@ public abstract class StarData
 		 * @param x X coordinate of the star
 		 * @param y Y coordinate of the star
 		 * @param z Z coordinate of the star
-		 * @param hasTexture Whether or not the star has a texture
 		 */
-		public void newStar(StarLike.StarType starType, Random random, double x, double y, double z, boolean hasTexture)
+		public void newStar(StarLike.StarType starType, Random random, double x, double y, double z)
 		{
 			// Set up position
 			
@@ -246,7 +246,7 @@ public abstract class StarData
 				
 				Tesselator tesselator = Tesselator.getInstance();
 				RenderSystem.setShader(GameRenderer::getPositionShader);
-				MeshData mesh = getStarBuffer(tesselator, GeneralConfig.textured_stars.get());
+				MeshData mesh = getStarBuffer(tesselator, hasTexture);
 				
 				starBuffer.bind();
 				starBuffer.upload(mesh);

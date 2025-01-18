@@ -14,13 +14,22 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import net.povstalec.stellarview.StellarView;
-import net.povstalec.stellarview.client.events.StellarViewEvents;
+import net.povstalec.stellarview.api.client.events.StellarViewEvents;
+import net.povstalec.stellarview.api.common.space_objects.distinct.Sol;
+import net.povstalec.stellarview.client.SpaceObjectRenderers;
 import net.povstalec.stellarview.client.render.SpaceRenderer;
+import net.povstalec.stellarview.client.render.ViewCenters;
 import net.povstalec.stellarview.client.render.level.StellarViewEndEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewNetherEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewOverworldEffects;
-import net.povstalec.stellarview.client.resourcepack.objects.*;
-import net.povstalec.stellarview.client.resourcepack.objects.distinct.Sol;
+import net.povstalec.stellarview.api.common.space_objects.resourcepack.BlackHole;
+import net.povstalec.stellarview.api.common.space_objects.resourcepack.Moon;
+import net.povstalec.stellarview.api.common.space_objects.resourcepack.Nebula;
+import net.povstalec.stellarview.api.common.space_objects.resourcepack.Planet;
+import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
+import net.povstalec.stellarview.api.common.space_objects.resourcepack.Star;
+import net.povstalec.stellarview.api.common.space_objects.resourcepack.StarField;
+import net.povstalec.stellarview.client.render.space_objects.SpaceObjectRenderer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,7 +55,7 @@ public class ResourcepackReloadListener
 	private static final ResourceLocation SOL_LOCATION = ResourceLocation.fromNamespaceAndPath(StellarView.MODID, "star/milky_way/sol");
 	
 	private static HashMap<ResourceLocation, ViewCenter> viewCenters = new HashMap<>();
-	private static HashMap<ResourceLocation, SpaceObject> spaceObjects = new HashMap<>();
+	private static HashMap<ResourceLocation, SpaceObjectRenderer> spaceObjects = new HashMap<>();
 	
 	@EventBusSubscriber(modid = StellarView.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 	public static class ReloadListener extends SimpleJsonResourceReloadListener
@@ -70,6 +79,7 @@ public class ResourcepackReloadListener
 				ResourceLocation location = jsonEntry.getKey();
 				JsonElement element = jsonEntry.getValue();
 				
+				SpaceObject spaceObject = null;
 				if(canShortenPath(location, VIEW_CENTERS))
 					addViewCenter(viewCenters, shortenPath(location, VIEW_CENTERS), element);
 				else if(canShortenPath(location, CELESTIALS))
@@ -77,22 +87,30 @@ public class ResourcepackReloadListener
 					location = shortenPath(location, CELESTIALS);
 					
 					if(canShortenPath(location, PLANET))
-						addPlanet(spaceObjects, location, element);
+						spaceObject = makePlanet(location, element);
 					
 					else if(canShortenPath(location, MOON))
-						addMoon(spaceObjects, location, element);
+						spaceObject = makeMoon(location, element);
 					
 					else if(canShortenPath(location, STAR))
-						addStar(spaceObjects, location, element);
+						spaceObject = makeStar(location, element);
 					
 					else if(canShortenPath(location, STAR_FIELD))
-						addStarField(spaceObjects, location, element);
+						spaceObject = makeStarField(location, element);
 					
 					else if(canShortenPath(location, BLACK_HOLE))
-						addBlackHole(spaceObjects, location, element);
+						spaceObject = makeBlackHole(location, element);
 					
 					else if(canShortenPath(location, NEBULA))
-						addNebula(spaceObjects, location, element);
+						spaceObject = makeNebula(location, element);
+				}
+				
+				if(spaceObject != null)
+				{
+					SpaceObjectRenderer renderer = SpaceObjectRenderers.constructObjectRenderer(spaceObject);
+					
+					if(renderer != null)
+						spaceObjects.put(location, renderer);
 				}
 			}
 
@@ -125,144 +143,155 @@ public class ResourcepackReloadListener
 			}
 		}
 		
-		private static void setViewCenters(HashMap<ResourceLocation, SpaceObject> spaceObjects, HashMap<ResourceLocation, ViewCenter> viewCenters)
+		private static void setViewCenters(HashMap<ResourceLocation, SpaceObjectRenderer> spaceObjects, HashMap<ResourceLocation, ViewCenter> viewCenters)
 		{
 			for(Map.Entry<ResourceLocation, ViewCenter> viewCenterEntry : viewCenters.entrySet())
 			{
 				// Set the View Center's Space Object if it exists, if it doesn't don't add it to View Center Map
-				if(viewCenterEntry.getValue().setViewCenterObject(spaceObjects))
+				if(viewCenterEntry.getValue().setViewObjectRenderer(spaceObjects))
 					ViewCenters.addViewCenter(viewCenterEntry.getKey(), viewCenterEntry.getValue());
 			}
 		}
 		
-		private static void addStar(HashMap<ResourceLocation, SpaceObject> spaceObjects, ResourceLocation location, JsonElement element)
+		private static Star makeStar(ResourceLocation location, JsonElement element)
 		{
 			try
 			{
-				
 				if(SOL_LOCATION.equals(location))
 				{
 					JsonObject json = GsonHelper.convertToJsonObject(element, "star");
 					Sol sol = Sol.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(loggedExceptionProvider("Failed to parse Sol"));
 					SpaceRenderer.addSol(sol);
 					
-					spaceObjects.put(location, sol);
+					return sol;
 				}
 				else
 				{
 					JsonObject json = GsonHelper.convertToJsonObject(element, "star");
 					Star star = Star.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(loggedExceptionProvider("Failed to parse Star"));
 					
-					spaceObjects.put(location, star);
+					return star;
 				}
 			}
 			catch(RuntimeException e)
 			{
 				StellarView.LOGGER.error("Could not load " + location.toString() + " " + e);
 			}
+			
+			return null;
 		}
 		
-		private static void addBlackHole(HashMap<ResourceLocation, SpaceObject> spaceObjects, ResourceLocation location, JsonElement element)
+		private static BlackHole makeBlackHole(ResourceLocation location, JsonElement element)
 		{
 			try
 			{
 				JsonObject json = GsonHelper.convertToJsonObject(element, "black_hole");
 				BlackHole blackHole = BlackHole.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(loggedExceptionProvider("Failed to parse Black Hole"));
 				
-				spaceObjects.put(location, blackHole);
+				return blackHole;
 			}
 			catch(RuntimeException e)
 			{
 				StellarView.LOGGER.error("Could not load " + location.toString() + " " + e);
 			}
+			
+			return null;
 		}
 		
-		private static void addPlanet(HashMap<ResourceLocation, SpaceObject> spaceObjects, ResourceLocation location, JsonElement element)
+		private static Planet makePlanet(ResourceLocation location, JsonElement element)
 		{
 			try
 			{
 				JsonObject json = GsonHelper.convertToJsonObject(element, "planet");
 				Planet planet = Planet.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(loggedExceptionProvider("Failed to parse Planet"));
 
-				spaceObjects.put(location, planet);
+				return planet;
 			}
 			catch(RuntimeException e)
 			{
 				StellarView.LOGGER.error("Could not load " + location.toString() + " " + e);
 			}
+			
+			return null;
 		}
 		
-		private static void addMoon(HashMap<ResourceLocation, SpaceObject> spaceObjects, ResourceLocation location, JsonElement element)
+		private static Moon makeMoon(ResourceLocation location, JsonElement element)
 		{
 			try
 			{
 				JsonObject json = GsonHelper.convertToJsonObject(element, "moon");
 				Moon moon = Moon.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(loggedExceptionProvider("Failed to parse Moon"));
 
-				spaceObjects.put(location, moon);
+				return moon;
 			}
 			catch(RuntimeException e)
 			{
 				StellarView.LOGGER.error("Could not load " + location.toString() + " " + e);
 			}
+			
+			return null;
 		}
 		
-		private static void addStarField(HashMap<ResourceLocation, SpaceObject> spaceObjects, ResourceLocation location, JsonElement element)
+		private static StarField  makeStarField(ResourceLocation location, JsonElement element)
 		{
 			try
 			{
 				JsonObject json = GsonHelper.convertToJsonObject(element, "star_field");
 				StarField starField = StarField.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(loggedExceptionProvider("Failed to parse Star Field"));
 
-				spaceObjects.put(location, starField);
+				return starField;
 			}
 			catch(RuntimeException e)
 			{
 				StellarView.LOGGER.error("Could not load " + location.toString() + " " + e);
 			}
+			
+			return null;
 		}
 		
-		private static void addNebula(HashMap<ResourceLocation, SpaceObject> spaceObjects, ResourceLocation location, JsonElement element)
+		private static Nebula makeNebula(ResourceLocation location, JsonElement element)
 		{
 			try
 			{
 				JsonObject json = GsonHelper.convertToJsonObject(element, "nebula");
 				Nebula nebula = Nebula.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(loggedExceptionProvider("Failed to parse Nebula"));
-
-				spaceObjects.put(location, nebula);
+				
+				return nebula;
 			}
 			catch(RuntimeException e)
 			{
 				StellarView.LOGGER.error("Could not load " + location.toString() + " " + e);
 			}
+			
+			return null;
 		}
 		
-		private static void setSpaceObjects(HashMap<ResourceLocation, SpaceObject> spaceObjects)
+		private static void setSpaceObjects(HashMap<ResourceLocation, SpaceObjectRenderer> spaceObjects)
 		{
-			for(Map.Entry<ResourceLocation, SpaceObject> spaceObjectEntry : spaceObjects.entrySet())
+			for(Map.Entry<ResourceLocation, SpaceObjectRenderer> spaceObjectEntry : spaceObjects.entrySet())
 			{
-				SpaceObject spaceObject = spaceObjectEntry.getValue();
+				SpaceObjectRenderer spaceObject = spaceObjectEntry.getValue();
 
 				// Set name
-				spaceObject.setResourceLocation(spaceObjectEntry.getKey());
+				spaceObject.renderedObject().setResourceLocation(spaceObjectEntry.getKey());
 				
 				// Handle parents
-				if(spaceObject.getParentLocation().isPresent())
+				if(spaceObject.renderedObject().getParentLocation().isPresent())
 				{
-					for(Map.Entry<ResourceLocation, SpaceObject> parentEntry : spaceObjects.entrySet())
+					for(Map.Entry<ResourceLocation, SpaceObjectRenderer> parentEntry : spaceObjects.entrySet())
 					{
-						if(parentEntry.getKey().equals(spaceObject.getParentLocation().get()))
+						if(parentEntry.getKey().equals(spaceObject.renderedObject().getParentLocation().get()))
 						{
 							parentEntry.getValue().addChild(spaceObject);
 							break;
 						}
 					}
 					
-					if(!spaceObject.getParent().isPresent())
+					if(!spaceObject.renderedObject().getParent().isPresent())
 						StellarView.LOGGER.error("Failed to find parent for " + spaceObject.toString());
 				}
 				else
-					SpaceRenderer.addSpaceObject(spaceObjectEntry.getValue());
+					SpaceRenderer.addSpaceObjectRenderer(spaceObjectEntry.getValue());
 			}
 		}
 		

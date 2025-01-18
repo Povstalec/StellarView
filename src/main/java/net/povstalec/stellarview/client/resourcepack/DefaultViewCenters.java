@@ -4,7 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.resources.ResourceKey;
 import net.povstalec.stellarview.client.resourcepack.effects.MeteorEffect;
-import net.povstalec.stellarview.client.resourcepack.objects.SpaceObject;
+import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
 import net.povstalec.stellarview.common.config.EndConfig;
 import net.povstalec.stellarview.common.config.NetherConfig;
 import net.povstalec.stellarview.common.config.OverworldConfig;
@@ -24,9 +24,8 @@ public final class DefaultViewCenters
 				AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(ViewCenter::getAxisRotation),
 				Codec.LONG.optionalFieldOf("rotation_period", 0L).forGetter(ViewCenter::getRotationPeriod),
 				
-				Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("day_max_brightness", DAY_MAX_BRIGHTNESS).forGetter(viewCenter -> viewCenter.dayMaxBrightness),
-				Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("day_min_visible_size", DAY_MIN_VISIBLE_SIZE).forGetter(viewCenter -> viewCenter.dayMinVisibleSize),
-				Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("day_max_visible_size", DAY_MAX_VISIBLE_SIZE).forGetter(viewCenter -> viewCenter.dayMaxVisibleSize),
+				DayBlending.CODEC.optionalFieldOf("day_blending", DayBlending.DAY_BLENDING).forGetter(viewCenter -> viewCenter.dayBlending),
+				DayBlending.CODEC.optionalFieldOf("sun_day_blending", DayBlending.SUN_DAY_BLENDING).forGetter(viewCenter -> viewCenter.sunDayBlending),
 				
 				MeteorEffect.ShootingStar.CODEC.optionalFieldOf("shooting_star", new MeteorEffect.ShootingStar()).forGetter(ViewCenter::getShootingStar),
 				MeteorEffect.MeteorShower.CODEC.optionalFieldOf("meteor_shower", new MeteorEffect.MeteorShower()).forGetter(ViewCenter::getMeteorShower),
@@ -39,13 +38,13 @@ public final class DefaultViewCenters
 				).apply(instance, Overworld::new));
 		
 		public Overworld(Optional<ResourceKey<SpaceObject>> viewCenterKey, Optional<List<Skybox>> skyboxes, AxisRotation axisRotation,
-				long rotationPeriod, float dayMaxBrightness, float dayMinVisibleSize, float dayMaxVisibleSize,
+				long rotationPeriod, DayBlending dayBlending, DayBlending sunDayBlending,
 				MeteorEffect.ShootingStar shootingStar, MeteorEffect.MeteorShower meteorShower,
 				boolean createHorizon, boolean createVoid,
 				boolean starsAlwaysVisible, int zRotationMultiplier)
 		{
 			super(viewCenterKey, skyboxes, axisRotation,
-					rotationPeriod, dayMaxBrightness, dayMinVisibleSize, dayMaxVisibleSize,
+					rotationPeriod, dayBlending,sunDayBlending,
 					shootingStar, meteorShower, createHorizon, createVoid,
 					starsAlwaysVisible, zRotationMultiplier);
 		}
@@ -80,9 +79,8 @@ public final class DefaultViewCenters
 				AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(ViewCenter::getAxisRotation),
 				Codec.LONG.optionalFieldOf("rotation_period", 0L).forGetter(ViewCenter::getRotationPeriod),
 				
-				Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("day_max_brightness", DAY_MAX_BRIGHTNESS).forGetter(viewCenter -> viewCenter.dayMaxBrightness),
-				Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("day_min_visible_size", DAY_MIN_VISIBLE_SIZE).forGetter(viewCenter -> viewCenter.dayMinVisibleSize),
-				Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("day_max_visible_size", DAY_MAX_VISIBLE_SIZE).forGetter(viewCenter -> viewCenter.dayMaxVisibleSize),
+				DayBlending.CODEC.optionalFieldOf("day_blending", DayBlending.DAY_BLENDING).forGetter(viewCenter -> viewCenter.dayBlending),
+				DayBlending.CODEC.optionalFieldOf("sun_day_blending", DayBlending.SUN_DAY_BLENDING).forGetter(viewCenter -> viewCenter.sunDayBlending),
 				
 				MeteorEffect.ShootingStar.CODEC.optionalFieldOf("shooting_star", new MeteorEffect.ShootingStar()).forGetter(ViewCenter::getShootingStar),
 				MeteorEffect.MeteorShower.CODEC.optionalFieldOf("meteor_shower", new MeteorEffect.MeteorShower()).forGetter(ViewCenter::getMeteorShower),
@@ -95,13 +93,13 @@ public final class DefaultViewCenters
 				).apply(instance, Nether::new));
 		
 		public Nether(Optional<ResourceKey<SpaceObject>> viewCenterKey, Optional<List<Skybox>> skyboxes, AxisRotation axisRotation,
-				long rotationPeriod, float dayMaxBrightness, float dayMinVisibleSize, float dayMaxVisibleSize,
+				long rotationPeriod, DayBlending dayBlending, DayBlending sunDayBlending,
 				MeteorEffect.ShootingStar shootingStar, MeteorEffect.MeteorShower meteorShower,
 				boolean createHorizon, boolean createVoid,
 				boolean starsAlwaysVisible, int zRotationMultiplier)
 		{
 			super(viewCenterKey, skyboxes, axisRotation,
-					rotationPeriod, dayMaxBrightness, dayMinVisibleSize, dayMaxVisibleSize,
+					rotationPeriod, dayBlending,sunDayBlending,
 					shootingStar, meteorShower, createHorizon, createVoid,
 					starsAlwaysVisible, zRotationMultiplier);
 		}
@@ -131,9 +129,8 @@ public final class DefaultViewCenters
 				AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(ViewCenter::getAxisRotation),
 				Codec.LONG.optionalFieldOf("rotation_period", 0L).forGetter(ViewCenter::getRotationPeriod),
 				
-				Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("day_max_brightness", DAY_MAX_BRIGHTNESS).forGetter(viewCenter -> viewCenter.dayMaxBrightness),
-				Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("day_min_visible_size", DAY_MIN_VISIBLE_SIZE).forGetter(viewCenter -> viewCenter.dayMinVisibleSize),
-				Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("day_max_visible_size", DAY_MAX_VISIBLE_SIZE).forGetter(viewCenter -> viewCenter.dayMaxVisibleSize),
+				DayBlending.CODEC.optionalFieldOf("day_blending", DayBlending.DAY_BLENDING).forGetter(viewCenter -> viewCenter.dayBlending),
+				DayBlending.CODEC.optionalFieldOf("sun_day_blending", DayBlending.SUN_DAY_BLENDING).forGetter(viewCenter -> viewCenter.sunDayBlending),
 				
 				MeteorEffect.ShootingStar.CODEC.optionalFieldOf("shooting_star", new MeteorEffect.ShootingStar()).forGetter(ViewCenter::getShootingStar),
 				MeteorEffect.MeteorShower.CODEC.optionalFieldOf("meteor_shower", new MeteorEffect.MeteorShower()).forGetter(ViewCenter::getMeteorShower),
@@ -146,13 +143,13 @@ public final class DefaultViewCenters
 				).apply(instance, End::new));
 		
 		public End(Optional<ResourceKey<SpaceObject>> viewCenterKey, Optional<List<Skybox>> skyboxes, AxisRotation axisRotation,
-				long rotationPeriod, float dayMaxBrightness, float dayMinVisibleSize, float dayMaxVisibleSize,
+				long rotationPeriod, DayBlending dayBlending, DayBlending sunDayBlending,
 				MeteorEffect.ShootingStar shootingStar, MeteorEffect.MeteorShower meteorShower,
 				boolean createHorizon, boolean createVoid,
 				boolean starsAlwaysVisible, int zRotationMultiplier)
 		{
 			super(viewCenterKey, skyboxes, axisRotation,
-					rotationPeriod, dayMaxBrightness, dayMinVisibleSize, dayMaxVisibleSize,
+					rotationPeriod, dayBlending,sunDayBlending,
 					shootingStar, meteorShower, createHorizon, createVoid,
 					starsAlwaysVisible, zRotationMultiplier);
 		}

@@ -56,7 +56,20 @@ public class UV
 		return phaseHandler != null ? (float) (v + phaseHandler.v(ticks)) / phaseHandler.rows() : v;
 	}
 	
-	public static UV fromTag(CompoundTag tag, UV.PhaseHandler phaseHandler)
+	//============================================================================================
+	//*************************************Saving and Loading*************************************
+	//============================================================================================
+	
+	public CompoundTag serialize()
+	{
+		CompoundTag tag = new CompoundTag();
+		tag.putFloat(U, u);
+		tag.putFloat(V, v);
+		
+		return tag;
+	}
+	
+	public static UV deserialize(CompoundTag tag, UV.PhaseHandler phaseHandler)
 	{
 		return new UV(phaseHandler, tag.getFloat(U), tag.getFloat(V));
 	}
@@ -198,12 +211,31 @@ public class UV
 			return topRight;
 		}
 		
-		public static Quad fromTag(CompoundTag tag)
+		//============================================================================================
+		//*************************************Saving and Loading*************************************
+		//============================================================================================
+		
+		public CompoundTag serialize()
 		{
-			PhaseHandler phaseHandler = PhaseHandler.fromTag(tag.getCompound(PHASE_HANDLER));
+			CompoundTag tag = new CompoundTag();
+			tag.put(PHASE_HANDLER, phaseHandler.serialize());
 			
-			return new Quad(phaseHandler, UV.fromTag(tag.getCompound(TOP_LEFT), phaseHandler), UV.fromTag(tag.getCompound(BOTTOM_LEFT), phaseHandler),
-					UV.fromTag(tag.getCompound(BOTTOM_RIGHT), phaseHandler), UV.fromTag(tag.getCompound(TOP_RIGHT), phaseHandler));
+			tag.put(TOP_LEFT, topLeft.serialize());
+			tag.put(BOTTOM_LEFT, bottomLeft.serialize());
+			tag.put(BOTTOM_RIGHT, bottomRight.serialize());
+			tag.put(TOP_RIGHT, topRight.serialize());
+			
+			tag.putBoolean(FLIP_UV, flipped);
+			
+			return tag;
+		}
+		
+		public static Quad deserialize(CompoundTag tag)
+		{
+			PhaseHandler phaseHandler = PhaseHandler.deserialize(tag.getCompound(PHASE_HANDLER));
+			
+			return new Quad(phaseHandler, UV.deserialize(tag.getCompound(TOP_LEFT), phaseHandler), UV.deserialize(tag.getCompound(BOTTOM_LEFT), phaseHandler),
+					UV.deserialize(tag.getCompound(BOTTOM_RIGHT), phaseHandler), UV.deserialize(tag.getCompound(TOP_RIGHT), phaseHandler));
 		}
 	}
 	
@@ -276,7 +308,22 @@ public class UV
 	    	return doPhases;
 	    }
 		
-		public static PhaseHandler fromTag(CompoundTag tag)
+		//============================================================================================
+		//*************************************Saving and Loading*************************************
+		//============================================================================================
+		
+		public CompoundTag serialize()
+		{
+			CompoundTag tag = new CompoundTag();
+			tag.putInt(TICKS_PER_PHASE, ticksPerPhase);
+			tag.putInt(PHASE_TICK_OFFSET, phaseTickOffset);
+			tag.putInt(COLUMNS, columns);
+			tag.putInt(ROWS, rows);
+			
+			return tag;
+		}
+		
+		public static PhaseHandler deserialize(CompoundTag tag)
 		{
 			return new PhaseHandler(tag.getInt(TICKS_PER_PHASE), tag.getInt(PHASE_TICK_OFFSET), tag.getInt(COLUMNS), tag.getInt(ROWS));
 		}

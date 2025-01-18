@@ -3,6 +3,8 @@ package net.povstalec.stellarview.common.util;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.HolderLookup;
+import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.config.GeneralConfig;
 import net.minecraft.nbt.CompoundTag;
@@ -11,7 +13,7 @@ import org.joml.Quaternionf;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 
-public class SpaceCoords
+public class SpaceCoords implements INBTSerializable<CompoundTag>
 {
 	public static final String X = "x";
 	public static final String Y = "y";
@@ -64,11 +66,6 @@ public class SpaceCoords
 	public SpaceCoords()
 	{
 		this(0, 0, 0, 0, 0, 0);
-	}
-	
-	public static SpaceCoords fromTag(CompoundTag tag)
-	{
-		return new SpaceCoords(SpaceDistance.fromTag(tag.getCompound(X)), SpaceDistance.fromTag(tag.getCompound(Y)), SpaceDistance.fromTag(tag.getCompound(Z)));
 	}
 	
 	//============================================================================================
@@ -224,7 +221,32 @@ public class SpaceCoords
 		return "( x: " + x.toString() + ", y: " + y.toString() + ", z: " + z.toString() + " )";
 	}
 	
-	public static class SpaceDistance
+	//============================================================================================
+	//*************************************Saving and Loading*************************************
+	//============================================================================================
+	
+	@Override
+	public CompoundTag serializeNBT(HolderLookup.Provider provider)
+	{
+		CompoundTag tag = new CompoundTag();
+		tag.put(X, x.serializeNBT(provider));
+		tag.put(Y, y.serializeNBT(provider));
+		tag.put(Z, z.serializeNBT(provider));
+		
+		return tag;
+	}
+	
+	@Override
+	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag)
+	{
+		x.deserializeNBT(provider, tag.getCompound(X));;
+		y.deserializeNBT(provider, tag.getCompound(Y));;
+		z.deserializeNBT(provider, tag.getCompound(Z));;
+	}
+	
+	
+	
+	public static class SpaceDistance implements INBTSerializable<CompoundTag>
 	{
 		public static final String LY = "ly";
 		public static final String KM = "km";
@@ -252,14 +274,14 @@ public class SpaceCoords
 			this(lightYears, 0);
 		}
 		
+		public SpaceDistance()
+		{
+			this(0, 0);
+		}
+		
 		public SpaceDistance(double kilometers)
 		{
 			this(0, kilometers);
-		}
-		
-		public static SpaceDistance fromTag(CompoundTag tag)
-		{
-			return new SpaceDistance(tag.getLong(LY), tag.getDouble(KM));
 		}
 		
 		private void handleKmOverflow()
@@ -355,6 +377,27 @@ public class SpaceCoords
 		public String toString()
 		{
 			return "[ly: " + ly + ", km: " + km + "]";
+		}
+		
+		//============================================================================================
+		//*************************************Saving and Loading*************************************
+		//============================================================================================
+		
+		@Override
+		public CompoundTag serializeNBT(HolderLookup.Provider provider)
+		{
+			CompoundTag tag = new CompoundTag();
+			tag.putLong(LY, ly);
+			tag.putDouble(KM, km);
+			
+			return tag;
+		}
+		
+		@Override
+		public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag)
+		{
+			ly = tag.getLong(LY);
+			km = tag.getDouble(KM);
 		}
 	}
 }
