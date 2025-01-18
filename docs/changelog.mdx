@@ -1,6 +1,31 @@
 # Changelog
 The list of changes that have been made during development. This is not an exhaustive list, some changes were most certainly forgotten about.
 
+## 0.4.0 - 2025 Jan 17 - 1.19.2~1.21.1
+- Added:
+  - **Added Pleiades**
+  - **Added a bunch of moons, dwarf planets to Sol system and new planets to Proxima Centauri system**
+  - **Added config option to use game ticks instead of day ticks (game ticks are unaffected by time commands /time, meaning if you turn this option on, using /time set 0 will not reset the sky to its initial state; this, however, also means you will not be able to set the time to witness specific timed events, like Supernovae)**
+  - **Added Tick Multiplier config option to speed up the rate at which the sky is simulated**
+  - **Added an actual API section with Javadocs (so that I can feel a little bit less ashamed of the state of documentation for the mod)**
+  - **Added config option to disable gravitational lensing effects**
+  - **Added Czech translation**
+  - **Added German translation by **tristankechlo** (I added some translations that were missing, so if you notice anything wrong, please do tell me)**
+
+- Changed:
+  - **Changed some of the internal folder structure, normally I wouldn't mention this, but since this affects dependencies, it's probably better if I do**
+  - **Planet is now an extension of the new ViewObject, which is an extension of OrbitingObject**
+  - **View Centers now only accept ViewObjects as a valid "view_center"**
+  - **Textured Space Objects should now properly fade with distance**
+  - **Decreased nebula render distance, hopefully this should help making the region around Earth look less cluttered when viewed from outside of the Milky Way**
+  - **Changed how blending during day is defined in View Centers, suns can now blend separately from other objects**
+
+- Fixed:
+  - **Fixed Supernovae not rotating properly**
+  - **Servers will no longer crash when attempting to launch with Stellar View**
+  - **Fixed problems switching from textured to untextured stars during a single game session**
+
+
 ## 0.3.4 - 2025 Jan 12 - 1.19.2~1.21.1
 - Added:
   - Level Of Detail (LOD) to Star Fields
