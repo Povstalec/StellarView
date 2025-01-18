@@ -423,8 +423,6 @@ public class ViewCenter
 			this.updateTicks = true;
 			this.levelTicks = ticks;
 		}
-		this.starBrightness = LightEffects.starBrightness(this, level, camera, partialTicks);
-		this.dustCloudBrightness = GeneralConfig.dust_clouds.get() ? LightEffects.dustCloudBrightness(this, level, camera, partialTicks) : 0;
 		
 		setupFog.run();
 		
