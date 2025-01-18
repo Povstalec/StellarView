@@ -26,6 +26,8 @@ public class Planet extends ViewObject
 			FadeOutHandler.CODEC.optionalFieldOf("fade_out_handler", FadeOutHandler.DEFAULT_PLANET_HANDLER).forGetter(Planet::getFadeOutHandler)
 			).apply(instance, Planet::new));
 	
+	public Planet() {}
+	
 	public Planet(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
 			Optional<OrbitInfo> orbitInfo, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler)
 	{

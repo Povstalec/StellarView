@@ -46,6 +46,8 @@ public class Nebula extends TexturedObject
 			Codec.floatRange(0, Color.MAX_FLOAT_VALUE).optionalFieldOf(MIN_NEBULA_ALPHA, MIN_ALPHA).forGetter(Nebula::getMinNebulaAlpha)
 			).apply(instance, Nebula::new));
 	
+	public Nebula() {}
+	
 	public Nebula(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
 			List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler, float minNebulaSize, float maxNebulaAlpha, float minNebulaAlpha)
 	{

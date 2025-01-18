@@ -42,6 +42,8 @@ public class Moon extends Planet
 			Compatibility.CODEC.optionalFieldOf("compatibility").forGetter(Moon::getCompatibility)
 			).apply(instance, Moon::new));
 	
+	public Moon() {}
+	
 	public Moon(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
 				Optional<OrbitInfo> orbitInfo, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler,
 				Optional<Compatibility> compatibility)

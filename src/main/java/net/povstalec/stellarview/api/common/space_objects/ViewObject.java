@@ -12,6 +12,8 @@ import java.util.Optional;
 
 public class ViewObject extends OrbitingObject
 {
+	public ViewObject() {}
+	
 	public ViewObject(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation, Optional<OrbitInfo> orbitInfo,
 					  List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler)
 	{
