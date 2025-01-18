@@ -1,0 +1,39 @@
+{
+	"parent": "stellarview:planet/milky_way/sol/uranus",
+	"coords": { "x": {"ly": 0}, "y": {"ly": 0}, "z": {"ly": 0} },
+	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
+	"orbit_info":
+	{
+		"apoapsis": 129390,
+		"periapsis": 192390,
+		"orbit_clamp_distance": 100000000,
+		"orbital_period": { "ticks": 33923 },
+		"argument_of_periapsis": 0,
+		"inclination": 86.462,
+		"longtitude_of_ascending_node": 0,
+		"epoch_mean_anomaly": 64
+	},
+	"texture_layers":
+	[
+		{
+			"texture": "stellarview:textures/environment/halo_template.png",
+			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 192},
+			"blend": true,
+			"size": 480000,
+			"min_size": 0.08,
+			"clamp_at_min_size": true,
+			"rotation": 90,
+			"uv": { "flip_uv": true	}
+		},
+		{
+			"texture": "stellarview:textures/environment/planet/miranda.png",
+			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
+			"blend": false,
+			"size": 480000,
+			"min_size": 0.08,
+			"clamp_at_min_size": true,
+			"rotation": 90,
+			"uv": { "flip_uv": true }
+		}
+	]
+}
