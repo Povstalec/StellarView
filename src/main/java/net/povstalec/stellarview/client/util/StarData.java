@@ -1,4 +1,4 @@
-package net.povstalec.stellarview.common.util;
+package net.povstalec.stellarview.client.util;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
@@ -9,8 +9,8 @@ import net.povstalec.stellarview.client.render.shader.StellarViewShaders;
 import net.povstalec.stellarview.client.render.shader.StellarViewVertexFormat;
 import net.povstalec.stellarview.api.common.space_objects.resourcepack.StarField;
 import net.povstalec.stellarview.api.common.space_objects.StarLike;
-import net.povstalec.stellarview.client.util.StarBuffer;
-import net.povstalec.stellarview.common.config.GeneralConfig;
+import net.povstalec.stellarview.common.util.Color;
+import net.povstalec.stellarview.common.util.SpaceCoords;
 import org.joml.Matrix4f;
 
 import javax.annotation.Nullable;
