@@ -30,6 +30,8 @@ public class SpaceRegionRenderer
 	protected final ArrayList<GravityLenseRenderer> lensingRenderers = new ArrayList<GravityLenseRenderer>();
 	protected final ArrayList<StarFieldRenderer> starFieldRenderers = new ArrayList<StarFieldRenderer>();
 	
+	private boolean isSetUp = false;
+	
 	public SpaceRegionRenderer(SpaceRegion region)
 	{
 		this.region = region;
@@ -52,12 +54,34 @@ public class SpaceRegionRenderer
 		
 		this.children.add(child);
 		
-		if(child instanceof StarFieldRenderer starField)
+		return true;
+	}
+	
+	public void setupRegion()
+	{
+		for(SpaceObjectRenderer child : children)
+		{
+			setupLensingAndStarFields(child);
+		}
+		
+		isSetUp = true;
+	}
+	
+	public void setupLensingAndStarFields(SpaceObjectRenderer renderer)
+	{
+		if(renderer instanceof StarFieldRenderer starField)
 			starFieldRenderers.add(starField);
-		else if(child instanceof GravityLenseRenderer lense)
+		else if(renderer instanceof GravityLenseRenderer lense)
 			lensingRenderers.add(lense);
 		
-		return true;
+		// Hi, wanderer through code
+		// If you're wondering why this dumb line is here instead of iterating over it directly like a normal person, well you see, for some reason the code just starts thinking it's iterating over objects
+		// That's incredibly stupid, I hate it and I wish I didn't have to spend time on such idiotic things that shouldn't even be issues in the first place
+		ArrayList<SpaceObjectRenderer> children = renderer.children();
+		for(SpaceObjectRenderer child : children)
+		{
+			setupLensingAndStarFields(child);
+		}
 	}
 	
 	//============================================================================================
@@ -74,6 +98,9 @@ public class SpaceRegionRenderer
 	
 	public void render(ViewCenter viewCenter, SpaceObjectRenderer masterParent, ClientLevel level, Camera camera, float partialTicks, Matrix4f modelViewMatrix, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, Tesselator tesselator)
 	{
+		if(!isSetUp)
+			setupRegion();
+		
 		for(SpaceObjectRenderer spaceObject : children)
 		{
 			if(spaceObject != masterParent) // Makes sure the master parent (usually galaxy) is rendered last, that way stars from other galaxies don't get rendered over planets
