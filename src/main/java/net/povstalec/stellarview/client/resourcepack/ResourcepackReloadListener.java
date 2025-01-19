@@ -185,7 +185,7 @@ public class ResourcepackReloadListener
 			try
 			{
 				JsonObject json = GsonHelper.convertToJsonObject(element, "black_hole");
-				BlackHole blackHole = BlackHole.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Star", msg));
+				BlackHole blackHole = BlackHole.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Black Hole", msg));
 				
 				return blackHole;
 			}
