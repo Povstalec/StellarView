@@ -16,6 +16,7 @@ import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collection;
 
 public abstract class SpaceObjectRenderer<RenderedObject extends SpaceObject>
 {
@@ -64,6 +65,11 @@ public abstract class SpaceObjectRenderer<RenderedObject extends SpaceObject>
 		child.parent = this;
 		
 		renderedObject.addChild(child.renderedObject);
+	}
+	
+	public ArrayList<SpaceObjectRenderer> children()
+	{
+		return children;
 	}
 	
 	public RenderedObject renderedObject()
