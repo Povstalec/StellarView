@@ -183,7 +183,7 @@ public class ViewCenter
 	
 	public boolean isStatic()
 	{
-		return GeneralConfig.static_stars.get();
+		return GeneralConfig.static_sky.get();
 	}
 	
 	public long ticks()

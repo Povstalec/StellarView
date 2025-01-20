@@ -11,7 +11,7 @@
 	"gui.stellarview.tick_multiplier": "Násobitel tiků",
 	"gui.stellarview.disable_view_center_rotation": "Vypnout rotaci centra pohledu",
 	"gui.stellarview.gravitational_lensing": "Gravitační čočka",
-	"gui.stellarview.static_stars": "Statické hvězdy",
+	"gui.stellarview.static_stars": "[Shader compat] Statická obloha",
 	"gui.stellarview.disable_stars": "Zakázat hvězdy",
 	"gui.stellarview.day_stars": "Hvězdy během dne",
 	"gui.stellarview.bright_stars": "Jasné hvězdy",

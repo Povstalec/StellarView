@@ -6,6 +6,8 @@ public class GeneralConfig
 {
 	public static final String PREFIX = "client.general";
 	
+	public static StellarViewConfigValue.BooleanValue static_sky;
+	
 	public static StellarViewConfigValue.BooleanValue use_game_ticks;
 	public static StellarViewConfigValue.IntValue tick_multiplier;
 	
@@ -13,7 +15,6 @@ public class GeneralConfig
 	
 	public static StellarViewConfigValue.BooleanValue gravitational_lensing;
 	
-	public static StellarViewConfigValue.BooleanValue static_stars;
 	public static StellarViewConfigValue.BooleanValue disable_stars;
 	public static StellarViewConfigValue.BooleanValue bright_stars;
 	public static StellarViewConfigValue.BooleanValue textured_stars;
@@ -23,6 +24,12 @@ public class GeneralConfig
 	
 	public static void init(ForgeConfigSpec.Builder client)
 	{
+		static_sky = new StellarViewConfigValue.BooleanValue(client, "client.static_sky",
+				false,
+				"Makes the sky static (compatible with shaders)");
+		
+		
+		
 		use_game_ticks = new StellarViewConfigValue.BooleanValue(client, "client.use_game_ticks",
 				false,
 				"False - Positions along orbits, supernovae and meteor effects are affected when /time set command is used | True - Only planetary rotation is affected, everything else is unaffected (good choice if you want to use /time set 0 command without the sky reverting back to how it looked at tick 0)");
@@ -42,12 +49,6 @@ public class GeneralConfig
 		gravitational_lensing = new StellarViewConfigValue.BooleanValue(client, "client.gravitational_lensing",
 				true,
 				"Enables gravitational lensing effects");
-		
-		
-		
-		static_stars = new StellarViewConfigValue.BooleanValue(client, "client.static_stars",
-				false,
-				"Makes stars static (compatible with shaders)");
 		
 		disable_stars = new StellarViewConfigValue.BooleanValue(client, "client.disable_stars", 
 				false, 
