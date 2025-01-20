@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
+import net.minecraft.client.renderer.ShaderInstance;
 import net.povstalec.stellarview.client.render.SpaceRenderer;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 import org.lwjgl.opengl.GL15C;
@@ -213,21 +214,88 @@ public class StarBuffer implements AutoCloseable
 		shaderInstance.clear();
 	}
 	
+	public void drawWithShader(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, ShaderInstance shaderInstance)
+	{
+		if(!RenderSystem.isOnRenderThread())
+		{
+			RenderSystem.recordRenderCall(() ->
+			{
+				this._drawWithShader(new Matrix4f(modelViewMatrix), new Matrix4f(projectionMatrix), shaderInstance);
+			});
+		}
+		else
+			this._drawWithShader(modelViewMatrix, projectionMatrix, shaderInstance);
+		
+	}
+	
+	private void _drawWithShader(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, ShaderInstance shaderInstance)
+	{
+		for(int i = 0; i < 12; ++i)
+		{
+			int j = RenderSystem.getShaderTexture(i);
+			shaderInstance.setSampler("Sampler" + i, j);
+		}
+		
+		if(shaderInstance.MODEL_VIEW_MATRIX != null)
+			shaderInstance.MODEL_VIEW_MATRIX.set(modelViewMatrix);
+		
+		if(shaderInstance.PROJECTION_MATRIX != null)
+			shaderInstance.PROJECTION_MATRIX.set(projectionMatrix);
+		
+		if(shaderInstance.INVERSE_VIEW_ROTATION_MATRIX != null)
+			shaderInstance.INVERSE_VIEW_ROTATION_MATRIX.set(RenderSystem.getInverseViewRotationMatrix());
+		
+		if(shaderInstance.COLOR_MODULATOR != null)
+			shaderInstance.COLOR_MODULATOR.set(RenderSystem.getShaderColor());
+		
+		if(shaderInstance.FOG_START != null)
+			shaderInstance.FOG_START.set(RenderSystem.getShaderFogStart());
+		
+		if(shaderInstance.FOG_END != null)
+			shaderInstance.FOG_END.set(RenderSystem.getShaderFogEnd());
+		
+		if(shaderInstance.FOG_COLOR != null)
+			shaderInstance.FOG_COLOR.set(RenderSystem.getShaderFogColor());
+		
+		if(shaderInstance.FOG_SHAPE != null)
+			shaderInstance.FOG_SHAPE.set(RenderSystem.getShaderFogShape().getIndex());
+		
+		if(shaderInstance.TEXTURE_MATRIX != null)
+			shaderInstance.TEXTURE_MATRIX.set(RenderSystem.getTextureMatrix());
+		
+		if(shaderInstance.GAME_TIME != null)
+			shaderInstance.GAME_TIME.set(RenderSystem.getShaderGameTime());
+		
+		if(shaderInstance.SCREEN_SIZE != null)
+		{
+			Window window = Minecraft.getInstance().getWindow();
+			shaderInstance.SCREEN_SIZE.set((float)window.getWidth(), (float)window.getHeight());
+		}
+		
+		if(shaderInstance.LINE_WIDTH != null && (this.mode == VertexFormat.Mode.LINES || this.mode == VertexFormat.Mode.LINE_STRIP))
+			shaderInstance.LINE_WIDTH.set(RenderSystem.getShaderLineWidth());
+		
+		RenderSystem.setupShaderLights(shaderInstance);
+		shaderInstance.apply();
+		this.draw();
+		shaderInstance.clear();
+	}
+	
 	public void close()
 	{
-		if (this.vertexBufferId >= 0)
+		if(this.vertexBufferId >= 0)
 		{
 			RenderSystem.glDeleteBuffers(this.vertexBufferId);
 			this.vertexBufferId = -1;
 		}
 		
-		if (this.indexBufferId >= 0)
+		if(this.indexBufferId >= 0)
 		{
 			RenderSystem.glDeleteBuffers(this.indexBufferId);
 			this.indexBufferId = -1;
 		}
 		
-		if (this.arrayObjectId >= 0)
+		if(this.arrayObjectId >= 0)
 		{
 			RenderSystem.glDeleteVertexArrays(this.arrayObjectId);
 			this.arrayObjectId = -1;

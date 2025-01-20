@@ -23,7 +23,7 @@ public class SpaceRegionRenderer
 	
 	protected final SpaceRegion region;
 	
-	protected final ArrayList<SpaceObjectRenderer> children = new ArrayList<SpaceObjectRenderer>();
+	protected final ArrayList<SpaceObjectRenderer<?>> children = new ArrayList<SpaceObjectRenderer<?>>();
 	
 	protected final ArrayList<GravityLenseRenderer> lensingRenderers = new ArrayList<GravityLenseRenderer>();
 	protected final ArrayList<StarFieldRenderer> starFieldRenderers = new ArrayList<StarFieldRenderer>();
@@ -40,7 +40,7 @@ public class SpaceRegionRenderer
 		return region.getRegionPos();
 	}
 	
-	public ArrayList<SpaceObjectRenderer> getChildren()
+	public ArrayList<SpaceObjectRenderer<?>> getChildren()
 	{
 		return children;
 	}
@@ -57,7 +57,7 @@ public class SpaceRegionRenderer
 	
 	public void setupRegion()
 	{
-		for(SpaceObjectRenderer child : children)
+		for(SpaceObjectRenderer<?> child : children)
 		{
 			setupLensingAndStarFields(child);
 		}
@@ -65,18 +65,14 @@ public class SpaceRegionRenderer
 		isSetUp = true;
 	}
 	
-	public void setupLensingAndStarFields(SpaceObjectRenderer renderer)
+	public void setupLensingAndStarFields(SpaceObjectRenderer<?> renderer)
 	{
-		if(renderer instanceof StarFieldRenderer starField)
+		if(renderer instanceof StarFieldRenderer<?> starField)
 			starFieldRenderers.add(starField);
-		else if(renderer instanceof GravityLenseRenderer lense)
+		else if(renderer instanceof GravityLenseRenderer<?> lense)
 			lensingRenderers.add(lense);
 		
-		// Hi, wanderer through code
-		// If you're wondering why this dumb line is here instead of iterating over it directly like a normal person, well you see, for some reason the code just starts thinking it's iterating over objects
-		// That's incredibly stupid, I hate it and I wish I didn't have to spend time on such idiotic things that shouldn't even be issues in the first place
-		ArrayList<SpaceObjectRenderer> children = renderer.children();
-		for(SpaceObjectRenderer child : children)
+		for(SpaceObjectRenderer<?> child : renderer.children())
 		{
 			setupLensingAndStarFields(child);
 		}

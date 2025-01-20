@@ -24,7 +24,6 @@ public abstract class SpaceObject implements INBTSerializable<CompoundTag>
 	public static final String PARENT_LOCATION = "parent";
 	public static final String COORDS = "coords";
 	public static final String AXIS_ROTATION = "axis_rotation";
-	public static final String FADE_OUT_HANDLER = "fade_out_handler";
 	public static final String ID = "id";
 	
 	public static final ResourceLocation SPACE_OBJECT_LOCATION = new ResourceLocation(StellarView.MODID, "space_object");

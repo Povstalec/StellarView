@@ -177,6 +177,11 @@ public class ViewCenter
 		return true;
 	}
 	
+	public boolean isStatic()
+	{
+		return GeneralConfig.static_sky.get();
+	}
+	
 	public long ticks()
 	{
 		return ticks;
