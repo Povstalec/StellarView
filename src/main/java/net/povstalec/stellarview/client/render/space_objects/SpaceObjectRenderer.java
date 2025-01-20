@@ -25,12 +25,12 @@ public abstract class SpaceObjectRenderer<RenderedObject extends SpaceObject>
 	protected RenderedObject renderedObject;
 	protected double lastDistance = 0; // Last known distance of this object from the View Center, used for sorting
 	
-	protected ArrayList<SpaceObjectRenderer> children;
+	protected ArrayList<SpaceObjectRenderer<?>> children;
 	
 	public SpaceObjectRenderer(RenderedObject renderedObject)
 	{
 		this.renderedObject = renderedObject;
-		this.children = new ArrayList<SpaceObjectRenderer>();
+		this.children = new ArrayList<SpaceObjectRenderer<?>>();
 	}
 	
 	public SpaceCoords spaceCoords()
@@ -67,7 +67,7 @@ public abstract class SpaceObjectRenderer<RenderedObject extends SpaceObject>
 		renderedObject.addChild(child.renderedObject);
 	}
 	
-	public ArrayList<SpaceObjectRenderer> children()
+	public ArrayList<SpaceObjectRenderer<?>> children()
 	{
 		return children;
 	}

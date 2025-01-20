@@ -181,6 +181,11 @@ public class ViewCenter
 		return true;
 	}
 	
+	public boolean isStatic()
+	{
+		return GeneralConfig.static_stars.get();
+	}
+	
 	public long ticks()
 	{
 		return ticks;

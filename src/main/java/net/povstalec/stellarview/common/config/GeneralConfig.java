@@ -5,13 +5,15 @@ import net.minecraftforge.common.ForgeConfigSpec;
 public class GeneralConfig
 {
 	public static final String PREFIX = "client.general";
-
+	
 	public static StellarViewConfigValue.BooleanValue use_game_ticks;
 	public static StellarViewConfigValue.IntValue tick_multiplier;
 	
 	public static StellarViewConfigValue.BooleanValue disable_view_center_rotation;
 	
 	public static StellarViewConfigValue.BooleanValue gravitational_lensing;
+	
+	public static StellarViewConfigValue.BooleanValue static_stars;
 	public static StellarViewConfigValue.BooleanValue disable_stars;
 	public static StellarViewConfigValue.BooleanValue bright_stars;
 	public static StellarViewConfigValue.BooleanValue textured_stars;
@@ -40,6 +42,12 @@ public class GeneralConfig
 		gravitational_lensing = new StellarViewConfigValue.BooleanValue(client, "client.gravitational_lensing",
 				true,
 				"Enables gravitational lensing effects");
+		
+		
+		
+		static_stars = new StellarViewConfigValue.BooleanValue(client, "client.static_stars",
+				false,
+				"Makes stars static (compatible with shaders)");
 		
 		disable_stars = new StellarViewConfigValue.BooleanValue(client, "client.disable_stars", 
 				false, 

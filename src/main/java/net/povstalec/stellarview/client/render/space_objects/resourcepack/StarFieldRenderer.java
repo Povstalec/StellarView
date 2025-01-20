@@ -371,7 +371,7 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 			Quaternionf q = SpaceCoords.getQuaternionf(level, viewCenter, partialTicks);
 			
 			stack.mulPose(q);
-			this.starData.renderStars(StarField.LevelOfDetail.fromDistance(difference), stack.last().pose(), projectionMatrix, difference, hasTexture);
+			this.starData.renderStars(StarField.LevelOfDetail.fromDistance(difference), stack.last().pose(), projectionMatrix, difference, viewCenter.isStatic(), hasTexture);
 			
 			setupFog.run();
 			stack.popPose();
