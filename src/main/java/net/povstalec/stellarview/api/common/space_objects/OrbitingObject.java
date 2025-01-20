@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.povstalec.stellarview.common.config.GeneralConfig;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -23,19 +24,21 @@ import net.povstalec.stellarview.common.util.TextureLayer;
 
 public class OrbitingObject extends TexturedObject
 {
+	public static final String ORBIT_INFO = "orbit_info";
+	
 	public static final Vector3f INITIAL_ORBIT_VECTOR = new Vector3f(-1, 0, 0);
 	
 	@Nullable
 	private OrbitInfo orbitInfo;
 	
 	public static final Codec<OrbitingObject> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			ResourceLocation.CODEC.optionalFieldOf("parent").forGetter(OrbitingObject::getParentLocation),
-			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf("coords").forGetter(object -> Either.left(object.getCoords())),
-			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(OrbitingObject::getAxisRotation),
-			OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(object -> Optional.ofNullable(object.orbitInfo)),
-			TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(OrbitingObject::getTextureLayers),
+			ResourceLocation.CODEC.optionalFieldOf(PARENT_LOCATION).forGetter(OrbitingObject::getParentLocation),
+			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf(COORDS).forGetter(object -> Either.left(object.getCoords())),
+			AxisRotation.CODEC.fieldOf(AXIS_ROTATION).forGetter(OrbitingObject::getAxisRotation),
+			OrbitInfo.CODEC.optionalFieldOf(ORBIT_INFO).forGetter(object -> Optional.ofNullable(object.orbitInfo)),
+			TextureLayer.CODEC.listOf().fieldOf(TEXTURE_LAYERS).forGetter(OrbitingObject::getTextureLayers),
 			
-			FadeOutHandler.CODEC.optionalFieldOf("fade_out_handler", FadeOutHandler.DEFAULT_PLANET_HANDLER).forGetter(OrbitingObject::getFadeOutHandler)
+			FadeOutHandler.CODEC.optionalFieldOf(FADE_OUT_HANDLER, FadeOutHandler.DEFAULT_PLANET_HANDLER).forGetter(OrbitingObject::getFadeOutHandler)
 			).apply(instance, OrbitingObject::new));
 	
 	public OrbitingObject() {}
@@ -86,7 +89,10 @@ public class OrbitingObject extends TexturedObject
 	public CompoundTag serializeNBT()
 	{
 		CompoundTag tag = super.serializeNBT();
-		//TODO Serialize OrbitInfo
+		
+		if(orbitInfo != null)
+			tag.put(ORBIT_INFO, orbitInfo.serializeNBT());
+		
 		return tag;
 	}
 	
@@ -94,14 +100,25 @@ public class OrbitingObject extends TexturedObject
 	public void deserializeNBT(CompoundTag tag)
 	{
 		super.deserializeNBT(tag);
-		//TODO Deserialize OrbitInfo
-		this.orbitInfo = null;
+		
+		if(tag.contains(ORBIT_INFO))
+		{
+			orbitInfo = new OrbitInfo();
+			orbitInfo.deserializeNBT(tag.getCompound(ORBIT_INFO));
+		}
+		else
+			orbitInfo = null;
+		
 	}
 	
 	
 	
-	public static class OrbitalPeriod
+	public static class OrbitalPeriod implements INBTSerializable<CompoundTag>
 	{
+		public static final String TICKS = "ticks";
+		public static final String ORBITS = "orbits";
+		public static final String SYNODIC = "synodic";
+		
 		private long ticks;
 		private double orbits; // The number of full orbital revolutions the object will complete in a given number of ticks
 		private boolean synodic;
@@ -109,10 +126,12 @@ public class OrbitingObject extends TexturedObject
 		private double frequency;
 		
 		public static final Codec<OrbitalPeriod> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-				Codec.LONG.fieldOf("ticks").forGetter(OrbitalPeriod::ticks),
-				Codec.doubleRange(Double.MIN_NORMAL, Double.MAX_VALUE).optionalFieldOf("orbits", 1D).forGetter(OrbitalPeriod::orbits),
-				Codec.BOOL.optionalFieldOf("synodic", false).forGetter(OrbitalPeriod::synodic)
+				Codec.LONG.fieldOf(TICKS).forGetter(OrbitalPeriod::ticks),
+				Codec.doubleRange(Double.MIN_NORMAL, Double.MAX_VALUE).optionalFieldOf(ORBITS, 1D).forGetter(OrbitalPeriod::orbits),
+				Codec.BOOL.optionalFieldOf(SYNODIC, false).forGetter(OrbitalPeriod::synodic)
 				).apply(instance, OrbitalPeriod::new));
+		
+		public OrbitalPeriod() {}
 		
 		public OrbitalPeriod(long ticks, double orbits, boolean synodic)
 		{
@@ -159,44 +178,85 @@ public class OrbitingObject extends TexturedObject
 		{
 			return frequency;
 		}
+		
+		//============================================================================================
+		//*************************************Saving and Loading*************************************
+		//============================================================================================
+		
+		@Override
+		public CompoundTag serializeNBT()
+		{
+			CompoundTag tag = new CompoundTag();
+			
+			tag.putLong(TICKS, ticks);
+			tag.putDouble(ORBITS, orbits);
+			
+			tag.putBoolean(SYNODIC, synodic);
+			
+			return tag;
+		}
+		
+		@Override
+		public void deserializeNBT(CompoundTag tag)
+		{
+			this.ticks = tag.getLong(TICKS);
+			this.orbits = tag.getDouble(ORBITS);
+			
+			this.synodic = tag.getBoolean(SYNODIC);
+			
+			this.frequency = orbits / ticks;
+		}
 	}
 	
-	public static class OrbitInfo
+	
+	
+	public static class OrbitInfo implements INBTSerializable<CompoundTag>
 	{
+		public static final String APOAPSIS = "apoapsis";
+		public static final String PERIAPSIS = "periapsis";
+		public static final String ORBIT_CLAMP_DISTANCE = "orbit_clamp_distance";
+		public static final String ORBITAL_PERIOD = "orbital_period";
+		public static final String ARGUMENT_OF_PERIAPSIS = "argument_of_periapsis";
+		public static final String INCLINATION = "inclination";
+		public static final String LONGTITUDE_OF_ASCENDING_NODE = "longtitude_of_ascending_node";
+		public static final String EPOCH_MEAN_ANOMALY = "epoch_mean_anomaly";
+		
 		public static final Codec<OrbitInfo> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-				Codec.floatRange(1, Float.MAX_VALUE).fieldOf("apoapsis").forGetter(OrbitInfo::apoapsis),
-				Codec.floatRange(1, Float.MAX_VALUE).fieldOf("periapsis").forGetter(OrbitInfo::periapsis),
+				Codec.floatRange(1, Float.MAX_VALUE).fieldOf(APOAPSIS).forGetter(OrbitInfo::apoapsis),
+				Codec.floatRange(1, Float.MAX_VALUE).fieldOf(PERIAPSIS).forGetter(OrbitInfo::periapsis),
 				
-				Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf("orbit_clamp_distance", 0F).forGetter(OrbitInfo::orbitClampNumber),
+				Codec.floatRange(0, Float.MAX_VALUE).optionalFieldOf(ORBIT_CLAMP_DISTANCE, 0F).forGetter(OrbitInfo::orbitClampNumber),
 				
-				OrbitalPeriod.CODEC.fieldOf("orbital_period").forGetter(OrbitInfo::orbitalPeriod),
+				OrbitalPeriod.CODEC.fieldOf(ORBITAL_PERIOD).forGetter(OrbitInfo::orbitalPeriod),
 				
-				Codec.FLOAT.optionalFieldOf("argument_of_periapsis", 0F).forGetter(OrbitInfo::argumentOfPeriapsis),
+				Codec.FLOAT.optionalFieldOf(ARGUMENT_OF_PERIAPSIS, 0F).forGetter(OrbitInfo::argumentOfPeriapsis),
 				
-				Codec.FLOAT.optionalFieldOf("inclination", 0F).forGetter(OrbitInfo::inclination),
-				Codec.FLOAT.optionalFieldOf("longtitude_of_ascending_node", 0F).forGetter(OrbitInfo::longtitudeOfAscendingNode),
+				Codec.FLOAT.optionalFieldOf(INCLINATION, 0F).forGetter(OrbitInfo::inclination),
+				Codec.FLOAT.optionalFieldOf(LONGTITUDE_OF_ASCENDING_NODE, 0F).forGetter(OrbitInfo::longtitudeOfAscendingNode),
 				
-				Codec.FLOAT.optionalFieldOf("epoch_mean_anomaly", 0F).forGetter(OrbitInfo::epochMeanAnomaly)
+				Codec.FLOAT.optionalFieldOf(EPOCH_MEAN_ANOMALY, 0F).forGetter(OrbitInfo::epochMeanAnomaly)
 				).apply(instance, OrbitInfo::new));
 		
-		private final float apoapsis;
-		private final float periapsis;
-		private final float orbitClampDistance; // Visually clamps the orbit as if it was viewed from this distance
+		private float apoapsis;
+		private float periapsis;
+		private float orbitClampDistance; // Visually clamps the orbit as if it was viewed from this distance
 		
-		private final OrbitalPeriod orbitalPeriod;
+		private OrbitalPeriod orbitalPeriod;
 		
-		private final float argumentOfPeriapsis;
+		private float argumentOfPeriapsis;
 		
-		private final float inclination;
-		private final float longtitudeOfAscendingNode;
+		private float inclination;
+		private float longtitudeOfAscendingNode;
 		
-		private final float epochMeanAnomaly;
+		private float epochMeanAnomaly;
 		
 		private float sweep;
 		
-		private final float eccentricity;
+		private float eccentricity;
 		
-		private final Matrix4f orbitMatrix;
+		private Matrix4f orbitMatrix;
+		
+		public OrbitInfo() {}
 		
 		public OrbitInfo(float apoapsis, float periapsis, float orbitClampDistance,
 				OrbitalPeriod orbitalPeriod,
@@ -280,7 +340,7 @@ public class OrbitingObject extends TexturedObject
 			float trueAnomaly = (float) eccentricAnomaly(ticks, partialTicks);
 			
 			orbitVector.mulProject(movementMatrix(trueAnomaly));
-			orbitVector.mulProject(orbitMatrix);
+			orbitVector.mulProject(getOrbitMatrix());
 			
 			return orbitVector;
 		}
@@ -323,7 +383,7 @@ public class OrbitingObject extends TexturedObject
 			Matrix4f scaleMatrix = new Matrix4f().scale(semiMajorAxis, semiMajorAxis, semiMajorAxis);
 			
 			// Make the orbit eccentric
-			Matrix4f eccentricityMatrix = new Matrix4f().scale(1, 1, 1 - eccentricity);
+			Matrix4f eccentricityMatrix = new Matrix4f().scale(1, 1, 1 - eccentricity());
 			
 			// Offset the orbit to make periapsis closer to whatever it's orbiting around
 			Matrix4f offsetMatrix = new Matrix4f().translate(new Vector3f(semiMajorAxis - periapsis, 0, 0));
@@ -341,6 +401,55 @@ public class OrbitingObject extends TexturedObject
 		public Matrix4f getOrbitMatrix()
 		{
 			return orbitMatrix;
+		}
+		
+		//============================================================================================
+		//*************************************Saving and Loading*************************************
+		//============================================================================================
+		
+		@Override
+		public CompoundTag serializeNBT()
+		{
+			CompoundTag tag = new CompoundTag();
+			
+			tag.putFloat(APOAPSIS, apoapsis);
+			tag.putFloat(PERIAPSIS, periapsis);
+			
+			tag.putFloat(ORBIT_CLAMP_DISTANCE, orbitClampDistance);
+			
+			tag.put(ORBITAL_PERIOD, orbitalPeriod.serializeNBT());
+			
+			tag.putFloat(ARGUMENT_OF_PERIAPSIS, argumentOfPeriapsis);
+			
+			tag.putFloat(INCLINATION, inclination);
+			tag.putFloat(LONGTITUDE_OF_ASCENDING_NODE, longtitudeOfAscendingNode);
+			
+			tag.putFloat(EPOCH_MEAN_ANOMALY, epochMeanAnomaly);
+			
+			return tag;
+		}
+		
+		@Override
+		public void deserializeNBT(CompoundTag tag)
+		{
+			this.apoapsis = tag.getFloat(APOAPSIS);
+			this.periapsis = tag.getFloat(PERIAPSIS);
+			this.orbitClampDistance = tag.getFloat(ORBIT_CLAMP_DISTANCE);
+			
+			this.orbitalPeriod = new OrbitalPeriod();
+			this.orbitalPeriod.deserializeNBT(tag.getCompound(ORBITAL_PERIOD));
+			
+			this.argumentOfPeriapsis = tag.getFloat(ARGUMENT_OF_PERIAPSIS);
+			
+			this.inclination = tag.getFloat(INCLINATION);
+			this.longtitudeOfAscendingNode = tag.getFloat(LONGTITUDE_OF_ASCENDING_NODE);
+			
+			this.epochMeanAnomaly = tag.getFloat(EPOCH_MEAN_ANOMALY);
+			setupSweep();
+			
+			this.eccentricity = (apoapsis - periapsis) / (apoapsis + periapsis);
+			
+			this.orbitMatrix = orbitMatrix();
 		}
 
 		/**

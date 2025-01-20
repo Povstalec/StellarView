@@ -11,6 +11,7 @@
 	"gui.stellarview.tick_multiplier": "Tick Multiplier",
 	"gui.stellarview.disable_view_center_rotation": "Disable View Center Rotation",
 	"gui.stellarview.gravitational_lensing": "Gravitational Lensing",
+	"gui.stellarview.static_sky": "[Shader compat] Static Sky",
 	"gui.stellarview.disable_stars": "Disable Stars",
 	"gui.stellarview.day_stars": "Stars During Day",
 	"gui.stellarview.bright_stars": "Bright Stars",
