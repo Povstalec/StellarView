@@ -88,7 +88,7 @@ void main()
 	xyz.y *= distance;
 	xyz.z *= distance;
 	
-	if(LensingIntensity > 0.0)
+	if(LensingIntensity > 1.0)
 		xyz = LensingMat * xyz;
 	
 	// This effectively pushes the Star away from the camera
@@ -149,7 +149,7 @@ void main()
 	float projectedX = heightProjectionXZ * sinTheta - width * cosTheta;
 	float projectedZ = width * sinTheta + heightProjectionXZ * cosTheta;
 	
-	vec3 pos =  LensingIntensity > 0.0 ? LensingMatInv * vec3(projectedX + starX, heightProjectionY + starY, projectedZ + starZ) : vec3(projectedX + starX, heightProjectionY + starY, projectedZ + starZ);
+	vec3 pos = LensingIntensity > 0.0 ? LensingMatInv * vec3(projectedX + starX, heightProjectionY + starY, projectedZ + starZ) : vec3(projectedX + starX, heightProjectionY + starY, projectedZ + starZ);
 	
 	gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
 	

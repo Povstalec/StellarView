@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.povstalec.stellarview.api.common.space_objects.StarLike;
 import net.povstalec.stellarview.api.common.space_objects.SupernovaLeftover;
 import net.povstalec.stellarview.client.render.LightEffects;
@@ -31,6 +32,8 @@ import net.povstalec.stellarview.common.util.TextureLayer;
 
 public class Star extends StarLike
 {
+	public static final String SUPERNOVA_INFO = "supernova_info";
+	
 	@Nullable
 	private SupernovaInfo supernovaInfo;
 	
@@ -47,7 +50,7 @@ public class Star extends StarLike
 			Codec.floatRange(0, Color.MAX_FLOAT_VALUE).optionalFieldOf("max_star_alpha", MAX_ALPHA).forGetter(Star::getMaxStarAlpha),
 			Codec.floatRange(0, Color.MAX_FLOAT_VALUE).optionalFieldOf("min_star_alpha", MIN_ALPHA).forGetter(Star::getMinStarAlpha),
 			
-			SupernovaInfo.CODEC.optionalFieldOf("supernova_info").forGetter(star -> Optional.ofNullable(star.supernovaInfo()))
+			SupernovaInfo.CODEC.optionalFieldOf(SUPERNOVA_INFO).forGetter(star -> Optional.ofNullable(star.supernovaInfo()))
 			).apply(instance, Star::new));
 	
 	public Star() {}
@@ -122,7 +125,10 @@ public class Star extends StarLike
 	public CompoundTag serializeNBT()
 	{
 		CompoundTag tag = super.serializeNBT();
-		//TODO Serialize SupernovaInfo
+		
+		if(supernovaInfo != null)
+			tag.put(SUPERNOVA_INFO, supernovaInfo.serializeNBT());
+		
 		return tag;
 	}
 	
@@ -130,14 +136,26 @@ public class Star extends StarLike
 	public void deserializeNBT(CompoundTag tag)
 	{
 		super.deserializeNBT(tag);
-		//TODO Deserialize SupernovaInfo
-		supernovaInfo = null;
+		
+		if(tag.contains(ORBIT_INFO))
+		{
+			supernovaInfo = new SupernovaInfo();
+			supernovaInfo.deserializeNBT(tag.getCompound(SUPERNOVA_INFO));
+		}
+		else
+			supernovaInfo = null;
 	}
 	
 	
 	
-	public static class SupernovaInfo
+	public static class SupernovaInfo implements INBTSerializable<CompoundTag>
 	{
+		public static final String MAX_SIZE_MULTIPLIER = "max_size_multiplier";
+		public static final String START_TICKS = "start_ticks";
+		public static final String DURATION_TICKS = "duration_ticks";
+		public static final String NEBULA = "nebula";
+		public static final String SUPERNOVA_LEFTOVER = "supernova_leftover";
+		
 		protected Nebula nebula; //TODO Leave a Nebula where there used to be a Supernova
 		protected SupernovaLeftover supernovaLeftover; // Whatever is left after Supernova dies
 		
@@ -148,13 +166,15 @@ public class Star extends StarLike
 		protected long endTicks;
 		
 		public static final Codec<SupernovaInfo> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-				Codec.FLOAT.fieldOf("max_size_multiplier").forGetter(SupernovaInfo::getMaxSizeMultiplier),
-				Codec.LONG.fieldOf("start_ticks").forGetter(SupernovaInfo::getStartTicks),
-				Codec.LONG.fieldOf("duration_ticks").forGetter(SupernovaInfo::getDurationTicks),
+				Codec.FLOAT.fieldOf(MAX_SIZE_MULTIPLIER).forGetter(SupernovaInfo::getMaxSizeMultiplier),
+				Codec.LONG.fieldOf(START_TICKS).forGetter(SupernovaInfo::getStartTicks),
+				Codec.LONG.fieldOf(DURATION_TICKS).forGetter(SupernovaInfo::getDurationTicks),
 				
-				Nebula.CODEC.fieldOf("nebula").forGetter(SupernovaInfo::getNebula),
-				SupernovaLeftover.CODEC.fieldOf("supernova_leftover").forGetter(SupernovaInfo::getSupernovaLeftover)
+				Nebula.CODEC.fieldOf(NEBULA).forGetter(SupernovaInfo::getNebula),
+				SupernovaLeftover.CODEC.fieldOf(SUPERNOVA_LEFTOVER).forGetter(SupernovaInfo::getSupernovaLeftover)
 				).apply(instance, SupernovaInfo::new));
+		
+		public SupernovaInfo() {}
 		
 		public SupernovaInfo(float maxSizeMultiplier, long startTicks, long durationTicks, Nebula nebula, SupernovaLeftover supernovaLeftover)
 		{
@@ -215,10 +235,28 @@ public class Star extends StarLike
 			return ticks - getStartTicks();
 		}
 		
-		//TODO
-		/*public static SupernovaInfo fromTag(CompoundTag tag)
-		{
+		//============================================================================================
+		//*************************************Saving and Loading*************************************
+		//============================================================================================
 		
-		}*/
+		@Override
+		public CompoundTag serializeNBT()
+		{
+			CompoundTag tag = new CompoundTag();
+			
+			tag.putFloat(MAX_SIZE_MULTIPLIER, maxSizeMultiplier);
+			tag.putLong(START_TICKS, startTicks);
+			tag.putLong(DURATION_TICKS, durationTicks);
+			
+			return tag;
+		}
+		
+		@Override
+		public void deserializeNBT(CompoundTag tag)
+		{
+			this.maxSizeMultiplier = tag.getFloat(MAX_SIZE_MULTIPLIER);
+			this.startTicks = tag.getLong(START_TICKS);
+			this.durationTicks = tag.getLong(DURATION_TICKS);
+		}
 	}
 }
