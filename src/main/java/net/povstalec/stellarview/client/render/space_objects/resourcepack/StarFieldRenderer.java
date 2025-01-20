@@ -17,7 +17,7 @@ import net.povstalec.stellarview.client.util.StarData;
 import net.povstalec.stellarview.common.util.DustCloudInfo;
 import net.povstalec.stellarview.common.util.StarInfo;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
-import net.povstalec.stellarview.common.util.DustCloudData;
+import net.povstalec.stellarview.client.util.DustCloudData;
 import net.povstalec.stellarview.common.config.GeneralConfig;
 import net.povstalec.stellarview.common.util.*;
 import org.joml.Matrix4f;
@@ -44,8 +44,6 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 	
 	
 	protected DustCloudData dustCloudData;
-	@Nullable
-	protected DustCloudBuffer dustCloudBuffer;
 	protected int totalDustClouds;
 	
 	public StarFieldRenderer(T starField)
@@ -95,6 +93,9 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 	{
 		if(starData != null)
 			starData.reset();
+		
+		if(dustCloudData != null)
+			dustCloudData.reset();
 	}
 	
 	//============================================================================================
@@ -248,7 +249,7 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 	//****************************************Dust Clouds*****************************************
 	//============================================================================================
 	
-	protected void generateDustClouds(BufferBuilder bufferBuilder, Random random)
+	protected void generateDustClouds(DustCloudData.LOD lod, Random random)
 	{
 		for(int i = 0; i < renderedObject.getDustClouds(); i++)
 		{
@@ -265,11 +266,11 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 			
 			renderedObject.getAxisRotation().quaterniond().transform(cartesian);
 			
-			dustCloudData.newDustCloud(renderedObject.getDustCloudInfo(), bufferBuilder, random, cartesian.x, cartesian.y, cartesian.z, 1, i);
+			lod.newDustCloud(renderedObject.getDustCloudInfo().getRandomDustCloudType(random), random, cartesian.x, cartesian.y, cartesian.z, 1);
 		}
 	}
 	
-	protected void generateArmDustClouds(BufferBuilder bufferBuilder, AxisRotation axisRotation, DustCloudData dustCloudData, DustCloudInfo dustCloudInfo, Random random, int numberOfDustClouds, double sizeMultiplier, StarField.SpiralArm arm)
+	protected void generateArmDustClouds(DustCloudData.LOD lod, AxisRotation axisRotation, DustCloudInfo dustCloudInfo, Random random, double sizeMultiplier, StarField.SpiralArm arm)
 	{
 		for(int i = 0; i < arm.armDustClouds(); i++)
 		{
@@ -298,46 +299,34 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 			
 			axisRotation.quaterniond().transform(cartesian);
 			
-			dustCloudData.newDustCloud(arm.dustCloudInfo() == null ? dustCloudInfo : arm.dustCloudInfo(), bufferBuilder, random, cartesian.x, cartesian.y, cartesian.z, (1 / progress) + 0.2, numberOfDustClouds + i);
+			lod.newDustCloud(arm.dustCloudInfo() == null ? dustCloudInfo.getRandomDustCloudType(random) : arm.dustCloudInfo().getRandomDustCloudType(random), random, cartesian.x, cartesian.y, cartesian.z, (1 / progress) + 0.2);
 		}
 	}
 	
-	protected MeshData generateDustCloudBuffer(Tesselator tesselator, Random random)
+	protected void setDustClouds()
 	{
-		final var bufferBuilder = tesselator.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR_POS_COLOR_LY_TEX.get());
 		double sizeMultiplier = renderedObject.getDiameter() / 30D;
 		
-		dustCloudData = new DustCloudData(totalDustClouds);
-		
-		generateDustClouds(bufferBuilder, random);
-		
-		int numberOfDustClouds = renderedObject.getDustClouds();
-		for(StarField.SpiralArm arm :renderedObject.getSpiralArms()) //Draw each arm
+		dustCloudData = new DustCloudData()
 		{
-			generateArmDustClouds(bufferBuilder, renderedObject.getAxisRotation(), dustCloudData, renderedObject.getDustCloudInfo(), random, numberOfDustClouds, sizeMultiplier, arm);
-			numberOfDustClouds += arm.armDustClouds();
-		}
-		
-		return bufferBuilder.build();
-	}
-	
-	public void setupDustCloudBuffer()
-	{
-		if(dustCloudBuffer != null)
-			dustCloudBuffer.close();
-		
-		dustCloudBuffer = new DustCloudBuffer();
-		Tesselator tesselator = Tesselator.getInstance();
-		RenderSystem.setShader(GameRenderer::getPositionShader);
-		
-		MeshData mesh = generateDustCloudBuffer(tesselator, new Random(renderedObject.getSeed()));
-		
-		if(mesh == null)
-			return;
-		
-		dustCloudBuffer.bind();
-		dustCloudBuffer.upload(mesh);
-		VertexBuffer.unbind();
+			@Override
+			protected LOD newDustClouds()
+			{
+				Random random;
+				random = new Random(renderedObject.getSeed());
+				
+				LOD lod = new LOD(totalDustClouds);
+				
+				generateDustClouds(lod, random);
+				
+				for(StarField.SpiralArm arm : renderedObject.getSpiralArms()) //Draw each arm
+				{
+					generateArmDustClouds(lod, renderedObject.getAxisRotation(), renderedObject.getDustCloudInfo(), random, sizeMultiplier, arm);
+				}
+				
+				return lod;
+			}
+		};
 	}
 	
 	//============================================================================================
@@ -392,8 +381,13 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 	{
 		SpaceCoords difference = viewCenter.getCoords().sub(spaceCoords());
 		
-		if(dustCloudBuffer == null)
-			setupDustCloudBuffer();
+		if(StarField.LevelOfDetail.fromDistance(difference) == StarField.LevelOfDetail.LOD1)
+			return;
+		
+		if(dustCloudData == null)
+			setDustClouds();
+		else if(requiresReset())
+			dustCloudData.reset();
 		
 		if(brightness > 0.0F && totalDustClouds > 0)
 		{
@@ -407,9 +401,7 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 			Quaternionf q = SpaceCoords.getQuaternionf(level, viewCenter, partialTicks);
 			
 			transformedModelView.rotate(q);
-			this.dustCloudBuffer.bind();
-			this.dustCloudBuffer.drawWithShader(transformedModelView, projectionMatrix, difference, StellarViewShaders.starDustCloudShader());
-			VertexBuffer.unbind();
+			this.dustCloudData.renderDustClouds(transformedModelView, projectionMatrix, difference, viewCenter.isStatic());
 			
 			setupFog.run();
 		}
