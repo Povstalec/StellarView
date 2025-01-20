@@ -20,6 +20,7 @@ import net.povstalec.stellarview.common.util.TextureLayer;
 public abstract class TexturedObject extends SpaceObject
 {
 	public static final String TEXTURE_LAYERS = "texture_layers";
+	public static final String FADE_OUT_HANDLER = "fade_out_handler";
 	
 	protected ArrayList<TextureLayer> textureLayers;
 	protected FadeOutHandler fadeOutHandler;
