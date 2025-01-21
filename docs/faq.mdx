@@ -10,11 +10,15 @@ I haven't yet gotten around to adding Solar Eclipses, but they will be in the mo
 
 ## Does this mod work with Shaders?
 
-Kinda, but not really? It's not gonna crash when you play with Shaders, but most Shaderpacks disregard any sky effects and replace them with their own custom sky effects, overriding the changes Stellar View brings.
+Kinda? It's not gonna crash when you play with Shaders, but most Shaderpacks disregard any sky effects and replace them with their own custom sky effects, overriding the changes Stellar View brings.
+Some packs can be configurated to disable their own sky and allow Stellar View sky to render.
 
-[Complementary Shaders](https://www.complementary.dev/shaders/), for example, only override the galaxies added by Stellar View, but still allow the planets and moons to be visible. And I'm sure I've seen at least one shaderpack that allows Stellar View to work properly, but unfortunately I have no idea what it was called.
+HOWEVER!!! Note that for Stellar View stars and dust clouds to work with any shaderpack, you must set the ***Static Sky*** config option to *True*!
+If it's not set to true, the stars and dust clouds will render dynamically using a custom core vertex shader, which isn't allowed by rendering mods like Iris.
 
-If you do find some Shaders that are compatible with Stellar View, feel free to inform us over at the [Discord Server](https://discord.gg/VDSqzdBqRd).
+Here is a list of Shaders that can definitely be made to work with Stellar View (stars + dust clouds included) and the settings used to make them work, feel free to inform us over at the [Discord Server](https://discord.gg/VDSqzdBqRd) if you find any more:
+
+* [Sildur's Vibrant Shaders](https://sildurs-shaders.github.io/) - Settings:  [ Sky & Lighting -> [ Default Skybox: ON, Shader Stars: OFF ] ]
 
 
 ## Why does my server crash when I boot it up with Stellar View installed?
