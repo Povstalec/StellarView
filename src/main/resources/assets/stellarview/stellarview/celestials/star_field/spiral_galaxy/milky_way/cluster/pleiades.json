@@ -10,13 +10,5 @@
 	"y_stretch": 1.0,
 	"z_stretch": 1.0,
 	
-	"star_info":
-	{
-		"star_types":
-		[
-			{ "rgb": {"red": 207, "green": 207, "blue": 255}, "min_size": 0.25, "max_size": 0.35, "min_brightness": 255, "max_brightness": 255, "max_visible_distance": 10000000, "weight": 1 },
-			{ "rgb": {"red": 223, "green": 223, "blue": 255}, "min_size": 0.20, "max_size": 0.30, "min_brightness": 225, "max_brightness": 255, "max_visible_distance": 8000000, "weight": 10 },
-			{ "rgb": {"red": 239, "green": 239, "blue": 255}, "min_size": 0.15, "max_size": 0.25, "min_brightness": 210, "max_brightness": 240, "max_visible_distance": 6000000, "weight": 1 }
-		]
-	}
+	"star_info": "stellarview:pleiades_distribution"
 }

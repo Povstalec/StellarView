@@ -92,6 +92,7 @@ public class ViewCenter
 	public final boolean createVoid;
 	
 	public final boolean starsAlwaysVisible;
+	public final boolean starsIgnoreFog;
 	public final int zRotationMultiplier;
     
     public static final Codec<ViewCenter> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -104,21 +105,22 @@ public class ViewCenter
 			DayBlending.CODEC.optionalFieldOf("day_blending", DayBlending.DAY_BLENDING).forGetter(viewCenter -> viewCenter.dayBlending),
 			DayBlending.CODEC.optionalFieldOf("sun_day_blending", DayBlending.SUN_DAY_BLENDING).forGetter(viewCenter -> viewCenter.sunDayBlending),
 			
-			MeteorEffect.ShootingStar.CODEC.optionalFieldOf("shooting_star", null).forGetter(ViewCenter::getShootingStar),
-			MeteorEffect.MeteorShower.CODEC.optionalFieldOf("meteor_shower", null).forGetter(ViewCenter::getMeteorShower),
+			MeteorEffect.ShootingStar.CODEC.optionalFieldOf("shooting_star").forGetter(viewCenter -> Optional.ofNullable(viewCenter.shootingStar)),
+			MeteorEffect.MeteorShower.CODEC.optionalFieldOf("meteor_shower").forGetter(viewCenter -> Optional.ofNullable(viewCenter.meteorShower)),
 			
 			Codec.BOOL.optionalFieldOf("create_horizon", true).forGetter(viewCenter -> viewCenter.createHorizon),
 			Codec.BOOL.optionalFieldOf("create_void", true).forGetter(viewCenter -> viewCenter.createVoid),
 			
 			Codec.BOOL.optionalFieldOf("stars_always_visible", false).forGetter(viewCenter -> viewCenter.starsAlwaysVisible),
+			Codec.BOOL.optionalFieldOf("stars_ignore_fog", false).forGetter(viewCenter -> viewCenter.starsIgnoreFog),
 			Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("z_rotation_multiplier", 30000000).forGetter(viewCenter -> viewCenter.zRotationMultiplier)
 			).apply(instance, ViewCenter::new));
 	
 	public ViewCenter(Optional<ResourceKey<SpaceObject>> viewCenterKey, Optional<List<Skybox>> skyboxes, AxisRotation axisRotation,
 			long rotationPeriod, DayBlending dayBlending, DayBlending sunDayBlending,
-			MeteorEffect.ShootingStar shootingStar, MeteorEffect.MeteorShower meteorShower,
+			Optional<MeteorEffect.ShootingStar> shootingStar, Optional<MeteorEffect.MeteorShower> meteorShower,
 			boolean createHorizon, boolean createVoid,
-			boolean starsAlwaysVisible, int zRotationMultiplier)
+			boolean starsAlwaysVisible, boolean starsIgnoreFog, int zRotationMultiplier)
 	{
 		this.levelTicks = 0;
 		this.updateTicks = false;
@@ -141,8 +143,8 @@ public class ViewCenter
 		this.dayBlending = dayBlending;
 		this.sunDayBlending = sunDayBlending;
 		
-		this.shootingStar = shootingStar;
-		this.meteorShower = meteorShower;
+		this.shootingStar = shootingStar.isPresent() ? shootingStar.get() : null;
+		this.meteorShower = meteorShower.isPresent() ? meteorShower.get() : null;
 		
 		this.createHorizon = createHorizon;
 		this.createVoid = createVoid;
@@ -153,15 +155,16 @@ public class ViewCenter
 			darkBuffer = StellarViewSkyEffects.createDarkSky();
 		
 		this.starsAlwaysVisible = starsAlwaysVisible;
+		this.starsIgnoreFog = starsIgnoreFog;
 		this.zRotationMultiplier = zRotationMultiplier;
 	}
 	
-	public void setViewObjectRenderer(ViewObjectRenderer object)
+	public void setViewObjectRenderer(ViewObjectRenderer<?> object)
 	{
 		viewObject = object;
 	}
 	
-	public boolean setViewObjectRenderer(HashMap<ResourceLocation, SpaceObjectRenderer> spaceObjects)
+	public boolean setViewObjectRenderer(HashMap<ResourceLocation, SpaceObjectRenderer<?>> spaceObjects)
 	{
 		if(viewCenterKey != null)
 		{
@@ -435,7 +438,7 @@ public class ViewCenter
 		
 		setupFog.run();
 		
-		if(!StellarViewFogEffects.isFoggy(this.minecraft, camera))
+		if(this.starsIgnoreFog || !StellarViewFogEffects.isFoggy(this.minecraft, camera))
 		{
 			RenderSystem.disableTexture();
 			Vec3 skyColor = level.getSkyColor(this.minecraft.gameRenderer.getMainCamera().getPosition(), partialTicks);

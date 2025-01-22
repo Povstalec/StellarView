@@ -20,6 +20,7 @@ import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.api.client.events.StellarViewEvents;
 import net.povstalec.stellarview.client.SpaceObjectRenderers;
 import net.povstalec.stellarview.client.render.SpaceRenderer;
+import net.povstalec.stellarview.client.render.StellarViewEffects;
 import net.povstalec.stellarview.client.render.ViewCenters;
 import net.povstalec.stellarview.client.render.level.StellarViewEndEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewNetherEffects;
@@ -33,28 +34,36 @@ import net.povstalec.stellarview.api.common.space_objects.resourcepack.Star;
 import net.povstalec.stellarview.api.common.space_objects.resourcepack.StarField;
 import net.povstalec.stellarview.api.common.space_objects.distinct.Sol;
 import net.povstalec.stellarview.client.render.space_objects.SpaceObjectRenderer;
+import net.povstalec.stellarview.client.resourcepack.effects.MeteorEffect;
+import net.povstalec.stellarview.common.util.DustCloudInfo;
+import net.povstalec.stellarview.common.util.StarInfo;
 
 public class ResourcepackReloadListener
 {
 	public static final String PATH = "stellarview";
 	
 	public static final String VIEW_CENTERS = "view_centers";
+	
 	public static final String CELESTIALS = "celestials";
 
 	public static final String PLANET = "planet";
 	public static final String MOON = "moon";
-	
 	public static final String STAR = "star";
 	public static final String BLACK_HOLE = "black_hole";
-
 	public static final String STAR_FIELD = "star_field";
-
 	public static final String NEBULA = "nebula";
+	
+	public static final String EFFECTS = "effects";
+	public static final String STAR_INFO = "star_info";
+	public static final String DUST_CLOUD_INFO = "dust_cloud_info";
 	
 	private static final ResourceLocation SOL_LOCATION = new ResourceLocation(StellarView.MODID, "star/milky_way/sol");
 	
-	private static HashMap<ResourceLocation, ViewCenter> viewCenters = new HashMap<>();
-	private static HashMap<ResourceLocation, SpaceObjectRenderer> spaceObjects = new HashMap<>();
+	private static HashMap<ResourceLocation, ViewCenter> viewCenters;
+	private static HashMap<ResourceLocation, SpaceObjectRenderer<?>> spaceObjects;
+	
+	private static HashMap<ResourceLocation, StarInfo> starTypes;
+	private static HashMap<ResourceLocation, DustCloudInfo> dustCloudTypes;
 	
 	@Mod.EventBusSubscriber(modid = StellarView.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 	public static class ReloadListener extends SimpleJsonResourceReloadListener
@@ -70,19 +79,37 @@ public class ResourcepackReloadListener
 			if(StellarViewEvents.onReload(jsonMap, manager, filler))
 				return;
 			
+			viewCenters = new HashMap<>();
+			spaceObjects = new HashMap<>();
+			
+			starTypes = new HashMap<>();
+			dustCloudTypes = new HashMap<>();
+			
     		SpaceRenderer.clear();
     		ViewCenters.clear();
+			StellarViewEffects.reset();
     		
 			for(Map.Entry<ResourceLocation, JsonElement> jsonEntry : jsonMap.entrySet())
 			{
 				ResourceLocation location = jsonEntry.getKey();
 				JsonElement element = jsonEntry.getValue();
 				
-				SpaceObject spaceObject = null;
+				// Add View Center
 				if(canShortenPath(location, VIEW_CENTERS))
 					addViewCenter(viewCenters, shortenPath(location, VIEW_CENTERS), element);
+				else if(canShortenPath(location, EFFECTS))
+				{
+					location = shortenPath(location, EFFECTS);
+					
+					if(canShortenPath(location, STAR_INFO))
+						addStarType(starTypes, shortenPath(location, STAR_INFO), element);
+					
+					else if(canShortenPath(location, DUST_CLOUD_INFO))
+						addDustCloudType(dustCloudTypes, shortenPath(location, DUST_CLOUD_INFO), element);
+				}
 				else if(canShortenPath(location, CELESTIALS))
 				{
+					SpaceObject spaceObject = null;
 					location = shortenPath(location, CELESTIALS);
 					
 					if(canShortenPath(location, PLANET))
@@ -102,21 +129,26 @@ public class ResourcepackReloadListener
 					
 					else if(canShortenPath(location, NEBULA))
 						spaceObject = makeNebula(location, element);
-				}
-				
-				if(spaceObject != null)
-				{
-					SpaceObjectRenderer renderer = SpaceObjectRenderers.constructObjectRenderer(spaceObject);
 					
-					if(renderer != null)
-						spaceObjects.put(location, renderer);
+					if(spaceObject != null)
+					{
+						SpaceObjectRenderer renderer = SpaceObjectRenderers.constructObjectRenderer(spaceObject);
+						
+						if(renderer != null)
+							spaceObjects.put(location, renderer);
+					}
 				}
 			}
-
+			
+			StellarViewEffects.setupEffects(starTypes, dustCloudTypes);
 			setSpaceObjects(spaceObjects);
 			SpaceRenderer.setupSynodicOrbits();
 			setViewCenters(spaceObjects, viewCenters);
 		}
+		
+		//============================================================================================
+		//****************************************View Centers****************************************
+		//============================================================================================
 		
 		private static void addViewCenter(HashMap<ResourceLocation, ViewCenter> viewCenters, ResourceLocation location, JsonElement element)
 		{
@@ -142,7 +174,7 @@ public class ResourcepackReloadListener
 			}
 		}
 		
-		private static void setViewCenters(HashMap<ResourceLocation, SpaceObjectRenderer> spaceObjects, HashMap<ResourceLocation, ViewCenter> viewCenters)
+		private static void setViewCenters(HashMap<ResourceLocation, SpaceObjectRenderer<?>> spaceObjects, HashMap<ResourceLocation, ViewCenter> viewCenters)
 		{
 			for(Map.Entry<ResourceLocation, ViewCenter> viewCenterEntry : viewCenters.entrySet())
 			{
@@ -151,6 +183,65 @@ public class ResourcepackReloadListener
 					ViewCenters.addViewCenter(viewCenterEntry.getKey(), viewCenterEntry.getValue());
 			}
 		}
+		
+		//============================================================================================
+		//******************************************Effects*******************************************
+		//============================================================================================
+		
+		private static void addStarType(HashMap<ResourceLocation, StarInfo> starTypes, ResourceLocation location, JsonElement element)
+		{
+			try
+			{
+				JsonObject json = GsonHelper.convertToJsonObject(element, "star_info");
+				StarInfo starInfo;
+				
+				starInfo = StarInfo.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Star Info", msg));
+				
+				starTypes.put(location, starInfo);
+			}
+			catch(RuntimeException e)
+			{
+				StellarView.LOGGER.error("Could not load " + location.toString() + " " + e);
+			}
+		}
+		
+		private static void addDustCloudType(HashMap<ResourceLocation, DustCloudInfo> dustCloudTypes, ResourceLocation location, JsonElement element)
+		{
+			try
+			{
+				JsonObject json = GsonHelper.convertToJsonObject(element, "dust_cloud_info");
+				DustCloudInfo dustCloudInfo;
+				
+				dustCloudInfo = DustCloudInfo.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Dust Cloud Info", msg));
+				
+				dustCloudTypes.put(location, dustCloudInfo);
+			}
+			catch(RuntimeException e)
+			{
+				StellarView.LOGGER.error("Could not load " + location.toString() + " " + e);
+			}
+		}
+		
+		private static void addMeteorType(HashMap<ResourceLocation, MeteorEffect.MeteorType> meteorTypes, ResourceLocation location, JsonElement element)
+		{
+			try
+			{
+				JsonObject json = GsonHelper.convertToJsonObject(element, "meteor_type");
+				MeteorEffect.MeteorType meteorType;
+				
+				meteorType = MeteorEffect.MeteorType.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Meteor Type", msg));
+				
+				meteorTypes.put(location, meteorType);
+			}
+			catch(RuntimeException e)
+			{
+				StellarView.LOGGER.error("Could not load " + location.toString() + " " + e);
+			}
+		}
+		
+		//============================================================================================
+		//*****************************************Celestials*****************************************
+		//============================================================================================
 		
 		private static Star makeStar(ResourceLocation location, JsonElement element)
 		{
@@ -265,19 +356,19 @@ public class ResourcepackReloadListener
 			return null;
 		}
 		
-		private static void setSpaceObjects(HashMap<ResourceLocation, SpaceObjectRenderer> spaceObjects)
+		private static void setSpaceObjects(HashMap<ResourceLocation, SpaceObjectRenderer<?>> spaceObjects)
 		{
-			for(Map.Entry<ResourceLocation, SpaceObjectRenderer> spaceObjectEntry : spaceObjects.entrySet())
+			for(Map.Entry<ResourceLocation, SpaceObjectRenderer<?>> spaceObjectEntry : spaceObjects.entrySet())
 			{
-				SpaceObjectRenderer spaceObject = spaceObjectEntry.getValue();
+				SpaceObjectRenderer<?> spaceObject = spaceObjectEntry.getValue();
 
-				// Set name
-				spaceObject.renderedObject().setResourceLocation(spaceObjectEntry.getKey());
+				// Setup object
+				spaceObject.setupSpaceObject(spaceObjectEntry.getKey());
 				
 				// Handle parents
 				if(spaceObject.renderedObject().getParentLocation().isPresent())
 				{
-					for(Map.Entry<ResourceLocation, SpaceObjectRenderer> parentEntry : spaceObjects.entrySet())
+					for(Map.Entry<ResourceLocation, SpaceObjectRenderer<?>> parentEntry : spaceObjects.entrySet())
 					{
 						if(parentEntry.getKey().equals(spaceObject.renderedObject().getParentLocation().get()))
 						{
