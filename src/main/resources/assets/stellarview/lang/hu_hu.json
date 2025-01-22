@@ -1,0 +1,46 @@
+{
+  "gui.stellarview.config": "Stellar View Beállítások",
+  "gui.stellarview.config.general": "Általános Beállítások",
+  "gui.stellarview.config.overworld": "Felszíni Beállítások",
+  "gui.stellarview.config.nether": "Alvilági Beállítások",
+  "gui.stellarview.config.end": "End Beállítások",
+  "gui.stellarview.config.twilight_forest": "Twilight Forest Beállítások",
+  "gui.stellarview.config.aether": "Aether Beállítások",
+
+  "gui.stellarview.use_game_ticks": "Játék tick-ek használata",
+  "gui.stellarview.tick_multiplier": "Tick szorzó",
+  "gui.stellarview.disable_view_center_rotation": "Nézetközpont forgásának kikapcsolása",
+  "gui.stellarview.gravitational_lensing": "Gravitációs lencse effektus",
+  "gui.stellarview.disable_stars": "Csillagok kikapcsolása",
+  "gui.stellarview.day_stars": "Csillagok napközben",
+  "gui.stellarview.bright_stars": "Fényes csillagok",
+  "gui.stellarview.textured_stars": "Csillagok textúrákkal",
+  "gui.stellarview.dust_clouds": "Csillagközi porfelhők",
+
+  "gui.stellarview.space_region_render_distance": "Űrbeli látótávolság",
+
+  "gui.stellarview.replace_vanilla": "Alapverzió (Vanilla) lecserélése",
+  "gui.stellarview.replace_default": "Alapértelmezett lecserélése",
+  "gui.stellarview.config_priority": "Beállítások előnyben részesítése",
+
+  "gui.stellarview.overworld_z_rotation_multiplier": "Égbolt forgatási szorzó",
+
+  "gui.stellarview.meteor_shower_chance": "Meteorzápor valószínűsége",
+  "gui.stellarview.shooting_star_chance": "Hullócsillag valószínűsége",
+
+  "gui.stellarview.sol.x_offset": "Nap eltolása az X tengelyen",
+  "gui.stellarview.sol.y_offset": "Nap eltolása az Y tengelyen",
+  "gui.stellarview.sol.z_offset": "Nap eltolása a Z tengelyen",
+
+  "gui.stellarview.sol.x_rotation": "Nap elforgatása az X tengelyen",
+  "gui.stellarview.sol.y_rotation": "Nap elforgatása az Y tengelyen",
+  "gui.stellarview.sol.z_rotation": "Nap elforgatása a Z tengelyen",
+
+  "key.category.stellarview.config_screen": "Stellar View Beállítások Menü",
+  "key.stellarview.open_config_screen": "Beállítások menü megnyitása",
+
+  "gui.stellarview.reset": "Vissza",
+  "gui.stellarview.true": "Igen",
+  "gui.stellarview.false": "Nem",
+  "gui.stellarview.ly": "ly"
+}
