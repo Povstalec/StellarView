@@ -3,6 +3,7 @@ package net.povstalec.stellarview.client.render.space_objects;
 import com.mojang.blaze3d.vertex.Tesselator;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
