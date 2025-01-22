@@ -25,7 +25,6 @@ public class StellarViewNetherEffects extends DimensionSpecialEffects.NetherEffe
     {
 		if(NetherConfig.replace_vanilla.get())
 			return ViewCenters.renderViewCenterSky(level, ticks, partialTick, poseStack, camera, projectionMatrix, isFoggy, setupFog);
-		
         return false;
     }
 	

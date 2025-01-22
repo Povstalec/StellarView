@@ -13,6 +13,7 @@ import net.povstalec.stellarview.api.common.SpaceRegion;
 import net.povstalec.stellarview.api.common.space_objects.distinct.Sol;
 import net.povstalec.stellarview.client.render.space_objects.SpaceObjectRenderer;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
+import net.povstalec.stellarview.client.resourcepack.effects.MeteorEffect;
 import net.povstalec.stellarview.common.config.GeneralConfig;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;

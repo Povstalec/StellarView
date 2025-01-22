@@ -11,7 +11,9 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.api.common.space_objects.resourcepack.StarField;
+import net.povstalec.stellarview.client.render.StellarViewEffects;
 import net.povstalec.stellarview.client.render.shader.StellarViewShaders;
 import net.povstalec.stellarview.client.render.shader.StellarViewVertexFormat;
 import net.povstalec.stellarview.client.render.space_objects.SpaceObjectRenderer;
@@ -25,12 +27,15 @@ import net.povstalec.stellarview.common.config.GeneralConfig;
 import net.povstalec.stellarview.common.util.*;
 
 import javax.annotation.Nullable;
+import java.util.HashMap;
 import java.util.Random;
 
 public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<T>
 {
 	protected boolean hasTexture = GeneralConfig.textured_stars.get();
 	
+	@Nullable
+	protected StarInfo starInfo;
 	protected StarData starData;
 	protected int lod1stars = 0;
 	protected int lod2stars = 0;
@@ -41,7 +46,10 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 	protected int[] armLod1stars;
 	protected int[] armLod2stars;
 	
-	
+	@Nullable
+	protected DustCloudInfo dustCloudInfo;
+	@Nullable
+	protected DustCloudInfo[] armDustCloudInfo;
 	protected DustCloudData dustCloudData;
 	protected int totalDustClouds;
 	
@@ -50,28 +58,11 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 		super(starField);
 		
 		this.totalStars = starField.getStars();
-		setupLOD(starField.getStarInfo());
+		this.totalDustClouds = starField.getDustClouds();
 		
-		int totalDustClouds = starField.getDustClouds();
-		
+		armDustCloudInfo = new DustCloudInfo[renderedObject.getSpiralArms().size()];
 		armLod1stars = new int[renderedObject.getSpiralArms().size()];
 		armLod2stars = new int[renderedObject.getSpiralArms().size()];
-		int i = 0;
-		for(StarField.SpiralArm arm : renderedObject.getSpiralArms())
-		{
-			armLod1stars[i] = (int) (arm.armStars() * ((float) starField.getStarInfo().lod1Weight() / starField.getStarInfo().totalWeight()));
-			armLod2stars[i] = (int) (arm.armStars() * ((float) starField.getStarInfo().lod2Weight() / starField.getStarInfo().totalWeight()));
-			
-			this.totalStars += arm.armStars();
-			this.totalLOD1stars += armLod1stars[i];
-			this.totalLOD2stars += armLod2stars[i];
-			
-			totalDustClouds += arm.armDustClouds();
-			
-			i++;
-		}
-		
-		this.totalDustClouds = totalDustClouds;
 	}
 	
 	protected void setupLOD(StarInfo starInfo)
@@ -81,6 +72,21 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 		
 		this.totalLOD1stars = this.lod1stars;
 		this.totalLOD2stars = this.lod2stars;
+		
+		int i = 0;
+		for(StarField.SpiralArm arm : renderedObject.getSpiralArms())
+		{
+			armLod1stars[i] = (int) (arm.armStars() * ((float) starInfo.lod1Weight() / starInfo.totalWeight()));
+			armLod2stars[i] = (int) (arm.armStars() * ((float) starInfo.lod2Weight() / starInfo.totalWeight()));
+			
+			this.totalStars += arm.armStars();
+			this.totalLOD1stars += armLod1stars[i];
+			this.totalLOD2stars += armLod2stars[i];
+			
+			this.totalDustClouds += arm.armDustClouds();
+			
+			i++;
+		}
 	}
 	
 	public boolean requiresReset()
@@ -95,6 +101,83 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 		
 		if(dustCloudData != null)
 			dustCloudData.reset();
+	}
+	
+	public void setStarInfo(StarInfo starInfo)
+	{
+		this.starInfo = starInfo;
+	}
+	
+	public void setupStarInfo()
+	{
+		if(renderedObject().getStarInfo() != null && StellarViewEffects.hasStarInfo(renderedObject().getStarInfo()))
+			setStarInfo(StellarViewEffects.getStarInfo(renderedObject().getStarInfo()));
+	}
+	
+	public StarInfo getStarInfo()
+	{
+		if(starInfo == null)
+			return StarInfo.DEFAULT_STAR_INFO;
+		
+		return starInfo;
+	}
+	
+	public void setDustCloudInfo(DustCloudInfo dustCloudInfo)
+	{
+		this.dustCloudInfo = dustCloudInfo;
+	}
+	
+	public void setupDustCloudInfo()
+	{
+		if(renderedObject().getDustCloudInfo() != null && StellarViewEffects.hasDustCloudInfo(renderedObject().getDustCloudInfo()))
+			setDustCloudInfo(StellarViewEffects.getDustCloudInfo(renderedObject().getDustCloudInfo()));
+		
+		ResourceLocation location;
+		for(int i = 0; i < armDustCloudInfo.length; i++)
+		{
+			location = renderedObject.getSpiralArms().get(i).dustCloudInfo();
+			if(location != null && StellarViewEffects.hasDustCloudInfo(location))
+				setArmDustCloudInfo(StellarViewEffects.getDustCloudInfo(location), i);
+				
+		}
+	}
+	
+	public DustCloudInfo getDustCloudInfo()
+	{
+		if(dustCloudInfo == null)
+			return DustCloudInfo.DEFAULT_DUST_CLOUD_INFO;
+		
+		return dustCloudInfo;
+	}
+	
+	public void setArmDustCloudInfo(DustCloudInfo dustCloudInfo, int armIndex)
+	{
+		if(armIndex < 0 || armIndex >= armDustCloudInfo.length)
+			return;
+		
+		armDustCloudInfo[armIndex] = dustCloudInfo;
+	}
+	
+	public DustCloudInfo getArmDustCloudInfo(int armIndex)
+	{
+		if(armIndex < 0 || armIndex >= armDustCloudInfo.length)
+			return null;
+		
+		if(armDustCloudInfo[armIndex] == null)
+			return getDustCloudInfo();
+		
+		return armDustCloudInfo[armIndex];
+	}
+	
+	@Override
+	public void setupSpaceObject(ResourceLocation id)
+	{
+		super.setupSpaceObject(id);
+		
+		setupStarInfo();
+		setupLOD(getStarInfo());
+		
+		setupDustCloudInfo();
 	}
 	
 	//============================================================================================
@@ -135,13 +218,13 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 			switch(levelOfDetail)
 			{
 				case LOD1:
-					lod.newStar(renderedObject.getStarInfo().randomLOD1StarType(random), random, cartesian.x, cartesian.y, cartesian.z);
+					lod.newStar(getStarInfo().randomLOD1StarType(random), random, cartesian.x, cartesian.y, cartesian.z);
 					break;
 				case LOD2:
-					lod.newStar(renderedObject.getStarInfo().randomLOD2StarType(random), random, cartesian.x, cartesian.y, cartesian.z);
+					lod.newStar(getStarInfo().randomLOD2StarType(random), random, cartesian.x, cartesian.y, cartesian.z);
 					break;
 				default:
-					lod.newStar(renderedObject.getStarInfo().randomLOD3StarType(random), random, cartesian.x, cartesian.y, cartesian.z);
+					lod.newStar(getStarInfo().randomLOD3StarType(random), random, cartesian.x, cartesian.y, cartesian.z);
 			}
 		}
 	}
@@ -235,7 +318,7 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 				int i = 0;
 				for(StarField.SpiralArm arm : renderedObject.getSpiralArms()) //Draw each arm
 				{
-					generateArmStars(lod, levelOfDetail, renderedObject.getAxisRotation(), renderedObject.getStarInfo(), random, sizeMultiplier, hasTexture, arm, i);
+					generateArmStars(lod, levelOfDetail, renderedObject.getAxisRotation(), getStarInfo(), random, sizeMultiplier, hasTexture, arm, i);
 					i++;
 				}
 				
@@ -265,11 +348,11 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 			
 			renderedObject.getAxisRotation().quaterniond().transform(cartesian);
 			
-			lod.newDustCloud(renderedObject.getDustCloudInfo().getRandomDustCloudType(random), random, cartesian.x, cartesian.y, cartesian.z, 1);
+			lod.newDustCloud(getDustCloudInfo().getRandomDustCloudType(random), random, cartesian.x, cartesian.y, cartesian.z, 1);
 		}
 	}
 	
-	protected void generateArmDustClouds(DustCloudData.LOD lod, AxisRotation axisRotation, DustCloudInfo dustCloudInfo, Random random, double sizeMultiplier, StarField.SpiralArm arm)
+	protected void generateArmDustClouds(DustCloudData.LOD lod, AxisRotation axisRotation, DustCloudInfo dustCloudInfo, Random random, double sizeMultiplier, StarField.SpiralArm arm, int armIndex)
 	{
 		for(int i = 0; i < arm.armDustClouds(); i++)
 		{
@@ -298,7 +381,7 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 			
 			axisRotation.quaterniond().transform(cartesian);
 			
-			lod.newDustCloud(arm.dustCloudInfo() == null ? dustCloudInfo.getRandomDustCloudType(random) : arm.dustCloudInfo().getRandomDustCloudType(random), random, cartesian.x, cartesian.y, cartesian.z, (1 / progress) + 0.2);
+			lod.newDustCloud(getArmDustCloudInfo(armIndex) == null ? dustCloudInfo.getRandomDustCloudType(random) : getArmDustCloudInfo(armIndex).getRandomDustCloudType(random), random, cartesian.x, cartesian.y, cartesian.z, (1 / progress) + 0.2);
 		}
 	}
 	
@@ -318,9 +401,9 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 				
 				generateDustClouds(lod, random);
 				
-				for(StarField.SpiralArm arm : renderedObject.getSpiralArms()) //Draw each arm
+				for(int i = 0; i < renderedObject.getSpiralArms().size(); i++) //Draw each arm
 				{
-					generateArmDustClouds(lod, renderedObject.getAxisRotation(), renderedObject.getDustCloudInfo(), random, sizeMultiplier, arm);
+					generateArmDustClouds(lod, renderedObject.getAxisRotation(), getDustCloudInfo(), random, sizeMultiplier, renderedObject.getSpiralArm(i), i);
 				}
 				
 				return lod;
@@ -354,7 +437,7 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 				RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 			RenderSystem.setShaderColor(1, 1, 1, viewCenter.starBrightness());
 			if(hasTexture)
-				RenderSystem.setShaderTexture(0, renderedObject.getStarInfo().getStarTexture());
+				RenderSystem.setShaderTexture(0, renderedObject().getStarTexture());
 			FogRenderer.setupNoFog();
 			
 			Quaternion q = SpaceCoords.getQuaternionf(level, viewCenter, partialTicks);

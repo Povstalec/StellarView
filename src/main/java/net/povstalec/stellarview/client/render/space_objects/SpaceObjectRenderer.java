@@ -6,6 +6,7 @@ import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
@@ -73,6 +74,17 @@ public abstract class SpaceObjectRenderer<RenderedObject extends SpaceObject>
 	public RenderedObject renderedObject()
 	{
 		return renderedObject;
+	}
+	
+	public void setupSpaceObject(ResourceLocation id)
+	{
+		renderedObject().setResourceLocation(id);
+	}
+	
+	@Override
+	public String toString()
+	{
+		return renderedObject.toString();
 	}
 	
 	//============================================================================================
