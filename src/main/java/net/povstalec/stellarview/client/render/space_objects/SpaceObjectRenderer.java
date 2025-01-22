@@ -73,6 +73,17 @@ public abstract class SpaceObjectRenderer<RenderedObject extends SpaceObject>
 		return renderedObject;
 	}
 	
+	public void setupSpaceObject(ResourceLocation id)
+	{
+		renderedObject().setResourceLocation(id);
+	}
+	
+	@Override
+	public String toString()
+	{
+		return renderedObject.toString();
+	}
+	
 	//============================================================================================
 	//*****************************************Rendering******************************************
 	//============================================================================================

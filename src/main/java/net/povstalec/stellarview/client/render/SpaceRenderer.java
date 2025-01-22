@@ -7,10 +7,14 @@ import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.vertex.Tesselator;
 import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.api.common.SpaceRegion;
 import net.povstalec.stellarview.client.render.space_objects.SpaceObjectRenderer;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
+import net.povstalec.stellarview.client.resourcepack.effects.MeteorEffect;
 import net.povstalec.stellarview.common.config.GeneralConfig;
+import net.povstalec.stellarview.common.util.DustCloudInfo;
+import net.povstalec.stellarview.common.util.StarInfo;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
