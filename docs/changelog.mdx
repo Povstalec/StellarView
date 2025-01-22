@@ -1,32 +1,49 @@
 # Changelog
 The list of changes that have been made during development. This is not an exhaustive list, some changes were most certainly forgotten about.
 
-## 0.4.0 - 2025 Jan 17 - 1.19.2~1.21.1
+## 0.4.0 - 2025 Jan 17 - 1.19.2~1.19.4, 1.20.1, 1.21.1
 - Added:
-  - **Added Pleiades**
-  - **Added a bunch of moons, dwarf planets to Sol system and new planets to Proxima Centauri system**
-  - **Added config option to use game ticks instead of day ticks (game ticks are unaffected by time commands /time, meaning if you turn this option on, using /time set 0 will not reset the sky to its initial state; this, however, also means you will not be able to set the time to witness specific timed events, like Supernovae)**
-  - **Added Tick Multiplier config option to speed up the rate at which the sky is simulated**
-  - **Added an actual API section with Javadocs (so that I can feel a little bit less ashamed of the state of documentation for the mod)**
-  - **Added config option to disable gravitational lensing effects**
-  - **Added Czech translation**
-  - **Added German translation by **tristankechlo** (I added some translations that were missing, so if you notice anything wrong, please do tell me)**
+  - Pleiades, a famous star cluster
+  - Minor moons around various planets. Most of these cannot be seen from Earth, and require the view center to be moved to the parent body.
+    - Phobos and Deimos around Mars
+    - Metis, Adrastea, Amalthea, Thebe, and Himalia around Jupiter
+    - Hyperion, Phoebe, Janus, Epimethius, and Mimas around Saturn (Mimas is visible from Earth)
+    - Puck, Sycorax, and Portia around Uranus
+    - Proteus, Nereid, Larissa, Galatea, and Despina around Neptune
+    - Hydra, Kerberos, Nix, and Styx around Pluto
+  - Glacio (from Ad Astra) as a moon of Proxima C
+  - More dwarf planets and their moons. These can't be seen from Earth either.
+    - Eris with Dysnomia
+    - Haumea with Namaka and Hi'iaka
+    - Makemake with Emketu (MK2)
+    - Gonggong with Xiangliu
+    - Orcus with Vanth
+    - Quaoar with Weywot
+    - Salacia with Actea
+    - Sedna
+  - Config option to use game ticks instead of day ticks (game ticks are unaffected by time commands /time, meaning if you turn this option on, using /time set 0 will not reset the sky to its initial state; this, however, also means you will not be able to set the time to witness specific timed events, like Supernovae)
+  - Tick Multiplier config option to speed up the rate at which the sky is simulated
+  - API section with Javadocs, providing documentation for how to get the most out of Stellar View
+  - Config option to disable gravitational lensing effects from black holes
+  - Czech translation
+  - German translation by **tristankechlo** (Povstalec added some translations that were missing, so if you notice anything wrong, please do tell him)
 
 - Changed:
-  - **Changed some of the internal folder structure, normally I wouldn't mention this, but since this affects dependencies, it's probably better if I do**
-  - **Planet is now an extension of the new ViewObject, which is an extension of OrbitingObject**
-  - **View Centers now only accept ViewObjects as a valid "view_center"**
-  - **Textured Space Objects should now properly fade with distance**
-  - **Decreased nebula render distance, hopefully this should help making the region around Earth look less cluttered when viewed from outside of the Milky Way**
-  - **Changed how blending during day is defined in View Centers, suns can now blend separately from other objects**
+  - Changed some of the internal folder structure, potentially affecting dependancies
+  - Planet is now an extension of the new ViewObject, which is an extension of OrbitingObject
+  - View Centers now only accept ViewObjects as a valid "view_center"
+  - Textured Space Objects should now properly fade with distance
+  - Decreased nebula render distance, hopefully this should help making the region around Earth look less cluttered when viewed from outside of the Milky Way
+  - Changed how blending during day is defined in View Centers, suns can now blend separately from other objects
+  - Tweaked orbits and sizes of Proxima B, C, and D
 
 - Fixed:
-  - **Fixed Supernovae not rotating properly**
-  - **Servers will no longer crash when attempting to launch with Stellar View**
-  - **Fixed problems switching from textured to untextured stars during a single game session**
+  - Supernovae not rotating properly
+  - Server incompatability - servers will no longer crash when attempting to launch with Stellar View
+  - Problems switching from textured to untextured stars during a single game session
 
 
-## 0.3.4 - 2025 Jan 12 - 1.19.2~1.21.1
+## 0.3.4 - 2025 Jan 12 - 1.19.2~1.19.4, 1.20.1, 1.21.1
 - Added:
   - Level Of Detail (LOD) to Star Fields
 - Fixed:
@@ -35,13 +52,13 @@ The list of changes that have been made during development. This is not an exhau
   - Crash with Iris
 
 
-## 0.3.3 - 2024 Dec 22 - 1.19.2~1.21.1
+## 0.3.3 - 2024 Dec 22 - 1.19.2~1.19.4, 1.20.1, 1.21.1
 - Added:
   - **Compatibility with Aether**
   - **Compatibility with Twilight Forest**
 
 
-## 0.3.2 - 2024 Dec 21 - 1.19.2~1.21.1
+## 0.3.2 - 2024 Dec 21 - 1.19.2~1.19.4, 1.20.1, 1.21.1
 **(v1.21.1) Updated to Enhanced Celestials version 6.0.0.0**
 - Added:
   - Gravitational lensing around Black Holes (still fairly work in progress, only affects Star Fields for now)
@@ -50,7 +67,7 @@ The list of changes that have been made during development. This is not an exhau
   - Stars can now use custom textures (for the sake of performance, one texture applies to an entire Star Field)
 
 
-## 0.3.1 - 2024 Oct 19 - 1.19.2~1.21.1
+## 0.3.1 - 2024 Oct 19 - 1.19.2~1.19.4, 1.20.1, 1.21.1
 - **Updated to Minecraft 1.21.1 - HUGE thanks for the port to NeoForge 1.21.1 done entirely by Erdragh**
 - Added:
   - Supernova 1987A
@@ -61,7 +78,7 @@ The list of changes that have been made during development. This is not an exhau
   - Alpha Centauri system not rendering from far away
 
 
-## 0.3.0 - 2024 Oct 06 - 1.19.2~1.20.1
+## 0.3.0 - 2024 Oct 06 - 1.19.2~1.19.4, 1.20.1
 - Added:
   - ***Resourcepack compatibility*** - Every single aspect of the mod can now be modified through the use of Resourcepacks. You can even add new objects to the sky.
   - ***View Center system*** - View Centers (which can be edited through Resourcepacks) can specify which planet (or any other object really) you're viewing the sky from. They will, by default, work with any dimension using dimension effects of Overworld, Nether and End. Any additional custom dimension effects added by mods can be easily edited into being compatible with the View Center system by their respective mod authors, if they choose to do so.
@@ -76,7 +93,7 @@ The list of changes that have been made during development. This is not an exhau
   - Minimized sky jitter caused by high time values (billions of ticks in the future)
 
 
-## 0.2.4 - 2024 May 26
+## 0.2.4 - 2024 May 26 - 1.19.2~1.19.4, 1.20.1
 - Changed:
   - Textures no longer use flipped UV by default (the Moon still uses flipped UV, because that's how Vanilla Minecraft does it)
 - Fixed:
@@ -84,13 +101,13 @@ The list of changes that have been made during development. This is not an exhau
   - Sun showing up at night
 
 
-## 0.2.3 Hotfix - 2024 May 24 - 1.19.2~1.20.1
+## 0.2.3 Hotfix - 2024 May 24 - 1.19.2~1.19.4, 1.20.1
 - Fixed:
   - Galaxy API problems that can cause crashes related to compatibility
   - Galaxy rotation being incorrectly affected by the year length config slider
 
 
-## 0.2.3 - 2024 May 24 - 1.19.2~1.20.1
+## 0.2.3 - 2024 May 24 - 1.19.2~1.19.4, 1.20.1
 ***HUGE thanks to Noobly Walker who practically carried most this update***
 - Added:
   - Dione, Enceladus, Iapetus, Rhea, and Tethys around Saturn
@@ -112,14 +129,14 @@ The list of changes that have been made during development. This is not an exhau
   - The Moon's phases should now properly line up with where it is in the sky
 
 
-## 0.2.2 - 2024 Feb 23 - 1.19.2~1.20.1
+## 0.2.2 - 2024 Feb 23 - 1.19.2~1.19.4, 1.20.1
 - Added:
   - Compatibility with Enhanced Celestials
 - Fixed:
   - Supernova is no longer visible during the day before it has exploded
 
 
-## 0.2.1 - 2024 Jan 08 - 1.19.2~1.20.1
+## 0.2.1 - 2024 Jan 08 - 1.19.2~1.19.4, 1.20.1
 - Added:
   - Io, Europa, Callisto, and Ganymede are now orbiting Jupiter
   - Titan orbiting Saturn
@@ -127,7 +144,7 @@ The list of changes that have been made during development. This is not an exhau
   - Potential crashes related to sky event rarity
 
 
-## 0.2.0 - 2024 Jan 04 - 1.19.2~1.20.1
+## 0.2.0 - 2024 Jan 04 - 1.19.2~1.19.4, 1.20.1
 - Added:
   - Orbiting objects (Planets and moons can be seen in the night sky orbiting around each other)
 - Fixes and changes:
@@ -137,7 +154,7 @@ The list of changes that have been made during development. This is not an exhau
   - Alpha, Beta and Gamma effects (there are plans to replace those with a better, more flexible system)
 
 
-## 0.1.5 - 2023 Aug 16 - 1.19.2~1.20.1
+## 0.1.5 - 2023 Aug 16 - 1.19.2~1.19.4, 1.20.1
 - Added:
   - Supernovae
   - Shooting Stars
@@ -148,8 +165,9 @@ The list of changes that have been made during development. This is not an exhau
   - The Moon now blends with the sky during day
 
 
-## 0.1.4 - 2023 Jul 13 - 1.19.2~1.20.1
+## 0.1.4 - 2023 Jul 13 - 1.19.2~1.19.4, 1.20.1
 - Fixed stars appearing black during twilight
+- Now supports 1.20.1
 
 
 ## 0.1.3 - 2023 Jun 29 - 1.19.2~1.19.4
@@ -160,6 +178,7 @@ The list of changes that have been made during development. This is not an exhau
 - Config options to specify Milky Way position and rotation
 - Config option to specify the rate at which the sky rotates when the Player moves along the Z-Axis
 - Keybind (G by default) to open Stellar View Client Config while in-game
+- Now supports 1.19.2 and 1.19.4
 
 
 ## 0.1.1 - 2023 May 24 - 1.19.3
