@@ -13,8 +13,8 @@ uniform mat3 LensingMat;
 uniform mat3 LensingMatInv;
 uniform float LensingIntensity;
 
-float DEFAULT_DISTANCE = 100;
-float MIN_STAR_SIZE = 0.02;
+const float DEFAULT_DISTANCE = 100;
+const float MIN_STAR_SIZE = 0.02;
 
 out vec4 vertexColor;
 

@@ -17,17 +17,12 @@ import net.povstalec.stellarview.api.common.space_objects.StarLike;
 
 public class StarInfo implements INBTSerializable<CompoundTag>
 {
-	public static final ResourceLocation DEFAULT_STAR_TEXTURE = new ResourceLocation(StellarView.MODID,"textures/environment/star.png");
-	
-	public static final String STAR_TEXTURE = "star_texture";
 	public static final String LOD1_TYPES = "lod1_types";
 	public static final String LOD2_TYPES = "lod2_types";
 	public static final String LOD3_TYPES = "lod3_types";
 	public static final String LOD1_WEIGHT = "lod1_weight";
 	public static final String LOD2_WEIGHT = "lod2_weight";
 	public static final String LOD3_WEIGHT = "lod3_weight";
-	
-	protected ResourceLocation starTexture;
 	
 	private ArrayList<StarLike.StarType> lod1Types;
 	private ArrayList<StarLike.StarType> lod2Types;
@@ -38,19 +33,16 @@ public class StarInfo implements INBTSerializable<CompoundTag>
 	
 	public static final StarLike.StarType WHITE_STAR = new StarLike.StarType(new Color.IntRGB(255, 255, 255), 0.15F, 0.25F, (short) 100, (short) 255, 6000000, 1);
 	public static final List<StarLike.StarType> DEFAULT_STARS = Arrays.asList(WHITE_STAR);
-	public static final StarInfo DEFAULT_STAR_INFO = new StarInfo(DEFAULT_STAR_TEXTURE, DEFAULT_STARS);
+	public static final StarInfo DEFAULT_STAR_INFO = new StarInfo(DEFAULT_STARS);
 	
 	public static final Codec<StarInfo> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			ResourceLocation.CODEC.optionalFieldOf("star_texture", DEFAULT_STAR_TEXTURE).forGetter(StarInfo::getStarTexture),
 			StarLike.StarType.CODEC.listOf().fieldOf("star_types").forGetter(starInfo -> new ArrayList<StarLike.StarType>())
 			).apply(instance, StarInfo::new));
 	
 	public StarInfo() {}
 	
-	public StarInfo(ResourceLocation starTexture, List<StarLike.StarType> starTypes)
+	public StarInfo(List<StarLike.StarType> starTypes)
 	{
-		this.starTexture = starTexture;
-		
 		for(StarLike.StarType starType : starTypes)
 		{
 			switch(StarField.LevelOfDetail.fromDistance(starType.getMaxVisibleDistance()))
@@ -77,10 +69,8 @@ public class StarInfo implements INBTSerializable<CompoundTag>
 		}
 	}
 	
-	public StarInfo(ResourceLocation starTexture, List<StarLike.StarType> lod1Types, List<StarLike.StarType> lod2Types, List<StarLike.StarType> lod3Types, int lod1Weight, int lod2Weight, int lod3Weight)
+	public StarInfo(List<StarLike.StarType> lod1Types, List<StarLike.StarType> lod2Types, List<StarLike.StarType> lod3Types, int lod1Weight, int lod2Weight, int lod3Weight)
 	{
-		this.starTexture = starTexture;
-		
 		if(lod1Types != null)
 			this.lod1Types = new ArrayList<StarLike.StarType>(lod1Types);
 		if(lod2Types != null)
@@ -93,18 +83,12 @@ public class StarInfo implements INBTSerializable<CompoundTag>
 		this.lod3Weight = lod3Weight;
 	}
 	
-	public ResourceLocation getStarTexture()
-	{
-		return starTexture;
-	}
-	
 	private StarLike.StarType randomStarType(ArrayList<StarLike.StarType> lodTypes, int totalWeight, Random random)
 	{
 		if(lodTypes == null || lodTypes.isEmpty())
 			return WHITE_STAR;
 		
 		int i = 0;
-		
 		for(int weight = random.nextInt(0, totalWeight); i < lodTypes.size() - 1; i++)
 		{
 			weight -= lodTypes.get(i).getWeight();
@@ -191,8 +175,6 @@ public class StarInfo implements INBTSerializable<CompoundTag>
 	{
 		CompoundTag tag = new CompoundTag();
 		
-		tag.putString(STAR_TEXTURE, starTexture.toString());
-		
 		if(this.lod1Types != null)
 			tag.put(LOD1_TYPES, serializeLODTypes(this.lod1Types));
 		if(this.lod2Types != null)
@@ -210,8 +192,6 @@ public class StarInfo implements INBTSerializable<CompoundTag>
 	@Override
 	public void deserializeNBT(CompoundTag tag)
 	{
-		this.starTexture = new ResourceLocation(tag.getString(STAR_TEXTURE));
-		
 		this.lod1Types = getLODTypes(tag, LOD1_TYPES);
 		this.lod2Types = getLODTypes(tag, LOD2_TYPES);
 		this.lod3Types = getLODTypes(tag, LOD3_TYPES);
