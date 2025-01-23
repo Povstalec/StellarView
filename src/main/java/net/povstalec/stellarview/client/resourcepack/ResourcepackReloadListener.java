@@ -85,11 +85,7 @@ public class ResourcepackReloadListener
 			starTypes = new HashMap<>();
 			dustCloudTypes = new HashMap<>();
 			
-    		SpaceRenderer.clear();
-    		ViewCenters.clear();
-			StellarViewEffects.reset();
-    		
-			for(Map.Entry<ResourceLocation, JsonElement> jsonEntry : jsonMap.entrySet())
+    		for(Map.Entry<ResourceLocation, JsonElement> jsonEntry : jsonMap.entrySet())
 			{
 				ResourceLocation location = jsonEntry.getKey();
 				JsonElement element = jsonEntry.getValue();
@@ -140,17 +136,37 @@ public class ResourcepackReloadListener
 				}
 			}
 			
-			StellarViewEffects.setupEffects(starTypes, dustCloudTypes);
-			setSpaceObjects(spaceObjects);
-			SpaceRenderer.setupSynodicOrbits();
-			setViewCenters(spaceObjects, viewCenters);
+			if(!StellarViewEvents.onEffectsReload(starTypes, dustCloudTypes))
+			{
+				StellarViewEffects.reset();
+				StellarViewEffects.setupEffects(starTypes, dustCloudTypes);
+			}
+			
+			if(!StellarViewEvents.onSpaceRendererReload(spaceObjects))
+			{
+				SpaceRenderer.clear();
+				setSpaceObjects(spaceObjects);
+				SpaceRenderer.setupSynodicOrbits();
+			}
+			
+			if(!StellarViewEvents.onViewCenterReload(spaceObjects, viewCenters))
+			{
+				ViewCenters.clear();
+				setViewCenters(spaceObjects, viewCenters);
+			}
+			
+			viewCenters.clear();
+			spaceObjects.clear();
+			
+			starTypes.clear();
+			dustCloudTypes.clear();
 		}
 		
 		//============================================================================================
 		//****************************************View Centers****************************************
 		//============================================================================================
 		
-		private static void addViewCenter(HashMap<ResourceLocation, ViewCenter> viewCenters, ResourceLocation location, JsonElement element)
+		public static void addViewCenter(HashMap<ResourceLocation, ViewCenter> viewCenters, ResourceLocation location, JsonElement element)
 		{
 			try
 			{
@@ -158,11 +174,11 @@ public class ResourcepackReloadListener
 				ViewCenter viewCenter;
 				
 				if(StellarViewOverworldEffects.OVERWORLD_EFFECTS.equals(location))
-					viewCenter = DefaultViewCenters.Overworld.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse View Center", msg));
+					viewCenter = DefaultViewCenters.Overworld.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Overworld View Center", msg));
 				else if(StellarViewNetherEffects.NETHER_EFFECTS.equals(location))
-					viewCenter = DefaultViewCenters.Nether.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse View Center", msg));
+					viewCenter = DefaultViewCenters.Nether.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Nether View Center", msg));
 				else if(StellarViewEndEffects.END_EFFECTS.equals(location))
-					viewCenter = DefaultViewCenters.End.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse View Center", msg));
+					viewCenter = DefaultViewCenters.End.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse End View Center", msg));
 				else
 					viewCenter = ViewCenter.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse View Center", msg));
 				
@@ -174,7 +190,7 @@ public class ResourcepackReloadListener
 			}
 		}
 		
-		private static void setViewCenters(HashMap<ResourceLocation, SpaceObjectRenderer<?>> spaceObjects, HashMap<ResourceLocation, ViewCenter> viewCenters)
+		public static void setViewCenters(HashMap<ResourceLocation, SpaceObjectRenderer<?>> spaceObjects, HashMap<ResourceLocation, ViewCenter> viewCenters)
 		{
 			for(Map.Entry<ResourceLocation, ViewCenter> viewCenterEntry : viewCenters.entrySet())
 			{
@@ -188,7 +204,7 @@ public class ResourcepackReloadListener
 		//******************************************Effects*******************************************
 		//============================================================================================
 		
-		private static void addStarType(HashMap<ResourceLocation, StarInfo> starTypes, ResourceLocation location, JsonElement element)
+		public static void addStarType(HashMap<ResourceLocation, StarInfo> starTypes, ResourceLocation location, JsonElement element)
 		{
 			try
 			{
@@ -205,7 +221,7 @@ public class ResourcepackReloadListener
 			}
 		}
 		
-		private static void addDustCloudType(HashMap<ResourceLocation, DustCloudInfo> dustCloudTypes, ResourceLocation location, JsonElement element)
+		public static void addDustCloudType(HashMap<ResourceLocation, DustCloudInfo> dustCloudTypes, ResourceLocation location, JsonElement element)
 		{
 			try
 			{
@@ -222,7 +238,7 @@ public class ResourcepackReloadListener
 			}
 		}
 		
-		private static void addMeteorType(HashMap<ResourceLocation, MeteorEffect.MeteorType> meteorTypes, ResourceLocation location, JsonElement element)
+		public static void addMeteorType(HashMap<ResourceLocation, MeteorEffect.MeteorType> meteorTypes, ResourceLocation location, JsonElement element)
 		{
 			try
 			{
@@ -243,7 +259,7 @@ public class ResourcepackReloadListener
 		//*****************************************Celestials*****************************************
 		//============================================================================================
 		
-		private static Star makeStar(ResourceLocation location, JsonElement element)
+		public static Star makeStar(ResourceLocation location, JsonElement element)
 		{
 			try
 			{
@@ -271,7 +287,7 @@ public class ResourcepackReloadListener
 			return null;
 		}
 		
-		private static BlackHole makeBlackHole(ResourceLocation location, JsonElement element)
+		public static BlackHole makeBlackHole(ResourceLocation location, JsonElement element)
 		{
 			try
 			{
@@ -288,7 +304,7 @@ public class ResourcepackReloadListener
 			return null;
 		}
 		
-		private static Planet makePlanet(ResourceLocation location, JsonElement element)
+		public static Planet makePlanet(ResourceLocation location, JsonElement element)
 		{
 			try
 			{
@@ -305,7 +321,7 @@ public class ResourcepackReloadListener
 			return null;
 		}
 		
-		private static Moon makeMoon(ResourceLocation location, JsonElement element)
+		public static Moon makeMoon(ResourceLocation location, JsonElement element)
 		{
 			try
 			{
@@ -322,7 +338,7 @@ public class ResourcepackReloadListener
 			return null;
 		}
 		
-		private static StarField  makeStarField(ResourceLocation location, JsonElement element)
+		public static StarField  makeStarField(ResourceLocation location, JsonElement element)
 		{
 			try
 			{
@@ -339,7 +355,7 @@ public class ResourcepackReloadListener
 			return null;
 		}
 		
-		private static Nebula makeNebula(ResourceLocation location, JsonElement element)
+		public static Nebula makeNebula(ResourceLocation location, JsonElement element)
 		{
 			try
 			{
@@ -356,7 +372,7 @@ public class ResourcepackReloadListener
 			return null;
 		}
 		
-		private static void setSpaceObjects(HashMap<ResourceLocation, SpaceObjectRenderer<?>> spaceObjects)
+		public static void setSpaceObjects(HashMap<ResourceLocation, SpaceObjectRenderer<?>> spaceObjects)
 		{
 			for(Map.Entry<ResourceLocation, SpaceObjectRenderer<?>> spaceObjectEntry : spaceObjects.entrySet())
 			{

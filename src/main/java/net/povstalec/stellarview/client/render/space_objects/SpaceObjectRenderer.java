@@ -79,7 +79,8 @@ public abstract class SpaceObjectRenderer<RenderedObject extends SpaceObject>
 	
 	public void setupSpaceObject(ResourceLocation id)
 	{
-		renderedObject().setResourceLocation(id);
+		if(id != null)
+			renderedObject().setResourceLocation(id);
 	}
 	
 	@Override
