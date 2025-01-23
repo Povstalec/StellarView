@@ -1,6 +1,22 @@
 # Changelog
 The list of changes that have been made during development. This is not an exhaustive list, some changes were most certainly forgotten about.
 
+## 0.4.3 - 2025 Jan 22 - 1.19.2~1.19.4, 1.20.1, 1.21.1
+- Added:
+  - stars_ignore_fog View Center field for Resourcepacks (allows stars to render even in foggy environments when set to true)
+
+- Changed:
+  - Star Info and Dust Cloud Info are now defined independently from Star Fields
+
+## 0.4.2 - 2025 Jan 20 - 1.19.2~1.19.4, 1.20.1, 1.21.1
+- Added:
+  - Config option to enable Static Sky - Effectively a shader compatibility mode (don't expect shaders to automatically start working with the mod though, it will just make it is still up to each individual shader how it handles the sky.)
+    - This is effectively a band-aid and it will 100% cause trouble for future development in the future, because it SEVERELY limits what can achieved with rendering. As of now, it only impacts Real-Time Gravitational Lensing, but don't be surprised if a feature is added in the future that does not show up while the Static Sky is active, since it uses vanilla core shaders, which are impractical for a lot of planned features.
+
+## 0.4.1 - 2025 Jan 19 - 1.19.2~1.19.4, 1.20.1, 1.21.1
+- Fixed:
+  - Child Black Holes missing gravitational lensing effects
+
 ## 0.4.0 - 2025 Jan 17 - 1.19.2~1.19.4, 1.20.1, 1.21.1
 - Added:
   - Pleiades, a famous star cluster
