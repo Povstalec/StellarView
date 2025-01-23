@@ -34,6 +34,7 @@ public final class SpaceRenderer
 	private static final Vector3f NULL_VECTOR = new Vector3f();
 	
 	private static final int STAR_LIMIT = 100000;
+	private static final int DUST_CLOUD_LIMIT = 50000;
 	
 	private static final HashMap<SpaceRegion.RegionPos, SpaceRegionRenderer> SPACE_REGIONS = new HashMap<SpaceRegion.RegionPos, SpaceRegionRenderer>();
 	
@@ -51,6 +52,7 @@ public final class SpaceRenderer
 	private static AxisRotation solAxisRotation = null;
 	
 	private static int starsPerTick = 0;
+	private static int dustCloudsPerTick = 0;
 	
 	public static void updateSpaceObjects()
 	{
@@ -69,6 +71,16 @@ public final class SpaceRenderer
 	public static void loadedStars(int starCount)
 	{
 		starsPerTick += starCount;
+	}
+	
+	public static boolean loadNewDustClouds()
+	{
+		return dustCloudsPerTick < DUST_CLOUD_LIMIT;
+	}
+	
+	public static void loadedDustClouds(int dustCloudCount)
+	{
+		dustCloudsPerTick += dustCloudCount;
 	}
 	
 	public static void clear()
