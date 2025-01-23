@@ -154,12 +154,6 @@ public class ResourcepackReloadListener
 				ViewCenters.clear();
 				setViewCenters(spaceObjects, viewCenters);
 			}
-			
-			viewCenters.clear();
-			spaceObjects.clear();
-			
-			starTypes.clear();
-			dustCloudTypes.clear();
 		}
 		
 		//============================================================================================
