@@ -53,6 +53,20 @@ public abstract class SpaceObjectRenderer<RenderedObject extends SpaceObject>
 		return new Vector3f();
 	}
 	
+	public void addChildRaw(SpaceObjectRenderer child)
+	{
+		if(child.parent != null)
+		{
+			StellarView.LOGGER.error(this.toString() + " already has a parent");
+			return;
+		}
+		
+		children.add(child);
+		child.parent = this;
+		
+		renderedObject.addChildRaw(child.renderedObject);
+	}
+	
 	public void addChild(SpaceObjectRenderer child)
 	{
 		if(child.parent != null)
