@@ -75,7 +75,7 @@ public abstract class TexturedObject extends SpaceObject
 		int i = 0;
 		for(TextureLayer textureLayer : textureLayers)
 		{
-			textureLayerTag.put(String.valueOf(i), textureLayer.serialize());
+			textureLayerTag.put(String.valueOf(i), textureLayer.serializeNBT());
 			i++;
 		}
 		tag.put(TEXTURE_LAYERS, textureLayerTag);
@@ -94,7 +94,9 @@ public abstract class TexturedObject extends SpaceObject
 		CompoundTag textureLayerTag = tag.getCompound(TEXTURE_LAYERS);
 		for(int i = 0; i < textureLayerTag.size(); i++)
 		{
-			textureLayers.add(TextureLayer.deserialize(textureLayerTag.getCompound(String.valueOf(i))));
+			TextureLayer textureLayer = new TextureLayer();
+			textureLayer.deserializeNBT(textureLayerTag.getCompound(String.valueOf(i)));
+			textureLayers.add(textureLayer);
 		}
 		
 		this.fadeOutHandler = new FadeOutHandler();
