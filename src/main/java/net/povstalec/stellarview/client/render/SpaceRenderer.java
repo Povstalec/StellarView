@@ -120,6 +120,7 @@ public final class SpaceRenderer
 	public static void resetStarFields()
 	{
 		starsPerTick = 0;
+		dustCloudsPerTick = 0;
 		for(Map.Entry<SpaceRegion.RegionPos, SpaceRegionRenderer> spaceRegionEntry : SPACE_REGIONS.entrySet())
 		{
 			spaceRegionEntry.getValue().resetStarFields();
@@ -129,6 +130,7 @@ public final class SpaceRenderer
 	public static void render(ViewCenter viewCenter, SpaceObjectRenderer masterParent, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder)
 	{
 		starsPerTick = 0;
+		dustCloudsPerTick = 0;
 		setBestLensing();
 		
 		SpaceRegion.RegionPos pos = new SpaceRegion.RegionPos(viewCenter.getCoords());
