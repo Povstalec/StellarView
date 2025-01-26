@@ -4,7 +4,7 @@
 	"texture_layers":
 	[
 		{
-			"texture": "textures/environment/sun.png",
+			"texture": "stellarview:textures/environment/sun.png",
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": true,
 			"size": 4488626469,
