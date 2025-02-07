@@ -38,7 +38,7 @@ public class LightEffects
 	{
 		// Brightness of the position where the player is standing, 15 is subtracted from the ambient skylight, that way only block light is accounted for
 		int brightnessAtBlock = level.getLightEngine().getRawBrightness(camera.getEntity().getOnPos().above(), 15);
-		float brightness = 1.5F * ((7F - brightnessAtBlock) / 15F);
+		float brightness = 2F * ((7F - brightnessAtBlock) / 15F);
 		
 		if(brightness < 0)
 			brightness = 0;
@@ -110,7 +110,7 @@ public class LightEffects
 	
 	public static float dustCloudBrightness(ViewCenter viewCenter, ClientLevel level, Camera camera, float partialTicks)
 	{
-		float brightness = level.getStarBrightness(partialTicks);
+		float brightness = level.getStarBrightness(partialTicks) * 2;
 		
 		if(viewCenter.starsAlwaysVisible() && brightness < 0.5F)
 			brightness = 0.5F;

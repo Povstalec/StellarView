@@ -5,7 +5,7 @@
 	"seed": 84201,
 	"diameter_ly": 10000,
 	"stars": 400,
-	"dust_clouds": 15,
+	"dust_clouds": 5,
 	
 	"x_stretch": 0.8,
 	"y_stretch": 1.0,

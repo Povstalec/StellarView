@@ -260,8 +260,7 @@ public class ResourcepackReloadListener
 				if(SOL_LOCATION.equals(location))
 				{
 					JsonObject json = GsonHelper.convertToJsonObject(element, "star");
-					Sol sol = Sol.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Star", msg));
-					SpaceRenderer.addSol(sol);
+					Sol sol = Sol.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Sol", msg));
 					
 					return sol;
 				}
@@ -371,6 +370,9 @@ public class ResourcepackReloadListener
 			for(Map.Entry<ResourceLocation, SpaceObjectRenderer<?>> spaceObjectEntry : spaceObjects.entrySet())
 			{
 				SpaceObjectRenderer<?> spaceObject = spaceObjectEntry.getValue();
+				
+				if(spaceObject.renderedObject() instanceof Sol sol)
+					SpaceRenderer.addSol(sol);
 
 				// Setup object
 				spaceObject.setupSpaceObject(spaceObjectEntry.getKey());
