@@ -8,9 +8,8 @@
 	"stars": 1000,
 	"dust_clouds": 8,
 	
-	"x_stretch": 0.5,
-	"y_stretch": 0.25,
-	"z_stretch": 0.5,
+	"star_stretch": { "x": 1.0, "y": 0.25, "z": 1.0 },
+	"dust_cloud_stretch": { "x": 0.5, "y": 0.25, "z": 0.5 },
 	
 	"spiral_arms":
 	[

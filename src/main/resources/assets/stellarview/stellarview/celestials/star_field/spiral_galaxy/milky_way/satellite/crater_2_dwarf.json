@@ -6,9 +6,5 @@
 	"diameter_ly": 6950,
 	"stars": 10,
 	
-	"x_stretch": 1.0,
-	"y_stretch": 1.0,
-	"z_stretch": 1.0,
-	
 	"star_info": "stellarview:main_sequence_distribution"
 }

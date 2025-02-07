@@ -337,7 +337,7 @@ public class ResourcepackReloadListener
 			{
 				JsonObject json = GsonHelper.convertToJsonObject(element, "star_field");
 				StarField starField = StarField.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Star Field", msg));
-
+				
 				return starField;
 			}
 			catch(RuntimeException e)
