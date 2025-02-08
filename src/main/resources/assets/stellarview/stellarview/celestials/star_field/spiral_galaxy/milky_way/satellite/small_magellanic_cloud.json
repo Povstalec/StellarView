@@ -5,11 +5,7 @@
 	"seed": 66837,
 	"diameter_ly": 6950,
 	"stars": 500,
-	"dust_clouds": 12,
-	
-	"x_stretch": 1.0,
-	"y_stretch": 1.0,
-	"z_stretch": 1.0,
+	"dust_clouds": 6,
 	
 	"dust_cloud_info": "stellarview:white_dust_clouds",
 	"star_info": "stellarview:main_sequence_distribution"

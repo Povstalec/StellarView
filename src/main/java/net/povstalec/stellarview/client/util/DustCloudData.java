@@ -207,7 +207,7 @@ public abstract class DustCloudData
 			
 			if(dustCloudBuffer == null) // Buffer requires setup
 			{
-				if(!SpaceRenderer.loadNewStars())
+				if(!SpaceRenderer.loadNewDustClouds())
 					return;
 				
 				dustCloudBuffer = new DustCloudBuffer();
@@ -227,7 +227,7 @@ public abstract class DustCloudData
 					dustCloudBuffer.drawWithShader(pose, projectionMatrix, difference, StellarViewShaders.starDustCloudShader());
 				VertexBuffer.unbind();
 				
-				//TODO Maybe make something similar for dust clouds?   SpaceRenderer.loadedStars(stars);
+				SpaceRenderer.loadedDustClouds(dustClouds);
 			}
 			else
 			{

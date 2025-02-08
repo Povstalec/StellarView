@@ -93,6 +93,7 @@ public class ViewCenter
 	
 	public final boolean starsAlwaysVisible;
 	public final boolean starsIgnoreFog;
+	public final boolean starsIgnoreRain;
 	public final int zRotationMultiplier;
     
     public static final Codec<ViewCenter> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -113,6 +114,7 @@ public class ViewCenter
 			
 			Codec.BOOL.optionalFieldOf("stars_always_visible", false).forGetter(viewCenter -> viewCenter.starsAlwaysVisible),
 			Codec.BOOL.optionalFieldOf("stars_ignore_fog", false).forGetter(viewCenter -> viewCenter.starsIgnoreFog),
+			Codec.BOOL.optionalFieldOf("stars_ignore_rain", false).forGetter(viewCenter -> viewCenter.starsIgnoreRain),
 			Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("z_rotation_multiplier", 30000000).forGetter(viewCenter -> viewCenter.zRotationMultiplier)
 			).apply(instance, ViewCenter::new));
 	
@@ -120,7 +122,7 @@ public class ViewCenter
 			long rotationPeriod, DayBlending dayBlending, DayBlending sunDayBlending,
 			Optional<MeteorEffect.ShootingStar> shootingStar, Optional<MeteorEffect.MeteorShower> meteorShower,
 			boolean createHorizon, boolean createVoid,
-			boolean starsAlwaysVisible, boolean starsIgnoreFog, int zRotationMultiplier)
+			boolean starsAlwaysVisible, boolean starsIgnoreFog, boolean starsIgnoreRain, int zRotationMultiplier)
 	{
 		this.levelTicks = 0;
 		this.updateTicks = false;
@@ -156,6 +158,7 @@ public class ViewCenter
 		
 		this.starsAlwaysVisible = starsAlwaysVisible;
 		this.starsIgnoreFog = starsIgnoreFog;
+		this.starsIgnoreRain = starsIgnoreRain;
 		this.zRotationMultiplier = zRotationMultiplier;
 	}
 	
@@ -286,6 +289,16 @@ public class ViewCenter
 	public boolean starsAlwaysVisible()
 	{
 		return starsAlwaysVisible;
+	}
+	
+	public boolean starsIgnoreFog()
+	{
+		return starsIgnoreFog;
+	}
+	
+	public boolean starsIgnoreRain()
+	{
+		return starsIgnoreRain;
 	}
 	
 	public double zRotationMultiplier()
@@ -438,7 +451,7 @@ public class ViewCenter
 		
 		setupFog.run();
 		
-		if(this.starsIgnoreFog || !StellarViewFogEffects.isFoggy(this.minecraft, camera))
+		if(starsIgnoreFog() || !StellarViewFogEffects.isFoggy(this.minecraft, camera))
 		{
 			//RenderSystem.disableTexture();
 			Vec3 skyColor = level.getSkyColor(this.minecraft.gameRenderer.getMainCamera().getPosition(), partialTicks);

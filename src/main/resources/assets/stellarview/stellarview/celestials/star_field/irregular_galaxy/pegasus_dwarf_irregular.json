@@ -8,13 +8,12 @@
 	"stars": 1000,
 	"dust_clouds": 0,
 	
-	"x_stretch": 0.5,
-	"y_stretch": 0.25,
-	"z_stretch": 0.5,
+	"star_stretch": { "x": 1.0, "y": 0.25, "z": 1.0 },
+	"dust_cloud_stretch": { "x": 0.5, "y": 0.25, "z": 0.5 },
 	
 	"spiral_arms":
 	[
-		{ "dust_clouds": 150, "stars": 1000, "arm_rotation": 0, "arm_length": 2.1, "arm_thickness": 2.5 },
+		{ "dust_clouds": 70, "stars": 1000, "arm_rotation": 0, "arm_length": 2.1, "arm_thickness": 2.5 },
 		{ "dust_clouds": 30, "stars": 500, "arm_rotation": 156, "arm_length": 1.2, "arm_thickness": 2.5 }
 	],
 

@@ -3,13 +3,9 @@
 	"axis_rotation": { "x_axis": 196, "y_axis": 35, "z_axis": 286 },
 	
 	"seed": 164327,
-	"diameter_ly": 660,
-	"stars": 50,
-	"dust_clouds": 20,
-	
-	"x_stretch": 1.0,
-	"y_stretch": 1.0,
-	"z_stretch": 1.0,
+	"diameter_ly": 6500,
+	"stars": 500,
+	"dust_clouds": 10,
 	
 	"dust_cloud_info": "stellarview:white_dust_clouds",
 	"star_info": "stellarview:main_sequence_distribution"
