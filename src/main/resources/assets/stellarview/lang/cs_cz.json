@@ -14,9 +14,11 @@
 	"gui.stellarview.static_stars": "[Shader compat] Statická obloha",
 	"gui.stellarview.disable_stars": "Zakázat hvězdy",
 	"gui.stellarview.day_stars": "Hvězdy během dne",
-	"gui.stellarview.bright_stars": "Jasné hvězdy",
 	"gui.stellarview.textured_stars": "Textury hvězd",
 	"gui.stellarview.dust_clouds": "Mračna prachu",
+	"gui.stellarview.light_pollution": "Světelné znečištění",
+	"gui.stellarview.star_brightness": "Jas hvězd",
+	"gui.stellarview.dust_cloud_brightness": "Jas prašných mračen",
 	
 	"gui.stellarview.space_region_render_distance": "Vesmírný dohled",
 	

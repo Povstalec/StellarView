@@ -13,14 +13,16 @@ public class GeneralConfig
 	
 	public static StellarViewConfigValue.BooleanValue disable_view_center_rotation;
 	
-	public static StellarViewConfigValue.BooleanValue gravitational_lensing;
+	public static StellarViewConfigValue.IntValue space_region_render_distance;
 	
-	public static StellarViewConfigValue.BooleanValue disable_stars;
-	public static StellarViewConfigValue.BooleanValue bright_stars;
-	public static StellarViewConfigValue.BooleanValue textured_stars;
+	public static StellarViewConfigValue.BooleanValue gravitational_lensing;
 	public static StellarViewConfigValue.BooleanValue dust_clouds;
 	
-	public static StellarViewConfigValue.IntValue space_region_render_distance;
+	public static StellarViewConfigValue.BooleanValue disable_stars;
+	public static StellarViewConfigValue.BooleanValue textured_stars;
+	public static StellarViewConfigValue.BooleanValue light_pollution;
+	public static StellarViewConfigValue.IntValue star_brightness;
+	public static StellarViewConfigValue.IntValue dust_cloud_brightness;
 	
 	public static void init(ForgeConfigSpec.Builder client)
 	{
@@ -46,28 +48,40 @@ public class GeneralConfig
 		
 		
 		
+		space_region_render_distance = new StellarViewConfigValue.IntValue(client, "client.space_region_render_distance",
+				8, 1, 12,
+				"Specifies the max distance at which a Space Region can render");
+		
+		
+		
 		gravitational_lensing = new StellarViewConfigValue.BooleanValue(client, "client.gravitational_lensing",
 				true,
 				"Enables gravitational lensing effects");
-		
-		disable_stars = new StellarViewConfigValue.BooleanValue(client, "client.disable_stars", 
-				false, 
-				"Removes Stars");
-		
-		bright_stars = new StellarViewConfigValue.BooleanValue(client, "client.bright_stars", 
-				true, 
-				"Makes Stars brighter");
-		
-		textured_stars = new StellarViewConfigValue.BooleanValue(client, "client.textured_stars",
-				true,
-				"Enables the use of textures for stars");
 		
 		dust_clouds = new StellarViewConfigValue.BooleanValue(client, "client.dust_clouds",
 				true,
 				"Enables dust cloud rendering");
 		
-		space_region_render_distance = new StellarViewConfigValue.IntValue(client, "client.space_region_render_distance",
-				8, 1, 12,
-				"Specifies the max distance at which a Space Region can render");
+		
+		
+		disable_stars = new StellarViewConfigValue.BooleanValue(client, "client.disable_stars", 
+				false, 
+				"Removes Stars");
+		
+		textured_stars = new StellarViewConfigValue.BooleanValue(client, "client.textured_stars",
+				true,
+				"Enables the use of textures for stars");
+		
+		light_pollution = new StellarViewConfigValue.BooleanValue(client, "client.light_pollution",
+				true,
+				"Makes sky objects dimmer when the player is near a light source");
+		
+		star_brightness = new StellarViewConfigValue.IntValue(client, "client.star_brightness",
+				100, 0, 100,
+				"Specifies the base brightness of stars and planets");
+		
+		dust_cloud_brightness = new StellarViewConfigValue.IntValue(client, "client.dust_cloud_brightness",
+				100, 0, 100,
+				"Specifies the base brightness of dust clouds and nebulae");
 	}
 }
