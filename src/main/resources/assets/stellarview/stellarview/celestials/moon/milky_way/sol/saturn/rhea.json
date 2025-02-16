@@ -26,7 +26,7 @@
 			"uv": { "flip_uv": false }
 		},
 		{
-			"texture": "stellarview:textures/environment/planet/rhea.png",
+			"texture": "stellarview:textures/environment/planet/sol/rhea.png",
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": false,
 			"size": 763500,
