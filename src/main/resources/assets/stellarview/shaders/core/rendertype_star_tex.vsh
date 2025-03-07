@@ -97,7 +97,7 @@ void main()
 	if(LensingIntensity > 1.0)
 	{
 		float lensingAmount = cosPhi * LensingIntensity;
-		width = lensingAmount  > 1.0 ? lensingAmount * HeightWidthSize.y * starSize :  HeightWidthSize.y * starSize;
+		width = lensingAmount > 1.0 ? lensingAmount * HeightWidthSize.y * starSize :  HeightWidthSize.y * starSize;
 	}
 	else
 		width = HeightWidthSize.y * starSize;
