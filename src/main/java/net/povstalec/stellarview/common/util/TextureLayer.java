@@ -5,8 +5,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.util.INBTSerializable;
 
-public class TextureLayer
+public class TextureLayer implements INBTSerializable<CompoundTag>
 {
 	public static final String TEXTURE = "texture";
 	public static final String RGBA = "rgba";
@@ -23,18 +24,18 @@ public class TextureLayer
 	
 	public static final double MIN_VISUAL_SIZE = 0.05;
 	
-	private final ResourceLocation texture;
-	private final Color.FloatRGBA rgba;
+	private ResourceLocation texture;
+	private Color.FloatRGBA rgba;
 	
-	private final boolean blend;
+	private boolean blend;
 	
-	private final double size;
-	private final double minSize;
-	private final boolean clampAtMinSize;
+	private double size;
+	private double minSize;
+	private boolean clampAtMinSize;
 	
-	private final double rotation;
+	private double rotation;
 	
-	private final UV.Quad uv;
+	private UV.Quad uv;
 	
 	public static final Codec<TextureLayer> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			ResourceLocation.CODEC.fieldOf(TEXTURE).forGetter(TextureLayer::texture),
@@ -50,6 +51,8 @@ public class TextureLayer
 			
 			UV.Quad.CODEC.optionalFieldOf(UV_QUAD, UV.Quad.DEFAULT_QUAD_UV).forGetter(TextureLayer::uv)
 	).apply(instance, TextureLayer::new));
+	
+	public TextureLayer() {}
 	
 	public TextureLayer(ResourceLocation texture, Color.FloatRGBA rgba, boolean blend,
 			double size, double minSize, boolean clampAtMinSize,
@@ -128,7 +131,8 @@ public class TextureLayer
 	//*************************************Saving and Loading*************************************
 	//============================================================================================
 	
-	public CompoundTag serialize()
+	@Override
+	public CompoundTag serializeNBT()
 	{
 		CompoundTag tag = new CompoundTag();
 		
@@ -149,24 +153,20 @@ public class TextureLayer
 		return tag;
 	}
 	
-	public static TextureLayer deserialize(CompoundTag tag)
+	@Override
+	public void deserializeNBT(CompoundTag tag)
 	{
-		ResourceLocation texture = new ResourceLocation(tag.getString(TEXTURE));
-		
-		Color.FloatRGBA rgba = new Color.FloatRGBA(0, 0, 0);
+		this.texture = new ResourceLocation(tag.getString(TEXTURE));
+		this.rgba = new Color.FloatRGBA(0, 0, 0);
 		rgba.deserializeNBT(tag.getCompound(RGBA));
 		
-		boolean blend = tag.getBoolean(BLEND);
+		this.blend = tag.getBoolean(BLEND);
 		
-		double size = tag.getDouble(SIZE);
-		double minSize = tag.getDouble(MIN_SIZE);
-		boolean clampAtMinSize = tag.getBoolean(CLAMP_AT_MIN_SIZE);
+		this.size = tag.getDouble(SIZE);
+		this.minSize = tag.getDouble(MIN_SIZE);
+		this.clampAtMinSize = tag.getBoolean(CLAMP_AT_MIN_SIZE);
 		
-		double rotation = tag.getDouble(ROTATION);
-		
-		UV.Quad uv = UV.Quad.deserialize(tag.getCompound(UV_QUAD));
-		
-		
-		return new TextureLayer(texture, rgba, blend, size, minSize, clampAtMinSize, rotation, uv);
+		this.rotation = tag.getDouble(ROTATION);
+		this.uv = UV.Quad.deserialize(tag.getCompound(UV_QUAD));
 	}
 }

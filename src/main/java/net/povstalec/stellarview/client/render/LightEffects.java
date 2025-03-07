@@ -38,7 +38,7 @@ public class LightEffects
 	{
 		// Brightness of the position where the player is standing, 15 is subtracted from the ambient skylight, that way only block light is accounted for
 		int brightnessAtBlock = level.getLightEngine().getRawBrightness(camera.getEntity().getOnPos().above(), 15);
-		float brightness = 1.5F * ((7F - brightnessAtBlock) / 15F);
+		float brightness = 2F * ((7F - brightnessAtBlock) / 7F);
 		
 		if(brightness < 0)
 			brightness = 0;
@@ -66,82 +66,98 @@ public class LightEffects
 		return 1F - level.getRainLevel(partialTicks);
 	}
 	
+	public static float getStarBrightness(ViewCenter viewCenter, ClientLevel level, Camera camera, float partialTicks)
+	{
+		float brightness = GeneralConfig.star_brightness.get() / 100F;
+		
+		if(!viewCenter.starsAlwaysVisible())
+			brightness *= level.getStarBrightness(partialTicks);
+		else
+			brightness *= 2F;
+		
+		if(GeneralConfig.light_pollution.get())
+			brightness *= LightEffects.lightSourceStarDimming(level, camera);
+		else
+			brightness *= 2F;
+		
+		return brightness;
+	}
+	
+	public static float getDustBrightness(ViewCenter viewCenter, ClientLevel level, Camera camera, float partialTicks)
+	{
+		float brightness = GeneralConfig.dust_cloud_brightness.get() / 100F;
+		
+		if(!viewCenter.starsAlwaysVisible())
+			brightness *= level.getStarBrightness(partialTicks);
+		else
+			brightness *= 2F;
+		
+		if(GeneralConfig.light_pollution.get())
+			brightness *= LightEffects.lightSourceDustCloudDimming(level, camera);
+		else
+			brightness *= 2F;
+		
+		return brightness;
+	}
+	
+	
+	
 	public static float dayBrightness(ViewCenter viewCenter, float size, long ticks, ClientLevel level, Camera camera, float partialTicks)
 	{
-		if(viewCenter.starsAlwaysVisible())
-			return GeneralConfig.bright_stars.get() ? 0.5F * LightEffects.lightSourceStarDimming(level, camera) : 0.5F;
-		
-		float brightness = level.getStarBrightness(partialTicks) * 2;
-		
-		if(GeneralConfig.bright_stars.get())
-			brightness = brightness * LightEffects.lightSourceStarDimming(level, camera);
+		float brightness = getStarBrightness(viewCenter, level, camera, partialTicks);
 		
 		if(brightness < viewCenter.dayBlending().dayMaxBrightness() && size > viewCenter.dayBlending().dayMinVisibleSize())
 		{
 			float aboveSize = size >= viewCenter.dayBlending().dayMaxVisibleSize() ? viewCenter.dayBlending().dayVisibleRange() : size - viewCenter.dayBlending().dayMinVisibleSize();
 			float brightnessPercentage = aboveSize / viewCenter.dayBlending().dayVisibleRange();
+			float minBrightness = brightnessPercentage * viewCenter.dayBlending().dayMaxBrightness();
 			
-			brightness = brightnessPercentage * viewCenter.dayBlending().dayMaxBrightness();
+			if(brightness < minBrightness)
+				brightness = minBrightness;
 		}
 		
-		return brightness * LightEffects.rainDimming(level, partialTicks);
+		return viewCenter.starsIgnoreRain() ? brightness : brightness * LightEffects.rainDimming(level, partialTicks);
 	}
 	
 	public static float starDayBrightness(ViewCenter viewCenter, float size, long ticks, ClientLevel level, Camera camera, float partialTicks)
 	{
-		if(viewCenter.starsAlwaysVisible())
-			return GeneralConfig.bright_stars.get() ? 0.5F * LightEffects.lightSourceStarDimming(level, camera) : 0.5F;
-		
-		float brightness = level.getStarBrightness(partialTicks) * 2;
-		
-		if(GeneralConfig.bright_stars.get())
-			brightness = brightness * LightEffects.lightSourceStarDimming(level, camera);
+		float brightness = getStarBrightness(viewCenter, level, camera, partialTicks);
 		
 		if(brightness < viewCenter.sunDayBlending().dayMaxBrightness() && size > viewCenter.sunDayBlending().dayMinVisibleSize())
 		{
 			float aboveSize = size >= viewCenter.sunDayBlending().dayMaxVisibleSize() ? viewCenter.sunDayBlending().dayVisibleRange() : size - viewCenter.sunDayBlending().dayMinVisibleSize();
 			float brightnessPercentage = aboveSize / viewCenter.sunDayBlending().dayVisibleRange();
+			float minBrightness = brightnessPercentage * viewCenter.sunDayBlending().dayMaxBrightness();
 			
-			brightness = brightnessPercentage * viewCenter.sunDayBlending().dayMaxBrightness();
+			if(brightness < minBrightness)
+				brightness = minBrightness;
 		}
 		
-		return brightness * LightEffects.rainDimming(level, partialTicks);
+		return viewCenter.starsIgnoreRain() ? brightness : brightness * LightEffects.rainDimming(level, partialTicks);
 	}
 	
 	public static float dustCloudBrightness(ViewCenter viewCenter, ClientLevel level, Camera camera, float partialTicks)
 	{
-		float brightness = level.getStarBrightness(partialTicks);
+		float brightness = getDustBrightness(viewCenter, level, camera, partialTicks);
 		
-		if(viewCenter.starsAlwaysVisible() && brightness < 0.5F)
-			brightness = 0.5F;
-		
-		if(GeneralConfig.bright_stars.get())
-			brightness = brightness * LightEffects.lightSourceDustCloudDimming(level, camera);
-		
-		brightness = brightness * LightEffects.rainDimming(level, partialTicks);
-		
-		return brightness;
+		return viewCenter.starsIgnoreRain() ? brightness : brightness * LightEffects.rainDimming(level, partialTicks);
 	}
 	
 	public static float nebulaBrightness(ViewCenter viewCenter, float size, long ticks, ClientLevel level, Camera camera, float partialTicks)
 	{
-		if(viewCenter.starsAlwaysVisible())
-			return GeneralConfig.bright_stars.get() ? 0.5F * LightEffects.lightSourceStarDimming(level, camera) : 0.5F;
-		
-		float brightness = level.getStarBrightness(partialTicks) * 2;
-		
-		if(GeneralConfig.bright_stars.get())
-			brightness = brightness * LightEffects.lightSourceDustCloudDimming(level, camera);
+		float brightness = getDustBrightness(viewCenter, level, camera, partialTicks);
 		
 		if(brightness < viewCenter.dayBlending().dayMaxBrightness() && size > viewCenter.dayBlending().dayMinVisibleSize())
 		{
 			float aboveSize = size >= viewCenter.dayBlending().dayMaxVisibleSize() ? viewCenter.dayBlending().dayVisibleRange() : size - viewCenter.dayBlending().dayMinVisibleSize();
 			float brightnessPercentage = aboveSize / viewCenter.dayBlending().dayVisibleRange();
+			float minBrightness = brightnessPercentage * viewCenter.dayBlending().dayMaxBrightness();
 			
-			brightness = brightnessPercentage * viewCenter.dayBlending().dayMaxBrightness();
+			if(brightness < minBrightness)
+				brightness = minBrightness;
 		}
 		
-		return brightness * LightEffects.rainDimming(level, partialTicks);
+		return viewCenter.starsIgnoreRain() ? brightness : brightness * LightEffects.rainDimming(level, partialTicks);
 	}
 	
 	/**
@@ -153,16 +169,8 @@ public class LightEffects
 	 */
 	public static float starBrightness(ViewCenter viewCenter, ClientLevel level, Camera camera, float partialTicks)
 	{
-		float starBrightness = level.getStarBrightness(partialTicks);
+		float brightness = getStarBrightness(viewCenter, level, camera, partialTicks);
 		
-		if(viewCenter.starsAlwaysVisible() && starBrightness < 0.5F)
-			starBrightness = 0.5F;
-		
-		if(GeneralConfig.bright_stars.get())
-			starBrightness = starBrightness * LightEffects.lightSourceStarDimming(level, camera);
-		
-		starBrightness = starBrightness * LightEffects.rainDimming(level, partialTicks);
-		
-		return starBrightness;
+		return viewCenter.starsIgnoreRain() ? brightness : brightness * LightEffects.rainDimming(level, partialTicks);
 	}
 }
