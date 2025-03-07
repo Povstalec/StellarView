@@ -8,6 +8,7 @@ import net.povstalec.stellarview.api.common.space_objects.distinct.Sol;
 import net.povstalec.stellarview.api.common.space_objects.resourcepack.*;
 import net.povstalec.stellarview.client.SpaceObjectRenderers;
 import net.povstalec.stellarview.client.render.space_objects.resourcepack.*;
+import net.povstalec.stellarview.client.screens.config.ConfigScreen;
 import net.povstalec.stellarview.compatibility.aether.AetherCompatibility;
 import net.povstalec.stellarview.compatibility.twilightforest.TwilightForestCompatibility;
 import org.slf4j.Logger;
@@ -23,12 +24,10 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import net.neoforged.neoforge.client.event.RegisterDimensionSpecialEffectsEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
-import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.povstalec.stellarview.client.render.level.StellarViewEndEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewNetherEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewOverworldEffects;
 import net.povstalec.stellarview.client.resourcepack.ResourcepackReloadListener;
-import net.povstalec.stellarview.client.screens.config.ConfigScreen;
 import net.povstalec.stellarview.common.config.StellarViewConfig;
 import net.povstalec.stellarview.common.util.KeyBindings;
 
@@ -50,12 +49,13 @@ public class StellarView
     public static StellarViewOverworldEffects overworld;
     public static StellarViewNetherEffects nether;
     public static StellarViewEndEffects end;
-
-	public StellarView(ModContainer modContainer)
+	
+	public StellarView(ModContainer modContainer, Dist dist)
 	{
 		modContainer.registerConfig(ModConfig.Type.CLIENT, StellarViewConfig.CLIENT_CONFIG, MODID + "-client.toml");
 		
-		modContainer.registerExtensionPoint(IConfigScreenFactory.class, (mc, parent) -> new ConfigScreen(parent));
+		if(dist.isClient())
+			ConfigScreen.registerConfigScreen(modContainer);
 	}
 
     @EventBusSubscriber(modid = StellarView.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)

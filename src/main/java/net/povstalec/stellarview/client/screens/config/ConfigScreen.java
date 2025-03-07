@@ -5,6 +5,8 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
 import javax.annotation.Nullable;
 
@@ -60,4 +62,8 @@ public class ConfigScreen extends Screen
 		graphics.drawString(this.font, this.title, (this.width - font.width(this.title)) / 2, 8, 16777215);
     }
 	
+	public static void registerConfigScreen(ModContainer modContainer)
+	{
+		modContainer.registerExtensionPoint(IConfigScreenFactory.class, (mc, parent) -> new ConfigScreen(parent));
+	}
 }
