@@ -205,9 +205,9 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 			
 			Vector3d cartesian = new SphericalCoords(distance * renderedObject.getDiameter(), theta, phi).toCartesianD();
 			
-			cartesian.x *= renderedObject.xStretch();
-			cartesian.y *= renderedObject.yStretch();
-			cartesian.z *= renderedObject.zStretch();
+			cartesian.x *= renderedObject.starStretch().xStretch();
+			cartesian.y *= renderedObject.starStretch().yStretch();
+			cartesian.z *= renderedObject.starStretch().zStretch();
 			
 			renderedObject.getAxisRotation().quaterniond().transform(cartesian);
 			
@@ -332,15 +332,15 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 		for(int i = 0; i < renderedObject.getDustClouds(); i++)
 		{
 			// This generates random coordinates for the Star close to the camera
-			double distance = renderedObject.clumpStarsInCenter() ? random.nextDouble() : Math.cbrt(random.nextDouble());
+			double distance = renderedObject.clumpDustCloudsInCenter() ? random.nextDouble() : Math.cbrt(random.nextDouble());
 			double theta = random.nextDouble() * 2F * Math.PI;
 			double phi = Math.acos(2F * random.nextDouble() - 1F); // This prevents the formation of that weird streak that normally happens
 			
 			Vector3d cartesian = new SphericalCoords(distance * renderedObject.getDiameter(), theta, phi).toCartesianD();
 			
-			cartesian.x *= renderedObject.xStretch();
-			cartesian.y *= renderedObject.yStretch();
-			cartesian.z *= renderedObject.zStretch();
+			cartesian.x *= renderedObject.dustCloudStretch().xStretch();
+			cartesian.y *= renderedObject.dustCloudStretch().yStretch();
+			cartesian.z *= renderedObject.dustCloudStretch().zStretch();
 			
 			renderedObject.getAxisRotation().quaterniond().transform(cartesian);
 			
@@ -361,15 +361,15 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 			progress++;
 			
 			// This generates random coordinates for the Star close to the camera
-			double distance = arm.clumpStarsInCenter() ? random.nextDouble() : Math.cbrt(random.nextDouble());
+			double distance = arm.clumpDustCloudsInCenter() ? random.nextDouble() : Math.cbrt(random.nextDouble());
 			double theta = random.nextDouble() * 2F * Math.PI;
 			double sphericalphi = Math.acos(2F * random.nextDouble() - 1F); // This prevents the formation of that weird streak that normally happens
 			
 			Vector3d cartesian = new SphericalCoords(distance * arm.armThickness(), theta, sphericalphi).toCartesianD();
 			
-			double x =  r * Math.cos(phi) + cartesian.x * arm.armThickness() / (progress * 1.5);
-			double z =  r * Math.sin(phi) + cartesian.z * arm.armThickness() / (progress * 1.5);
-			double y =  cartesian.y * arm.armThickness() / (progress * 1.5);
+			double x =  r * Math.cos(phi)/* + cartesian.x * arm.armThickness() / (progress * 1.5)*/;
+			double z =  r * Math.sin(phi)/* + cartesian.z * arm.armThickness() / (progress * 1.5)*/;
+			double y =  0/*cartesian.y * arm.armThickness() / (progress * 1.5)*/;
 			
 			cartesian.x = x * sizeMultiplier;
 			cartesian.y = y * sizeMultiplier;

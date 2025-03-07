@@ -1,15 +1,14 @@
 {
 	"coords": { "right_ascension": {"hours": 18, "minutes": 55, "seconds": 19.5}, "declination": {"degrees": -30, "minutes": 32, "seconds": 43}, "distance": {"ly": 65000} },
-	"axis_rotation": { "x_axis": 197, "y_axis": 71.6, "z_axis": 33.8 },
+	"axis_rotation": { "x_axis": 7, "y_axis": 171.6, "z_axis": 233.8 },
 	
 	"seed": 91291,
-	"diameter_ly": 100000,
+	"diameter_ly": 10000,
 	"stars": 650,
-	"dust_clouds": 15,
+	"dust_clouds": 8,
 	
-	"x_stretch": 0.6,
-	"y_stretch": 1.0,
-	"z_stretch": 0.6,
+	"star_stretch": { "x": 0.6, "y": 1.0, "z": 0.6 },
+	"dust_cloud_stretch": { "x": 0.6, "y": 1.0, "z": 0.6 },
 	
 	"dust_cloud_info": "stellarview:white_dust_clouds",
 	"star_info": "stellarview:main_sequence_distribution"

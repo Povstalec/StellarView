@@ -64,13 +64,16 @@ public class StellarView
 		@SubscribeEvent
 		public static void onClientSetup(FMLClientSetupEvent event)
 		{
-			SpaceObjectRenderers.register(Planet.class, PlanetRenderer<Planet>::new);
-			SpaceObjectRenderers.register(Moon.class, MoonRenderer<Moon>::new);
-			SpaceObjectRenderers.register(Star.class, StarRenderer<Star>::new);
-			SpaceObjectRenderers.register(Sol.class, StarRenderer<Sol>::new);
-			SpaceObjectRenderers.register(BlackHole.class, BlackHoleRenderer<BlackHole>::new);
-			SpaceObjectRenderers.register(Nebula.class, NebulaRenderer<Nebula>::new);
-			SpaceObjectRenderers.register(StarField.class, StarFieldRenderer<StarField>::new);
+			event.enqueueWork(() ->
+			{
+				SpaceObjectRenderers.register(Planet.class, PlanetRenderer<Planet>::new);
+				SpaceObjectRenderers.register(Moon.class, MoonRenderer<Moon>::new);
+				SpaceObjectRenderers.register(Star.class, StarRenderer<Star>::new);
+				SpaceObjectRenderers.register(Sol.class, StarRenderer<Sol>::new);
+				SpaceObjectRenderers.register(BlackHole.class, BlackHoleRenderer<BlackHole>::new);
+				SpaceObjectRenderers.register(Nebula.class, NebulaRenderer<Nebula>::new);
+				SpaceObjectRenderers.register(StarField.class, StarFieldRenderer<StarField>::new);
+			});
 		}
 		
     	@SubscribeEvent(priority = EventPriority.LOWEST)

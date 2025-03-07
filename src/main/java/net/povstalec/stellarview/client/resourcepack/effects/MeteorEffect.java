@@ -1,5 +1,13 @@
 package net.povstalec.stellarview.client.resourcepack.effects;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import net.povstalec.stellarview.client.render.LightEffects;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferUploader;
@@ -13,14 +21,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.util.Mth;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
-import net.povstalec.stellarview.common.config.GeneralConfig;
 import net.povstalec.stellarview.common.util.*;
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 public abstract class MeteorEffect
 {
@@ -87,14 +88,9 @@ public abstract class MeteorEffect
 	
 	public Color.FloatRGBA rgba(ViewCenter viewCenter, ClientLevel level, Camera camera, long ticks, float partialTicks)
 	{
-		float brightness = level.getStarBrightness(partialTicks);
-		brightness = viewCenter.starsAlwaysVisible() && brightness < 0.5F ? 
-				0.5F : brightness;
+		float brightness = LightEffects.getStarBrightness(viewCenter, level, camera, partialTicks) / 2F;
 		
-		if(GeneralConfig.bright_stars.get())
-			brightness = brightness * (1 + ((float) (15 - level.getLightEngine().getRawBrightness(camera.getEntity().getOnPos().above(), 15)) / 15));
-		
-		brightness *= (1.0F - level.getRainLevel(partialTicks));
+		brightness *= LightEffects.rainDimming(level, partialTicks);
 		
 		return new Color.FloatRGBA(1, 1, 1, brightness);
 	}

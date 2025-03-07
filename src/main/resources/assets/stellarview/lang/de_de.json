@@ -15,9 +15,11 @@
 	"gui.stellarview.static_sky": "[Shader compat] Statische Himmel",
 	"gui.stellarview.disable_stars": "Sterne deaktivieren",
 	"gui.stellarview.day_stars": "Sterne am Tag",
-	"gui.stellarview.bright_stars": "Hellere Sterne",
 	"gui.stellarview.textured_stars": "Sterne mit Texturen",
 	"gui.stellarview.dust_clouds": "Staubwolken",
+	"gui.stellarview.light_pollution": "Lichtverschmutzung",
+	"gui.stellarview.star_brightness": "Sternhelligkeit",
+	"gui.stellarview.dust_cloud_brightness": "Staubwolkhelligkeit",
 	
 	"gui.stellarview.space_region_render_distance": "Raumsichtweite",
 

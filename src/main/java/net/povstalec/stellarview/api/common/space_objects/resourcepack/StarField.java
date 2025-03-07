@@ -76,88 +76,83 @@ public class StarField extends SpaceObject
 	public static final ResourceLocation DEFAULT_STAR_TEXTURE = ResourceLocation.fromNamespaceAndPath(StellarView.MODID,"textures/environment/star.png");
 	public static final ResourceLocation DEFAULT_DUST_CLOUD_TEXTURE = ResourceLocation.fromNamespaceAndPath(StellarView.MODID,"textures/environment/dust_cloud.png");
 	
-	public static final String SEED = "seed";
-	public static final String DIAMETER_LY = "diameter_ly";
-	public static final String STARS = "stars";
-	public static final String TOTAL_STARS = "total_stars";
-	public static final String STAR_INFO = "star_info";
-	public static final String SPIRAL_ARMS = "spiral_arms";
-	public static final String STAR_TEXTURE = "star_texture";
-	public static final String CLUMP_STARS_IN_CENTER = "clump_stars_in_center";
-	public static final String X_STRETCH = "x_stretch";
-	public static final String Y_STRETCH = "y_stretch";
-	public static final String Z_STRETCH = "z_stretch";
 	public static final String DUST_CLOUDS = "dust_clouds";
-	public static final String TOTAL_DUST_CLOUDS = "total_dust_clouds";
 	public static final String DUST_CLOUD_INFO = "dust_cloud_info";
 	public static final String DUST_CLOUD_TEXTURE = "dust_cloud_texture";
+	public static final String CLUMP_DUST_CLOUDS_IN_CENTER = "clump_dust_clouds_in_center";
+	public static final String DUST_CLOUD_STRETCH = "dust_cloud_stretch";
+	
+	public static final String STARS = "stars";
+	public static final String STAR_INFO = "star_info";
+	public static final String STAR_TEXTURE = "star_texture";
+	public static final String CLUMP_STARS_IN_CENTER = "clump_stars_in_center";
+	public static final String STAR_STRETCH = "star_stretch";
+	
+	public static final String SEED = "seed";
+	public static final String DIAMETER_LY = "diameter_ly";
+	public static final String SPIRAL_ARMS = "spiral_arms";
 	
 	protected int dustClouds;
 	protected ResourceLocation dustCloudInfo;
 	protected ResourceLocation dustCloudTexture;
+	protected boolean clumpDustCloudsInCenter;
+	protected Stretch dustCloudStretch;
 	
 	protected int stars;
 	protected ResourceLocation starInfo;
 	protected ResourceLocation starTexture;
+	protected boolean clumpStarsInCenter;
+	protected Stretch starStretch;
 	
 	protected long seed;
-	protected boolean clumpStarsInCenter;
-	
 	protected int diameter;
-	
-	protected double xStretch;
-	protected double yStretch;
-	protected double zStretch;
-	
 	protected ArrayList<SpiralArm> spiralArms;
 	
 	public static final Codec<StarField> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			ResourceLocation.CODEC.optionalFieldOf("parent").forGetter(StarField::getParentLocation),
-			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf("coords").forGetter(object -> Either.left(object.getCoords())),
-			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(StarField::getAxisRotation),
+			ResourceLocation.CODEC.optionalFieldOf(PARENT_LOCATION).forGetter(StarField::getParentLocation),
+			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf(COORDS).forGetter(object -> Either.left(object.getCoords())),
+			AxisRotation.CODEC.fieldOf(AXIS_ROTATION).forGetter(StarField::getAxisRotation),
 			
-			Codec.intRange(0, 4000).optionalFieldOf("dust_clouds", 0).forGetter(StarField::getDustClouds),
-			ResourceLocation.CODEC.optionalFieldOf("dust_cloud_info").forGetter(starField -> Optional.ofNullable(starField.dustCloudInfo)),
-			ResourceLocation.CODEC.optionalFieldOf("dust_cloud_texture", DEFAULT_DUST_CLOUD_TEXTURE).forGetter(StarField::getDustCloudTexture),
+			Codec.intRange(0, 4000).optionalFieldOf(DUST_CLOUDS, 0).forGetter(StarField::getDustClouds),
+			ResourceLocation.CODEC.optionalFieldOf(DUST_CLOUD_INFO).forGetter(starField -> Optional.ofNullable(starField.dustCloudInfo)),
+			ResourceLocation.CODEC.optionalFieldOf(DUST_CLOUD_TEXTURE, DEFAULT_DUST_CLOUD_TEXTURE).forGetter(StarField::getDustCloudTexture),
+			Codec.BOOL.optionalFieldOf(CLUMP_DUST_CLOUDS_IN_CENTER, true).forGetter(StarField::clumpDustCloudsInCenter),
+			Stretch.CODEC.optionalFieldOf(DUST_CLOUD_STRETCH, Stretch.DEFAULT_STRETCH).forGetter(StarField::dustCloudStretch),
 			
-			ResourceLocation.CODEC.optionalFieldOf("star_info").forGetter(starField -> Optional.ofNullable(starField.starInfo)),
-			ResourceLocation.CODEC.optionalFieldOf("star_texture", DEFAULT_STAR_TEXTURE).forGetter(starField -> starField.starTexture),
-			Codec.LONG.fieldOf("seed").forGetter(StarField::getSeed),
-			Codec.INT.fieldOf("diameter_ly").forGetter(StarField::getDiameter),
+			Codec.intRange(0, 30000).fieldOf(STARS).forGetter(StarField::getStars),
+			ResourceLocation.CODEC.optionalFieldOf(STAR_INFO).forGetter(starField -> Optional.ofNullable(starField.starInfo)),
+			ResourceLocation.CODEC.optionalFieldOf(STAR_TEXTURE, DEFAULT_STAR_TEXTURE).forGetter(starField -> starField.starTexture),
+			Codec.BOOL.optionalFieldOf(CLUMP_STARS_IN_CENTER, true).forGetter(StarField::clumpStarsInCenter),
+			Stretch.CODEC.optionalFieldOf(STAR_STRETCH, Stretch.DEFAULT_STRETCH).forGetter(StarField::starStretch),
 			
-			Codec.intRange(0, 30000).fieldOf("stars").forGetter(StarField::getStars),
-			Codec.BOOL.optionalFieldOf("clump_stars_in_center", true).forGetter(StarField::clumpStarsInCenter),
-			
-			Codec.DOUBLE.optionalFieldOf("x_stretch", 1.0).forGetter(StarField::xStretch),
-			Codec.DOUBLE.optionalFieldOf("y_stretch", 1.0).forGetter(StarField::yStretch),
-			Codec.DOUBLE.optionalFieldOf("z_stretch", 1.0).forGetter(StarField::zStretch),
-			
-			SpiralArm.CODEC.listOf().optionalFieldOf("spiral_arms", new ArrayList<SpiralArm>()).forGetter(starField -> starField.spiralArms)
+			Codec.LONG.fieldOf(SEED).forGetter(StarField::getSeed),
+			Codec.INT.fieldOf(DIAMETER_LY).forGetter(StarField::getDiameter),
+			SpiralArm.CODEC.listOf().optionalFieldOf(SPIRAL_ARMS, new ArrayList<SpiralArm>()).forGetter(starField -> starField.spiralArms)
 			).apply(instance, StarField::new));
 	
 	public StarField() {}
 	
-	public StarField(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation, int dustClouds, Optional<ResourceLocation> dustCloudInfo, ResourceLocation dustCloudTexture, Optional<ResourceLocation> starInfo, ResourceLocation starTexture, long seed, int diameter, int numberOfStars, boolean clumpStarsInCenter,
-			double xStretch, double yStretch, double zStretch, List<SpiralArm> spiralArms)
+	public StarField(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
+					 int dustClouds, Optional<ResourceLocation> dustCloudInfo, ResourceLocation dustCloudTexture, boolean clumpDustCloudsInCenter, Stretch dustCloudStretch,
+					 int stars, Optional<ResourceLocation> starInfo, ResourceLocation starTexture, boolean clumpStarsInCenter, Stretch starStretch,
+					 long seed, int diameter, List<SpiralArm> spiralArms)
 	{
 		super(parent, coords, axisRotation);
 		
 		this.dustClouds = dustClouds;
 		this.dustCloudInfo = dustCloudInfo.isPresent() ? dustCloudInfo.get() : null;
 		this.dustCloudTexture = dustCloudTexture;
+		this.clumpDustCloudsInCenter = clumpDustCloudsInCenter;
+		this.dustCloudStretch = dustCloudStretch;
 		
+		this.stars = stars;
 		this.starInfo = starInfo.isPresent() ? starInfo.get() : null;
-		this.seed = seed;
-		this.diameter = diameter;
-		
-		this.stars = numberOfStars;
 		this.starTexture = starTexture;
 		this.clumpStarsInCenter = clumpStarsInCenter;
+		this.starStretch = starStretch;
 		
-		this.xStretch = xStretch;
-		this.yStretch = yStretch;
-		this.zStretch = zStretch;
-		
+		this.seed = seed;
+		this.diameter = diameter;
 		this.spiralArms = new ArrayList<SpiralArm>(spiralArms);
 	}
 	
@@ -181,6 +176,16 @@ public class StarField extends SpaceObject
 	public ResourceLocation getStarInfo()
 	{
 		return starInfo;
+	}
+	
+	public boolean clumpDustCloudsInCenter()
+	{
+		return clumpDustCloudsInCenter;
+	}
+	
+	public Stretch dustCloudStretch()
+	{
+		return dustCloudStretch;
 	}
 	
 	public ResourceLocation getStarTexture()
@@ -208,19 +213,9 @@ public class StarField extends SpaceObject
 		return clumpStarsInCenter;
 	}
 	
-	public double xStretch()
+	public Stretch starStretch()
 	{
-		return xStretch;
-	}
-	
-	public double yStretch()
-	{
-		return yStretch;
-	}
-	
-	public double zStretch()
-	{
-		return zStretch;
+		return starStretch;
 	}
 	
 	public List<SpiralArm> getSpiralArms()
@@ -247,31 +242,27 @@ public class StarField extends SpaceObject
 		
 		tag.putInt(DUST_CLOUDS, dustClouds);
 		tag.putString(DUST_CLOUD_TEXTURE, dustCloudTexture.toString());
+		if(dustCloudInfo != null)
+			tag.putString(DUST_CLOUD_INFO, dustCloudInfo.toString());
+		tag.putBoolean(CLUMP_DUST_CLOUDS_IN_CENTER, clumpDustCloudsInCenter);
+		tag.put(DUST_CLOUD_STRETCH, dustCloudStretch.serializeNBT(provider));
 		
-		tag.putLong(SEED, seed);
-		
-		tag.putInt(DIAMETER_LY, diameter);
 		tag.putInt(STARS, stars);
 		tag.putString(STAR_TEXTURE, starTexture.toString());
-		
+		if(starInfo != null)
+			tag.putString(STAR_INFO, starInfo.toString());
 		tag.putBoolean(CLUMP_STARS_IN_CENTER, clumpStarsInCenter);
+		tag.put(STAR_STRETCH, starStretch.serializeNBT(provider));
 		
-		tag.putDouble(X_STRETCH, xStretch);
-		tag.putDouble(Y_STRETCH, yStretch);
-		tag.putDouble(Z_STRETCH, zStretch);
+		tag.putLong(SEED, seed);
+		tag.putInt(DIAMETER_LY, diameter);
 		
 		CompoundTag armsTag = new CompoundTag();
 		for(int i = 0; i < spiralArms.size(); i++)
 		{
 			armsTag.put("spiral_arm_" + i, spiralArms.get(i).serializeNBT(provider));
 		}
-		
 		tag.put(SPIRAL_ARMS, armsTag);
-		
-		if(starInfo != null)
-			tag.putString(STAR_INFO, starInfo.toString());
-		if(dustCloudInfo != null)
-			tag.putString(DUST_CLOUD_INFO, dustCloudInfo.toString());
 		
 		return tag;
 	}
@@ -283,18 +274,20 @@ public class StarField extends SpaceObject
 		
 		dustClouds = tag.getInt(DUST_CLOUDS);
 		dustCloudTexture = ResourceLocation.parse(tag.getString(DUST_CLOUD_TEXTURE));
+		dustCloudInfo = tag.contains(DUST_CLOUD_INFO) ? ResourceLocation.parse(tag.getString(DUST_CLOUD_INFO)) : null;
+		clumpDustCloudsInCenter = tag.getBoolean(CLUMP_DUST_CLOUDS_IN_CENTER);
+		dustCloudStretch = new Stretch();
+		dustCloudStretch.deserializeNBT(provider, tag.getCompound(DUST_CLOUD_STRETCH));
 		
-		seed = tag.getLong(SEED);
-		
-		diameter = tag.getInt(DIAMETER_LY);
 		stars = tag.getInt(STARS);
 		starTexture = ResourceLocation.parse(tag.getString(STAR_TEXTURE));
-		
+		starInfo = tag.contains(STAR_INFO) ? ResourceLocation.parse(tag.getString(STAR_INFO)) : null;
 		clumpStarsInCenter = tag.getBoolean(CLUMP_STARS_IN_CENTER);
+		starStretch = new Stretch();
+		starStretch.deserializeNBT(provider, tag.getCompound(STAR_STRETCH));
 		
-		xStretch = tag.getDouble(X_STRETCH);
-		yStretch = tag.getDouble(Y_STRETCH);
-		zStretch = tag.getDouble(Z_STRETCH);
+		seed = tag.getLong(SEED);
+		diameter = tag.getInt(DIAMETER_LY);
 		
 		this.spiralArms = new ArrayList<SpiralArm>();
 		CompoundTag armsTag = tag.getCompound(SPIRAL_ARMS);
@@ -304,9 +297,6 @@ public class StarField extends SpaceObject
 			arm.deserializeNBT(provider, armsTag.getCompound(key));
 			spiralArms.add(arm);
 		}
-		
-		starInfo = tag.contains(STAR_INFO) ? ResourceLocation.parse(tag.getString(STAR_INFO)) : null;
-		dustCloudInfo = tag.contains(DUST_CLOUD_INFO) ? ResourceLocation.parse(tag.getString(DUST_CLOUD_INFO)) : null;
 	}
 	
 	
@@ -329,6 +319,7 @@ public class StarField extends SpaceObject
 		protected double armLength;
 		protected double armThickness;
 		protected boolean clumpStarsInCenter;
+		protected boolean clumpDustCloudsInCenter;
 		
 		public static final Codec<SpiralArm> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				Codec.INT.optionalFieldOf(DUST_CLOUDS, 0).forGetter(SpiralArm::armDustClouds),
@@ -392,6 +383,11 @@ public class StarField extends SpaceObject
 			return clumpStarsInCenter;
 		}
 		
+		public boolean clumpDustCloudsInCenter()
+		{
+			return clumpDustCloudsInCenter;
+		}
+		
 		//============================================================================================
 		//*************************************Saving and Loading*************************************
 		//============================================================================================
@@ -413,6 +409,7 @@ public class StarField extends SpaceObject
 			tag.putDouble(ARM_THICKNESS, armThickness);
 			
 			tag.putBoolean(CLUMP_STARS_IN_CENTER, clumpStarsInCenter);
+			tag.putBoolean(CLUMP_DUST_CLOUDS_IN_CENTER, clumpDustCloudsInCenter);
 			
 			return tag;
 		}
@@ -431,6 +428,79 @@ public class StarField extends SpaceObject
 			armThickness = tag.getDouble(ARM_THICKNESS);
 			
 			clumpStarsInCenter = tag.getBoolean(CLUMP_STARS_IN_CENTER);
+			clumpDustCloudsInCenter = tag.getBoolean(CLUMP_DUST_CLOUDS_IN_CENTER);
+		}
+	}
+	
+	
+	
+	public static class Stretch implements INBTSerializable<CompoundTag>
+	{
+		public static final String X_STRETCH = "x";
+		public static final String Y_STRETCH = "y";
+		public static final String Z_STRETCH = "z";
+		
+		protected double xStretch;
+		protected double yStretch;
+		protected double zStretch;
+		
+		public static final Stretch DEFAULT_STRETCH = new Stretch();
+		
+		public static final Codec<Stretch> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				Codec.DOUBLE.optionalFieldOf(X_STRETCH, 1.0).forGetter(stretch -> stretch.xStretch),
+				Codec.DOUBLE.optionalFieldOf(Y_STRETCH, 1.0).forGetter(stretch -> stretch.yStretch),
+				Codec.DOUBLE.optionalFieldOf(Z_STRETCH, 1.0).forGetter(stretch -> stretch.zStretch)
+		).apply(instance, Stretch::new));
+		
+		public Stretch(double xStretch, double yStretch, double zStretch)
+		{
+			this.xStretch = xStretch;
+			this.yStretch = yStretch;
+			this.zStretch = zStretch;
+		}
+		
+		public Stretch()
+		{
+			this(1, 1, 1);
+		}
+		
+		public double xStretch()
+		{
+			return xStretch;
+		}
+		
+		public double yStretch()
+		{
+			return yStretch;
+		}
+		
+		public double zStretch()
+		{
+			return zStretch;
+		}
+		
+		//============================================================================================
+		//*************************************Saving and Loading*************************************
+		//============================================================================================
+		
+		@Override
+		public CompoundTag serializeNBT(HolderLookup.Provider provider)
+		{
+			CompoundTag tag = new CompoundTag();
+			
+			tag.putDouble(X_STRETCH, xStretch);
+			tag.putDouble(Y_STRETCH, yStretch);
+			tag.putDouble(Z_STRETCH, zStretch);
+			
+			return tag;
+		}
+		
+		@Override
+		public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag)
+		{
+			xStretch = tag.getDouble(X_STRETCH);
+			yStretch = tag.getDouble(Y_STRETCH);
+			zStretch = tag.getDouble(Z_STRETCH);
 		}
 	}
 }

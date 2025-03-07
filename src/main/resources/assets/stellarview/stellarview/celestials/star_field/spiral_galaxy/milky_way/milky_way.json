@@ -6,18 +6,17 @@
 	"diameter_ly": 90000,
 	
 	"stars": 2000,
-	"dust_clouds": 20,
+	"dust_clouds": 5,
 	
-	"x_stretch": 0.5,
-	"y_stretch": 0.25,
-	"z_stretch": 0.5,
+	"star_stretch": { "x": 1.0, "y": 0.25, "z": 1.0 },
+	"dust_cloud_stretch": { "x": 0.25, "y": 0.25, "z": 0.25 },
 	
 	"spiral_arms":
 	[
-		{ "dust_clouds": 100, "stars": 1500, "arm_rotation": 0, "arm_length": 1.6298770314100501, "arm_thickness": 2.0, "dust_cloud_info": "stellarview:milky_way/milky_way_arm_distribution" },
-		{ "dust_clouds": 100, "stars": 1500, "arm_rotation": 90, "arm_length": 1.6941251689586823, "arm_thickness": 2.0, "dust_cloud_info": "stellarview:milky_way/milky_way_arm_distribution" },
-		{ "dust_clouds": 100, "stars": 1500, "arm_rotation": 180, "arm_length": 1.9660513834462778, "arm_thickness": 2.0, "dust_cloud_info": "stellarview:milky_way/milky_way_arm_distribution" },
-		{ "dust_clouds": 100, "stars": 1500, "arm_rotation": 270, "arm_length": 1.8086568638593041, "arm_thickness": 2.0, "dust_cloud_info": "stellarview:milky_way/milky_way_arm_distribution" }
+		{ "dust_clouds": 25, "stars": 1500, "arm_rotation": 0, "arm_length": 1.6298770314100501, "arm_thickness": 2.0, "dust_cloud_info": "stellarview:milky_way/milky_way_arm_distribution" },
+		{ "dust_clouds": 25, "stars": 1500, "arm_rotation": 90, "arm_length": 1.6941251689586823, "arm_thickness": 2.0, "dust_cloud_info": "stellarview:milky_way/milky_way_arm_distribution" },
+		{ "dust_clouds": 25, "stars": 1500, "arm_rotation": 180, "arm_length": 1.9660513834462778, "arm_thickness": 2.0, "dust_cloud_info": "stellarview:milky_way/milky_way_arm_distribution" },
+		{ "dust_clouds": 25, "stars": 1500, "arm_rotation": 270, "arm_length": 1.8086568638593041, "arm_thickness": 2.0, "dust_cloud_info": "stellarview:milky_way/milky_way_arm_distribution" }
 	],
 	
 	"dust_cloud_info": "stellarview:milky_way/milky_way_core_distribution",
