@@ -73,7 +73,7 @@ public class LightEffects
 		if(!viewCenter.starsAlwaysVisible())
 			brightness *= level.getStarBrightness(partialTicks);
 		else
-			brightness *= 2F;
+			brightness *= 0.5F;
 		
 		if(GeneralConfig.light_pollution.get())
 			brightness *= LightEffects.lightSourceStarDimming(level, camera);
@@ -90,7 +90,7 @@ public class LightEffects
 		if(!viewCenter.starsAlwaysVisible())
 			brightness *= level.getStarBrightness(partialTicks);
 		else
-			brightness *= 2F;
+			brightness *= 0.5F;
 		
 		if(GeneralConfig.light_pollution.get())
 			brightness *= LightEffects.lightSourceDustCloudDimming(level, camera);
