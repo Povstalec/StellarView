@@ -27,7 +27,7 @@
 			"uv": { "flip_uv": false }
 		},
 		{
-			"texture": "stellarview:textures/environment/planet/charon.png",
+			"texture": "stellarview:textures/environment/planet/sol/charon.png",
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": false,
 			"size": 606000,
