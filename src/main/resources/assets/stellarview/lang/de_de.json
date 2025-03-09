@@ -7,6 +7,7 @@
 	"gui.stellarview.config.twilight_forest": "Twilight Forest Konfiguration",
 	"gui.stellarview.config.aether": "Aether Konfiguration",
 	
+	"gui.stellarview.vanilla_moon": "Vanilla Mond",
 	"gui.stellarview.use_game_ticks": "Spiel Ticks verwenden",
 	"gui.stellarview.tick_multiplier": "Tickmultiplikator",
 	"gui.stellarview.disable_view_center_rotation": "Deaktivieren der Ansichtszentrumrotation",

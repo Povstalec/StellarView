@@ -18,6 +18,7 @@ import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.api.client.events.StellarViewEvents;
+import net.povstalec.stellarview.api.common.space_objects.distinct.Luna;
 import net.povstalec.stellarview.client.SpaceObjectRenderers;
 import net.povstalec.stellarview.client.render.SpaceRenderer;
 import net.povstalec.stellarview.client.render.StellarViewEffects;
@@ -58,6 +59,7 @@ public class ResourcepackReloadListener
 	public static final String DUST_CLOUD_INFO = "dust_cloud_info";
 	
 	private static final ResourceLocation SOL_LOCATION = new ResourceLocation(StellarView.MODID, "star/milky_way/sol");
+	private static final ResourceLocation LUNA_LOCATION = new ResourceLocation(StellarView.MODID, "moon/milky_way/sol/earth/luna");
 	
 	private static HashMap<ResourceLocation, ViewCenter> viewCenters;
 	private static HashMap<ResourceLocation, SpaceObjectRenderer<?>> spaceObjects;
@@ -318,10 +320,20 @@ public class ResourcepackReloadListener
 		{
 			try
 			{
-				JsonObject json = GsonHelper.convertToJsonObject(element, "moon");
-				Moon moon = Moon.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Moon", msg));
-
-				return moon;
+				if(LUNA_LOCATION.equals(location))
+				{
+					JsonObject json = GsonHelper.convertToJsonObject(element, "moon");
+					Luna luna = Luna.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Luna", msg));
+					
+					return luna;
+				}
+				else
+				{
+					JsonObject json = GsonHelper.convertToJsonObject(element, "moon");
+					Moon moon = Moon.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Moon", msg));
+					
+					return moon;
+				}
 			}
 			catch(RuntimeException e)
 			{
