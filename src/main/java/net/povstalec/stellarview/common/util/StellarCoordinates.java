@@ -271,9 +271,10 @@ public class StellarCoordinates
 			
 			double galacticLatitude = Math.asin(sinB);
 			
-			double inbetween = Math.cos(DECLINATION_NGP) * Math.sin(declination) - Math.sin(DECLINATION_NGP) * Math.cos(declination) * Math.cos(rightAscension - RIGHT_ASCENSION_NGP);
+			double x1 = Math.cos(declination) * Math.sin(rightAscension - RIGHT_ASCENSION_NGP);
+			double x2 = (Math.sin(declination) - Math.sin(DECLINATION_NGP) * galacticLatitude) / Math.cos(DECLINATION_NGP);
 			
-			double galacticLongtitude = L_NCP - Math.acos(inbetween / Math.cos(galacticLatitude));
+			double galacticLongtitude = L_NCP - Math.atan2(x1, x2);
 			
 			return new Galactic(galacticLongtitude, galacticLatitude, distance);
 		}

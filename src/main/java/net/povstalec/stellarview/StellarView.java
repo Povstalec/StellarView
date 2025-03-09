@@ -4,17 +4,21 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 
 import net.minecraftforge.eventbus.api.EventPriority;
-import net.povstalec.stellarview.client.render.SpaceRenderer;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.povstalec.stellarview.api.common.space_objects.distinct.Luna;
+import net.povstalec.stellarview.api.common.space_objects.distinct.Sol;
+import net.povstalec.stellarview.api.common.space_objects.resourcepack.*;
+import net.povstalec.stellarview.client.SpaceObjectRenderers;
+import net.povstalec.stellarview.client.render.space_objects.distinct.*;
+import net.povstalec.stellarview.client.render.space_objects.resourcepack.*;
 import net.povstalec.stellarview.compatibility.aether.AetherCompatibility;
 import net.povstalec.stellarview.compatibility.twilightforest.TwilightForestCompatibility;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 
-import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
@@ -49,14 +53,9 @@ public class StellarView
     
     public static final Logger LOGGER = LogUtils.getLogger();
     
-    private static Minecraft minecraft = Minecraft.getInstance();
-    
     public static StellarViewOverworldEffects overworld;
     public static StellarViewNetherEffects nether;
     public static StellarViewEndEffects end;
-	
-	private static float starBrightness = 0F;
-	private static float dustCloudBrightness = 0F;
 
 	public StellarView()
 	{
@@ -78,6 +77,22 @@ public class StellarView
     @Mod.EventBusSubscriber(modid = StellarView.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents
     {
+		@SubscribeEvent
+		public static void onClientSetup(FMLClientSetupEvent event)
+		{
+			event.enqueueWork(() ->
+			{
+				SpaceObjectRenderers.register(Planet.class, PlanetRenderer<Planet>::new);
+				SpaceObjectRenderers.register(Moon.class, MoonRenderer<Moon>::new);
+				SpaceObjectRenderers.register(Luna.class, LunaRenderer::new);
+				SpaceObjectRenderers.register(Star.class, StarRenderer<Star>::new);
+				SpaceObjectRenderers.register(Sol.class, StarRenderer<Sol>::new);
+				SpaceObjectRenderers.register(BlackHole.class, BlackHoleRenderer<BlackHole>::new);
+				SpaceObjectRenderers.register(Nebula.class, NebulaRenderer<Nebula>::new);
+				SpaceObjectRenderers.register(StarField.class, StarFieldRenderer<StarField>::new);
+			});
+		}
+		
     	@SubscribeEvent(priority = EventPriority.LOWEST)
         public static void registerDimensionEffects(RegisterDimensionSpecialEffectsEvent event)
 		{
@@ -133,69 +148,4 @@ public class StellarView
 		
 		return isAetherLoaded.get();
 	}
-    
-    public static void updateSpaceObjects()
-    {
-		if(minecraft.level == null)
-    		return;
-    	
-    	SpaceRenderer.updateSol();
-    	SpaceRenderer.resetStarFields();
-    }
-    
-    public static float lightSourceStarDimming(ClientLevel level, Camera camera)
-    {
-    	// Brightness of the position where the player is standing, 15 is subtracted from the ambient skylight, that way only block light is accounted for
-    	int brightnessAtBlock = level.getLightEngine().getRawBrightness(camera.getEntity().getOnPos().above(), 15);
-    	float brightness = 0.5F + 1.5F * ((15F - brightnessAtBlock) / 15F);
-		
-		if(starBrightness < brightness)
-		{
-			starBrightness += 0.01F;
-			
-			if(starBrightness > brightness)
-				starBrightness = brightness;
-		}
-		else if(starBrightness > brightness)
-		{
-			starBrightness -= 0.01F;
-			
-			if(starBrightness < brightness)
-				starBrightness = brightness;
-		}
-		
-    	return starBrightness;
-    }
-	
-	public static float lightSourceDustCloudDimming(ClientLevel level, Camera camera)
-	{
-		// Brightness of the position where the player is standing, 15 is subtracted from the ambient skylight, that way only block light is accounted for
-		int brightnessAtBlock = level.getLightEngine().getRawBrightness(camera.getEntity().getOnPos().above(), 15);
-		float brightness = 1.5F * ((7F - brightnessAtBlock) / 15F);
-		
-		if(brightness < 0)
-			brightness = 0;
-		
-		if(dustCloudBrightness < brightness)
-		{
-			dustCloudBrightness += 0.001F;
-			
-			if(dustCloudBrightness > brightness)
-				dustCloudBrightness = brightness;
-		}
-		else if(dustCloudBrightness > brightness)
-		{
-			dustCloudBrightness -= 0.001F;
-			
-			if(dustCloudBrightness < brightness)
-				dustCloudBrightness = brightness;
-		}
-		
-		return dustCloudBrightness;
-	}
-    
-    public static float rainDimming(ClientLevel level, float partialTicks)
-    {
-    	return 1F - level.getRainLevel(partialTicks);
-    }
 }	

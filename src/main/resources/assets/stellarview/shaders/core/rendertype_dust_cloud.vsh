@@ -14,9 +14,9 @@ uniform mat3 LensingMat;
 uniform mat3 LensingMatInv;
 uniform float LensingIntensity;
 
-float DEFAULT_DISTANCE = 100;
-float MAX_SIZE = 50;
-float MAX_ALPHA = 0.025;
+const float DEFAULT_DISTANCE = 100;
+const float MAX_SIZE = 50;
+const float MAX_ALPHA = 0.025;
 
 out vec4 vertexColor;
 out vec2 texCoord0;
@@ -106,7 +106,7 @@ void main()
 	if(LensingIntensity > 1.0)
 	{
 		float lensingAmount = cosPhi * LensingIntensity;
-		width = lensingAmount  > 1.0 ? lensingAmount * HeightWidthSize.y * starSize :  HeightWidthSize.y * starSize;
+		width = lensingAmount > 1.0 ? lensingAmount * HeightWidthSize.y * starSize :  HeightWidthSize.y * starSize;
 	}
 	else
 		width = HeightWidthSize.y * starSize;

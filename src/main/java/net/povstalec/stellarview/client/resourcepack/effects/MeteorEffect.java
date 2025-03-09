@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import net.povstalec.stellarview.client.render.LightEffects;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -94,14 +95,9 @@ public abstract class MeteorEffect
 	
 	public Color.FloatRGBA rgba(ViewCenter viewCenter, ClientLevel level, Camera camera, long ticks, float partialTicks)
 	{
-		float brightness = level.getStarBrightness(partialTicks);
-		brightness = viewCenter.starsAlwaysVisible() && brightness < 0.5F ? 
-				0.5F : brightness;
+		float brightness = LightEffects.getStarBrightness(viewCenter, level, camera, partialTicks) / 2F;
 		
-		if(GeneralConfig.bright_stars.get())
-			brightness = brightness * (1 + ((float) (15 - level.getLightEngine().getRawBrightness(camera.getEntity().getOnPos().above(), 15)) / 15));
-		
-		brightness *= (1.0F - level.getRainLevel(partialTicks));
+		brightness *= LightEffects.rainDimming(level, partialTicks);
 		
 		return new Color.FloatRGBA(1, 1, 1, brightness);
 	}
@@ -118,7 +114,7 @@ public abstract class MeteorEffect
         stack.mulPose(Axis.ZP.rotationDegrees(zRotation));
         stack.mulPose(Axis.XP.rotationDegrees(xRotation));
 		
-		meteorType.render(bufferbuilder, stack.last().pose(), SPHERICAL_START, rgba(viewCenter, level, camera, level.getDayTime(), partialTicks), level.getDayTime(), mulSize, addRotation);
+		meteorType.render(bufferbuilder, stack.last().pose(), SPHERICAL_START, rgba(viewCenter, level, camera, viewCenter.ticks(), partialTicks), viewCenter.ticks(), mulSize, addRotation);
 		stack.popPose();
 	}
 	
@@ -235,8 +231,8 @@ public abstract class MeteorEffect
 			if(!canRender(viewCenter))
 				return;
 			
-			long tickSeed = level.getDayTime() / TICKS;
-			int specificTime = (int) (level.getDayTime() % TICKS);
+			long tickSeed = viewCenter.ticks() / TICKS;
+			int specificTime = (int) (viewCenter.ticks() % TICKS);
 
 			Random randomizer = new Random(tickSeed);
 			
@@ -244,9 +240,9 @@ public abstract class MeteorEffect
 			
 			if(shouldAppear(viewCenter, tickSeed) && specificTime >= randomStart && specificTime < randomStart + DURATION)
 			{
-				double position = level.getDayTime() % DURATION;
+				double position = viewCenter.ticks() % DURATION;
 				
-				long shootingStarRandomizer = level.getDayTime() / DURATION;
+				long shootingStarRandomizer = viewCenter.ticks() / DURATION;
 				
 				Random random = new Random(shootingStarRandomizer);
 				
@@ -301,13 +297,13 @@ public abstract class MeteorEffect
 			if(!canRender(viewCenter))
 				return;
 			
-			long dailySeed = level.getDayTime() / (viewCenter.getRotationPeriod() == 0 ? 24000L : viewCenter.getRotationPeriod());
+			long dailySeed = viewCenter.ticks() / (viewCenter.getRotationPeriod() == 0 ? 24000L : viewCenter.getRotationPeriod());
 			
 			if(shouldAppear(viewCenter, dailySeed))
 			{
-				double position = level.getDayTime() % DURATION;
+				double position = viewCenter.ticks() % DURATION;
 				
-				long meteorRandomizer = level.getDayTime() / DURATION;
+				long meteorRandomizer = viewCenter.ticks() / DURATION;
 				
 				Random random = new Random(meteorRandomizer);
 				

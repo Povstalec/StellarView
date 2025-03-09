@@ -1,18 +1,25 @@
 {
 	"gui.stellarview.config": "Stellar View Config",
-	"gui.stellarview.config.general": "Stellar View - General Config",
-	"gui.stellarview.config.overworld": "Stellar View - Overworld Config",
-	"gui.stellarview.config.nether": "Stellar View - Nether Config",
-	"gui.stellarview.config.end": "Stellar View - End Config",
-	"gui.stellarview.config.twilight_forest": "Stellar View - Twilight Forest Config",
-	"gui.stellarview.config.aether": "Stellar View - Aether Config",
-
+	"gui.stellarview.config.general": "General Config",
+	"gui.stellarview.config.overworld": "Overworld Config",
+	"gui.stellarview.config.nether": "Nether Config",
+	"gui.stellarview.config.end": "End Config",
+	"gui.stellarview.config.twilight_forest": "Twilight Forest Config",
+	"gui.stellarview.config.aether": "Aether Config",
+	
+	"gui.stellarview.vanilla_moon": "Vanilla Moon",
+	"gui.stellarview.use_game_ticks": "Use Game Ticks",
+	"gui.stellarview.tick_multiplier": "Tick Multiplier",
 	"gui.stellarview.disable_view_center_rotation": "Disable View Center Rotation",
+	"gui.stellarview.gravitational_lensing": "Gravitational Lensing",
+	"gui.stellarview.static_sky": "[Shader compat] Static Sky",
 	"gui.stellarview.disable_stars": "Disable Stars",
 	"gui.stellarview.day_stars": "Stars During Day",
-	"gui.stellarview.bright_stars": "Bright Stars",
 	"gui.stellarview.textured_stars": "Textured Stars",
 	"gui.stellarview.dust_clouds": "Dust Clouds",
+	"gui.stellarview.light_pollution": "Light Pollution",
+	"gui.stellarview.star_brightness": "Star Brightness",
+	"gui.stellarview.dust_cloud_brightness": "Dust Cloud Brightness",
 	
 	"gui.stellarview.space_region_render_distance": "Space Region Render Distance",
 

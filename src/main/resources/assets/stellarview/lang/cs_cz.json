@@ -1,0 +1,50 @@
+{
+	"gui.stellarview.config": "Stellar View - Nastavení",
+	"gui.stellarview.config.general": "Obecné nastavení",
+	"gui.stellarview.config.overworld": "Nastavení Země",
+	"gui.stellarview.config.nether": "Nastavení Netheru",
+	"gui.stellarview.config.end": "Nastavení Endu",
+	"gui.stellarview.config.twilight_forest": "Nastavení pro Twilight Forest",
+	"gui.stellarview.config.aether": "Nastavení pro Aether",
+	
+	"gui.stellarview.vanilla_moon": "Vanilla Měsíc",
+	"gui.stellarview.use_game_ticks": "Používat herní tiky",
+	"gui.stellarview.tick_multiplier": "Násobitel tiků",
+	"gui.stellarview.disable_view_center_rotation": "Vypnout rotaci centra pohledu",
+	"gui.stellarview.gravitational_lensing": "Gravitační čočka",
+	"gui.stellarview.static_stars": "[Shader compat] Statická obloha",
+	"gui.stellarview.disable_stars": "Zakázat hvězdy",
+	"gui.stellarview.day_stars": "Hvězdy během dne",
+	"gui.stellarview.textured_stars": "Textury hvězd",
+	"gui.stellarview.dust_clouds": "Mračna prachu",
+	"gui.stellarview.light_pollution": "Světelné znečištění",
+	"gui.stellarview.star_brightness": "Jas hvězd",
+	"gui.stellarview.dust_cloud_brightness": "Jas prašných mračen",
+	
+	"gui.stellarview.space_region_render_distance": "Vesmírný dohled",
+	
+	"gui.stellarview.replace_vanilla": "Nahradit Vanilla",
+	"gui.stellarview.replace_default": "Nahradit původní",
+	"gui.stellarview.config_priority": "Prioritizovat nastavení",
+	
+	"gui.stellarview.overworld_z_rotation_multiplier": "Násobitel rotace osy Z",
+	
+	"gui.stellarview.meteor_shower_chance": "Šance meteorického roje",
+	"gui.stellarview.shooting_star_chance": "Šance padající hvězdy",
+	
+	"gui.stellarview.sol.x_offset": "X-ový offset Slunce",
+	"gui.stellarview.sol.y_offset": "Y-ový offset Slunce",
+	"gui.stellarview.sol.z_offset": "Z-ový offset Slunce",
+	
+	"gui.stellarview.sol.x_rotation": "X-ová rotace Slunce",
+	"gui.stellarview.sol.y_rotation": "Y-ová rotace Slunce",
+	"gui.stellarview.sol.z_rotation": "Z-ová rotace Slunce",
+	
+	"key.category.stellarview.config_screen": "Stellar View - Obrazovka s nastavením",
+	"key.stellarview.open_config_screen": "Otevřít obrazovku s nastavením",
+	
+	"gui.stellarview.reset": "Reset",
+	"gui.stellarview.true": "ANO",
+	"gui.stellarview.false": "NE",
+	"gui.stellarview.ly": "ly"
+}
