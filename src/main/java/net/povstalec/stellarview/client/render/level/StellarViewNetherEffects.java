@@ -31,7 +31,7 @@ public class StellarViewNetherEffects extends DimensionSpecialEffects.NetherEffe
     {
 		if(NetherConfig.replace_vanilla.get())
 		{
-			StellarViewLightmapEffects.defaultLightmapColors(level, partialTicks, skyDarken, skyLight, blockLight, pixelX, pixelY, colors);
+			//StellarViewLightmapEffects.defaultLightmapColors(level, partialTicks, skyDarken, skyLight, blockLight, pixelX, pixelY, colors);
 			
 			if(StellarView.isEnhancedCelestialsLoaded())
 				EnhancedCelestialsCompatibility.adjustLightmapColors(level, partialTicks, skyDarken, skyLight, blockLight, pixelX, pixelY, colors);

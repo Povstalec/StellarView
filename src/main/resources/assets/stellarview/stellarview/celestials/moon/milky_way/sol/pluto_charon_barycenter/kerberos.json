@@ -26,7 +26,7 @@
 			"uv": { "flip_uv": true	}
 		},
 		{
-			"texture": "stellarview:textures/environment/planet/kerberos.png",
+			"texture": "stellarview:textures/environment/planet/sol/kerberos.png",
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": false,
 			"size": 19000,

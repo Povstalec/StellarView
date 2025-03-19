@@ -4,9 +4,11 @@ import java.util.Optional;
 
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.povstalec.stellarview.api.common.space_objects.distinct.Luna;
 import net.povstalec.stellarview.api.common.space_objects.distinct.Sol;
 import net.povstalec.stellarview.api.common.space_objects.resourcepack.*;
 import net.povstalec.stellarview.client.SpaceObjectRenderers;
+import net.povstalec.stellarview.client.render.space_objects.distinct.*;
 import net.povstalec.stellarview.client.render.space_objects.resourcepack.*;
 import net.povstalec.stellarview.client.screens.config.ConfigScreen;
 import net.povstalec.stellarview.compatibility.aether.AetherCompatibility;
@@ -68,6 +70,7 @@ public class StellarView
 			{
 				SpaceObjectRenderers.register(Planet.class, PlanetRenderer<Planet>::new);
 				SpaceObjectRenderers.register(Moon.class, MoonRenderer<Moon>::new);
+				SpaceObjectRenderers.register(Luna.class, LunaRenderer::new);
 				SpaceObjectRenderers.register(Star.class, StarRenderer<Star>::new);
 				SpaceObjectRenderers.register(Sol.class, StarRenderer<Sol>::new);
 				SpaceObjectRenderers.register(BlackHole.class, BlackHoleRenderer<BlackHole>::new);

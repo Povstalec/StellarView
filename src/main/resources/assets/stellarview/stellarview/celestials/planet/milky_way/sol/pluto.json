@@ -27,7 +27,7 @@
 			"uv": { "flip_uv": false }
 		},
 		{
-			"texture": "stellarview:textures/environment/planet/pluto.png",
+			"texture": "stellarview:textures/environment/planet/sol/pluto.png",
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": false,
 			"size": 1188300,

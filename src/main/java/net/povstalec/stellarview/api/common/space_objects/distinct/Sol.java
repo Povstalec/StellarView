@@ -34,6 +34,8 @@ public class Sol extends Star
 			SupernovaInfo.CODEC.optionalFieldOf("supernova_info").forGetter(sol -> Optional.ofNullable(sol.supernovaInfo()))
 			).apply(instance, Sol::new));
 	
+	public Sol() {}
+	
 	public Sol(Optional<ResourceLocation> parent, Either<SpaceCoords, Equatorial> coords,
 			AxisRotation axisRotation, Optional<OrbitInfo> orbitInfo, List<TextureLayer> textureLayers,
 			FadeOutHandler fadeOutHandler, float minStarSize, float maxStarAlpha, float minStarAlpha,

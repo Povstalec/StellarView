@@ -14,6 +14,8 @@ public class OverworldConfig
 	public static StellarViewConfigValue.IntValue meteor_shower_chance;
 	public static StellarViewConfigValue.IntValue shooting_star_chance;
 	
+	public static StellarViewConfigValue.BooleanValue vanilla_moon;
+	
 	public static StellarViewConfigValue.IntValue sol_x_offset;
 	public static StellarViewConfigValue.IntValue sol_y_offset;
 	public static StellarViewConfigValue.IntValue sol_z_offset;
@@ -54,6 +56,12 @@ public class OverworldConfig
 		overworld_z_rotation_multiplier = new StellarViewConfigValue.IntValue(client, "client.overworld_z_rotation_multiplier", 
 				3000, 0, 3000, 
 				"Controls how much the Overworld sky rotates when moving along the Z-axis");
+		
+		
+		
+		vanilla_moon = new StellarViewConfigValue.BooleanValue(client, PREFIX + "vanilla_moon",
+				false,
+				"Uses the Vanilla Moon texture for rendering");
 		
 		
 		
