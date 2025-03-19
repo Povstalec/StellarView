@@ -26,7 +26,7 @@
 			"uv": { "flip_uv": false }
 		},
 		{
-			"texture": "stellarview:textures/environment/planet/c_uranus.png",
+			"texture": "stellarview:textures/environment/planet/sol/uranus.png",
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": false,
 			"size": 25362000,
