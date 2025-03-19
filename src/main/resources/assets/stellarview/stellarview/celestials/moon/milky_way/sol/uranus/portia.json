@@ -26,7 +26,7 @@
 			"uv": { "flip_uv": true	}
 		},
 		{
-			"texture": "stellarview:textures/environment/planet/portia.png",
+			"texture": "stellarview:textures/environment/planet/sol/portia.png",
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": false,
 			"size": 156000,
