@@ -18,7 +18,7 @@
 			"texture": "stellarview:textures/environment/star/proxima_centauri.png",
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": true,
-			"size": 692146201.5,
+			"size": 214646464,
 			"min_size": 0.02,
 			"clamp_at_min_size": true,
 			"rotation": 12,
