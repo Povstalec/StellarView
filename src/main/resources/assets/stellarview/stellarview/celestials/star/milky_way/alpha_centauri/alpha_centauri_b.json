@@ -15,11 +15,21 @@
 	"texture_layers":
 	[
 		{
+			"texture": "stellarview:textures/environment/star/template/orange_psf.png",
+			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 128},
+			"blend": true,
+			"size": 51999599653350,
+			"max_size": 1.5,
+			"clamp_at_max_size": true,
+			"rotation": 57,
+			"uv": { "flip_uv": false }
+		},
+		{
 			"texture": "stellarview:textures/environment/star/alpha_centauri_b.png",
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": true,
-			"size": 3856178999.5,
-			"min_size": 0.4,
+			"size": 1195867200,
+			"min_size": 0.02,
 			"clamp_at_min_size": true,
 			"rotation": 12,
 			"uv": { "flip_uv": false }
