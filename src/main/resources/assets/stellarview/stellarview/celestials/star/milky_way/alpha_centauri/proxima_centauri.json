@@ -5,21 +5,11 @@
 	"texture_layers":
 	[
 		{
-			"texture": "stellarview:textures/environment/star/template/red_psf.png",
-			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 128},
-			"blend": true,
-			"size": 5754399370,
-			"max_size": 1.5,
-			"clamp_at_max_size": true,
-			"rotation": 70,
-			"uv": { "flip_uv": false }
-		},
-		{
 			"texture": "stellarview:textures/environment/star/proxima_centauri.png",
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": true,
 			"size": 692146201.5,
-			"min_size": 0.02,
+			"min_size": 0.3,
 			"clamp_at_min_size": true,
 			"rotation": 12,
 			"uv": { "flip_uv": false }
