@@ -163,9 +163,9 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
     implementation fg.deobf("corgitaco.corgilib:Corgilib-Forge:${minecraft_version}-${corgilib_version}")
-    implementation fg.deobf("corgitaco.enhancedcelestials:Enhanced-Celestials-Forge:${minecraft_version}-${enhanced_celestials_version}")
+    implementation fg.deobf("dev.corgitaco:Data_Anchor-forge-${minecraft_version}:${data_anchor_version}")
+    implementation fg.deobf("dev.corgitaco.enhancedcelestials:Enhanced-Celestials-forge:${minecraft_version}-${enhanced_celestials_version}")
     implementation fg.deobf("curse.maven:the-twilight-forest-227639:5468648")
-
     implementation fg.deobf("com.aetherteam.aether:aether:${minecraft_version}-${aether_version}-neoforge")
 }
 
