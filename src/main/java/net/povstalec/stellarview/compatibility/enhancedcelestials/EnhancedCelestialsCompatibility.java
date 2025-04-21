@@ -16,15 +16,18 @@ import net.povstalec.stellarview.common.util.Color;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 public class EnhancedCelestialsCompatibility
 {
 	public static final float getMoonSize(ClientLevel level, float defaultSize)
 	{
 		return ECWorldRenderer.getMoonSize(defaultSize);
 	}
-	
+
 	public static final Color.FloatRGBA getMoonColor(ClientLevel level, float partialTicks)
 	{
+		AtomicReference<Color.FloatRGBA> result = new AtomicReference<>(new Color.FloatRGBA(1, 1, 1));
 		/*
 		 * Shamelessly copy pasted from
 		 * https://github.com/CorgiTaco/Enhanced-Celestials/blob/1.20.X/common/src/main/java/dev/corgitaco/enhancedcelestials/client/ECWorldRenderer.java
@@ -43,8 +46,10 @@ public class EnhancedCelestialsCompatibility
 			float g = Mth.clampedLerp(lastGLColor.y(), currentGLColor.y(), blend);
 			float b = Mth.clampedLerp(lastGLColor.z(), currentGLColor.z(), blend);
 			RenderSystem.setShaderColor(r, g, b, 1.0F - level.getRainLevel(partialTicks));
+
+			result.set(new Color.FloatRGBA(r > 1F ? 1F : r, g > 1F ? 1F : g, b > 1F ? 1F : b));
 		});
-        return new Color.FloatRGBA(1, 1, 1);
+		return result.get();
 	}
 	
 	public static final void adjustLightmapColors(ClientLevel level, float partialTicks, float skyDarken, float skyLight, float blockLight, int pixelX, int pixelY, Vector3f colors)
