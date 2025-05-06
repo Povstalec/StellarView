@@ -6,8 +6,7 @@ hide_meta: true
 Space Objects represent nearly everything you see in the night sky, they contain the information on how an object should behave and what it looks like.
 
 The following are considered Space Objects:
-* Planets
-* Moons
+* [Planets and Moons](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/planets_and_moons)
 * Stars
 * Black Holes
 * Nebulae
@@ -15,7 +14,7 @@ The following are considered Space Objects:
 
 
 
-# Textured Object and Orbiting Object
+# Textured Object
 
 A Textured Object is a subtype of Space Object that is visually represented with one or more textures.
 
@@ -63,16 +62,16 @@ These Texture Layers are rendered from top to bottom, which means that in the ab
 
 ### Texture Layer
 
-A texture layer consists of the following fields:
+Texture Layer definition consists of the following fields:
 
-* `texture` REQUIRED - Defines the path to the texture file used for rendering the layer.
-* `rgba` REQUIRED - A set of 4 values, the first 3 (*red*, *green*, *blue*) define color adjustments and the last one (*alpha*) adjusts the transparency (255 = no transparency, 0 = full transparency).
-* `blend` REQUIRED - Specifies whether or not the layer should blend with the background.
-* `size` REQUIRED - Defines the visual size of the layer (in meters). 
-* `min_size` OPTIONAL - When specified, defines the minimal visual size of the object. When the object is far enough away that its visual size would be smaller than min_size, the layer stops rendering.
-* `clamp_at_min_size` OPTIONAL - When specified and min_size is present, it changes the behaviour of min_size and instead of the layer no longer rendering, it will remain at this minimum size no matter how far away the object moves.
-* `rotation` REQUIRED - Defines the amount by which the layer is rotated by along the axis facing the player (in degrees).
-* `uv` OPTIONAL - Allows Resourcepacks to specify the *phase_handler* (OPTIONAL) which can change the [UV coordinates](https://en.wikipedia.org/wiki/UV_mapping) of a texture based on time and *flip_uv* (OPTIONAL) decides whether the texture should have its U coordinate flipped.
+* `texture` **REQUIRED** - Defines the path to the texture file used for rendering the layer.
+* `rgba` **REQUIRED** - A set of 4 values, the first 3 (*red*, *green*, *blue*) define color adjustments and the last one (*alpha*) adjusts the transparency (255 = no transparency, 0 = full transparency).
+* `blend` **REQUIRED** - Specifies whether or not the layer should blend with the background.
+* `size` **REQUIRED** - Defines the visual size of the layer (in meters). 
+* `min_size` *OPTIONAL* - When specified, defines the minimal visual size of the object. When the object is far enough away that its visual size would be smaller than min_size, the layer stops rendering.
+* `clamp_at_min_size` *OPTIONAL* - When specified and min_size is present, it changes the behaviour of min_size and instead of the layer no longer rendering, it will remain at this minimum size no matter how far away the object moves.
+* `rotation` **REQUIRED** - Defines the amount by which the layer is rotated by along the axis facing the player (in degrees).
+* `uv` *OPTIONAL* - Allows Resourcepacks to specify the `phase_handler` (*OPTIONAL*) which can change the [UV coordinates](https://en.wikipedia.org/wiki/UV_mapping) of a texture based on time and `flip_uv` (*OPTIONAL*) decides whether the texture should have its U coordinate flipped.
 
 ```json
 "uv":
@@ -90,10 +89,10 @@ A texture layer consists of the following fields:
 
 In the above example taken from [Luna](https://github.com/Povstalec/StellarView/blob/main/src/main/resources/assets/stellarview/stellarview/celestials/moon/milky_way/sol/earth/luna.json), we define the 8 phases of the Moon using the following values:
 
-* `ticks_per_phase` REQUIRED - Specifies how many ticks it takes before the phase switches to the next one. In this case, the Moon's phases change each day, so we set it to 24000 ticks, which is exactly 1 day in Minecraft.
-* `phase_tick_offset` OPTIONAL - Specifies the offset at which the phases start. For example, setting it to 48000 would make the Moon start at its 3rd phase in this case.
-* `columns` REQUIRED - defines the number of columns used for phases along the U-axis. In the case of the Moon, there are 4 (see [Minecraft Wiki](https://minecraft.wiki/w/Moon#/media/File:201111102025_moon_phases.png) for reference)
-* `rows` REQUIRED - defines the number of rows used for phases along the V-axis. In the case of the Moon, there are 2 (see [Minecraft Wiki](https://minecraft.wiki/w/Moon#/media/File:201111102025_moon_phases.png) for reference)
+* `ticks_per_phase` **REQUIRED** - Specifies how many ticks it takes before the phase switches to the next one. In this case, the Moon's phases change each day, so we set it to 24000 ticks, which is exactly 1 day in Minecraft.
+* `phase_tick_offset` *OPTIONAL* - Specifies the offset at which the phases start. For example, setting it to 48000 would make the Moon start at its 3rd phase in this case.
+* `columns` **REQUIRED** - defines the number of columns used for phases along the U-axis. In the case of the Moon, there are 4 (see [Minecraft Wiki](https://minecraft.wiki/w/Moon#/media/File:201111102025_moon_phases.png) for reference)
+* `rows` **REQUIRED** - defines the number of rows used for phases along the V-axis. In the case of the Moon, there are 2 (see [Minecraft Wiki](https://minecraft.wiki/w/Moon#/media/File:201111102025_moon_phases.png) for reference)
 
 
 

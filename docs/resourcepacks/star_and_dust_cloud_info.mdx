@@ -5,7 +5,7 @@ hide_meta: true
 
 # Star Info
 
-Star Info allows you to specify the possible types of stars that a Star Field may consist of.
+Star Info allows you to specify the possible types of stars that a [Star Field](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/star_fields) may consist of.
 Star Info is stored separately from Star Field, because it is common for one instance of Star Info to be reused for multiple Star Fields (For example, main_sequence_distribution.json).
 
 Star Info consists of a single REQUIRED field called `star_types`, which defines a list of Star Types that generate within this Star Field.
@@ -15,14 +15,17 @@ Star Info consists of a single REQUIRED field called `star_types`, which defines
 When a Star Field is generated, each of its stars receive a random Star Type defined in the star_types section of Star Info.
 This random Star Type is then used for defining the star's color and for further randomization of the star's size and brightness.
 
-A Star Type consists of the following fields:
+
+## Definition
+
+A Star Type definition consists of the following fields:
 
 * `rgb` **REQUIRED** - A set of 3 values (*red*, *green*, *blue*) that define the color of the star. [Min = 0 | Max = 255]
-* `min_size` **REQUIRED** - A (unitless) value that specifies the minimum size a star of this Star Type can have when its size is randomly generated.
+* `min_size` **REQUIRED** - A (unitless) float value that specifies the minimum size a star of this Star Type can have when its size is randomly generated.
 * `max_size` **REQUIRED** - A (unitless) value that specifies the maximum size a star of this Star Type can have when its size is randomly generated.
 * `min_brightness` **REQUIRED** - A value that specifies the minimum brightness a star of this Star Type can have when its brightness is randomly generated.
 * `max_brightness` **REQUIRED** - A value that specifies the maximum brightness a star of this Star Type can have when its brightness is randomly generated.
-* `max_visible_distance` **OPTIONAL** - A distance value (in Light Years) that specifies the maximum distance at which the star is still rendered. WIP
+* `max_visible_distance` *OPTIONAL* - A distance value (in Light Years) that specifies the maximum distance at which the star is still rendered. WIP
 * `weight` **REQUIRED** - The higher the weight, the higher the chance for this Star Type to be used when a random star is generated. [Min = 1 | Max = 2147483647]
 
 Star Info example for main sequence star distribution:
@@ -41,9 +44,10 @@ Star Info example for main sequence star distribution:
 }
 ```
 
+
 # Dust Cloud Info
 
-Dust Cloud Info allows you to specify the possible types of dust clouds that a Star Field may consist of.
+Dust Cloud Info allows you to specify the possible types of dust clouds that a [Star Field](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/star_fields) may consist of.
 Dust Cloud Info is stored separately from Star Field, because it is common for one instance of Dust Cloud Info to be reused for multiple Star Fields (For example, white_dust_clouds.json).
 
 Dust Cloud Info consists of a single REQUIRED field called `dust_cloud_types`, which defines a list of Dust Cloud Types that generate within this Star Field.
@@ -53,7 +57,10 @@ Dust Cloud Info consists of a single REQUIRED field called `dust_cloud_types`, w
 When a Star Field is generated, each of its dust clouds receive a random Dust Cloud Type defined in the star_types section of Dust Cloud Info.
 This random Dust Cloud Type is then used for defining the dust cloud's color and for further randomization of the dust cloud's size and brightness.
 
-A Dust Cloud Type consists of the following fields:
+
+## Definition
+
+A Dust Cloud Type definition consists of the following fields:
 
 * `rgb` **REQUIRED** - A set of 3 values (*red*, *green*, *blue*) that define the color of the dust cloud. [Min = 0 | Max = 255]
 * `min_size` **REQUIRED** - A (unitless) value that specifies the minimum size a dust cloud of this Dust Cloud Type can have when its size is randomly generated.
