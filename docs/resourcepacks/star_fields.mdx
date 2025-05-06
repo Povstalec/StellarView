@@ -5,34 +5,74 @@ hide_meta: true
 
 # Star Field
 
-TODO Description
+A Star Field is a type of Space Object that defines the shape and size of a collection of stars and dust clouds,
+which means it can be used to represent star clusters and galaxies.
 
 ## Definition
 
-* `parent_location` *OPTIONAL* - TODO
-* `coords` **REQUIRED** - TODO
-* `axis_rotation` **REQUIRED** - TODO
+* `parent_location` *OPTIONAL* - Defines the path (Resource Location) the object's [parent](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/space_objects).
+* `coords` **REQUIRED** - Specifies the space coordinates of the object.
+* `axis_rotation` **REQUIRED** - Specifies the rotation of the object around its individual axes (X axis -> Z axis -> Y axis).
 
-* `dust_clouds` *OPTIONAL* - TODO
-* `dust_cloud_info` *OPTIONAL* - TODO
-* `dust_cloud_texture` *OPTIONAL* - TODO
-* `clump_dust_clouds_in_center` *OPTIONAL* - TODO
-* `dust_cloud_stretch` *OPTIONAL* - TODO
+* `dust_clouds` *OPTIONAL* - Specifies the number of dust clouds that generate in a Star Field. [Min = 0 | Max = 2147483647]
+* `dust_cloud_info` *OPTIONAL* - Defines the path to the [Dust Cloud Info](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/star_and_dust_cloud_info) file reference.
+* `dust_cloud_texture` *OPTIONAL* - Defines the path to the texture file used for rendering the dust cloud texture.
+* `clump_dust_clouds_in_center` *OPTIONAL* - Decides whether dust clouds should be evenly distributed around the Star Field or if they should clump around the center, true by default.
+* `dust_cloud_stretch` *OPTIONAL* - Specifies the dust cloud stretch along each of the Star Field's relative axes.
 
-* `stars` **REQUIRED** - TODO
-* `star_info` *OPTIONAL* - TODO
-* `star_texture` *OPTIONAL* - TODO
-* `clump_stars_in_center` *OPTIONAL* - TODO
-* `star_stretch` *OPTIONAL* - TODO
+* `stars` **REQUIRED** - Specifies the number of stars that generate in a Star Field. [Min = 0 | Max = 2147483647]
+* `star_info` *OPTIONAL* - Defines the path to the [Star Info](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/star_and_dust_cloud_info) file reference.
+* `star_texture` *OPTIONAL* - Defines the path to the texture file used for rendering the star texture.
+* `clump_stars_in_center` *OPTIONAL* - Decides whether dust clouds should be evenly distributed around the Star Field or if they should clump around the center, true by default.
+* `star_stretch` *OPTIONAL* - Specifies the star stretch along each of the Star Field's relative axes.
 
-* `seed` **REQUIRED** - TODO
-* `diameter_ly` **REQUIRED** - TODO
-* `spiral_arms` *OPTIONAL* - TODO
+* `seed` **REQUIRED** - Specifies the seed used for randomizing the Star Field's generation.
+* `diameter_ly` **REQUIRED** - Specifies the Star Field's diameter in Light Years.
+* `spiral_arms` *OPTIONAL* - Defines the Star Field's individual Spiral Arms.
 
+### Star Stretch / Dust Cloud Stretch
 
-TODO LOD
+Stretch, as the name implies, stretches the coordinates along which a star or a dust cloud generates.
+This means that if a Star Field's is stretch defined as { "x": 1.0, "y": 0.25, "z": 1.0 },
+a star that would have otherwise generated at coordinates (4, 4, 4) will instead generate at coordinates (4, 1, 4).
+Note that these stretched coordinates are relative to the Star Field's Axis Rotation.
 
 
 # Spiral Arm
 
 TODO Description
+
+## Definition
+
+TODO Spiral Arm definition
+
+
+# Examples
+
+Star Field definition example for the Milky Way galaxy: 
+```json
+{
+	"coords": { "right_ascension": {"hours": 17, "minutes": 45, "seconds": 40.0409}, "declination": {"degrees": -29, "minutes": 0, "seconds": 28.118}, "distance": {"ly": 26996} },
+	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
+	
+	"seed": 10842,
+	"diameter_ly": 90000,
+	
+	"stars": 2000,
+	"dust_clouds": 5,
+	
+	"star_stretch": { "x": 1.0, "y": 0.25, "z": 1.0 },
+	"dust_cloud_stretch": { "x": 0.25, "y": 0.25, "z": 0.25 },
+	
+	"spiral_arms":
+	[
+		{ "dust_clouds": 25, "stars": 1500, "arm_rotation": 0, "arm_length": 1.6298770314100501, "arm_thickness": 2.0, "dust_cloud_info": "stellarview:milky_way/milky_way_arm_distribution" },
+		{ "dust_clouds": 25, "stars": 1500, "arm_rotation": 90, "arm_length": 1.6941251689586823, "arm_thickness": 2.0, "dust_cloud_info": "stellarview:milky_way/milky_way_arm_distribution" },
+		{ "dust_clouds": 25, "stars": 1500, "arm_rotation": 180, "arm_length": 1.9660513834462778, "arm_thickness": 2.0, "dust_cloud_info": "stellarview:milky_way/milky_way_arm_distribution" },
+		{ "dust_clouds": 25, "stars": 1500, "arm_rotation": 270, "arm_length": 1.8086568638593041, "arm_thickness": 2.0, "dust_cloud_info": "stellarview:milky_way/milky_way_arm_distribution" }
+	],
+	
+	"dust_cloud_info": "stellarview:milky_way/milky_way_core_distribution",
+	"star_info": "stellarview:main_sequence_distribution"
+}
+```

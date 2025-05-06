@@ -12,6 +12,11 @@ The following are considered Space Objects:
 * Nebulae
 * Star Fields
 
+### Parent Space Object
+
+If a parent is defined for a Space Object, the Space Object's relative coordinates and rotation will center around the parent.
+For example: If a star is defined with `coords` (0, 2, 1) and it references a galaxy at `coords` (0, 40, 0) as its parent, the star's absolute position will be (0, 42, 1), `axis_rotation` behaves similarly.
+
 
 
 # Textured Object

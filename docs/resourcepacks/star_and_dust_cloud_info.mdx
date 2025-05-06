@@ -15,6 +15,13 @@ Star Info consists of a single REQUIRED field called `star_types`, which defines
 When a Star Field is generated, each of its stars receive a random Star Type defined in the star_types section of Star Info.
 This random Star Type is then used for defining the star's color and for further randomization of the star's size and brightness.
 
+### Level Of Detail (LOD)
+
+To increase performance, Star Fields divide their stars into 3 groups which are rendered at different distances. These groups are as follows:
+* LOD3 - Stars won't render when they're more than 5 000 000 Light Years away.
+* LOD2 - Stars won't render when they're more than 10 000 000 Light Years away.
+* LOD1 - Stars always render
+
 
 ## Definition
 
