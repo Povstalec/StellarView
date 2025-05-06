@@ -67,12 +67,12 @@ A texture layer consists of the following fields:
 
 * `texture` REQUIRED - Defines the path to the texture file used for rendering the layer.
 * `rgba` REQUIRED - A set of 4 values, the first 3 (*red*, *green*, *blue*) define color adjustments and the last one (*alpha*) adjusts the transparency (255 = no transparency, 0 = full transparency).
-* *blend* REQUIRED - Specifies whether or not the layer should blend with the background.
-* *size* REQUIRED - Defines the visual size of the layer (in meters). 
-* *min_size* OPTIONAL - When specified, defines the minimal visual size of the object. When the object is far enough away that its visual size would be smaller than min_size, the layer stops rendering.
-* *clamp_at_min_size* OPTIONAL - When specified and min_size is present, it changes the behaviour of min_size and instead of the layer no longer rendering, it will remain at this minimum size no matter how far away the object moves.
-* *rotation* REQUIRED - Defines the amount by which the layer is rotated by along the axis facing the player (in degrees).
-* *uv* OPTIONAL - Allows Resourcepacks to specify the *phase_handler* (OPTIONAL) which can change the [UV coordinates](https://en.wikipedia.org/wiki/UV_mapping) of a texture based on time and *flip_uv* (OPTIONAL) decides whether the texture should have its U coordinate flipped.
+* `blend` REQUIRED - Specifies whether or not the layer should blend with the background.
+* `size` REQUIRED - Defines the visual size of the layer (in meters). 
+* `min_size` OPTIONAL - When specified, defines the minimal visual size of the object. When the object is far enough away that its visual size would be smaller than min_size, the layer stops rendering.
+* `clamp_at_min_size` OPTIONAL - When specified and min_size is present, it changes the behaviour of min_size and instead of the layer no longer rendering, it will remain at this minimum size no matter how far away the object moves.
+* `rotation` REQUIRED - Defines the amount by which the layer is rotated by along the axis facing the player (in degrees).
+* `uv` OPTIONAL - Allows Resourcepacks to specify the *phase_handler* (OPTIONAL) which can change the [UV coordinates](https://en.wikipedia.org/wiki/UV_mapping) of a texture based on time and *flip_uv* (OPTIONAL) decides whether the texture should have its U coordinate flipped.
 
 ```json
 "uv":
