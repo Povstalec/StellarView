@@ -29,3 +29,62 @@ which means it can be used to represent star clusters and galaxies.
 * `seed` **REQUIRED** - Specifies the seed used for randomizing the Star Field's generation.
 * `diameter_ly` **REQUIRED** - Specifies the Star Field's diameter in Light Years.
 * `spiral_arms` *OPTIONAL* - Defines the Star Field's individual Spiral Arms.
+
+
+### Star Stretch / Dust Cloud Stretch
+
+Stretch, as the name implies, stretches the coordinates along which a star or a dust cloud generates.
+This means that if a Star Field's is stretch defined as { "x": 1.0, "y": 0.25, "z": 1.0 },
+a star that would have otherwise generated at coordinates (4, 4, 4) will instead generate at coordinates (4, 1, 4).
+Note that these stretched coordinates are relative to the Star Field's Axis Rotation.
+
+
+
+# Spiral Arm
+
+Spiral Arms emulate the arms of a [Spiral Galaxy](https://en.wikipedia.org/wiki/Spiral_galaxy).
+Each Spiral Arm holds its own [Dust Cloud Info](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/star_and_dust_cloud_info),
+meaning one galaxy may have multiple Spiral Arms, each of which has different dust cloud colors.
+
+
+## Definition
+
+* `dust_clouds` *OPTIONAL* - Specifies the number of dust clouds that generate in the Spiral Arm. [Min = 0 | Max = 4000]
+* `dust_cloud_info` *OPTIONAL* - Defines the path to the [Dust Cloud Info](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/star_and_dust_cloud_info) file reference.
+* `stars` **REQUIRED** - Specifies the number of stars that generate in the Spiral Arm. [Min = 0 | Max = 30000]
+* `arm_rotation` **REQUIRED** - Specifies the relative rotation of the Star Field's Spiral Arm around its relative Y-axis.
+* `arm_length` **REQUIRED** - Specifies the relative length of the Spiral Arm compared to the Star Field's diameter.
+* `arm_thickness` **REQUIRED** - Specifies the relative thickness of the Spiral Arm, which decides the maximum spread of stars around the arm's central spiral.
+* `clump_stars_in_center` *OPTIONAL* - Decides whether stars should be evenly distributed around the Spiral Arm or if they should clump around the center, true by default.
+
+
+
+# Examples
+
+Star Field definition example for the Milky Way galaxy: 
+```json
+{
+	"coords": { "right_ascension": {"hours": 17, "minutes": 45, "seconds": 40.0409}, "declination": {"degrees": -29, "minutes": 0, "seconds": 28.118}, "distance": {"ly": 26996} },
+	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
+	
+	"seed": 10842,
+	"diameter_ly": 90000,
+	
+	"stars": 2000,
+	"dust_clouds": 5,
+	
+	"star_stretch": { "x": 1.0, "y": 0.25, "z": 1.0 },
+	"dust_cloud_stretch": { "x": 0.25, "y": 0.25, "z": 0.25 },
+	
+	"spiral_arms":
+	[
+		{ "dust_clouds": 25, "stars": 1500, "arm_rotation": 0, "arm_length": 1.6298770314100501, "arm_thickness": 2.0, "dust_cloud_info": "stellarview:milky_way/milky_way_arm_distribution" },
+		{ "dust_clouds": 25, "stars": 1500, "arm_rotation": 90, "arm_length": 1.6941251689586823, "arm_thickness": 2.0, "dust_cloud_info": "stellarview:milky_way/milky_way_arm_distribution" },
+		{ "dust_clouds": 25, "stars": 1500, "arm_rotation": 180, "arm_length": 1.9660513834462778, "arm_thickness": 2.0, "dust_cloud_info": "stellarview:milky_way/milky_way_arm_distribution" },
+		{ "dust_clouds": 25, "stars": 1500, "arm_rotation": 270, "arm_length": 1.8086568638593041, "arm_thickness": 2.0, "dust_cloud_info": "stellarview:milky_way/milky_way_arm_distribution" }
+	],
+	
+	"dust_cloud_info": "stellarview:milky_way/milky_way_core_distribution",
+	"star_info": "stellarview:main_sequence_distribution"
+}
+```
