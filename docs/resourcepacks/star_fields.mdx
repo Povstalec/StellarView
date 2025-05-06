@@ -14,13 +14,13 @@ which means it can be used to represent star clusters and galaxies.
 * `coords` **REQUIRED** - Specifies the space coordinates of the object.
 * `axis_rotation` **REQUIRED** - Specifies the rotation of the object around its individual axes (X axis -> Z axis -> Y axis).
 
-* `dust_clouds` *OPTIONAL* - Specifies the number of dust clouds that generate in a Star Field. [Min = 0 | Max = 2147483647]
+* `dust_clouds` *OPTIONAL* - Specifies the number of dust clouds that generate in the Star Field. [Min = 0 | Max = 4000]
 * `dust_cloud_info` *OPTIONAL* - Defines the path to the [Dust Cloud Info](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/star_and_dust_cloud_info) file reference.
 * `dust_cloud_texture` *OPTIONAL* - Defines the path to the texture file used for rendering the dust cloud texture.
 * `clump_dust_clouds_in_center` *OPTIONAL* - Decides whether dust clouds should be evenly distributed around the Star Field or if they should clump around the center, true by default.
 * `dust_cloud_stretch` *OPTIONAL* - Specifies the dust cloud stretch along each of the Star Field's relative axes.
 
-* `stars` **REQUIRED** - Specifies the number of stars that generate in a Star Field. [Min = 0 | Max = 2147483647]
+* `stars` **REQUIRED** - Specifies the number of stars that generate in the Star Field. [Min = 0 | Max = 30000]
 * `star_info` *OPTIONAL* - Defines the path to the [Star Info](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/star_and_dust_cloud_info) file reference.
 * `star_texture` *OPTIONAL* - Defines the path to the texture file used for rendering the star texture.
 * `clump_stars_in_center` *OPTIONAL* - Decides whether dust clouds should be evenly distributed around the Star Field or if they should clump around the center, true by default.
@@ -40,11 +40,19 @@ Note that these stretched coordinates are relative to the Star Field's Axis Rota
 
 # Spiral Arm
 
-TODO Description
+Spiral Arms emulate the arms of a [Spiral Galaxy](https://en.wikipedia.org/wiki/Spiral_galaxy).
+Each Spiral Arm holds its own [Dust Cloud Info](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/star_and_dust_cloud_info),
+meaning one galaxy may have multiple Spiral Arms, each of which has different dust cloud colors.
 
 ## Definition
 
-TODO Spiral Arm definition
+* `dust_clouds` *OPTIONAL* - Specifies the number of dust clouds that generate in the Spiral Arm. [Min = 0 | Max = 4000]
+* `dust_cloud_info` *OPTIONAL* - Defines the path to the [Dust Cloud Info](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/star_and_dust_cloud_info) file reference.
+* `stars` **REQUIRED** - Specifies the number of stars that generate in the Spiral Arm. [Min = 0 | Max = 30000]
+* `arm_rotation` **REQUIRED** - Specifies the relative rotation of the Star Field's Spiral Arm around its relative Y-axis.
+* `arm_length` **REQUIRED** - Specifies the relative length of the Spiral Arm compared to the Star Field's diameter.
+* `arm_thickness` **REQUIRED** - Specifies the relative thickness of the Spiral Arm, which decides the maximum spread of stars around the arm's central spiral.
+* `clump_stars_in_center` *OPTIONAL* - Decides whether stars should be evenly distributed around the Spiral Arm or if they should clump around the center, true by default.
 
 
 # Examples
