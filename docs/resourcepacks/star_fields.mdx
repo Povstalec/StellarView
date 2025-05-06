@@ -7,3 +7,32 @@ hide_meta: true
 
 A Star Field is a type of Space Object that defines the shape and size of a collection of stars and dust clouds,
 which means it can be used to represent star clusters and galaxies.
+
+## Definition
+
+* `parent_location` *OPTIONAL* - Defines the path (Resource Location) the object's [parent](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/space_objects).
+* `coords` **REQUIRED** - Specifies the space coordinates of the object.
+* `axis_rotation` **REQUIRED** - Specifies the rotation of the object around its individual axes (X axis -> Z axis -> Y axis).
+
+* `dust_clouds` *OPTIONAL* - Specifies the number of dust clouds that generate in the Star Field. [Min = 0 | Max = 4000]
+* `dust_cloud_info` *OPTIONAL* - Defines the path to the [Dust Cloud Info](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/star_and_dust_cloud_info) file reference.
+* `dust_cloud_texture` *OPTIONAL* - Defines the path to the texture file used for rendering the dust cloud texture.
+* `clump_dust_clouds_in_center` *OPTIONAL* - Decides whether dust clouds should be evenly distributed around the Star Field or if they should clump around the center, true by default.
+* `dust_cloud_stretch` *OPTIONAL* - Specifies the dust cloud stretch along each of the Star Field's relative axes.
+
+* `stars` **REQUIRED** - Specifies the number of stars that generate in the Star Field. [Min = 0 | Max = 30000]
+* `star_info` *OPTIONAL* - Defines the path to the [Star Info](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/star_and_dust_cloud_info) file reference.
+* `star_texture` *OPTIONAL* - Defines the path to the texture file used for rendering the star texture.
+* `clump_stars_in_center` *OPTIONAL* - Decides whether dust clouds should be evenly distributed around the Star Field or if they should clump around the center, true by default.
+* `star_stretch` *OPTIONAL* - Specifies the star stretch along each of the Star Field's relative axes.
+
+* `seed` **REQUIRED** - Specifies the seed used for randomizing the Star Field's generation.
+* `diameter_ly` **REQUIRED** - Specifies the Star Field's diameter in Light Years.
+* `spiral_arms` *OPTIONAL* - Defines the Star Field's individual Spiral Arms.
+
+### Star Stretch / Dust Cloud Stretch
+
+Stretch, as the name implies, stretches the coordinates along which a star or a dust cloud generates.
+This means that if a Star Field's is stretch defined as { "x": 1.0, "y": 0.25, "z": 1.0 },
+a star that would have otherwise generated at coordinates (4, 4, 4) will instead generate at coordinates (4, 1, 4).
+Note that these stretched coordinates are relative to the Star Field's Axis Rotation.
