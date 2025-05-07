@@ -29,7 +29,7 @@ Planned Features
 
 ## Contributing
 
-This mod uses the [NeoForge](https://neoforged.net) modding API.
+This mod uses the [Fabric](https://fabricmc.net/) modding API.
 It's recommended to use IntelliJ with the [mcdev Plugin](https://mcdev.io).
 
 Once the Gradle project is imported into IntelliJ you might need to restart it
