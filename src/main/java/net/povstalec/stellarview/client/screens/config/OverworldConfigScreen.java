@@ -6,10 +6,8 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.povstalec.stellarview.client.screens.config.ConfigList.BooleanConfigEntry;
-import net.povstalec.stellarview.client.screens.config.ConfigList.SliderConfigEntry;
 import net.povstalec.stellarview.common.config.OverworldConfig;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class OverworldConfigScreen extends Screen
 {
@@ -19,10 +17,10 @@ public class OverworldConfigScreen extends Screen
     private static final int BACK_BUTTON_WIDTH = 200;
     private static final int BACK_BUTTON_HEIGHT = 20;
     private static final int BACK_BUTTON_TOP_OFFSET = 26;
-
-	private static final int OPTIONS_LIST_HEADER_HEIGHT = 24;
-	private static final int OPTIONS_LIST_BOTTOM_OFFSET = 32;
-	private static final int OPTIONS_LIST_ITEM_HEIGHT = 25;
+    
+    private static final int OPTIONS_LIST_TOP_HEIGHT = 24;
+    private static final int OPTIONS_LIST_BOTTOM_OFFSET = 32;
+    private static final int OPTIONS_LIST_ITEM_HEIGHT = 25;
 
 	
 	public OverworldConfigScreen(@Nullable Screen parentScreen)
@@ -36,46 +34,46 @@ public class OverworldConfigScreen extends Screen
     public void init()
     {
 		super.init();
-
-		this.configList = new ConfigList(minecraft, this.width,
-				this.height - OPTIONS_LIST_HEADER_HEIGHT - OPTIONS_LIST_BOTTOM_OFFSET, OPTIONS_LIST_HEADER_HEIGHT, OPTIONS_LIST_ITEM_HEIGHT);
+		
+		this.configList = new ConfigList(minecraft, this.width, this.height, 
+				OPTIONS_LIST_TOP_HEIGHT, this.height - OPTIONS_LIST_BOTTOM_OFFSET, OPTIONS_LIST_ITEM_HEIGHT);
 		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.replace_vanilla"), 
 				this.width, OverworldConfig.replace_vanilla));
 		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.config_priority"), 
 				this.width, OverworldConfig.config_priority));
 
 
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.meteor_shower_chance").append(Component.literal(": ")),
+		this.configList.add(new ConfigList.SliderConfigEntry(Component.translatable("gui.stellarview.meteor_shower_chance").append(Component.literal(": ")),
 				Component.literal("\u0025"),
 				this.width, OverworldConfig.meteor_shower_chance));
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.shooting_star_chance").append(Component.literal(": ")),
+		this.configList.add(new ConfigList.SliderConfigEntry(Component.translatable("gui.stellarview.shooting_star_chance").append(Component.literal(": ")),
 				Component.literal("\u0025"),
 				this.width, OverworldConfig.shooting_star_chance));
 		
 		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.vanilla_moon"),
 				this.width, OverworldConfig.vanilla_moon));
 
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.overworld_z_rotation_multiplier").append(Component.literal(": ")),
+		this.configList.add(new ConfigList.SliderConfigEntry(Component.translatable("gui.stellarview.overworld_z_rotation_multiplier").append(Component.literal(": ")),
 				Component.empty(),
 				this.width, OverworldConfig.overworld_z_rotation_multiplier, 10000));
 
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.sol.x_offset").append(Component.literal(": ")),
+		this.configList.add(new ConfigList.SliderConfigEntry(Component.translatable("gui.stellarview.sol.x_offset").append(Component.literal(": ")),
 				Component.literal(" ").append(Component.translatable("gui.stellarview.ly")),
 				this.width, OverworldConfig.sol_x_offset, 1000));
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.sol.y_offset").append(Component.literal(": ")),
+		this.configList.add(new ConfigList.SliderConfigEntry(Component.translatable("gui.stellarview.sol.y_offset").append(Component.literal(": ")),
 				Component.literal(" ").append(Component.translatable("gui.stellarview.ly")),
 				this.width, OverworldConfig.sol_y_offset, 1000));
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.sol.z_offset").append(Component.literal(": ")),
+		this.configList.add(new ConfigList.SliderConfigEntry(Component.translatable("gui.stellarview.sol.z_offset").append(Component.literal(": ")),
 				Component.literal(" ").append(Component.translatable("gui.stellarview.ly")),
 				this.width, OverworldConfig.sol_z_offset, 1000));
 
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.sol.x_rotation").append(Component.literal(": ")),
+		this.configList.add(new ConfigList.SliderConfigEntry(Component.translatable("gui.stellarview.sol.x_rotation").append(Component.literal(": ")),
 				Component.literal("\u00b0"),
 				this.width, OverworldConfig.sol_x_rotation));
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.sol.y_rotation").append(Component.literal(": ")),
+		this.configList.add(new ConfigList.SliderConfigEntry(Component.translatable("gui.stellarview.sol.y_rotation").append(Component.literal(": ")),
 				Component.literal("\u00b0"),
 				this.width, OverworldConfig.sol_y_rotation));
-		this.configList.add(new SliderConfigEntry(Component.translatable("gui.stellarview.sol.z_rotation").append(Component.literal(": ")),
+		this.configList.add(new ConfigList.SliderConfigEntry(Component.translatable("gui.stellarview.sol.z_rotation").append(Component.literal(": ")),
 				Component.literal("\u00b0"),
 				this.width, OverworldConfig.sol_z_rotation));
 		
@@ -95,9 +93,10 @@ public class OverworldConfigScreen extends Screen
 	@Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
     {
-		super.render(graphics, mouseX, mouseY, partialTick);
+        this.renderBackground(graphics);
         this.configList.render(graphics, mouseX, mouseY, partialTick);
-        graphics.drawString(this.font, this.title, (this.width - font.width(this.title)) / 2, 8, 16777215);
+        graphics.drawString(this.font, this.title, this.width / 2, 8, 16777215);
+        super.render(graphics, mouseX, mouseY, partialTick);
     }
 	
 }

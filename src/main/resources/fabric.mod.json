@@ -1,0 +1,36 @@
+{
+	"schemaVersion": 1,
+	"id": "stellarview",
+	"version": "${version}",
+	"name": "Stellar View",
+	"description": "Enjoy a Stellar View of the Sky",
+	"authors": [
+		"Woldericz_Junior"
+	],
+	"contact": {
+		"homepage": "https://moddedmc.wiki/cs/project/stellarview/docs",
+		"sources": "https://github.com/Povstalec/StellarView",
+		"issues": "https://github.com/Povstalec/StellarView/issues"
+	},
+	"license": "MIT",
+	"icon": "assets/stellarview/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [ "net.povstalec.stellarview.StellarView" ],
+		"client": [ "net.povstalec.stellarview.StellarViewClient" ],
+		"modmenu": [ "net.povstalec.stellarview.compatibility.modmenu.StellarViewModMenu" ]
+	},
+	"mixins": [
+		"stellarview.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.16.14",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"fabric-api": "*",
+		
+		"modmenu": "*"
+	},
+	"suggests": {
+	}
+}

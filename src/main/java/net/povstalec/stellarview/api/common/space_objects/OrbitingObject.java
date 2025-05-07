@@ -3,24 +3,18 @@ package net.povstalec.stellarview.api.common.space_objects;
 import java.util.List;
 import java.util.Optional;
 
-import javax.annotation.Nullable;
-
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.povstalec.stellarview.common.config.GeneralConfig;
+import net.povstalec.stellarview.common.util.*;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+
 import com.mojang.datafixers.util.Either;
 import com.mojang.math.Axis;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-
-import net.povstalec.stellarview.common.util.AxisRotation;
-import net.povstalec.stellarview.common.util.SpaceCoords;
-import net.povstalec.stellarview.common.util.StellarCoordinates;
-import net.povstalec.stellarview.common.util.TextureLayer;
 
 public class OrbitingObject extends TexturedObject
 {
@@ -86,32 +80,34 @@ public class OrbitingObject extends TexturedObject
 	//============================================================================================
 	
 	@Override
-	public CompoundTag serializeNBT(HolderLookup.Provider provider)
+	public CompoundTag serializeNBT()
 	{
-		CompoundTag tag = super.serializeNBT(provider);
+		CompoundTag tag = super.serializeNBT();
 		
 		if(orbitInfo != null)
-			tag.put(ORBIT_INFO, orbitInfo.serializeNBT(provider));
+			tag.put(ORBIT_INFO, orbitInfo.serializeNBT());
+		
 		return tag;
 	}
 	
 	@Override
-	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag)
+	public void deserializeNBT(CompoundTag tag)
 	{
-		super.deserializeNBT(provider, tag);
+		super.deserializeNBT(tag);
 		
 		if(tag.contains(ORBIT_INFO))
 		{
 			orbitInfo = new OrbitInfo();
-			orbitInfo.deserializeNBT(provider, tag.getCompound(ORBIT_INFO));
+			orbitInfo.deserializeNBT(tag.getCompound(ORBIT_INFO));
 		}
 		else
 			orbitInfo = null;
+		
 	}
 	
 	
 	
-	public static class OrbitalPeriod implements INBTSerializable<CompoundTag>
+	public static class OrbitalPeriod implements ISerializable
 	{
 		public static final String TICKS = "ticks";
 		public static final String ORBITS = "orbits";
@@ -182,7 +178,7 @@ public class OrbitingObject extends TexturedObject
 		//============================================================================================
 		
 		@Override
-		public CompoundTag serializeNBT(HolderLookup.Provider provider)
+		public CompoundTag serializeNBT()
 		{
 			CompoundTag tag = new CompoundTag();
 			
@@ -195,7 +191,7 @@ public class OrbitingObject extends TexturedObject
 		}
 		
 		@Override
-		public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag)
+		public void deserializeNBT(CompoundTag tag)
 		{
 			this.ticks = tag.getLong(TICKS);
 			this.orbits = tag.getDouble(ORBITS);
@@ -208,7 +204,7 @@ public class OrbitingObject extends TexturedObject
 	
 	
 	
-	public static class OrbitInfo implements INBTSerializable<CompoundTag>
+	public static class OrbitInfo implements ISerializable
 	{
 		public static final String APOAPSIS = "apoapsis";
 		public static final String PERIAPSIS = "periapsis";
@@ -406,7 +402,7 @@ public class OrbitingObject extends TexturedObject
 		//============================================================================================
 		
 		@Override
-		public CompoundTag serializeNBT(HolderLookup.Provider provider)
+		public CompoundTag serializeNBT()
 		{
 			CompoundTag tag = new CompoundTag();
 			
@@ -415,7 +411,7 @@ public class OrbitingObject extends TexturedObject
 			
 			tag.putFloat(ORBIT_CLAMP_DISTANCE, orbitClampDistance);
 			
-			tag.put(ORBITAL_PERIOD, orbitalPeriod.serializeNBT(provider));
+			tag.put(ORBITAL_PERIOD, orbitalPeriod.serializeNBT());
 			
 			tag.putFloat(ARGUMENT_OF_PERIAPSIS, argumentOfPeriapsis);
 			
@@ -428,14 +424,14 @@ public class OrbitingObject extends TexturedObject
 		}
 		
 		@Override
-		public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag)
+		public void deserializeNBT(CompoundTag tag)
 		{
 			this.apoapsis = tag.getFloat(APOAPSIS);
 			this.periapsis = tag.getFloat(PERIAPSIS);
 			this.orbitClampDistance = tag.getFloat(ORBIT_CLAMP_DISTANCE);
 			
 			this.orbitalPeriod = new OrbitalPeriod();
-			this.orbitalPeriod.deserializeNBT(provider, tag.getCompound(ORBITAL_PERIOD));
+			this.orbitalPeriod.deserializeNBT(tag.getCompound(ORBITAL_PERIOD));
 			
 			this.argumentOfPeriapsis = tag.getFloat(ARGUMENT_OF_PERIAPSIS);
 			

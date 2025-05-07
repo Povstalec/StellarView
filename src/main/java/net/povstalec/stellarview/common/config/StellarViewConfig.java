@@ -1,16 +1,9 @@
 package net.povstalec.stellarview.common.config;
 
-import com.electronwill.nightconfig.core.file.CommentedFileConfig;
-import com.electronwill.nightconfig.core.io.WritingMode;
-import net.neoforged.neoforge.common.ModConfigSpec;
-import net.povstalec.stellarview.StellarView;
-
-import java.io.File;
-
 public class StellarViewConfig
 {
-	private static final ModConfigSpec.Builder CLIENT_BUILDER = new ModConfigSpec.Builder();
-	public static final ModConfigSpec CLIENT_CONFIG;
+	private static final StellarViewConfigSpec.Builder CLIENT_BUILDER = new StellarViewConfigSpec.Builder();
+	public static final StellarViewConfigSpec CLIENT_CONFIG;
 	
 	static
 	{
@@ -22,17 +15,7 @@ public class StellarViewConfig
 		CLIENT_CONFIG = CLIENT_BUILDER.build();
 	}
 	
-	public static void loadConfig(ModConfigSpec config, String path)
-	{
-		StellarView.LOGGER.info("Loading Config: " + path);
-		final CommentedFileConfig file = CommentedFileConfig.builder(new File(path)).sync().autosave().writingMode(WritingMode.REPLACE).build();
-		StellarView.LOGGER.info("Built config: " + path);
-		file.load();
-		StellarView.LOGGER.info("Loaded Config: " + path);
-		config.correct(file);
-	}
-	
-	private static void generalClientConfig(ModConfigSpec.Builder client)
+	private static void generalClientConfig(StellarViewConfigSpec.Builder client)
 	{
 		CLIENT_BUILDER.push("General Config");
 		GeneralConfig.init(client);

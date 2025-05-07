@@ -2,7 +2,6 @@ package net.povstalec.stellarview.client.render.space_objects.distinct;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.Tesselator;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.GameRenderer;
@@ -23,7 +22,7 @@ import org.joml.Matrix4f;
 
 public class LunaRenderer extends MoonRenderer<Luna>
 {
-	public static final ResourceLocation MOON_LOCATION = ResourceLocation.withDefaultNamespace("textures/environment/moon_phases.png");
+	public static final ResourceLocation MOON_LOCATION = new ResourceLocation("textures/environment/moon_phases.png");
 	
 	public static final UV.Quad MOON_QUAD = new UV.Quad(new UV.PhaseHandler(24000, 0, 4, 2), true);
 	public static final TextureLayer MOON_TEXTURE_LAYER = new TextureLayer(MOON_LOCATION,new Color.FloatRGBA(255, 255, 255, 255),
@@ -39,7 +38,8 @@ public class LunaRenderer extends MoonRenderer<Luna>
 	//============================================================================================
 	
 	@Override
-	protected void renderTextureLayers(ViewCenter viewCenter, ClientLevel level, Camera camera, Tesselator tesselator, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)
+	
+	protected void renderTextureLayers(ViewCenter viewCenter, ClientLevel level, Camera camera, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)
 	{
 		double fade = renderedObject.fadeOut(distance);
 		
@@ -49,12 +49,12 @@ public class LunaRenderer extends MoonRenderer<Luna>
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		
 		if(OverworldConfig.vanilla_moon.get())
-			renderTextureLayer(MOON_TEXTURE_LAYER, viewCenter, level, camera, tesselator, lastMatrix, sphericalCoords, fade, ticks, distance, partialTicks);
+			renderTextureLayer(MOON_TEXTURE_LAYER, viewCenter, level, camera, bufferbuilder, lastMatrix, sphericalCoords, fade, ticks, distance, partialTicks);
 		else
 		{
 			for(TextureLayer textureLayer : renderedObject.getTextureLayers())
 			{
-				renderTextureLayer(textureLayer, viewCenter, level, camera, tesselator, lastMatrix, sphericalCoords, fade, ticks, distance, partialTicks);
+				renderTextureLayer(textureLayer, viewCenter, level, camera, bufferbuilder, lastMatrix, sphericalCoords, fade, ticks, distance, partialTicks);
 			}
 		}
 	}

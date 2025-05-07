@@ -1,9 +1,11 @@
 package net.povstalec.stellarview.common.util;
 
+import org.joml.Vector3f;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+
 import net.povstalec.stellarview.common.util.SpaceCoords.SpaceDistance;
-import org.joml.Vector3f;
 
 public class StellarCoordinates
 {

@@ -1,137 +1,51 @@
 package net.povstalec.stellarview;
 
-import java.util.Optional;
+import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.api.ModInitializer;
 
-import net.neoforged.bus.api.EventPriority;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.api.common.space_objects.distinct.Luna;
 import net.povstalec.stellarview.api.common.space_objects.distinct.Sol;
 import net.povstalec.stellarview.api.common.space_objects.resourcepack.*;
 import net.povstalec.stellarview.client.SpaceObjectRenderers;
-import net.povstalec.stellarview.client.render.space_objects.distinct.*;
+import net.povstalec.stellarview.client.render.space_objects.distinct.LunaRenderer;
 import net.povstalec.stellarview.client.render.space_objects.resourcepack.*;
-import net.povstalec.stellarview.client.screens.config.ConfigScreen;
-import net.povstalec.stellarview.compatibility.aether.AetherCompatibility;
-import net.povstalec.stellarview.compatibility.twilightforest.TwilightForestCompatibility;
-import org.slf4j.Logger;
-
-import com.mojang.logging.LogUtils;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.ModList;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.config.ModConfig;
-import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
-import net.neoforged.neoforge.client.event.RegisterDimensionSpecialEffectsEvent;
-import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
-import net.povstalec.stellarview.client.render.level.StellarViewEndEffects;
-import net.povstalec.stellarview.client.render.level.StellarViewNetherEffects;
-import net.povstalec.stellarview.client.render.level.StellarViewOverworldEffects;
-import net.povstalec.stellarview.client.resourcepack.ResourcepackReloadListener;
 import net.povstalec.stellarview.common.config.StellarViewConfig;
-import net.povstalec.stellarview.common.util.KeyBindings;
+import net.povstalec.stellarview.common.config.StellarViewConfigSpec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Mod(StellarView.MODID)
-public class StellarView
+import java.util.Optional;
+
+public class StellarView implements ModInitializer
 {
 	public static final String MODID = "stellarview";
 	
 	public static final String ENHANCED_CELESTIALS_MODID = "enhancedcelestials";
 	public static final String TWILIGHT_FOREST_MODID = "twilightforest";
 	public static final String AETHER_MODID = "aether";
-    
-    private static Optional<Boolean> isEnhancedCelestialsLoaded = Optional.empty();
-	private static Optional<Boolean> isTwilightForestLoaded = Optional.empty();
-	private static Optional<Boolean> isAetherLoaded = Optional.empty();
-    
-    public static final Logger LOGGER = LogUtils.getLogger();
-    
-    public static StellarViewOverworldEffects overworld;
-    public static StellarViewNetherEffects nether;
-    public static StellarViewEndEffects end;
 	
-	public StellarView(ModContainer modContainer, Dist dist)
-	{
-		modContainer.registerConfig(ModConfig.Type.CLIENT, StellarViewConfig.CLIENT_CONFIG, MODID + "-client.toml");
-		
-		if(dist.isClient())
-			ConfigScreen.registerConfigScreen(modContainer);
-	}
-
-    @EventBusSubscriber(modid = StellarView.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-    public static class ClientModEvents
-    {
-		@SubscribeEvent
-		public static void onClientSetup(FMLClientSetupEvent event)
-		{
-			event.enqueueWork(() ->
-			{
-				SpaceObjectRenderers.register(Planet.class, PlanetRenderer<Planet>::new);
-				SpaceObjectRenderers.register(Moon.class, MoonRenderer<Moon>::new);
-				SpaceObjectRenderers.register(Luna.class, LunaRenderer::new);
-				SpaceObjectRenderers.register(Star.class, StarRenderer<Star>::new);
-				SpaceObjectRenderers.register(Sol.class, StarRenderer<Sol>::new);
-				SpaceObjectRenderers.register(BlackHole.class, BlackHoleRenderer<BlackHole>::new);
-				SpaceObjectRenderers.register(Nebula.class, NebulaRenderer<Nebula>::new);
-				SpaceObjectRenderers.register(StarField.class, StarFieldRenderer<StarField>::new);
-			});
-		}
-		
-    	@SubscribeEvent(priority = EventPriority.LOWEST)
-        public static void registerDimensionEffects(RegisterDimensionSpecialEffectsEvent event)
-		{
-			overworld = new StellarViewOverworldEffects();
-			nether = new StellarViewNetherEffects();
-			end = new StellarViewEndEffects();
-			
-			event.register(StellarViewOverworldEffects.OVERWORLD_EFFECTS, overworld);
-			event.register(StellarViewNetherEffects.NETHER_EFFECTS, nether);
-			event.register(StellarViewEndEffects.END_EFFECTS, end);
-			
-			if(isTwilightForestLoaded())
-				TwilightForestCompatibility.registerTwilightForestEffects(event);
-			
-			if(isAetherLoaded())
-				AetherCompatibility.registerAetherEffects(event);
-        }
-    	
-
-    	@SubscribeEvent
-        public static void registerClientReloadListener(RegisterClientReloadListenersEvent event)
-        {
-    		ResourcepackReloadListener.ReloadListener.registerReloadListener(event);
-        }
-
-    	@SubscribeEvent
-        public static void onKeyRegister(RegisterKeyMappingsEvent event)
-        {
-        	event.register(KeyBindings.OPEN_CONFIG_KEY);
-        }
-    }
-    
-    public static boolean isEnhancedCelestialsLoaded()
-    {
-    	if(isEnhancedCelestialsLoaded.isEmpty())
-    		isEnhancedCelestialsLoaded = Optional.of(ModList.get().isLoaded(ENHANCED_CELESTIALS_MODID));
-    	
-    	return isEnhancedCelestialsLoaded.get();	
-    }
+	// This logger is used to write text to the console and the log file.
+	// It is considered best practice to use your mod id as the logger's name.
+	// That way, it's clear which mod wrote info, warnings, and errors.
+	public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
 	
-	public static boolean isTwilightForestLoaded()
+	private static Optional<Boolean> isEnhancedCelestialsLoaded = Optional.empty();
+
+	@Override
+	public void onInitialize()
 	{
-		if(isTwilightForestLoaded.isEmpty())
-			isTwilightForestLoaded = Optional.of(ModList.get().isLoaded(TWILIGHT_FOREST_MODID));
-		
-		return isTwilightForestLoaded.get();
+		//StellarViewReloadEvent.EVENT.register((jsonMap, manager, filler) -> true);
 	}
 	
-	public static boolean isAetherLoaded()
+	public static boolean isEnhancedCelestialsLoaded() //TODO Handle Enhanced Celestials Compatibility
 	{
-		if(isAetherLoaded.isEmpty())
-			isAetherLoaded = Optional.of(ModList.get().isLoaded(AETHER_MODID));
+		if(isEnhancedCelestialsLoaded.isEmpty())
+			isEnhancedCelestialsLoaded = Optional.of(FabricLoader.getInstance().isModLoaded(ENHANCED_CELESTIALS_MODID));
 		
-		return isAetherLoaded.get();
+		return isEnhancedCelestialsLoaded.get();
 	}
-}	
+}

@@ -1,11 +1,5 @@
 package net.povstalec.stellarview.compatibility.enhancedcelestials;
 
-import dev.corgitaco.enhancedcelestials.EnhancedCelestialsWorldData;
-import dev.corgitaco.enhancedcelestials.api.client.ColorSettings;
-import dev.corgitaco.enhancedcelestials.api.lunarevent.LunarEvent;
-import dev.corgitaco.enhancedcelestials.client.ECWorldRenderer;
-import dev.corgitaco.enhancedcelestials.core.EnhancedCelestialsContext;
-import dev.corgitaco.enhancedcelestials.lunarevent.LunarForecast;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
@@ -20,9 +14,9 @@ public class EnhancedCelestialsCompatibility
 {
 	public static final float getMoonSize(ClientLevel level, float defaultSize)
 	{
-		return ECWorldRenderer.getMoonSize(defaultSize);
+		return 20;//ECWorldRenderer.getMoonSize(defaultSize);
 	}
-
+	
 	public static final Color.FloatRGBA getMoonColor(ClientLevel level, float partialTicks)
 	{
 		/*
@@ -30,37 +24,37 @@ public class EnhancedCelestialsCompatibility
 		 * https://github.com/CorgiTaco/Enhanced-Celestials/blob/1.20.X/Common/src/main/java/corgitaco/enhancedcelestials/client/ECWorldRenderer.java#L19C9-L34C91
 		 * because what else am I supposed to do to have it work the same way for the sake of compatibility?
 		 */
-		EnhancedCelestialsWorldData enhancedCelestialsWorldData = (EnhancedCelestialsWorldData) level;
+		/*EnhancedCelestialsWorldData enhancedCelestialsWorldData = (EnhancedCelestialsWorldData) level;
         if(enhancedCelestialsWorldData != null)
         {
     		EnhancedCelestialsContext enhancedCelestialsContext = enhancedCelestialsWorldData.getLunarContext();
         	if(enhancedCelestialsContext != null)
             {
                 LunarForecast lunarForecast = enhancedCelestialsContext.getLunarForecast();
-
+                
                 ColorSettings lastColorSettings = lunarForecast.lastLunarEvent().value().getClientSettings().colorSettings();
                 ColorSettings currentColorSettings = lunarForecast.currentLunarEvent().value().getClientSettings().colorSettings();
-
+                
                 Vector3f lastGLColor = lastColorSettings.getGLMoonColor();
                 Vector3f currentGLColor = currentColorSettings.getGLMoonColor();
-
+                
                 float blend = lunarForecast.getBlend();
-
+                
                 float r = Mth.clampedLerp(lastGLColor.x(), currentGLColor.x(), blend);
                 float g = Mth.clampedLerp(lastGLColor.y(), currentGLColor.y(), blend);
                 float b = Mth.clampedLerp(lastGLColor.z(), currentGLColor.z(), blend);
-
+                
                 return new Color.FloatRGBA(r > 1F ? 1F : r, g > 1F ? 1F : g, b > 1F ? 1F : b);
             }
-        }
-
+        }*/
+        
         return new Color.FloatRGBA(1, 1, 1);
 	}
-
+	
 	public static final void adjustLightmapColors(ClientLevel level, float partialTicks, float skyDarken, float skyLight, float blockLight, int pixelX, int pixelY, Vector3f colors)
     {
 		float darkMultiplier = StellarViewLightmapEffects.getSkyDarken(level, 1.0F);
-
+		
 		boolean darkerWorld = true;
 		if(darkerWorld)
 		{
@@ -69,15 +63,15 @@ public class EnhancedCelestialsCompatibility
 				trueSkyDarken = 1.0F;
 			else
 				trueSkyDarken = darkMultiplier * 0.95F + 0.05F;
-
+			
 			Vector3f skyVector = (new Vector3f(trueSkyDarken, trueSkyDarken, 1.0F)).lerp(new Vector3f(1.0F, 1.0F, 1.0F), 0.35F);
-
+			
 			/*
 			 * Shamelessly copy pasted from
 			 * https://github.com/CorgiTaco/Enhanced-Celestials/blob/1.20.X/Common/src/main/java/corgitaco/enhancedcelestials/client/ECWorldRenderer.java#L61
 			 * because, again, what else am I supposed to do to have it work the same way?
 			 */
-			EnhancedCelestialsWorldData enhancedCelestialsWorldData = (EnhancedCelestialsWorldData) level;
+			/*EnhancedCelestialsWorldData enhancedCelestialsWorldData = (EnhancedCelestialsWorldData) level;
 			if(enhancedCelestialsWorldData != null)
 			{
 				EnhancedCelestialsContext enhancedCelestialsContext = enhancedCelestialsWorldData.getLunarContext();
@@ -98,11 +92,11 @@ public class EnhancedCelestialsCompatibility
 					targetColor.lerp(colorSettings.getGLSkyLightColor(), eventBlend);
 
 					float skyBlend = (1 - skyDarken) - level.getRainLevel(partialTicks);
-
+		            
 					skyVector.lerp(targetColor, skyBlend);
 				}
-			}
-
+			}*/
+			
 			Vector3f lightColor = new Vector3f();
 			float naturalLight = LightTexture.getBrightness(level.dimensionType(), pixelY) * trueSkyDarken; // pixelY represents natural light
 			float artificialLight = LightTexture.getBrightness(level.dimensionType(), pixelX) * skyLight; // pixelX represents artificial light

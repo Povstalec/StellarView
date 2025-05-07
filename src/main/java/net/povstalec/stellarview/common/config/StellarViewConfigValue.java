@@ -1,14 +1,12 @@
 package net.povstalec.stellarview.common.config;
 
-import net.neoforged.neoforge.common.ModConfigSpec;
-
 public abstract class StellarViewConfigValue
 {
 	public static class BooleanValue
 	{
-		public ModConfigSpec.BooleanValue boolean_value;
+		public StellarViewConfigSpec.BooleanValue boolean_value;
 		
-		public BooleanValue(ModConfigSpec.Builder builder, String path, boolean defaultValue, String comment)
+		public BooleanValue(StellarViewConfigSpec.Builder builder, String path, boolean defaultValue, String comment)
 		{
 			this.boolean_value = builder
 					.comment(comment)
@@ -35,11 +33,11 @@ public abstract class StellarViewConfigValue
 	
 	public static class IntValue
 	{
-		public ModConfigSpec.IntValue int_value;
+		public StellarViewConfigSpec.IntValue int_value;
 		protected int min;
 		protected int max;
 		
-		public IntValue(ModConfigSpec.Builder builder, String path, int defaultValue, int min, int max, String comment)
+		public IntValue(StellarViewConfigSpec.Builder builder, String path, int defaultValue, int min, int max, String comment)
 		{
 			this.int_value = builder
 					.comment(comment)
@@ -75,42 +73,14 @@ public abstract class StellarViewConfigValue
 		}
 	}
 	
-	public static class LongValue
-	{
-		public ModConfigSpec.LongValue long_value;
-		
-		public LongValue(ModConfigSpec.Builder builder, String path, long defaultValue, long min, long max, String comment)
-		{
-			this.long_value = builder
-					.comment(comment)
-					.defineInRange(path, defaultValue, min, max);
-		}
-		
-		public void set(long value)
-		{
-			long_value.set(value);
-			long_value.save();
-		}
-		
-		public long get()
-		{
-			return long_value.get();
-		}
-		
-		public long getDefault()
-		{
-			return long_value.getDefault();
-		}
-	}
-	
 	public static class RGBAValue
 	{
-		public ModConfigSpec.IntValue red_value;
-		public ModConfigSpec.IntValue green_value;
-		public ModConfigSpec.IntValue blue_value;
-		public ModConfigSpec.IntValue alpha_value;
+		public StellarViewConfigSpec.IntValue red_value;
+		public StellarViewConfigSpec.IntValue green_value;
+		public StellarViewConfigSpec.IntValue blue_value;
+		public StellarViewConfigSpec.IntValue alpha_value;
 		
-		public RGBAValue(ModConfigSpec.Builder builder, String path, int red, int blue, int green, int alpha, String comment)
+		public RGBAValue(StellarViewConfigSpec.Builder builder, String path, int red, int blue, int green, int alpha, String comment)
 		{
 			builder.comment(comment);
 			this.red_value = builder

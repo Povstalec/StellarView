@@ -1,32 +1,32 @@
 package net.povstalec.stellarview.api.client.events;
 
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.bus.api.Event;
-import net.neoforged.bus.api.ICancellableEvent;
 import net.povstalec.stellarview.common.util.DustCloudInfo;
 import net.povstalec.stellarview.common.util.StarInfo;
 
 import java.util.HashMap;
-import java.util.Map;
 
-public class StellarViewEffectsReloadEvent extends Event implements ICancellableEvent
+public interface StellarViewEffectsReloadEvent
 {
-	private final HashMap<ResourceLocation, StarInfo> starTypes;
-	private final HashMap<ResourceLocation, DustCloudInfo> dustCloudTypes;
+	Event<StellarViewEffectsReloadEvent> EVENT = EventFactory.createArrayBacked(StellarViewEffectsReloadEvent.class,
+			(listeners) -> (starTypes, dustCloudTypes) ->
+			{
+				for (StellarViewEffectsReloadEvent listener : listeners)
+				{
+					if(listener.onReload(starTypes, dustCloudTypes))
+						return true;
+				}
+				
+				return false;
+			});
 	
-	public StellarViewEffectsReloadEvent(HashMap<ResourceLocation, StarInfo> starTypes, HashMap<ResourceLocation, DustCloudInfo> dustCloudTypes)
-	{
-		this.starTypes = starTypes;
-		this.dustCloudTypes = dustCloudTypes;
-	}
-	
-	public Map<ResourceLocation, StarInfo> getStarTypes()
-	{
-		return starTypes;
-	}
-	
-	public Map<ResourceLocation, DustCloudInfo> getDustCloudTypes()
-	{
-		return dustCloudTypes;
-	}
+	/**
+	 * Returns true if canceled, otherwise false
+	 * @param starTypes
+	 * @param dustCloudTypes
+	 * @return
+	 */
+	boolean onReload(HashMap<ResourceLocation, StarInfo> starTypes, HashMap<ResourceLocation, DustCloudInfo> dustCloudTypes);
 }

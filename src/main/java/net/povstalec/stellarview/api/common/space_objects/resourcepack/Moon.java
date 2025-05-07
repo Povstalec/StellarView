@@ -3,24 +3,23 @@ package net.povstalec.stellarview.api.common.space_objects.resourcepack;
 import java.util.List;
 import java.util.Optional;
 
-import javax.annotation.Nullable;
-
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
-
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.Color;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 import net.povstalec.stellarview.common.util.StellarCoordinates;
 import net.povstalec.stellarview.common.util.TextureLayer;
 import net.povstalec.stellarview.compatibility.enhancedcelestials.EnhancedCelestialsCompatibility;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A subtype of planet that should be compatible with enhanced celestials
@@ -82,17 +81,17 @@ public class Moon extends Planet
 	//============================================================================================
 	
 	@Override
-	public CompoundTag serializeNBT(HolderLookup.Provider provider)
+	public CompoundTag serializeNBT()
 	{
-		CompoundTag tag = super.serializeNBT(provider);
+		CompoundTag tag = super.serializeNBT();
 		//TODO Serialize Compatibility
 		return tag;
 	}
 	
 	@Override
-	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag)
+	public void deserializeNBT(CompoundTag tag)
 	{
-		super.deserializeNBT(provider, tag);
+		super.deserializeNBT(tag);
 		//TODO Deserialize Compatibility
 	}
 	

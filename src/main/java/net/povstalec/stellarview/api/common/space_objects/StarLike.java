@@ -4,19 +4,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.povstalec.stellarview.common.util.AxisRotation;
-import net.povstalec.stellarview.common.util.Color;
-import net.povstalec.stellarview.common.util.SpaceCoords;
-import net.povstalec.stellarview.common.util.StellarCoordinates;
-import net.povstalec.stellarview.common.util.TextureLayer;
+import net.povstalec.stellarview.common.util.*;
 
 public abstract class StarLike extends OrbitingObject
 {
@@ -89,9 +84,9 @@ public abstract class StarLike extends OrbitingObject
 	//============================================================================================
 	
 	@Override
-	public CompoundTag serializeNBT(HolderLookup.Provider provider)
+	public CompoundTag serializeNBT()
 	{
-		CompoundTag tag = super.serializeNBT(provider);
+		CompoundTag tag = super.serializeNBT();
 		
 		tag.putFloat(MIN_STAR_SIZE, minStarSize);
 		tag.putFloat(MAX_STAR_ALPHA, maxStarAlpha);
@@ -101,9 +96,9 @@ public abstract class StarLike extends OrbitingObject
 	}
 	
 	@Override
-	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag)
+	public void deserializeNBT(CompoundTag tag)
 	{
-		super.deserializeNBT(provider, tag);
+		super.deserializeNBT(tag);
 		
 		minStarSize = tag.getFloat(MIN_STAR_SIZE);
 		maxStarAlpha = tag.getFloat(MAX_STAR_ALPHA);
@@ -112,7 +107,7 @@ public abstract class StarLike extends OrbitingObject
 	
 	
 	
-	public static class StarType implements INBTSerializable<CompoundTag>
+	public static class StarType implements ISerializable
 	{
 		public static final String RGB = "rgb";
 		public static final String MIN_SIZE = "min_size";
@@ -201,11 +196,11 @@ public abstract class StarLike extends OrbitingObject
 		//============================================================================================
 		
 		@Override
-		public CompoundTag serializeNBT(HolderLookup.Provider provider)
+		public CompoundTag serializeNBT()
 		{
 			CompoundTag tag = new CompoundTag();
 			
-			tag.put(RGB, rgb.serializeNBT(provider));
+			tag.put(RGB, rgb.serializeNBT());
 			
 			tag.putFloat(MIN_SIZE, minSize);
 			tag.putFloat(MAX_SIZE, maxSize);
@@ -221,10 +216,10 @@ public abstract class StarLike extends OrbitingObject
 		}
 		
 		@Override
-		public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag)
+		public void deserializeNBT(CompoundTag tag)
 		{
 			rgb = new Color.IntRGB();
-			rgb.deserializeNBT(provider, tag.getCompound(RGB));
+			rgb.deserializeNBT(tag.getCompound(RGB));
 			
 			minSize = tag.getFloat(MIN_SIZE);
 			maxSize = tag.getFloat(MAX_SIZE);

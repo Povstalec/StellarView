@@ -1,7 +1,5 @@
 package net.povstalec.stellarview.common.config;
 
-import net.neoforged.neoforge.common.ModConfigSpec;
-
 public class AetherConfig
 {
 	public static final String PREFIX = "client.aether.";
@@ -12,7 +10,7 @@ public class AetherConfig
 	public static StellarViewConfigValue.IntValue meteor_shower_chance;
 	public static StellarViewConfigValue.IntValue shooting_star_chance;
 	
-	public static void init(ModConfigSpec.Builder client)
+	public static void init(StellarViewConfigSpec.Builder client)
 	{
 		replace_default = new StellarViewConfigValue.BooleanValue(client, PREFIX + "replace_default",
 				true, 

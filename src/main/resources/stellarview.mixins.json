@@ -1,0 +1,14 @@
+{
+	"required": true,
+	"package": "net.povstalec.stellarview.mixin",
+	"compatibilityLevel": "JAVA_17",
+	"mixins": [
+		"StellarViewShadersMixin",
+		"StellarViewShaderMixin",
+		"ResourcepackReloadMixin",
+		"LevelRendererMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

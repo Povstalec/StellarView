@@ -4,12 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.annotation.Nullable;
-
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
 import net.povstalec.stellarview.common.util.*;
@@ -17,6 +13,7 @@ import net.povstalec.stellarview.common.util.*;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import org.jetbrains.annotations.Nullable;
 
 public class StarField extends SpaceObject
 {
@@ -73,8 +70,8 @@ public class StarField extends SpaceObject
 		}
 	}
 	
-	public static final ResourceLocation DEFAULT_STAR_TEXTURE = ResourceLocation.fromNamespaceAndPath(StellarView.MODID,"textures/environment/star.png");
-	public static final ResourceLocation DEFAULT_DUST_CLOUD_TEXTURE = ResourceLocation.fromNamespaceAndPath(StellarView.MODID,"textures/environment/dust_cloud.png");
+	public static final ResourceLocation DEFAULT_STAR_TEXTURE = new ResourceLocation(StellarView.MODID,"textures/environment/star.png");
+	public static final ResourceLocation DEFAULT_DUST_CLOUD_TEXTURE = new ResourceLocation(StellarView.MODID,"textures/environment/dust_cloud.png");
 	
 	public static final String DUST_CLOUDS = "dust_clouds";
 	public static final String DUST_CLOUD_INFO = "dust_cloud_info";
@@ -236,23 +233,23 @@ public class StarField extends SpaceObject
 	//============================================================================================
 	
 	@Override
-	public CompoundTag serializeNBT(HolderLookup.Provider provider)
+	public CompoundTag serializeNBT()
 	{
-		CompoundTag tag = super.serializeNBT(provider);
+		CompoundTag tag = super.serializeNBT();
 		
 		tag.putInt(DUST_CLOUDS, dustClouds);
 		tag.putString(DUST_CLOUD_TEXTURE, dustCloudTexture.toString());
 		if(dustCloudInfo != null)
 			tag.putString(DUST_CLOUD_INFO, dustCloudInfo.toString());
 		tag.putBoolean(CLUMP_DUST_CLOUDS_IN_CENTER, clumpDustCloudsInCenter);
-		tag.put(DUST_CLOUD_STRETCH, dustCloudStretch.serializeNBT(provider));
+		tag.put(DUST_CLOUD_STRETCH, dustCloudStretch.serializeNBT());
 		
 		tag.putInt(STARS, stars);
 		tag.putString(STAR_TEXTURE, starTexture.toString());
 		if(starInfo != null)
 			tag.putString(STAR_INFO, starInfo.toString());
 		tag.putBoolean(CLUMP_STARS_IN_CENTER, clumpStarsInCenter);
-		tag.put(STAR_STRETCH, starStretch.serializeNBT(provider));
+		tag.put(STAR_STRETCH, starStretch.serializeNBT());
 		
 		tag.putLong(SEED, seed);
 		tag.putInt(DIAMETER_LY, diameter);
@@ -260,7 +257,7 @@ public class StarField extends SpaceObject
 		CompoundTag armsTag = new CompoundTag();
 		for(int i = 0; i < spiralArms.size(); i++)
 		{
-			armsTag.put("spiral_arm_" + i, spiralArms.get(i).serializeNBT(provider));
+			armsTag.put("spiral_arm_" + i, spiralArms.get(i).serializeNBT());
 		}
 		tag.put(SPIRAL_ARMS, armsTag);
 		
@@ -268,23 +265,23 @@ public class StarField extends SpaceObject
 	}
 	
 	@Override
-	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag)
+	public void deserializeNBT(CompoundTag tag)
 	{
-		super.deserializeNBT(provider, tag);
+		super.deserializeNBT(tag);
 		
 		dustClouds = tag.getInt(DUST_CLOUDS);
-		dustCloudTexture = ResourceLocation.parse(tag.getString(DUST_CLOUD_TEXTURE));
-		dustCloudInfo = tag.contains(DUST_CLOUD_INFO) ? ResourceLocation.parse(tag.getString(DUST_CLOUD_INFO)) : null;
+		dustCloudTexture = new ResourceLocation(tag.getString(DUST_CLOUD_TEXTURE));
+		dustCloudInfo = tag.contains(DUST_CLOUD_INFO) ? new ResourceLocation(tag.getString(DUST_CLOUD_INFO)) : null;
 		clumpDustCloudsInCenter = tag.getBoolean(CLUMP_DUST_CLOUDS_IN_CENTER);
 		dustCloudStretch = new Stretch();
-		dustCloudStretch.deserializeNBT(provider, tag.getCompound(DUST_CLOUD_STRETCH));
+		dustCloudStretch.deserializeNBT(tag.getCompound(DUST_CLOUD_STRETCH));
 		
 		stars = tag.getInt(STARS);
-		starTexture = ResourceLocation.parse(tag.getString(STAR_TEXTURE));
-		starInfo = tag.contains(STAR_INFO) ? ResourceLocation.parse(tag.getString(STAR_INFO)) : null;
+		starTexture = new ResourceLocation(tag.getString(STAR_TEXTURE));
+		starInfo = tag.contains(STAR_INFO) ? new ResourceLocation(tag.getString(STAR_INFO)) : null;
 		clumpStarsInCenter = tag.getBoolean(CLUMP_STARS_IN_CENTER);
 		starStretch = new Stretch();
-		starStretch.deserializeNBT(provider, tag.getCompound(STAR_STRETCH));
+		starStretch.deserializeNBT(tag.getCompound(STAR_STRETCH));
 		
 		seed = tag.getLong(SEED);
 		diameter = tag.getInt(DIAMETER_LY);
@@ -294,14 +291,14 @@ public class StarField extends SpaceObject
 		for(String key : armsTag.getAllKeys())
 		{
 			SpiralArm arm = new SpiralArm();
-			arm.deserializeNBT(provider, armsTag.getCompound(key));
+			arm.deserializeNBT(armsTag.getCompound(key));
 			spiralArms.add(arm);
 		}
 	}
 	
 	
 	
-	public static class SpiralArm implements INBTSerializable<CompoundTag>
+	public static class SpiralArm implements ISerializable
 	{
 		public static final String STARS = "stars";
 		public static final String ARM_ROTATION = "arm_rotation";
@@ -322,10 +319,10 @@ public class StarField extends SpaceObject
 		protected boolean clumpDustCloudsInCenter;
 		
 		public static final Codec<SpiralArm> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-				Codec.INT.optionalFieldOf(DUST_CLOUDS, 0).forGetter(SpiralArm::armDustClouds),
+				Codec.intRange(0, 4000).optionalFieldOf(DUST_CLOUDS, 0).forGetter(SpiralArm::armDustClouds),
 				ResourceLocation.CODEC.optionalFieldOf(DUST_CLOUD_INFO).forGetter(arm -> Optional.ofNullable(arm.dustCloudInfo)),
 				
-				Codec.INT.fieldOf(STARS).forGetter(SpiralArm::armStars),
+				Codec.intRange(0, 30000).fieldOf(STARS).forGetter(SpiralArm::armStars),
 				Codec.DOUBLE.fieldOf(ARM_ROTATION).forGetter(SpiralArm::armRotation),
 				Codec.DOUBLE.fieldOf(ARM_LENGTH).forGetter(SpiralArm::armLength),
 				Codec.DOUBLE.fieldOf(ARM_THICKNESS).forGetter(SpiralArm::armThickness),
@@ -393,7 +390,7 @@ public class StarField extends SpaceObject
 		//============================================================================================
 		
 		@Override
-		public CompoundTag serializeNBT(HolderLookup.Provider provider)
+		public CompoundTag serializeNBT()
 		{
 			CompoundTag tag = new CompoundTag();
 			
@@ -415,11 +412,11 @@ public class StarField extends SpaceObject
 		}
 		
 		@Override
-		public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag)
+		public void deserializeNBT(CompoundTag tag)
 		{
 			armDustClouds = tag.getInt(DUST_CLOUDS);
 			
-			dustCloudInfo = tag.contains(DUST_CLOUD_INFO) ? ResourceLocation.parse(tag.getString(DUST_CLOUD_INFO)) : null;
+			dustCloudInfo = tag.contains(DUST_CLOUD_INFO) ? new ResourceLocation(tag.getString(DUST_CLOUD_INFO)) : null;
 			
 			armStars = tag.getInt(STARS);
 			
@@ -434,7 +431,7 @@ public class StarField extends SpaceObject
 	
 	
 	
-	public static class Stretch implements INBTSerializable<CompoundTag>
+	public static class Stretch implements ISerializable
 	{
 		public static final String X_STRETCH = "x";
 		public static final String Y_STRETCH = "y";
@@ -484,7 +481,7 @@ public class StarField extends SpaceObject
 		//============================================================================================
 		
 		@Override
-		public CompoundTag serializeNBT(HolderLookup.Provider provider)
+		public CompoundTag serializeNBT()
 		{
 			CompoundTag tag = new CompoundTag();
 			
@@ -496,7 +493,7 @@ public class StarField extends SpaceObject
 		}
 		
 		@Override
-		public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag)
+		public void deserializeNBT(CompoundTag tag)
 		{
 			xStretch = tag.getDouble(X_STRETCH);
 			yStretch = tag.getDouble(Y_STRETCH);

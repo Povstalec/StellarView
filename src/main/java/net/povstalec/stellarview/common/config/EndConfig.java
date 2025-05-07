@@ -1,7 +1,5 @@
 package net.povstalec.stellarview.common.config;
 
-import net.neoforged.neoforge.common.ModConfigSpec;
-
 public class EndConfig
 {
 	public static final String PREFIX = "client.end.";
@@ -14,7 +12,7 @@ public class EndConfig
 	public static StellarViewConfigValue.IntValue meteor_shower_chance;
 	public static StellarViewConfigValue.IntValue shooting_star_chance;
 	
-	public static void init(ModConfigSpec.Builder client)
+	public static void init(StellarViewConfigSpec.Builder client)
 	{
 		replace_vanilla = new StellarViewConfigValue.BooleanValue(client, PREFIX + "replace_vanilla", 
 				true, 

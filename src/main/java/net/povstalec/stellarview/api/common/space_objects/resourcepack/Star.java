@@ -3,25 +3,17 @@ package net.povstalec.stellarview.api.common.space_objects.resourcepack;
 import java.util.List;
 import java.util.Optional;
 
-import javax.annotation.Nullable;
-
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.povstalec.stellarview.api.common.space_objects.StarLike;
 import net.povstalec.stellarview.api.common.space_objects.SupernovaLeftover;
-import org.joml.Matrix4f;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.Tesselator;
+
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.client.Camera;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.GameRenderer;
-import net.povstalec.stellarview.client.resourcepack.ViewCenter;
+
 import net.povstalec.stellarview.common.util.*;
+import org.jetbrains.annotations.Nullable;
 
 public class Star extends StarLike
 {
@@ -115,24 +107,25 @@ public class Star extends StarLike
 	//============================================================================================
 	
 	@Override
-	public CompoundTag serializeNBT(HolderLookup.Provider provider)
+	public CompoundTag serializeNBT()
 	{
-		CompoundTag tag = super.serializeNBT(provider);
+		CompoundTag tag = super.serializeNBT();
 		
 		if(supernovaInfo != null)
-			tag.put(SUPERNOVA_INFO, supernovaInfo.serializeNBT(provider));
+			tag.put(SUPERNOVA_INFO, supernovaInfo.serializeNBT());
+		
 		return tag;
 	}
-
+	
 	@Override
-	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag)
+	public void deserializeNBT(CompoundTag tag)
 	{
-		super.deserializeNBT(provider, tag);
+		super.deserializeNBT(tag);
 		
 		if(tag.contains(ORBIT_INFO))
 		{
 			supernovaInfo = new SupernovaInfo();
-			supernovaInfo.deserializeNBT(provider, tag.getCompound(SUPERNOVA_INFO));
+			supernovaInfo.deserializeNBT(tag.getCompound(SUPERNOVA_INFO));
 		}
 		else
 			supernovaInfo = null;
@@ -140,7 +133,7 @@ public class Star extends StarLike
 	
 	
 	
-	public static class SupernovaInfo implements INBTSerializable<CompoundTag>
+	public static class SupernovaInfo implements ISerializable
 	{
 		public static final String MAX_SIZE_MULTIPLIER = "max_size_multiplier";
 		public static final String START_TICKS = "start_ticks";
@@ -232,7 +225,7 @@ public class Star extends StarLike
 		//============================================================================================
 		
 		@Override
-		public CompoundTag serializeNBT(HolderLookup.Provider provider)
+		public CompoundTag serializeNBT()
 		{
 			CompoundTag tag = new CompoundTag();
 			
@@ -244,7 +237,7 @@ public class Star extends StarLike
 		}
 		
 		@Override
-		public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag)
+		public void deserializeNBT(CompoundTag tag)
 		{
 			this.maxSizeMultiplier = tag.getFloat(MAX_SIZE_MULTIPLIER);
 			this.startTicks = tag.getLong(START_TICKS);

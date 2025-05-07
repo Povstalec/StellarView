@@ -3,9 +3,6 @@ package net.povstalec.stellarview.api.common.space_objects;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import javax.annotation.Nullable;
-
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 
 import com.mojang.datafixers.util.Either;
@@ -14,20 +11,21 @@ import com.mojang.serialization.Codec;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.common.util.AxisRotation;
+import net.povstalec.stellarview.common.util.ISerializable;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 import net.povstalec.stellarview.common.util.StellarCoordinates;
+import org.jetbrains.annotations.Nullable;
 
-public abstract class SpaceObject implements INBTSerializable<CompoundTag>
+public abstract class SpaceObject implements ISerializable
 {
 	public static final String PARENT_LOCATION = "parent";
 	public static final String COORDS = "coords";
 	public static final String AXIS_ROTATION = "axis_rotation";
 	public static final String ID = "id";
 	
-	public static final ResourceLocation SPACE_OBJECT_LOCATION = ResourceLocation.fromNamespaceAndPath(StellarView.MODID, "space_object");
+	public static final ResourceLocation SPACE_OBJECT_LOCATION = new ResourceLocation(StellarView.MODID, "space_object");
 	public static final ResourceKey<Registry<SpaceObject>> REGISTRY_KEY = ResourceKey.createRegistryKey(SPACE_OBJECT_LOCATION);
 	public static final Codec<ResourceKey<SpaceObject>> RESOURCE_KEY_CODEC = ResourceKey.codec(REGISTRY_KEY);
 	
@@ -175,7 +173,7 @@ public abstract class SpaceObject implements INBTSerializable<CompoundTag>
 	//============================================================================================
 	
 	@Override
-	public CompoundTag serializeNBT(HolderLookup.Provider provider)
+	public CompoundTag serializeNBT()
 	{
 		CompoundTag tag = new CompoundTag();
 		
@@ -185,26 +183,26 @@ public abstract class SpaceObject implements INBTSerializable<CompoundTag>
 		if(parentLocation != null)
 			tag.putString(PARENT_LOCATION, parentLocation.toString());
 		
-		tag.put(COORDS, coords.serializeNBT(provider));
+		tag.put(COORDS, coords.serializeNBT());
 		
-		tag.put(AXIS_ROTATION, axisRotation.serializeNBT(provider));
+		tag.put(AXIS_ROTATION, axisRotation.serializeNBT());
 		
 		return tag;
 	}
 	
 	@Override
-	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag)
+	public void deserializeNBT(CompoundTag tag)
 	{
 		if(tag.contains(ID))
-			this.location = ResourceLocation.parse(tag.getString(ID));
+			this.location = new ResourceLocation(tag.getString(ID));
 		
 		if(tag.contains(PARENT_LOCATION))
-			this.parentLocation = ResourceLocation.parse(tag.getString(PARENT_LOCATION));
+			this.parentLocation = new ResourceLocation(tag.getString(PARENT_LOCATION));
 		
 		this.coords = new SpaceCoords();
-		coords.deserializeNBT(provider, tag.getCompound(COORDS));
+		coords.deserializeNBT(tag.getCompound(COORDS));
 		
 		this.axisRotation = new AxisRotation();
-		axisRotation.deserializeNBT(provider, tag.getCompound(AXIS_ROTATION));
+		axisRotation.deserializeNBT(tag.getCompound(AXIS_ROTATION));
 	}
 }

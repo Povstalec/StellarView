@@ -3,7 +3,6 @@ package net.povstalec.stellarview.api.common.space_objects.resourcepack;
 import java.util.List;
 import java.util.Optional;
 
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.api.common.space_objects.TexturedObject;
@@ -102,9 +101,9 @@ public class Nebula extends TexturedObject
 	//============================================================================================
 	
 	@Override
-	public CompoundTag serializeNBT(HolderLookup.Provider provider)
+	public CompoundTag serializeNBT()
 	{
-		CompoundTag tag = super.serializeNBT(provider);
+		CompoundTag tag = super.serializeNBT();
 		
 		tag.putFloat(MIN_NEBULA_SIZE, minNebulaSize);
 		tag.putFloat(MAX_NEBULA_ALPHA, maxNebulaAlpha);
@@ -114,9 +113,9 @@ public class Nebula extends TexturedObject
 	}
 	
 	@Override
-	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag)
+	public void deserializeNBT(CompoundTag tag)
 	{
-		super.deserializeNBT(provider, tag);
+		super.deserializeNBT(tag);
 		
 		minNebulaSize = tag.getFloat(MIN_NEBULA_SIZE);
 		maxNebulaAlpha = tag.getFloat(MAX_NEBULA_ALPHA);

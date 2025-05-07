@@ -3,17 +3,15 @@ package net.povstalec.stellarview.client.util;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.renderer.GameRenderer;
-import net.povstalec.stellarview.api.common.space_objects.StarLike;
-import net.povstalec.stellarview.api.common.space_objects.resourcepack.StarField;
 import net.povstalec.stellarview.client.render.SpaceRenderer;
 import net.povstalec.stellarview.client.render.shader.StellarViewShaders;
 import net.povstalec.stellarview.client.render.shader.StellarViewVertexFormat;
 import net.povstalec.stellarview.common.util.Color;
 import net.povstalec.stellarview.common.util.DustCloudInfo;
 import net.povstalec.stellarview.common.util.SpaceCoords;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 
-import javax.annotation.Nullable;
 import java.util.Random;
 
 public abstract class DustCloudData
@@ -176,24 +174,28 @@ public abstract class DustCloudData
 				double height = aLocation * cosRandom - bLocation * sinRandom;
 				double width = bLocation * cosRandom + aLocation * sinRandom;
 				
-				builder.addVertex((float) dustCloudCoords[i][0], (float) dustCloudCoords[i][1], (float) dustCloudCoords[i][2])
-						.setColor((byte) dustCloudRGBA[i][0], (byte) dustCloudRGBA[i][1], (byte) dustCloudRGBA[i][2], (byte) dustCloudRGBA[i][3]);
+				builder.vertex(dustCloudCoords[i][0], dustCloudCoords[i][1], dustCloudCoords[i][2]).color(dustCloudRGBA[i][0], dustCloudRGBA[i][1], dustCloudRGBA[i][2], dustCloudRGBA[i][3]);
+				// These next few lines add a "custom" element defined as HeightWidthSize in StellarViewVertexFormat
+				builder.putFloat(0, (float) height);
+				builder.putFloat(4, (float) width);
+				builder.putFloat(8, (float) dustCloudSizes[i]);
+				builder.nextElement();
 				
-				StarData.addStarHeightWidthSize(builder, (float) height, (float) width, (float) dustCloudSizes[i]);
+				builder.uv( (float) (aLocation + 1) / 2F, (float) (bLocation + 1) / 2F);
 				
-				builder.setUv( (float) (aLocation + 1) / 2F, (float) (bLocation + 1) / 2F);
+				builder.endVertex();
 			}
 		}
 		
-		public MeshData getDustCloudBuffer(Tesselator tesselator)
+		public BufferBuilder.RenderedBuffer getDustCloudBuffer(BufferBuilder bufferBuilder)
 		{
-			final var bufferBuilder = tesselator.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR_POS_COLOR_LY_TEX.get());
+			bufferBuilder.begin(VertexFormat.Mode.QUADS, StellarViewVertexFormat.STAR_POS_COLOR_LY_TEX);
 			
 			for(int i = 0; i < dustClouds; i++)
 			{
 				createDustCloud(bufferBuilder, i);
 			}
-			return bufferBuilder.build();
+			return bufferBuilder.end();
 		}
 		
 		public void renderDustCloudBuffer(Matrix4f pose, Matrix4f projectionMatrix, SpaceCoords difference, boolean isStatic)
@@ -209,13 +211,16 @@ public abstract class DustCloudData
 				dustCloudBuffer = new DustCloudBuffer();
 				
 				Tesselator tesselator = Tesselator.getInstance();
+				BufferBuilder bufferBuilder = tesselator.getBuilder();
 				RenderSystem.setShader(GameRenderer::getPositionShader);
-				MeshData mesh = isStatic ? getStaticDustCloudBuffer(tesselator, difference) : getDustCloudBuffer(tesselator);
+				BufferBuilder.RenderedBuffer bufferbuilder$renderedbuffer;
+				
+				bufferbuilder$renderedbuffer = isStatic ? getStaticDustCloudBuffer(bufferBuilder, difference) : getDustCloudBuffer(bufferBuilder);
 				
 				dustCloudBuffer.bind();
-				dustCloudBuffer.upload(mesh);
+				dustCloudBuffer.upload(bufferbuilder$renderedbuffer);
 				if(isStatic)
-					dustCloudBuffer.drawWithShader(pose, projectionMatrix, GameRenderer.getPositionTexColorShader());
+					dustCloudBuffer.drawWithShader(pose, projectionMatrix, GameRenderer.getPositionColorTexShader());
 				else
 					dustCloudBuffer.drawWithShader(pose, projectionMatrix, difference, StellarViewShaders.starDustCloudShader());
 				VertexBuffer.unbind();
@@ -226,7 +231,7 @@ public abstract class DustCloudData
 			{
 				dustCloudBuffer.bind();
 				if(isStatic)
-					dustCloudBuffer.drawWithShader(pose, projectionMatrix, GameRenderer.getPositionTexColorShader());
+					dustCloudBuffer.drawWithShader(pose, projectionMatrix, GameRenderer.getPositionColorTexShader());
 				else
 					dustCloudBuffer.drawWithShader(pose, projectionMatrix, difference, StellarViewShaders.starDustCloudShader());
 				VertexBuffer.unbind();
@@ -237,15 +242,15 @@ public abstract class DustCloudData
 		//*******************************************Static*******************************************
 		//============================================================================================
 		
-		public MeshData getStaticDustCloudBuffer(Tesselator tesselator, SpaceCoords difference)
+		public BufferBuilder.RenderedBuffer getStaticDustCloudBuffer(BufferBuilder bufferBuilder, SpaceCoords difference)
 		{
-			final var bufferBuilder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+			bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
 			
 			for(int i = 0; i < dustClouds; i++)
 			{
 				createStaticDustCloud(bufferBuilder, i, difference);
 			}
-			return bufferBuilder.build();
+			return bufferBuilder.end();
 		}
 		
 		double clampDustCloud(double size, double distance)
@@ -403,9 +408,7 @@ public abstract class DustCloudData
 				double projectedX = heightProjectionXZ * sinTheta - width * cosTheta;
 				double projectedZ = width * sinTheta + heightProjectionXZ * cosTheta;
 				
-				builder.addVertex((float) (starX + projectedX), (float) (starY + heightProjectionY), (float) (starZ + projectedZ))
-						.setUv( (float) (aLocation + 1) / 2F, (float) (bLocation + 1) / 2F)
-						.setColor((byte) dustCloudRGBA[i][0], (byte) dustCloudRGBA[i][1], (byte) dustCloudRGBA[i][2], alpha);
+				builder.vertex(starX + projectedX, starY + heightProjectionY, starZ + projectedZ).color(dustCloudRGBA[i][0], dustCloudRGBA[i][1] , dustCloudRGBA[i][2], alpha).uv( (float) (aLocation + 1) / 2F, (float) (bLocation + 1) / 2F).endVertex();
 			}
 		}
 	}

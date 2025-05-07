@@ -1,5 +1,10 @@
 package net.povstalec.stellarview.client.render.level;
 
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.DimensionSpecialEffects;
@@ -9,20 +14,18 @@ import net.povstalec.stellarview.client.render.level.util.StellarViewLightmapEff
 import net.povstalec.stellarview.client.render.ViewCenters;
 import net.povstalec.stellarview.common.config.EndConfig;
 import net.povstalec.stellarview.compatibility.enhancedcelestials.EnhancedCelestialsCompatibility;
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
 
 public class StellarViewEndEffects extends DimensionSpecialEffects.EndEffects
 {
-	public static final ResourceLocation END_EFFECTS = ResourceLocation.withDefaultNamespace("the_end");
+	public static final ResourceLocation END_EFFECTS = new ResourceLocation("the_end");
 	
 	public StellarViewEndEffects() {}
-
-	@Override
-	public boolean renderSky(ClientLevel level, int ticks, float partialTick, Matrix4f modelViewMatrix, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
-	{
+	
+	/*@Override
+	public boolean renderSky(ClientLevel level, int ticks, float partialTick, PoseStack poseStack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
+    {
 		if(EndConfig.replace_vanilla.get())
-			return ViewCenters.renderViewCenterSky(level, ticks, partialTick, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog);
+			return ViewCenters.renderViewCenterSky(level, ticks, partialTick, poseStack, camera, projectionMatrix, isFoggy, setupFog);
 		
         return false;
     }
@@ -37,5 +40,5 @@ public class StellarViewEndEffects extends DimensionSpecialEffects.EndEffects
 			if(StellarView.isEnhancedCelestialsLoaded())
 				EnhancedCelestialsCompatibility.adjustLightmapColors(level, partialTicks, skyDarken, skyLight, blockLight, pixelX, pixelY, colors);
 		}
-	}
+	}*/
 }

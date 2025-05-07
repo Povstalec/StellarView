@@ -2,16 +2,14 @@ package net.povstalec.stellarview.common.util;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.neoforged.neoforge.common.util.INBTSerializable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public class DustCloudInfo implements INBTSerializable<CompoundTag>
+public class DustCloudInfo implements ISerializable
 {
 	public static final String DUST_CLOUD_TYPES = "dust_cloud_types";
 	public static final String TOTAL_WEIGHT = "total_weight";
@@ -68,14 +66,14 @@ public class DustCloudInfo implements INBTSerializable<CompoundTag>
 	//============================================================================================
 	
 	@Override
-	public CompoundTag serializeNBT(HolderLookup.Provider provider)
+	public CompoundTag serializeNBT()
 	{
 		CompoundTag tag = new CompoundTag();
 		
 		CompoundTag dustCloudTypesTag = new CompoundTag();
 		for(int i = 0; i < dustCloudTypes.size(); i++)
 		{
-			dustCloudTypesTag.put("dust_cloud_type_" + i, dustCloudTypes.get(i).serializeNBT(provider));
+			dustCloudTypesTag.put("dust_cloud_type_" + i, dustCloudTypes.get(i).serializeNBT());
 		}
 		tag.put(DUST_CLOUD_TYPES, dustCloudTypesTag);
 		
@@ -85,14 +83,14 @@ public class DustCloudInfo implements INBTSerializable<CompoundTag>
 	}
 	
 	@Override
-	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag)
+	public void deserializeNBT(CompoundTag tag)
 	{
 		this.dustCloudTypes = new ArrayList<DustCloudType>();
 		CompoundTag dustCloudTypesTag = tag.getCompound(DUST_CLOUD_TYPES);
 		for(int i = 0; i < dustCloudTypesTag.size(); i++)
 		{
 			DustCloudType dustCloudType = new DustCloudType();
-			dustCloudType.deserializeNBT(provider, dustCloudTypesTag.getCompound("dust_cloud_type_" + i));
+			dustCloudType.deserializeNBT(dustCloudTypesTag.getCompound("dust_cloud_type_" + i));
 			this.dustCloudTypes.add(dustCloudType);
 			
 		}
@@ -102,7 +100,7 @@ public class DustCloudInfo implements INBTSerializable<CompoundTag>
 	
 	
 	
-	public static class DustCloudType implements INBTSerializable<CompoundTag>
+	public static class DustCloudType implements ISerializable
 	{
 		public static final String RGB = "rgb";
 		public static final String MAX_SIZE = "max_size";
@@ -179,11 +177,11 @@ public class DustCloudInfo implements INBTSerializable<CompoundTag>
 		//============================================================================================
 		
 		@Override
-		public CompoundTag serializeNBT(HolderLookup.Provider provider)
+		public CompoundTag serializeNBT()
 		{
 			CompoundTag tag = new CompoundTag();
 			
-			tag.put(RGB, rgb.serializeNBT(provider));
+			tag.put(RGB, rgb.serializeNBT());
 			
 			tag.putFloat(MIN_SIZE, minSize);
 			tag.putFloat(MAX_SIZE, maxSize);
@@ -197,10 +195,10 @@ public class DustCloudInfo implements INBTSerializable<CompoundTag>
 		}
 		
 		@Override
-		public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag)
+		public void deserializeNBT(CompoundTag tag)
 		{
 			rgb = new Color.IntRGB();
-			rgb.deserializeNBT(provider, tag.getCompound(RGB));
+			rgb.deserializeNBT(tag.getCompound(RGB));
 			
 			minSize = tag.getFloat(MIN_SIZE);
 			maxSize = tag.getFloat(MAX_SIZE);

@@ -1,14 +1,13 @@
 package net.povstalec.stellarview.api.common;
 
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
+import net.povstalec.stellarview.common.util.ISerializable;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 
 import java.util.ArrayList;
 
-public class SpaceRegion implements INBTSerializable<CompoundTag>
+public class SpaceRegion implements ISerializable
 {
 	public static final String X = "x";
 	public static final String Y = "y";
@@ -62,7 +61,7 @@ public class SpaceRegion implements INBTSerializable<CompoundTag>
 	//============================================================================================
 	
 	@Override
-	public CompoundTag serializeNBT(HolderLookup.Provider provider)
+	public CompoundTag serializeNBT()
 	{
 		CompoundTag tag = new CompoundTag();
 		
@@ -74,7 +73,7 @@ public class SpaceRegion implements INBTSerializable<CompoundTag>
 	}
 	
 	@Override
-	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag)
+	public void deserializeNBT(CompoundTag tag)
 	{
 		pos = new RegionPos(tag.getLong(X), tag.getLong(Y), tag.getLong(Z));
 	}

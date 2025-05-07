@@ -1,7 +1,5 @@
 package net.povstalec.stellarview.common.config;
 
-import net.neoforged.neoforge.common.ModConfigSpec;
-
 public class GeneralConfig
 {
 	public static final String PREFIX = "client.general";
@@ -24,7 +22,7 @@ public class GeneralConfig
 	public static StellarViewConfigValue.IntValue star_brightness;
 	public static StellarViewConfigValue.IntValue dust_cloud_brightness;
 	
-	public static void init(ModConfigSpec.Builder client)
+	public static void init(StellarViewConfigSpec.Builder client)
 	{
 		static_sky = new StellarViewConfigValue.BooleanValue(client, "client.static_sky",
 				false,

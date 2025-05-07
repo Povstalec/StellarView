@@ -6,11 +6,14 @@ import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.FogRenderer;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.api.common.space_objects.resourcepack.StarField;
-import net.povstalec.stellarview.client.render.LightEffects;
 import net.povstalec.stellarview.client.render.StellarViewEffects;
+import net.povstalec.stellarview.client.render.shader.StellarViewShaders;
+import net.povstalec.stellarview.client.render.shader.StellarViewVertexFormat;
 import net.povstalec.stellarview.client.render.space_objects.SpaceObjectRenderer;
+import net.povstalec.stellarview.client.util.DustCloudBuffer;
 import net.povstalec.stellarview.client.util.StarData;
 import net.povstalec.stellarview.common.util.DustCloudInfo;
 import net.povstalec.stellarview.common.util.StarInfo;
@@ -18,12 +21,12 @@ import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.client.util.DustCloudData;
 import net.povstalec.stellarview.common.config.GeneralConfig;
 import net.povstalec.stellarview.common.util.*;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 
-import javax.annotation.Nullable;
 import java.util.Random;
 
 public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<T>
@@ -412,9 +415,7 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 	//============================================================================================
 	
 	@Override
-	public void render(ViewCenter viewCenter, ClientLevel level, float partialTicks, Matrix4f modelViewMatrix, Camera camera,
-					   Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, Tesselator tesselator,
-					   Vector3f parentVector, AxisRotation parentRotation)
+	public void render(ViewCenter viewCenter, ClientLevel level, float partialTicks, PoseStack stack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder, Vector3f parentVector, AxisRotation parentRotation)
 	{
 		SpaceCoords difference = viewCenter.getCoords().sub(spaceCoords());
 		
@@ -426,35 +427,34 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 			starData.reset();
 		}
 		
-		float starBrightness = LightEffects.starBrightness(viewCenter, level, camera, partialTicks);
-		
-		if(!GeneralConfig.disable_stars.get() && starBrightness > 0.0F && totalStars > 0)
+		if(!GeneralConfig.disable_stars.get() && viewCenter.starBrightness() > 0.0F)
 		{
-			final var transformedModelView = new Matrix4f(modelViewMatrix);
+			stack.pushPose();
 			
 			//stack.translate(0, 0, 0);
 			if(hasTexture)
 				RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-			RenderSystem.setShaderColor(1, 1, 1, starBrightness);
+			RenderSystem.setShaderColor(1, 1, 1, viewCenter.starBrightness());
 			if(hasTexture)
 				RenderSystem.setShaderTexture(0, renderedObject().getStarTexture());
 			FogRenderer.setupNoFog();
 			
 			Quaternionf q = SpaceCoords.getQuaternionf(level, viewCenter, partialTicks);
 			
-			transformedModelView.rotate(q);
-			this.starData.renderStars(StarField.LevelOfDetail.fromDistance(difference), transformedModelView, projectionMatrix, difference, viewCenter.isStatic(), hasTexture);
+			stack.mulPose(q);
+			this.starData.renderStars(StarField.LevelOfDetail.fromDistance(difference), stack.last().pose(), projectionMatrix, difference, viewCenter.isStatic(), hasTexture);
 			
 			setupFog.run();
+			stack.popPose();
 		}
 		
 		for(SpaceObjectRenderer child : children)
 		{
-			child.render(viewCenter, level, partialTicks, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog, tesselator, parentVector, new AxisRotation(0, 0, 0));
+			child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, parentVector, new AxisRotation(0, 0, 0));
 		}
 	}
 	
-	public void renderDustClouds(ViewCenter viewCenter, ClientLevel level, float partialTicks, Matrix4f modelViewMatrix, Camera camera,
+	public void renderDustClouds(ViewCenter viewCenter, ClientLevel level, float partialTicks, PoseStack stack, Camera camera,
 								 Matrix4f projectionMatrix, Runnable setupFog, float brightness)
 	{
 		SpaceCoords difference = viewCenter.getCoords().sub(spaceCoords());
@@ -467,9 +467,9 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 		else if(requiresReset())
 			dustCloudData.reset();
 		
-		if(brightness > 0.0F && totalDustClouds > 0)
+		if(brightness > 0.0F)
 		{
-			final var transformedModelView = new Matrix4f(modelViewMatrix);
+			stack.pushPose();
 			
 			RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 			RenderSystem.setShaderColor(1, 1, 1, brightness);
@@ -478,10 +478,11 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 			
 			Quaternionf q = SpaceCoords.getQuaternionf(level, viewCenter, partialTicks);
 			
-			transformedModelView.rotate(q);
-			this.dustCloudData.renderDustClouds(transformedModelView, projectionMatrix, difference, viewCenter.isStatic());
+			stack.mulPose(q);
+			this.dustCloudData.renderDustClouds(stack.last().pose(), projectionMatrix, difference, viewCenter.isStatic());
 			
 			setupFog.run();
+			stack.popPose();
 		}
 	}
 }

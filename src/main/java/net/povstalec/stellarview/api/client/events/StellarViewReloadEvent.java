@@ -1,39 +1,34 @@
 package net.povstalec.stellarview.api.client.events;
 
 import com.google.gson.JsonElement;
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.neoforged.bus.api.Event;
-import net.neoforged.bus.api.ICancellableEvent;
 
 import java.util.Map;
 
-public class StellarViewReloadEvent extends Event implements ICancellableEvent
+public interface StellarViewReloadEvent
 {
-	private final Map<ResourceLocation, JsonElement> jsonMap;
-	private final ResourceManager manager;
-	private final ProfilerFiller filler;
+	Event<StellarViewReloadEvent> EVENT = EventFactory.createArrayBacked(StellarViewReloadEvent.class,
+			(listeners) -> (jsonMap, manager, filler) ->
+			{
+				for (StellarViewReloadEvent listener : listeners)
+				{
+					if(listener.onReload(jsonMap, manager, filler))
+						return true;
+				}
+				
+				return false;
+			});
 	
-	public StellarViewReloadEvent(Map<ResourceLocation, JsonElement> jsonMap, ResourceManager manager, ProfilerFiller filler)
-	{
-		this.jsonMap = jsonMap;
-		this.manager = manager;
-		this.filler = filler;
-	}
-	
-	public Map<ResourceLocation, JsonElement> getJsonMap()
-	{
-		return jsonMap;
-	}
-	
-	public ResourceManager getManager()
-	{
-		return manager;
-	}
-	
-	public ProfilerFiller getFiller()
-	{
-		return filler;
-	}
+	/**
+	 * Returns true if canceled, otherwise false
+	 * @param jsonMap
+	 * @param manager
+	 * @param filler
+	 * @return
+	 */
+	boolean onReload(Map<ResourceLocation, JsonElement> jsonMap, ResourceManager manager, ProfilerFiller filler);
 }

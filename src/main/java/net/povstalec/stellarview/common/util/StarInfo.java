@@ -1,22 +1,18 @@
 package net.povstalec.stellarview.common.util;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.HolderLookup;
-import net.neoforged.neoforge.common.util.INBTSerializable;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
-import net.povstalec.stellarview.StellarView;
-import net.povstalec.stellarview.api.common.space_objects.StarLike;
-import net.povstalec.stellarview.api.common.space_objects.resourcepack.StarField;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-public class StarInfo implements INBTSerializable<CompoundTag>
+import net.minecraft.nbt.CompoundTag;
+import net.povstalec.stellarview.api.common.space_objects.resourcepack.StarField;
+import net.povstalec.stellarview.api.common.space_objects.StarLike;
+
+public class StarInfo implements ISerializable
 {
 	public static final String LOD1_TYPES = "lod1_types";
 	public static final String LOD2_TYPES = "lod2_types";
@@ -140,18 +136,18 @@ public class StarInfo implements INBTSerializable<CompoundTag>
 	//*************************************Saving and Loading*************************************
 	//============================================================================================
 	
-	private static CompoundTag serializeLODTypes(HolderLookup.Provider provider, ArrayList<StarLike.StarType> lodTypes)
+	private static CompoundTag serializeLODTypes(ArrayList<StarLike.StarType> lodTypes)
 	{
 		CompoundTag starTypesTag = new CompoundTag();
 		for(int i = 0; i < lodTypes.size(); i++)
 		{
-			starTypesTag.put("star_type_" + i, lodTypes.get(i).serializeNBT(provider));
+			starTypesTag.put("star_type_" + i, lodTypes.get(i).serializeNBT());
 		}
 		
 		return starTypesTag;
 	}
 	
-	private static ArrayList<StarLike.StarType> getLODTypes(HolderLookup.Provider provider, CompoundTag tag, String key)
+	private static ArrayList<StarLike.StarType> getLODTypes(CompoundTag tag, String key)
 	{
 		ArrayList<StarLike.StarType> lodTypes;
 		if(tag.contains(key))
@@ -161,7 +157,7 @@ public class StarInfo implements INBTSerializable<CompoundTag>
 			for(int i = 0; i < starTypesTag.size(); i++)
 			{
 				StarLike.StarType starType = new StarLike.StarType();
-				starType.deserializeNBT(provider, starTypesTag.getCompound("star_type_" + i));
+				starType.deserializeNBT(starTypesTag.getCompound("star_type_" + i));
 				lodTypes.add(starType);
 			}
 		}
@@ -172,16 +168,16 @@ public class StarInfo implements INBTSerializable<CompoundTag>
 	}
 	
 	@Override
-	public CompoundTag serializeNBT(HolderLookup.Provider provider)
+	public CompoundTag serializeNBT()
 	{
 		CompoundTag tag = new CompoundTag();
 		
 		if(this.lod1Types != null)
-			tag.put(LOD1_TYPES, serializeLODTypes(provider, this.lod1Types));
+			tag.put(LOD1_TYPES, serializeLODTypes(this.lod1Types));
 		if(this.lod2Types != null)
-			tag.put(LOD2_TYPES, serializeLODTypes(provider, this.lod2Types));
+			tag.put(LOD2_TYPES, serializeLODTypes(this.lod2Types));
 		if(this.lod3Types != null)
-			tag.put(LOD3_TYPES, serializeLODTypes(provider, this.lod3Types));
+			tag.put(LOD3_TYPES, serializeLODTypes(this.lod3Types));
 		
 		tag.putInt(LOD1_WEIGHT, lod1Weight);
 		tag.putInt(LOD2_WEIGHT, lod2Weight);
@@ -191,11 +187,11 @@ public class StarInfo implements INBTSerializable<CompoundTag>
 	}
 	
 	@Override
-	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag)
+	public void deserializeNBT(CompoundTag tag)
 	{
-		this.lod1Types = getLODTypes(provider, tag, LOD1_TYPES);
-		this.lod2Types = getLODTypes(provider, tag, LOD2_TYPES);
-		this.lod3Types = getLODTypes(provider, tag, LOD3_TYPES);
+		this.lod1Types = getLODTypes(tag, LOD1_TYPES);
+		this.lod2Types = getLODTypes(tag, LOD2_TYPES);
+		this.lod3Types = getLODTypes(tag, LOD3_TYPES);
 		
 		this.lod1Weight = tag.getInt(LOD1_WEIGHT);
 		this.lod2Weight = tag.getInt(LOD2_WEIGHT);

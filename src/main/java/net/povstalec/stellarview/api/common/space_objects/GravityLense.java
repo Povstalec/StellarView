@@ -1,7 +1,6 @@
 package net.povstalec.stellarview.api.common.space_objects;
 
 import com.mojang.datafixers.util.Either;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.common.util.*;
@@ -54,9 +53,9 @@ public abstract class GravityLense extends StarLike
 	//============================================================================================
 	
 	@Override
-	public CompoundTag serializeNBT(HolderLookup.Provider provider)
+	public CompoundTag serializeNBT()
 	{
-		CompoundTag tag = super.serializeNBT(provider);
+		CompoundTag tag = super.serializeNBT();
 		
 		tag.putFloat(LENSING_INTENSITY, lensingIntensity);
 		tag.putDouble(MAX_LENSING_DISTANCE, maxLensingDistance);
@@ -65,9 +64,9 @@ public abstract class GravityLense extends StarLike
 	}
 	
 	@Override
-	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag)
+	public void deserializeNBT(CompoundTag tag)
 	{
-		super.deserializeNBT(provider, tag);
+		super.deserializeNBT(tag);
 		
 		lensingIntensity = tag.getFloat(LENSING_INTENSITY);
 		maxLensingDistance = tag.getFloat(MAX_LENSING_DISTANCE);

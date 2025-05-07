@@ -6,9 +6,8 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.client.render.ViewCenters;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
-
-import javax.annotation.Nullable;
 
 public class StellarViewRendering
 {
@@ -38,20 +37,20 @@ public class StellarViewRendering
 	/**
 	 * Render the sky as seen from the View Center specified by the Resource Location (ID)
 	 *
-	 * @param location The Resource Location (ID) of the View Center
+	 * @param resourceLocation The Resource Location (ID) of the View Center
 	 * @param level ClientLevel used for rendering
 	 * @param ticks Current Ticks of the LevelRenderer
 	 * @param partialTicks Partial Ticks, what else to say?
-	 * @param modelViewMatrix Matrix4f used as a starting point for all of the linear transformations
+	 * @param poseStack PoseStack used as a starting point for all of the linear transformations
 	 * @param camera Player's Camera
 	 * @param projectionMatrix Current projection matrix
 	 * @param isFoggy Whether it is foggy or not
 	 * @param setupFog Function to set up fog
 	 * @return true if the View Center was found and rendered successfully, otherwise false
 	 */
-	public static boolean renderViewCenterSky(ResourceLocation location, ClientLevel level, int ticks, float partialTicks, Matrix4f modelViewMatrix, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
+	public static boolean renderViewCenterSky(ResourceLocation resourceLocation, ClientLevel level, int ticks, float partialTicks, PoseStack poseStack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
 	{
-		return ViewCenters.renderViewCenterSky(location, level, ticks, partialTicks, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog);
+		return ViewCenters.renderViewCenterSky(resourceLocation, level, ticks, partialTicks, poseStack, camera, projectionMatrix, isFoggy, setupFog);
 	}
 	
 	/**
@@ -60,15 +59,15 @@ public class StellarViewRendering
 	 * @param level ClientLevel used for rendering
 	 * @param ticks Current Ticks of the LevelRenderer
 	 * @param partialTicks Partial Ticks, what else to say?
-	 * @param modelViewMatrix Matrix4f used as a starting point for all of the linear transformations
+	 * @param poseStack PoseStack used as a starting point for all of the linear transformations
 	 * @param camera Player's Camera
 	 * @param projectionMatrix Current projection matrix
 	 * @param isFoggy Whether it is foggy or not
 	 * @param setupFog Function to set up fog
 	 * @return true if the View Center was found and rendered successfully, otherwise false
 	 */
-	public static boolean renderViewCenterSky(ClientLevel level, int ticks, float partialTicks, Matrix4f modelViewMatrix, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
+	public static boolean renderViewCenterSky(ClientLevel level, int ticks, float partialTicks, PoseStack poseStack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
 	{
-		return ViewCenters.renderViewCenterSky(level.dimension().location(), level, ticks, partialTicks, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog);
+		return ViewCenters.renderViewCenterSky(level.dimension().location(), level, ticks, partialTicks, poseStack, camera, projectionMatrix, isFoggy, setupFog);
 	}
 }

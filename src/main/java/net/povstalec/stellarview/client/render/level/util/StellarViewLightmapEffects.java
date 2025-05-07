@@ -1,11 +1,12 @@
 package net.povstalec.stellarview.client.render.level.util;
 
+import org.joml.Vector3f;
+import org.joml.Vector3fc;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.util.Mth;
-import org.joml.Vector3f;
-import org.joml.Vector3fc;
 
 public class StellarViewLightmapEffects
 {

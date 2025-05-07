@@ -1,15 +1,14 @@
 package net.povstalec.stellarview.common.util;
 
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.neoforged.neoforge.common.util.INBTSerializable;
 import org.joml.Math;
 import org.joml.Quaterniond;
 import org.joml.Quaternionf;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-public class AxisRotation implements INBTSerializable<CompoundTag>
+public class AxisRotation implements ISerializable
 {
 	public static final String X_AXIS = "x_axis";
 	public static final String Y_AXIS = "y_axis";
@@ -158,7 +157,7 @@ public class AxisRotation implements INBTSerializable<CompoundTag>
 	//============================================================================================
 	
 	@Override
-	public CompoundTag serializeNBT(HolderLookup.Provider provider)
+	public CompoundTag serializeNBT()
 	{
 		CompoundTag tag = new CompoundTag();
 		
@@ -170,7 +169,7 @@ public class AxisRotation implements INBTSerializable<CompoundTag>
 	}
 	
 	@Override
-	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag)
+	public void deserializeNBT(CompoundTag tag)
 	{
 		inDegrees = false;
 		xAxis = tag.getDouble(X_AXIS);

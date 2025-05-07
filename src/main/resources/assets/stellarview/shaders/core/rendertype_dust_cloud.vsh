@@ -18,6 +18,8 @@ const float DEFAULT_DISTANCE = 100;
 const float MAX_SIZE = 50;
 const float MAX_ALPHA = 0.025;
 
+const float KM_PER_LY = 9460730472581.2;
+
 out vec4 vertexColor;
 out vec2 texCoord0;
 
@@ -49,7 +51,7 @@ float clampAlpha(float alpha, float distance)
 
 void main()
 {
-	vec3 xyz = vec3(StarPos.x - RelativeSpaceLy.x, StarPos.y - RelativeSpaceLy.y, StarPos.z - RelativeSpaceLy.z);
+	vec3 xyz = vec3(StarPos.x - RelativeSpaceLy.x - RelativeSpaceKm.z / KM_PER_LY, StarPos.y - RelativeSpaceLy.y - RelativeSpaceKm.z / KM_PER_LY, StarPos.z - RelativeSpaceLy.z - RelativeSpaceKm.z / KM_PER_LY);
 	
 	float distance = sqrt(xyz.x * xyz.x + xyz.y * xyz.y + xyz.z * xyz.z);
 	

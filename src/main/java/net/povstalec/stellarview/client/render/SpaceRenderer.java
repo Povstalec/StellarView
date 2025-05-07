@@ -3,21 +3,18 @@ package net.povstalec.stellarview.client.render;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Nullable;
-
-import com.mojang.blaze3d.vertex.Tesselator;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.api.common.SpaceRegion;
 import net.povstalec.stellarview.client.render.space_objects.SpaceObjectRenderer;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
-import net.povstalec.stellarview.client.resourcepack.effects.MeteorEffect;
 import net.povstalec.stellarview.common.config.GeneralConfig;
-import net.povstalec.stellarview.common.util.DustCloudInfo;
-import net.povstalec.stellarview.common.util.StarInfo;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -125,7 +122,7 @@ public final class SpaceRenderer
 		}
 	}
 	
-	public static void render(ViewCenter viewCenter, SpaceObjectRenderer masterParent, ClientLevel level, Camera camera, float partialTicks, Matrix4f modelViewMatrix, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, Tesselator tesselator)
+	public static void render(ViewCenter viewCenter, SpaceObjectRenderer masterParent, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder)
 	{
 		starsPerTick = 0;
 		dustCloudsPerTick = 0;
@@ -138,7 +135,7 @@ public final class SpaceRenderer
 			for(Map.Entry<SpaceRegion.RegionPos, SpaceRegionRenderer> spaceRegionEntry : SPACE_REGIONS.entrySet())
 			{
 				if(spaceRegionEntry.getKey().isInRange(pos, getRange()))
-					spaceRegionEntry.getValue().renderDustClouds(viewCenter, level, camera, partialTicks, modelViewMatrix, projectionMatrix, setupFog, viewCenter.dustCloudBrightness());
+					spaceRegionEntry.getValue().renderDustClouds(viewCenter, level, camera, partialTicks, stack, projectionMatrix, setupFog, viewCenter.dustCloudBrightness());
 			}
 		}
 		
@@ -148,16 +145,16 @@ public final class SpaceRenderer
 			if(!spaceRegionEntry.getKey().equals(pos))
 			{
 				if(spaceRegionEntry.getKey().isInRange(pos, getRange()))
-					spaceRegionEntry.getValue().render(viewCenter, masterParent, level, camera, partialTicks, modelViewMatrix, projectionMatrix, isFoggy, setupFog, tesselator);
+					spaceRegionEntry.getValue().render(viewCenter, masterParent, level, camera, partialTicks, stack, projectionMatrix, isFoggy, setupFog, bufferbuilder);
 			}
 			else
 				centerRegion = spaceRegionEntry.getValue();
 		}
 		
 		if(centerRegion != null)
-			centerRegion.render(viewCenter, masterParent, level, camera, partialTicks, modelViewMatrix, projectionMatrix, isFoggy, setupFog, tesselator);
+			centerRegion.render(viewCenter, masterParent, level, camera, partialTicks, stack, projectionMatrix, isFoggy, setupFog, bufferbuilder);
 		
-		masterParent.render(viewCenter, level, partialTicks, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog, tesselator, NULL_VECTOR, new AxisRotation());
+		masterParent.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, NULL_VECTOR, new AxisRotation());
 	}
 	
 	

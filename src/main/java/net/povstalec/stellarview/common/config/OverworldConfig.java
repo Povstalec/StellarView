@@ -1,7 +1,5 @@
 package net.povstalec.stellarview.common.config;
 
-import net.neoforged.neoforge.common.ModConfigSpec;
-
 public class OverworldConfig
 {
 	public static final String PREFIX = "client.overworld.";
@@ -26,7 +24,7 @@ public class OverworldConfig
 	public static StellarViewConfigValue.IntValue sol_y_rotation;
 	public static StellarViewConfigValue.IntValue sol_z_rotation;
 	
-	public static void init(ModConfigSpec.Builder client)
+	public static void init(StellarViewConfigSpec.Builder client)
 	{
 		replace_vanilla = new StellarViewConfigValue.BooleanValue(client, PREFIX + "replace_vanilla", 
 				true, 

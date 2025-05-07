@@ -1,6 +1,7 @@
 package net.povstalec.stellarview.client.render.space_objects;
 
-import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
@@ -13,7 +14,6 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 public abstract class SpaceObjectRenderer<RenderedObject extends SpaceObject>
 {
@@ -104,13 +104,13 @@ public abstract class SpaceObjectRenderer<RenderedObject extends SpaceObject>
 	//*****************************************Rendering******************************************
 	//============================================================================================
 	
-	public abstract void render(ViewCenter viewCenter, ClientLevel level, float partialTicks, Matrix4f modelViewMatrix, Camera camera,
-								Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, Tesselator tesselator,
+	public abstract void render(ViewCenter viewCenter, ClientLevel level, float partialTicks, PoseStack stack, Camera camera,
+								Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder,
 								Vector3f parentVector, AxisRotation parentRotation);
 	
 	// Sets View Center coords and then renders everything
-	public void renderFrom(ViewCenter viewCenter, ClientLevel level, float partialTicks, Matrix4f modelViewMatrix, Camera camera,
-						   Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, Tesselator tesselator)
+	public void renderFrom(ViewCenter viewCenter, ClientLevel level, float partialTicks, PoseStack stack, Camera camera,
+						   Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder)
 	{
 		if(parent != null)
 			viewCenter.addCoords(getPosition(viewCenter, parent.axisRotation(), viewCenter.ticks(), partialTicks));
@@ -118,8 +118,8 @@ public abstract class SpaceObjectRenderer<RenderedObject extends SpaceObject>
 			viewCenter.addCoords(getPosition(viewCenter, viewCenter.ticks(), partialTicks));
 		
 		if(parent != null)
-			parent.renderFrom(viewCenter, level, partialTicks, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog, tesselator);
+			parent.renderFrom(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder);
 		else
-			viewCenter.renderSkyObjects(this, level, partialTicks, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog, tesselator);
+			viewCenter.renderSkyObjects(this, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder);
 	}
 }

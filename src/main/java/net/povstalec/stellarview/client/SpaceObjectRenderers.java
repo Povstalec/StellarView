@@ -1,10 +1,9 @@
 package net.povstalec.stellarview.client;
 
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
 import net.povstalec.stellarview.client.render.space_objects.SpaceObjectRenderer;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 
 public class SpaceObjectRenderers

@@ -1,19 +1,19 @@
 package net.povstalec.stellarview.common.util;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.HolderLookup;
-import net.neoforged.neoforge.common.util.INBTSerializable;
-import net.povstalec.stellarview.client.resourcepack.ViewCenter;
-import net.povstalec.stellarview.common.config.GeneralConfig;
 import net.minecraft.nbt.CompoundTag;
 import org.joml.Quaterniond;
 import org.joml.Quaternionf;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 
-public class SpaceCoords implements INBTSerializable<CompoundTag>
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.povstalec.stellarview.client.resourcepack.ViewCenter;
+import net.povstalec.stellarview.common.config.GeneralConfig;
+
+public class SpaceCoords implements ISerializable
 {
 	public static final String X = "x";
 	public static final String Y = "y";
@@ -226,27 +226,27 @@ public class SpaceCoords implements INBTSerializable<CompoundTag>
 	//============================================================================================
 	
 	@Override
-	public CompoundTag serializeNBT(HolderLookup.Provider provider)
+	public CompoundTag serializeNBT()
 	{
 		CompoundTag tag = new CompoundTag();
-		tag.put(X, x.serializeNBT(provider));
-		tag.put(Y, y.serializeNBT(provider));
-		tag.put(Z, z.serializeNBT(provider));
+		tag.put(X, x.serializeNBT());
+		tag.put(Y, y.serializeNBT());
+		tag.put(Z, z.serializeNBT());
 		
 		return tag;
 	}
 	
 	@Override
-	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag)
+	public void deserializeNBT(CompoundTag tag)
 	{
-		x.deserializeNBT(provider, tag.getCompound(X));;
-		y.deserializeNBT(provider, tag.getCompound(Y));;
-		z.deserializeNBT(provider, tag.getCompound(Z));;
+		x.deserializeNBT(tag.getCompound(X));;
+		y.deserializeNBT(tag.getCompound(Y));;
+		z.deserializeNBT(tag.getCompound(Z));;
 	}
 	
 	
 	
-	public static class SpaceDistance implements INBTSerializable<CompoundTag>
+	public static class SpaceDistance implements ISerializable
 	{
 		public static final String LY = "ly";
 		public static final String KM = "km";
@@ -384,7 +384,7 @@ public class SpaceCoords implements INBTSerializable<CompoundTag>
 		//============================================================================================
 		
 		@Override
-		public CompoundTag serializeNBT(HolderLookup.Provider provider)
+		public CompoundTag serializeNBT()
 		{
 			CompoundTag tag = new CompoundTag();
 			tag.putLong(LY, ly);
@@ -394,7 +394,7 @@ public class SpaceCoords implements INBTSerializable<CompoundTag>
 		}
 		
 		@Override
-		public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag)
+		public void deserializeNBT(CompoundTag tag)
 		{
 			ly = tag.getLong(LY);
 			km = tag.getDouble(KM);

@@ -29,14 +29,14 @@ public abstract class TexturedObjectRenderer<T extends TexturedObject> extends S
 	//============================================================================================
 	
 	@Override
-	public void render(ViewCenter viewCenter, ClientLevel level, float partialTicks, Matrix4f modelViewMatrix, Camera camera,
-					   Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, Tesselator tesselator,
-					   Vector3f parentVector, AxisRotation parentRotation)
+	public void render(ViewCenter viewCenter, ClientLevel level, float partialTicks, PoseStack stack, Camera camera,
+								Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder,
+								Vector3f parentVector, AxisRotation parentRotation)
 	{
 		Vector3f positionVector = getPosition(viewCenter, parentRotation, viewCenter.ticks(), partialTicks).add(parentVector); // Handles orbits 'n stuff
 		
 		// Add parent vector to current coords
-		SpaceCoords coords = renderedObject.getCoords().add(positionVector);
+		SpaceCoords coords = spaceCoords().add(positionVector);
 		
 		// Subtract coords of this from View Center coords to get relative coords
 		SphericalCoords sphericalCoords = coords.skyPosition(level, viewCenter, partialTicks, true);
@@ -51,13 +51,13 @@ public abstract class TexturedObjectRenderer<T extends TexturedObject> extends S
 			{
 				// Render child behind the parent
 				if(child.lastDistance >= this.lastDistance)
-					child.render(viewCenter, level, partialTicks, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog, tesselator, positionVector, axisRotation());
+					child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, positionVector, axisRotation());
 			}
 		}
 		
 		// If the object isn't the same we're viewing everything from and it isn't too far away, render it
-		if(!viewCenter.objectEquals(this) && renderedObject.getFadeOutHandler().getFadeOutEndDistance().toKm() > lastDistance)
-			renderTextureLayers(viewCenter, level, camera, tesselator, modelViewMatrix, sphericalCoords, viewCenter.ticks(), lastDistance, partialTicks);
+		if(!viewCenter.objectEquals(this))
+			renderTextureLayers(viewCenter, level, camera, bufferbuilder, stack.last().pose(), sphericalCoords, viewCenter.ticks(), lastDistance, partialTicks);
 		
 		if(childRenderDistance > lastDistance)
 		{
@@ -65,14 +65,14 @@ public abstract class TexturedObjectRenderer<T extends TexturedObject> extends S
 			{
 				// Render child in front of the parent
 				if(child.lastDistance < this.lastDistance)
-					child.render(viewCenter, level, partialTicks, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog, tesselator, positionVector, axisRotation());
+					child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, positionVector, axisRotation());
 			}
 		}
 	}
 	
 	
 	public static void renderOnSphere(Color.FloatRGBA rgba, Color.FloatRGBA secondaryRGBA, ResourceLocation texture, UV.Quad uv,
-									  ClientLevel level, Camera camera, Tesselator tesselator, Matrix4f lastMatrix, SphericalCoords sphericalCoords,
+									  ClientLevel level, Camera camera, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords,
 									  long ticks, double distance, float partialTicks, float brightness, float size, float rotation, boolean shouldBlend)
 	{
 		Vector3f corner00 = new Vector3f(size, DEFAULT_DISTANCE, size);
@@ -97,14 +97,14 @@ public abstract class TexturedObjectRenderer<T extends TexturedObject> extends S
 		RenderSystem.setShaderColor(rgba.red() * secondaryRGBA.red(), rgba.green() * secondaryRGBA.green(), rgba.blue() * secondaryRGBA.blue(), brightness * rgba.alpha() * secondaryRGBA.alpha());
 		
 		RenderSystem.setShaderTexture(0, texture);
-		final var bufferbuilder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+		bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 		
-		bufferbuilder.addVertex(lastMatrix, corner00.x, corner00.y, corner00.z).setUv(uv.topRight().u(ticks), uv.topRight().v(ticks));
-		bufferbuilder.addVertex(lastMatrix, corner10.x, corner10.y, corner10.z).setUv(uv.bottomRight().u(ticks), uv.bottomRight().v(ticks));
-		bufferbuilder.addVertex(lastMatrix, corner11.x, corner11.y, corner11.z).setUv(uv.bottomLeft().u(ticks), uv.bottomLeft().v(ticks));
-		bufferbuilder.addVertex(lastMatrix, corner01.x, corner01.y, corner01.z).setUv(uv.topLeft().u(ticks), uv.topLeft().v(ticks));
+		bufferbuilder.vertex(lastMatrix, corner00.x, corner00.y, corner00.z).uv(uv.topRight().u(ticks), uv.topRight().v(ticks)).endVertex();
+		bufferbuilder.vertex(lastMatrix, corner10.x, corner10.y, corner10.z).uv(uv.bottomRight().u(ticks), uv.bottomRight().v(ticks)).endVertex();
+		bufferbuilder.vertex(lastMatrix, corner11.x, corner11.y, corner11.z).uv(uv.bottomLeft().u(ticks), uv.bottomLeft().v(ticks)).endVertex();
+		bufferbuilder.vertex(lastMatrix, corner01.x, corner01.y, corner01.z).uv(uv.topLeft().u(ticks), uv.topLeft().v(ticks)).endVertex();
 		
-		BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
+		BufferUploader.drawWithShader(bufferbuilder.end());
 		
 		RenderSystem.defaultBlendFunc();
 	}
@@ -120,8 +120,8 @@ public abstract class TexturedObjectRenderer<T extends TexturedObject> extends S
 	 * @param distance
 	 * @param partialTicks
 	 */
-	protected void renderTextureLayer(TextureLayer textureLayer, ViewCenter viewCenter, ClientLevel level, Camera camera, Tesselator tesselator,
-									  Matrix4f lastMatrix,SphericalCoords sphericalCoords, double fade, long ticks, double distance, float partialTicks)
+	protected void renderTextureLayer(TextureLayer textureLayer, ViewCenter viewCenter, ClientLevel level, Camera camera, BufferBuilder bufferbuilder,
+									  Matrix4f lastMatrix, SphericalCoords sphericalCoords, double fade, long ticks, double distance, float partialTicks)
 	{
 		if(textureLayer.rgba().alpha() <= 0)
 			return;
@@ -137,11 +137,12 @@ public abstract class TexturedObjectRenderer<T extends TexturedObject> extends S
 		}
 		
 		renderOnSphere(textureLayer.rgba(), Color.FloatRGBA.DEFAULT, textureLayer.texture(), textureLayer.uv(),
-				level, camera, tesselator, lastMatrix, sphericalCoords,
-				ticks, distance, partialTicks, LightEffects.dayBrightness(viewCenter, size, ticks, level, camera, partialTicks) * (float) fade, size, (float) textureLayer.rotation(), textureLayer.shoulBlend());
+				level, camera, bufferbuilder, lastMatrix, sphericalCoords,
+				ticks, distance, partialTicks, LightEffects.dayBrightness(viewCenter, size, ticks, level, camera, partialTicks) * (float) fade,
+				size, (float) textureLayer.rotation(), textureLayer.shoulBlend());
 	}
 	
-	protected void renderTextureLayers(ViewCenter viewCenter, ClientLevel level, Camera camera, Tesselator tesselator, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)
+	protected void renderTextureLayers(ViewCenter viewCenter, ClientLevel level, Camera camera, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)
 	{
 		double fade = renderedObject.fadeOut(distance);
 		
@@ -152,7 +153,7 @@ public abstract class TexturedObjectRenderer<T extends TexturedObject> extends S
 		
 		for(TextureLayer textureLayer : renderedObject.getTextureLayers())
 		{
-			renderTextureLayer(textureLayer, viewCenter, level, camera, tesselator, lastMatrix, sphericalCoords, fade, ticks, distance, partialTicks);
+			renderTextureLayer(textureLayer, viewCenter, level, camera, bufferbuilder, lastMatrix, sphericalCoords, fade, ticks, distance, partialTicks);
 		}
 	}
 }

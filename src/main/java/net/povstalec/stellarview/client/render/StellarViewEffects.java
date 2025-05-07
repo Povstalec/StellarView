@@ -1,11 +1,10 @@
 package net.povstalec.stellarview.client.render;
 
 import net.minecraft.resources.ResourceLocation;
-import net.povstalec.stellarview.client.resourcepack.effects.MeteorEffect;
 import net.povstalec.stellarview.common.util.DustCloudInfo;
 import net.povstalec.stellarview.common.util.StarInfo;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 
 public class StellarViewEffects

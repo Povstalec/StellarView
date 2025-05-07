@@ -3,9 +3,8 @@ package net.povstalec.stellarview.client.render.space_objects;
 import net.povstalec.stellarview.api.common.space_objects.OrbitingObject;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.util.AxisRotation;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
-
-import javax.annotation.Nullable;
 
 public abstract class OrbitingObjectRenderer<T extends OrbitingObject> extends TexturedObjectRenderer<T>
 {

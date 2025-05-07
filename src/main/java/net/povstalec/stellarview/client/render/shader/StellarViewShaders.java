@@ -1,14 +1,17 @@
 package net.povstalec.stellarview.client.render.shader;
 
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.RegisterShadersEvent;
-import net.povstalec.stellarview.StellarView;
+import java.io.IOException;
+import java.util.List;
+import java.util.function.Consumer;
+
+import com.google.common.collect.Lists;
+import com.mojang.datafixers.util.Pair;
+import net.minecraft.client.renderer.ShaderInstance;
+import net.minecraft.server.packs.resources.ResourceProvider;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
+import net.minecraft.resources.ResourceLocation;
+import net.povstalec.stellarview.StellarView;
 
 public class StellarViewShaders
 {
@@ -17,29 +20,24 @@ public class StellarViewShaders
 	private static StarShaderInstance rendertypeStarTexShader;
 	private static DustCloudShaderInstance rendertypeDustCloudShader;
 	
-	@EventBusSubscriber(modid = StellarView.MODID, value = Dist.CLIENT, bus= EventBusSubscriber.Bus.MOD)
     public static class ShaderInit
     {
-        @SubscribeEvent
-        public static void registerShaders(RegisterShadersEvent event) throws IOException
+        public static void registerShaders(ResourceProvider factory, List<Pair<ShaderInstance, Consumer<ShaderInstance>>> programs) throws IOException
         {
-            event.registerShader(new StarShaderInstance(event.getResourceProvider(), ResourceLocation.fromNamespaceAndPath(StellarView.MODID,"rendertype_star"), StellarViewVertexFormat.STAR_POS_COLOR_LY.get()),
-            		(shaderInstance) ->
-            		{
-            			rendertypeStarShader = (StarShaderInstance) shaderInstance;
-            		});
+			programs.add(Pair.of(new StarShaderInstance(factory, new ResourceLocation(StellarView.MODID,"rendertype_star"), StellarViewVertexFormat.STAR_POS_COLOR_LY), (shaderInstance) ->
+			{
+				rendertypeStarShader = (StarShaderInstance) shaderInstance;
+			}));
 			
-			event.registerShader(new StarShaderInstance(event.getResourceProvider(), ResourceLocation.fromNamespaceAndPath(StellarView.MODID,"rendertype_star_tex"), StellarViewVertexFormat.STAR_POS_COLOR_LY_TEX.get()),
-					(shaderInstance) ->
-					{
-						rendertypeStarTexShader = (StarShaderInstance) shaderInstance;
-					});
+			programs.add(Pair.of(new StarShaderInstance(factory, new ResourceLocation(StellarView.MODID,"rendertype_star_tex"), StellarViewVertexFormat.STAR_POS_COLOR_LY_TEX), (shaderInstance) ->
+			{
+				rendertypeStarTexShader = (StarShaderInstance) shaderInstance;
+			}));
 			
-			event.registerShader(new DustCloudShaderInstance(event.getResourceProvider(), ResourceLocation.fromNamespaceAndPath(StellarView.MODID,"rendertype_dust_cloud"), StellarViewVertexFormat.STAR_POS_COLOR_LY_TEX.get()),
-					(shaderInstance) ->
-					{
-						rendertypeDustCloudShader = (DustCloudShaderInstance) shaderInstance;
-					});
+			programs.add(Pair.of(new DustCloudShaderInstance(factory, new ResourceLocation(StellarView.MODID,"rendertype_dust_cloud"), StellarViewVertexFormat.STAR_POS_COLOR_LY_TEX), (shaderInstance) ->
+			{
+				rendertypeDustCloudShader = (DustCloudShaderInstance) shaderInstance;
+			}));
         }
     }
 	

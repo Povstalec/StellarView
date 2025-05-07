@@ -1,6 +1,7 @@
 package net.povstalec.stellarview.client.render.space_objects;
 
-import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.povstalec.stellarview.api.common.space_objects.GravityLense;
@@ -57,7 +58,7 @@ public abstract class GravityLenseRenderer<T extends GravityLense> extends StarL
 	//============================================================================================
 	
 	@Override
-	protected void renderTextureLayer(TextureLayer textureLayer, ViewCenter viewCenter, ClientLevel level, Camera camera, Tesselator tesselator,
+	protected void renderTextureLayer(TextureLayer textureLayer, ViewCenter viewCenter, ClientLevel level, Camera camera, BufferBuilder bufferbuilder,
 									  Matrix4f lastMatrix, SphericalCoords sphericalCoords,
 									  double fade, long ticks, double distance, float partialTicks)
 	{
@@ -83,14 +84,14 @@ public abstract class GravityLenseRenderer<T extends GravityLense> extends StarL
 				return;
 		}
 		
-		renderOnSphere(textureLayer.rgba(), Color.FloatRGBA.DEFAULT, textureLayer.texture(), textureLayer.uv(),
-				level, camera, tesselator, lastMatrix, sphericalCoords,
+		renderOnSphere(textureLayer.rgba(), starRGBA, textureLayer.texture(), textureLayer.uv(),
+				level, camera, bufferbuilder, lastMatrix, sphericalCoords,
 				ticks, distance, partialTicks, LightEffects.dayBrightness(viewCenter, size, ticks, level, camera, partialTicks) * (float) fade, size, (float) textureLayer.rotation(), textureLayer.shoulBlend());
 	}
 	
 	@Override
-	public void render(ViewCenter viewCenter, ClientLevel level, float partialTicks, Matrix4f modelViewMatrix, Camera camera,
-					   Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, Tesselator tesselator,
+	public void render(ViewCenter viewCenter, ClientLevel level, float partialTicks, PoseStack stack, Camera camera,
+					   Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder,
 					   Vector3f parentVector, AxisRotation parentRotation)
 	{
 		Vector3f positionVector = getPosition(viewCenter, parentRotation, viewCenter.ticks(), partialTicks).add(parentVector); // Handles orbits 'n stuff
@@ -105,28 +106,27 @@ public abstract class GravityLenseRenderer<T extends GravityLense> extends StarL
 		lastDistance = sphericalCoords.r;
 		sphericalCoords.r = DEFAULT_DISTANCE;
 		
-		double childRenderDistance = renderedObject.getFadeOutHandler().getMaxChildRenderDistance().toKm();
-		if(childRenderDistance > lastDistance)
+		if(renderedObject.getFadeOutHandler().getMaxChildRenderDistance().toKm() > lastDistance)
 		{
 			for(SpaceObjectRenderer child : children)
 			{
 				// Render child behind the parent
 				if(child.lastDistance >= this.lastDistance)
-					child.render(viewCenter, level, partialTicks, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog, tesselator, positionVector, axisRotation());
+					child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, positionVector, axisRotation());
 			}
 		}
 		
 		// If the object isn't the same we're viewing everything from and it isn't too far away, render it
 		if(!viewCenter.objectEquals(this) && renderedObject.getFadeOutHandler().getFadeOutEndDistance().toKm() > lastDistance)
-			renderTextureLayers(viewCenter, level, camera, tesselator, modelViewMatrix, sphericalCoords, viewCenter.ticks(), lastDistance, partialTicks);
+			renderTextureLayers(viewCenter, level, camera, bufferbuilder, stack.last().pose(), sphericalCoords, viewCenter.ticks(), lastDistance, partialTicks);
 		
-		if(childRenderDistance > lastDistance)
+		if(renderedObject.getFadeOutHandler().getMaxChildRenderDistance().toKm() > lastDistance)
 		{
 			for(SpaceObjectRenderer child : children)
 			{
 				// Render child in front of the parent
 				if(child.lastDistance < this.lastDistance)
-					child.render(viewCenter, level, partialTicks, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog, tesselator, positionVector, axisRotation());
+					child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, positionVector, axisRotation());
 			}
 		}
 	}

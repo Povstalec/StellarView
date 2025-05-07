@@ -3,12 +3,10 @@ package net.povstalec.stellarview.common.util;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.common.util.INBTSerializable;
 
-public class TextureLayer implements INBTSerializable<CompoundTag>
+public class TextureLayer implements ISerializable
 {
 	public static final String TEXTURE = "texture";
 	public static final String RGBA = "rgba";
@@ -133,13 +131,13 @@ public class TextureLayer implements INBTSerializable<CompoundTag>
 	//============================================================================================
 	
 	@Override
-	public CompoundTag serializeNBT(HolderLookup.Provider provider)
+	public CompoundTag serializeNBT()
 	{
 		CompoundTag tag = new CompoundTag();
 		
 		tag.putString(TEXTURE, texture.toString());
 		
-		tag.put(RGBA, rgba.serializeNBT(provider));
+		tag.put(RGBA, rgba.serializeNBT());
 		
 		tag.putBoolean(BLEND, blend);
 		
@@ -155,13 +153,11 @@ public class TextureLayer implements INBTSerializable<CompoundTag>
 	}
 	
 	@Override
-	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag)
+	public void deserializeNBT(CompoundTag tag)
 	{
-		Color.FloatRGBA rgba = new Color.FloatRGBA(0, 0, 0);
-		rgba.deserializeNBT(provider, tag.getCompound(RGBA));
-		this.texture = ResourceLocation.tryParse(tag.getString(TEXTURE));
+		this.texture = new ResourceLocation(tag.getString(TEXTURE));
 		this.rgba = new Color.FloatRGBA(0, 0, 0);
-		rgba.deserializeNBT(provider, tag.getCompound(RGBA));
+		rgba.deserializeNBT(tag.getCompound(RGBA));
 		
 		this.blend = tag.getBoolean(BLEND);
 		

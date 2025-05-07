@@ -1,21 +1,19 @@
 package net.povstalec.stellarview.client.util;
 
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 
 import net.minecraft.client.renderer.GameRenderer;
-import net.povstalec.stellarview.api.common.space_objects.StarLike;
 import net.povstalec.stellarview.client.render.SpaceRenderer;
 import net.povstalec.stellarview.client.render.shader.StellarViewShaders;
 import net.povstalec.stellarview.client.render.shader.StellarViewVertexFormat;
 import net.povstalec.stellarview.api.common.space_objects.resourcepack.StarField;
+import net.povstalec.stellarview.api.common.space_objects.StarLike;
 import net.povstalec.stellarview.common.util.Color;
 import net.povstalec.stellarview.common.util.SpaceCoords;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
-import org.lwjgl.system.MemoryUtil;
 
-import javax.annotation.Nullable;
 import java.util.Random;
 
 public abstract class StarData
@@ -71,18 +69,6 @@ public abstract class StarData
 	
 	protected abstract LOD newStars(StarField.LevelOfDetail lod);
 	
-	public static void addStarHeightWidthSize(BufferBuilder builder, float height, float width, float size)
-	{
-		long i = builder.beginElement(StellarViewVertexFormat.ELEMENT_HEIGHT_WIDTH_SIZE.get());
-		
-		if (i != -1L)
-		{
-			MemoryUtil.memPutFloat(i, height);
-			MemoryUtil.memPutFloat(i + Float.BYTES, width);
-			MemoryUtil.memPutFloat(i + Float.BYTES * 2, size);
-		}
-	}
-	
 	
 	
 	public static class LOD
@@ -103,6 +89,7 @@ public abstract class StarData
 		{
 			this.starCoords = new double[stars][3];
 			this.starSizes = new double[stars];
+			
 			this.randoms = new double[stars][2];
 			
 			this.starRGBA = new short[stars][4];
@@ -215,25 +202,29 @@ public abstract class StarData
 				double height = aLocation * cosRandom - bLocation * sinRandom;
 				double width = bLocation * cosRandom + aLocation * sinRandom;
 				
-				builder.addVertex((float) starCoords[i][0], (float) starCoords[i][1], (float) starCoords[i][2])
-						.setColor((byte) starRGBA[i][0], (byte) starRGBA[i][1], (byte) starRGBA[i][2], (byte) starRGBA[i][3]);
-				
-				addStarHeightWidthSize(builder, (float) height, (float) width, (float) starSizes[i]);
+				builder.vertex(starCoords[i][0], starCoords[i][1], starCoords[i][2]).color(starRGBA[i][0], starRGBA[i][1], starRGBA[i][2], starRGBA[i][3]);
+				// These next few lines add a "custom" element defined as HeightWidthSize in StellarViewVertexFormat
+				builder.putFloat(0, (float) height);
+				builder.putFloat(4, (float) width);
+				builder.putFloat(8, (float) starSizes[i]);
+				builder.nextElement();
 				
 				if(hasTexture)
-					builder.setUv( (float) (aLocation + 1) / 2F, (float) (bLocation + 1) / 2F);
+					builder.uv( (float) (aLocation + 1) / 2F, (float) (bLocation + 1) / 2F);
+				
+				builder.endVertex();
 			}
 		}
 		
-		public MeshData getStarBuffer(Tesselator tesselator, boolean hasTexture)
+		public BufferBuilder.RenderedBuffer getStarBuffer(BufferBuilder bufferBuilder, boolean hasTexture)
 		{
-			final var bufferBuilder = tesselator.begin(VertexFormat.Mode.QUADS, hasTexture ? StellarViewVertexFormat.STAR_POS_COLOR_LY_TEX.get() : StellarViewVertexFormat.STAR_POS_COLOR_LY.get());
+			bufferBuilder.begin(VertexFormat.Mode.QUADS, hasTexture ? StellarViewVertexFormat.STAR_POS_COLOR_LY_TEX : StellarViewVertexFormat.STAR_POS_COLOR_LY);
 			
 			for(int i = 0; i < stars; i++)
 			{
 				createStar(bufferBuilder, hasTexture, i);
 			}
-			return bufferBuilder.build();
+			return bufferBuilder.end();
 		}
 		
 		private void renderStarBuffer(Matrix4f pose, Matrix4f projectionMatrix, SpaceCoords difference, boolean isStatic, boolean hasTexture)
@@ -249,13 +240,16 @@ public abstract class StarData
 				starBuffer = new StarBuffer();
 				
 				Tesselator tesselator = Tesselator.getInstance();
+				BufferBuilder bufferBuilder = tesselator.getBuilder();
 				RenderSystem.setShader(GameRenderer::getPositionShader);
-				MeshData mesh = isStatic ? getStaticStarBuffer(tesselator, hasTexture, difference) : getStarBuffer(tesselator, hasTexture);
+				BufferBuilder.RenderedBuffer bufferbuilder$renderedbuffer;
+				
+				bufferbuilder$renderedbuffer = isStatic ? getStaticStarBuffer(bufferBuilder, hasTexture, difference) : getStarBuffer(bufferBuilder, hasTexture);
 				
 				starBuffer.bind();
-				starBuffer.upload(mesh);
+				starBuffer.upload(bufferbuilder$renderedbuffer);
 				if(isStatic)
-					starBuffer.drawWithShader(pose, projectionMatrix, hasTexture ? GameRenderer.getPositionTexColorShader() : GameRenderer.getPositionColorShader());
+					starBuffer.drawWithShader(pose, projectionMatrix, hasTexture ? GameRenderer.getPositionColorTexShader() : GameRenderer.getPositionColorShader());
 				else
 					starBuffer.drawWithShader(pose, projectionMatrix, difference, hasTexture ? StellarViewShaders.starTexShader() : StellarViewShaders.starShader());
 				VertexBuffer.unbind();
@@ -266,7 +260,7 @@ public abstract class StarData
 			{
 				starBuffer.bind();
 				if(isStatic)
-					starBuffer.drawWithShader(pose, projectionMatrix, hasTexture ? GameRenderer.getPositionTexColorShader() : GameRenderer.getPositionColorShader());
+					starBuffer.drawWithShader(pose, projectionMatrix, hasTexture ? GameRenderer.getPositionColorTexShader() : GameRenderer.getPositionColorShader());
 				else
 					starBuffer.drawWithShader(pose, projectionMatrix, difference, hasTexture ? StellarViewShaders.starTexShader() : StellarViewShaders.starShader());
 				VertexBuffer.unbind();
@@ -277,15 +271,15 @@ public abstract class StarData
 		//*******************************************Static*******************************************
 		//============================================================================================
 		
-		public MeshData getStaticStarBuffer(Tesselator tesselator, boolean hasTexture, SpaceCoords difference)
+		public BufferBuilder.RenderedBuffer getStaticStarBuffer(BufferBuilder bufferBuilder, boolean hasTexture, SpaceCoords difference)
 		{
-			final var bufferBuilder = tesselator.begin(VertexFormat.Mode.QUADS, hasTexture ? DefaultVertexFormat.POSITION_TEX_COLOR : DefaultVertexFormat.POSITION_COLOR);
+			bufferBuilder.begin(VertexFormat.Mode.QUADS, hasTexture ? DefaultVertexFormat.POSITION_COLOR_TEX : DefaultVertexFormat.POSITION_COLOR);
 			
 			for(int i = 0; i < stars; i++)
 			{
 				createStaticStar(bufferBuilder, hasTexture, i, difference);
 			}
-			return bufferBuilder.build();
+			return bufferBuilder.end();
 		}
 		
 		double clampStar(double starSize, double minStarSize, double distance)
@@ -434,16 +428,9 @@ public abstract class StarData
 				double projectedZ = width * sinTheta + heightProjectionXZ * cosTheta;
 				
 				if(hasTexture)
-				{
-					builder.addVertex((float) (starX + projectedX), (float) (starY + heightProjectionY), (float) (starZ + projectedZ))
-							.setUv( (float) (aLocation + 1) / 2F, (float) (bLocation + 1) / 2F)
-							.setColor((byte) starRGBA[i][0], (byte) starRGBA[i][1], (byte) starRGBA[i][2], alpha);
-				}
+					builder.vertex(starX + projectedX, starY + heightProjectionY, starZ + projectedZ).color(starRGBA[i][0], starRGBA[i][1] , starRGBA[i][2], alpha).uv( (float) (aLocation + 1) / 2F, (float) (bLocation + 1) / 2F).endVertex();
 				else
-				{
-					builder.addVertex((float) (starX + projectedX), (float) (starY + heightProjectionY), (float) (starZ + projectedZ))
-							.setColor((byte) starRGBA[i][0], (byte) starRGBA[i][1], (byte) starRGBA[i][2], alpha);
-				}
+					builder.vertex(starX + projectedX, starY + heightProjectionY, starZ + projectedZ).color(starRGBA[i][0], starRGBA[i][1], starRGBA[i][2], alpha).endVertex();
 			}
 		}
 	}
