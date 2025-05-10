@@ -27,6 +27,6 @@ public class LunarCompatibility {
             int b = FastColor.ARGB32.blue(moonColor);
             return new Color.FloatRGBA(r, g, b);
         }
-        return new Color.FloatRGBA(1, 1, 1);
+        return new Color.FloatRGBA(255, 255, 255);
     }
 }
