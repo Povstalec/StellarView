@@ -86,7 +86,7 @@ public class Moon extends Planet
 				return EnhancedCelestialsCompatibility.getMoonColor(level, partialTicks);
 			}
 			else if(StellarView.isLunarLoaded() && level.dimension().equals(getCompatibility().get().lunarMoonDimension)) {
-				return LunarCompatibility.getMoonColor(level);
+				return LunarCompatibility.getMoonColor();
 			}
 		}
 		return new Color.FloatRGBA(1F, 1F, 1F);
