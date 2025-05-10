@@ -9,15 +9,27 @@ import java.lang.reflect.Field;
 public class LunarCompatibility {
 
     public static float getMoonSize(float defaultSize) {
-        if(MoonHandler.isMoonScaled()){
+        /* if(MoonHandler.isMoonScaled()){
             Matrix4f moonScale = MoonHandler.getMoonScale();
             try {
                 return moonScale.m00() * defaultSize;
             } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
                 return defaultSize;
             }
+        } */
+        // BODGE FIX - LUNAR SCALE NOT IMPLEMENTED
+        try {
+            Field moonEventID = MoonHandler.class.getDeclaredField("moonID");
+            moonEventID.setAccessible(true);
+            String eventID = (String) moonEventID.get(moonEventID);
+            System.out.println(eventID);
+            float moonScale = 1;
+            if(eventID.equals("lunar:big_moon")) { moonScale = 4f; }
+            if(eventID.equals("lunar:tiny_moon")) { moonScale = 0.25f; }
+            return moonScale * defaultSize;
+        } catch (NoSuchFieldException | IllegalAccessException | NullPointerException e) {
+            return defaultSize;
         }
-        return defaultSize;
     }
 
     public static Color.FloatRGBA getMoonColor() {
