@@ -44,10 +44,12 @@ public class StellarView
 	public static final String MODID = "stellarview";
 	
 	public static final String ENHANCED_CELESTIALS_MODID = "enhancedcelestials";
+	public static final String LUNAR_MODID = "lunar";
 	public static final String TWILIGHT_FOREST_MODID = "twilightforest";
 	public static final String AETHER_MODID = "aether";
     
     private static Optional<Boolean> isEnhancedCelestialsLoaded = Optional.empty();
+	private static Optional<Boolean> isLunarLoaded = Optional.empty();
 	private static Optional<Boolean> isTwilightForestLoaded = Optional.empty();
 	private static Optional<Boolean> isAetherLoaded = Optional.empty();
     
@@ -132,6 +134,14 @@ public class StellarView
     	
     	return isEnhancedCelestialsLoaded.get();	
     }
+
+	public static boolean isLunarLoaded()
+	{
+		if(isLunarLoaded.isEmpty())
+			isLunarLoaded = Optional.of(ModList.get().isLoaded(LUNAR_MODID));
+
+		return isLunarLoaded.get();
+	}
 	
 	public static boolean isTwilightForestLoaded()
 	{
