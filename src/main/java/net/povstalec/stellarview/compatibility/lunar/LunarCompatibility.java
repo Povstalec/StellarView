@@ -22,7 +22,6 @@ public class LunarCompatibility {
             Field moonEventID = MoonHandler.class.getDeclaredField("moonID");
             moonEventID.setAccessible(true);
             String eventID = (String) moonEventID.get(moonEventID);
-            System.out.println(eventID);
             float moonScale = 1;
             if(eventID.equals("lunar:big_moon")) { moonScale = 4f; }
             if(eventID.equals("lunar:tiny_moon")) { moonScale = 0.25f; }
