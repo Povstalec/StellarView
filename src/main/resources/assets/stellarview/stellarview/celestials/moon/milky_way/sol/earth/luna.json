@@ -59,6 +59,7 @@
 	
 	"compatibility":
 	{
-		"enhanced_celestials_moon_dimension": "minecraft:overworld"
+		"enhanced_celestials_moon_dimension": "minecraft:overworld",
+		"lunar_moon_dimension": "minecraft:overworld"
 	}
 }

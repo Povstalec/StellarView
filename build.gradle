@@ -121,9 +121,36 @@ configurations {
     runtimeClasspath.extendsFrom localRuntime
 }
 
+repositories {
+    // Put repositories for dependencies here
+    // ForgeGradle automatically adds the Forge maven and Maven Central for you
+
+    // If you have mod jar dependencies in ./libs, you can declare them as a repository like so.
+    // See https://docs.gradle.org/current/userguide/declaring_repositories.html#sub:flat_dir_resolver
+    // flatDir {
+    //     dir 'libs'
+    // }
+    maven {
+        name 'JTDev-Maven-Repository'
+        url 'https://maven.jt-dev.tech/releases'
+    }
+
+    maven githubPackage.invoke("The-Aether-Team/The-Aether")
+
+    maven {
+        url "https://cursemaven.com"
+    }
+
+    maven {
+        name "saps"
+        url "https://maven.saps.dev/releases"
+    }
+}
+
 dependencies {
     implementation ("corgitaco.corgilib:Corgilib-NeoForge:${minecraft_version}-${corgilib_version}")
     implementation ("maven.modrinth:enhanced-celestials:${enhanced_celestials_version}-neoforge")
+    implementation ("com.mrbysco.lunar:Lunar-common-${minecraft_version}:${lunar_version}") { transitive = false }
 
     implementation ("curse.maven:the-twilight-forest-227639:5983260")
 
