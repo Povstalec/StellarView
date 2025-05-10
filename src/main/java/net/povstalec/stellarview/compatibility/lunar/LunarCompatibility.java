@@ -4,6 +4,7 @@ import com.mrbysco.lunar.client.MoonHandler;
 import net.minecraft.util.FastColor;
 import net.povstalec.stellarview.common.util.Color;
 import org.joml.Matrix4f;
+import java.lang.reflect.Field;
 
 public class LunarCompatibility {
 
@@ -20,13 +21,18 @@ public class LunarCompatibility {
     }
 
     public static Color.FloatRGBA getMoonColor() {
+        /* Once Lunar updates to 0.2.3, there should be a getter for this,
+        so I shouldn't need to steal a private float array. -NW */
         if (MoonHandler.isEventActive()) {
-            int moonColor = MoonHandler.getMoonColor();
-            int r = FastColor.ARGB32.red(moonColor);
-            int g = FastColor.ARGB32.green(moonColor);
-            int b = FastColor.ARGB32.blue(moonColor);
-            return new Color.FloatRGBA(r, g, b);
+            try {
+                Field moonColorField = MoonHandler.class.getDeclaredField("moonColor");
+                moonColorField.setAccessible(true);
+                float[] rawColor = (float[]) moonColorField.get(moonColorField);
+                return new Color.FloatRGBA(rawColor[0], rawColor[1], rawColor[2]);
+            } catch (NoSuchFieldException | IllegalAccessException | NullPointerException e) {
+                return new Color.FloatRGBA(255, 255, 255);
+            }
         }
-        return new Color.FloatRGBA(1, 1, 1);
+        return new Color.FloatRGBA(255, 255, 255);
     }
 }
