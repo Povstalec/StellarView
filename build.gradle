@@ -136,6 +136,11 @@ repositories {
     maven {
         url "https://cursemaven.com"
     }
+
+    maven {
+        name "saps"
+        url "https://maven.saps.dev/releases"
+    }
 }
 
 dependencies {
@@ -167,6 +172,8 @@ dependencies {
     implementation fg.deobf("curse.maven:the-twilight-forest-227639:5468648")
 
     implementation fg.deobf("com.aetherteam.aether:aether:${minecraft_version}-${aether_version}-neoforge")
+
+    implementation fg.deobf("com.mrbysco.lunar:Lunar-forge-${minecraft_version}:${lunar_version}") { transitive = false }
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
