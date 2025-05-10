@@ -1,18 +1,13 @@
 package net.povstalec.stellarview.compatibility.lunar;
 
 import com.mrbysco.lunar.client.MoonHandler;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.util.FastColor;
 import net.povstalec.stellarview.common.util.Color;
 import org.joml.Matrix4f;
 
-import java.lang.reflect.Field;
-
 public class LunarCompatibility {
 
     public static float getMoonSize(float defaultSize) {
-        /* Have to do string conversion and manipulation to get
-        the float I'm after. At least it is only in 1.19.2. -NW */
         if(MoonHandler.isMoonScaled()){
             Matrix4f moonScale = MoonHandler.getMoonScale();
             try {
@@ -24,7 +19,7 @@ public class LunarCompatibility {
         return defaultSize;
     }
 
-    public static Color.FloatRGBA getMoonColor(ClientLevel level) {
+    public static Color.FloatRGBA getMoonColor() {
         if (MoonHandler.isEventActive()) {
             int moonColor = MoonHandler.getMoonColor();
             int r = FastColor.ARGB32.red(moonColor);
