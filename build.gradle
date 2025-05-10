@@ -141,6 +141,11 @@ repositories {
     maven {
         url "https://cursemaven.com"
     }
+
+    maven {
+        name "saps"
+        url "https://maven.saps.dev/releases"
+    }
 }
 
 dependencies {
@@ -169,6 +174,8 @@ dependencies {
     implementation fg.deobf("curse.maven:the-twilight-forest-227639:4389567")
 
     implementation fg.deobf("com.aetherteam.aether:aether:${mc_version}-${aether_version}-forge")
+
+    implementation fg.deobf("com.mrbysco.lunar:Lunar-forge-${mc_version}:${lunar_version}") { transitive = false }
 }
 
 // Example for how to get properties into the manifest for reading at runtime.
