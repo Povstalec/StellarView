@@ -153,6 +153,8 @@ public class Star extends StarLike
 		public static final String MAX_SIZE_MULTIPLIER = "max_size_multiplier";
 		public static final String START_TICKS = "start_ticks";
 		public static final String DURATION_TICKS = "duration_ticks";
+		public static final String REPEATING = "repeating";
+		public static final String INTERVAL_TICKS = "interval_ticks";
 		public static final String NEBULA = "nebula";
 		public static final String SUPERNOVA_LEFTOVER = "supernova_leftover";
 		
@@ -164,11 +166,16 @@ public class Star extends StarLike
 		protected long durationTicks;
 		
 		protected long endTicks;
+
+		protected boolean repeating;
+		protected long intervalTicks;
 		
 		public static final Codec<SupernovaInfo> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				Codec.FLOAT.fieldOf(MAX_SIZE_MULTIPLIER).forGetter(SupernovaInfo::getMaxSizeMultiplier),
 				Codec.LONG.fieldOf(START_TICKS).forGetter(SupernovaInfo::getStartTicks),
 				Codec.LONG.fieldOf(DURATION_TICKS).forGetter(SupernovaInfo::getDurationTicks),
+
+				Codec.LONG.optionalFieldOf(INTERVAL_TICKS, 0L).forGetter(SupernovaInfo::getIntervalTicks),
 				
 				Nebula.CODEC.fieldOf(NEBULA).forGetter(SupernovaInfo::getNebula),
 				SupernovaLeftover.CODEC.fieldOf(SUPERNOVA_LEFTOVER).forGetter(SupernovaInfo::getSupernovaLeftover)
@@ -176,13 +183,15 @@ public class Star extends StarLike
 		
 		public SupernovaInfo() {}
 		
-		public SupernovaInfo(float maxSizeMultiplier, long startTicks, long durationTicks, Nebula nebula, SupernovaLeftover supernovaLeftover)
+		public SupernovaInfo(float maxSizeMultiplier, long startTicks, long durationTicks, long intervalTicks, Nebula nebula, SupernovaLeftover supernovaLeftover)
 		{
 			this.maxSizeMultiplier = maxSizeMultiplier;
 			this.startTicks = startTicks;
 			this.durationTicks = durationTicks;
 			
 			this.endTicks = startTicks + durationTicks;
+
+			this.intervalTicks = intervalTicks;
 			
 			this.nebula = nebula;
 			this.supernovaLeftover = supernovaLeftover;
@@ -218,21 +227,47 @@ public class Star extends StarLike
 			return endTicks;
 		}
 		
-		
+		public long getIntervalTicks()
+		{
+			return intervalTicks;
+		}
+
+		private boolean isRepeating()
+		{
+			return this.getIntervalTicks() > 0;
+		}
+
+		/**
+		 * @param ticks Time
+		 * @return The amount of times this nova has gone off, if 0 - never gone off yet
+		 */
+		public long getOccurences(long ticks)
+		{
+			if(this.getIntervalTicks() == 0)
+				return -1;
+
+			if(ticks < getEndTicks())
+				return 0;
+			else
+				return (int) ((ticks-getEndTicks()) / (getDurationTicks()+getIntervalTicks())) + 1;
+		}
 		
 		public boolean supernovaStarted(long ticks)
 		{
-			return ticks > getStartTicks();
+			if(ticks < getStartTicks())
+				return false;
+
+			return ticks > (getStartTicks() + (this.isRepeating() ? (getDurationTicks()+getIntervalTicks())*getOccurences(ticks) : 0));
 		}
-		
+
 		public boolean supernovaEnded(long ticks)
 		{
-			return ticks > getEndTicks();
+			return ticks > (getEndTicks() + (this.isRepeating() ? (getDurationTicks()+getIntervalTicks())*getOccurences(ticks) : 0));
 		}
 		
 		public long lifetime(long ticks)
 		{
-			return ticks - getStartTicks();
+			return ticks - (getStartTicks() + (this.isRepeating() ? (getDurationTicks()+getIntervalTicks())*getOccurences(ticks) : 0));
 		}
 		
 		//============================================================================================
@@ -247,6 +282,8 @@ public class Star extends StarLike
 			tag.putFloat(MAX_SIZE_MULTIPLIER, maxSizeMultiplier);
 			tag.putLong(START_TICKS, startTicks);
 			tag.putLong(DURATION_TICKS, durationTicks);
+			tag.putBoolean(REPEATING, repeating);
+			tag.putLong(INTERVAL_TICKS, intervalTicks);
 			
 			return tag;
 		}
@@ -257,6 +294,8 @@ public class Star extends StarLike
 			this.maxSizeMultiplier = tag.getFloat(MAX_SIZE_MULTIPLIER);
 			this.startTicks = tag.getLong(START_TICKS);
 			this.durationTicks = tag.getLong(DURATION_TICKS);
+			this.repeating = tag.getBoolean(REPEATING);
+			this.intervalTicks = tag.getLong(INTERVAL_TICKS);
 		}
 	}
 }
