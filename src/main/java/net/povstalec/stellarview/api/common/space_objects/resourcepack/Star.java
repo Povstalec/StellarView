@@ -82,7 +82,7 @@ public class Star extends StarLike
 	public float supernovaSize(float size, long ticks, double lyDistance)
 	{
 		if(supernovaInfo.supernovaEnded(ticks))
-			return 0;
+			return this.supernovaInfo.getSupernovaLeftover().starSize(size, lyDistance);
 		
 		if(!supernovaInfo.supernovaStarted(ticks))
 			return size;
