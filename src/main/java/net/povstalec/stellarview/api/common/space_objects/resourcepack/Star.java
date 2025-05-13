@@ -83,14 +83,27 @@ public class Star extends StarLike
 	{
 		if(supernovaInfo.supernovaEnded(ticks))
 			return this.supernovaInfo.getSupernovaLeftover().starSize(size, lyDistance);
-		
+
+		if(supernovaInfo.supernovaShrinking(ticks))
+		{
+			long lifetime = ticks-2*supernovaInfo.getShrinkingEndTicks()+supernovaInfo.getStartTicks();
+			float sizeMultiplier = -supernovaInfo.getMaxSizeMultiplier() * (float) Math.sin(Math.PI * lifetime / supernovaInfo.getDurationTicks());
+
+			if(sizeMultiplier < supernovaInfo.getMinSizeMultiplier())
+			{
+				System.out.println("Supernova shrinking error! - " + ticks + " - " + sizeMultiplier);
+				return size*supernovaInfo.getMinSizeMultiplier();
+			}
+			return Math.max(supernovaInfo.getMinSizeMultiplier()*size, sizeMultiplier >= supernovaInfo.getMinSizeMultiplier() || (float) lifetime > supernovaInfo.getDurationTicks() / 2 ? sizeMultiplier * size : size);
+		}
+
 		if(!supernovaInfo.supernovaStarted(ticks))
 			return size;
 
 		long lifetime = supernovaInfo.lifetime(ticks);
 		float sizeMultiplier = supernovaInfo.getMaxSizeMultiplier() * (float) Math.sin(Math.PI * lifetime / supernovaInfo.getDurationTicks());
 		
-		return sizeMultiplier > 1 || (float) lifetime > supernovaInfo.getDurationTicks() / 2 ? sizeMultiplier * size : size;
+		return Math.max(supernovaInfo.getMinSizeMultiplier()*size, sizeMultiplier >= supernovaInfo.getMinSizeMultiplier() || (float) lifetime > supernovaInfo.getDurationTicks() / 2 ? sizeMultiplier * size : size);
 	}
 	
 	public float rotation(long ticks)
@@ -151,9 +164,9 @@ public class Star extends StarLike
 	public static class SupernovaInfo implements INBTSerializable<CompoundTag>
 	{
 		public static final String MAX_SIZE_MULTIPLIER = "max_size_multiplier";
+		public static final String MIN_SIZE_MULTIPLIER = "min_size_multiplier";
 		public static final String START_TICKS = "start_ticks";
 		public static final String DURATION_TICKS = "duration_ticks";
-		public static final String REPEATING = "repeating";
 		public static final String INTERVAL_TICKS = "interval_ticks";
 		public static final String NEBULA = "nebula";
 		public static final String SUPERNOVA_LEFTOVER = "supernova_leftover";
@@ -162,16 +175,17 @@ public class Star extends StarLike
 		protected SupernovaLeftover supernovaLeftover; // Whatever is left after Supernova dies
 		
 		protected float maxSizeMultiplier;
+		protected float minSizeMultiplier;
 		protected long startTicks;
 		protected long durationTicks;
 		
 		protected long endTicks;
 
-		protected boolean repeating;
 		protected long intervalTicks;
 		
 		public static final Codec<SupernovaInfo> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				Codec.FLOAT.fieldOf(MAX_SIZE_MULTIPLIER).forGetter(SupernovaInfo::getMaxSizeMultiplier),
+				Codec.FLOAT.optionalFieldOf(MIN_SIZE_MULTIPLIER, 1F).forGetter(SupernovaInfo::getMinSizeMultiplier),
 				Codec.LONG.fieldOf(START_TICKS).forGetter(SupernovaInfo::getStartTicks),
 				Codec.LONG.fieldOf(DURATION_TICKS).forGetter(SupernovaInfo::getDurationTicks),
 
@@ -183,9 +197,10 @@ public class Star extends StarLike
 		
 		public SupernovaInfo() {}
 		
-		public SupernovaInfo(float maxSizeMultiplier, long startTicks, long durationTicks, long intervalTicks, Nebula nebula, SupernovaLeftover supernovaLeftover)
+		public SupernovaInfo(float maxSizeMultiplier, float minSizeMultiplier, long startTicks, long durationTicks, long intervalTicks, Nebula nebula, SupernovaLeftover supernovaLeftover)
 		{
 			this.maxSizeMultiplier = maxSizeMultiplier;
+			this.minSizeMultiplier = minSizeMultiplier;
 			this.startTicks = startTicks;
 			this.durationTicks = durationTicks;
 			
@@ -210,6 +225,11 @@ public class Star extends StarLike
 		public float getMaxSizeMultiplier()
 		{
 			return maxSizeMultiplier;
+		}
+
+		public float getMinSizeMultiplier()
+		{
+			return minSizeMultiplier;
 		}
 		
 		public long getStartTicks()
@@ -237,6 +257,16 @@ public class Star extends StarLike
 			return this.getIntervalTicks() > 0;
 		}
 
+		private long getShrinkingStartTicks()
+		{
+			return (long) (getStartTicks() - (2*getDurationTicks()/Math.PI)*Math.asin(getMinSizeMultiplier()/getMaxSizeMultiplier()));
+		}
+
+		private long getShrinkingEndTicks()
+		{
+			return (long) (getStartTicks() - (getDurationTicks()/Math.PI)*Math.asin(-getMinSizeMultiplier()/getMaxSizeMultiplier()));
+		}
+
 		/**
 		 * @param ticks Time
 		 * @return The amount of times this nova has gone off, if 0 - never gone off yet
@@ -260,6 +290,12 @@ public class Star extends StarLike
 			return ticks > (getStartTicks() + (this.isRepeating() ? (getDurationTicks()+getIntervalTicks())*getOccurences(ticks) : 0));
 		}
 
+		public boolean supernovaShrinking(long ticks)
+		{
+			return ticks >= (getShrinkingStartTicks() + (this.isRepeating() ? (getDurationTicks()+getIntervalTicks())*getOccurences(ticks) : 0))
+					&& ticks <= (getShrinkingEndTicks() + (this.isRepeating() ? (getDurationTicks()+getIntervalTicks())*getOccurences(ticks): 0));
+        }
+
 		public boolean supernovaEnded(long ticks)
 		{
 			return ticks > (getEndTicks() + (this.isRepeating() ? (getDurationTicks()+getIntervalTicks())*getOccurences(ticks) : 0));
@@ -280,9 +316,9 @@ public class Star extends StarLike
 			CompoundTag tag = new CompoundTag();
 			
 			tag.putFloat(MAX_SIZE_MULTIPLIER, maxSizeMultiplier);
+			tag.putFloat(MIN_SIZE_MULTIPLIER, minSizeMultiplier);
 			tag.putLong(START_TICKS, startTicks);
 			tag.putLong(DURATION_TICKS, durationTicks);
-			tag.putBoolean(REPEATING, repeating);
 			tag.putLong(INTERVAL_TICKS, intervalTicks);
 			
 			return tag;
@@ -292,9 +328,9 @@ public class Star extends StarLike
 		public void deserializeNBT(CompoundTag tag)
 		{
 			this.maxSizeMultiplier = tag.getFloat(MAX_SIZE_MULTIPLIER);
+			this.minSizeMultiplier = tag.getFloat(MIN_SIZE_MULTIPLIER);
 			this.startTicks = tag.getLong(START_TICKS);
 			this.durationTicks = tag.getLong(DURATION_TICKS);
-			this.repeating = tag.getBoolean(REPEATING);
 			this.intervalTicks = tag.getLong(INTERVAL_TICKS);
 		}
 	}
