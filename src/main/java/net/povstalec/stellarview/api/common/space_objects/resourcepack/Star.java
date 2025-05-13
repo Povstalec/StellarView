@@ -103,7 +103,7 @@ public class Star extends StarLike
 		long lifetime = supernovaInfo.lifetime(ticks);
 		float sizeMultiplier = supernovaInfo.getMaxSizeMultiplier() * (float) Math.sin(Math.PI * lifetime / supernovaInfo.getDurationTicks());
 		
-		return Math.max(supernovaInfo.getMinSizeMultiplier()*size, sizeMultiplier >= supernovaInfo.getMinSizeMultiplier() || (float) lifetime > supernovaInfo.getDurationTicks() / 2 ? sizeMultiplier * size : size);
+		return sizeMultiplier >= supernovaInfo.getMinSizeMultiplier() || (float) lifetime > supernovaInfo.getDurationTicks() / 2 ? sizeMultiplier * size : size;
 	}
 	
 	public float rotation(long ticks)
