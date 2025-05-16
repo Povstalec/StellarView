@@ -25,7 +25,7 @@ public abstract class SpaceObject implements ISerializable
 	public static final String AXIS_ROTATION = "axis_rotation";
 	public static final String ID = "id";
 	
-	public static final ResourceLocation SPACE_OBJECT_LOCATION = new ResourceLocation(StellarView.MODID, "space_object");
+	public static final ResourceLocation SPACE_OBJECT_LOCATION = ResourceLocation.fromNamespaceAndPath(StellarView.MODID, "space_object");
 	public static final ResourceKey<Registry<SpaceObject>> REGISTRY_KEY = ResourceKey.createRegistryKey(SPACE_OBJECT_LOCATION);
 	public static final Codec<ResourceKey<SpaceObject>> RESOURCE_KEY_CODEC = ResourceKey.codec(REGISTRY_KEY);
 	
@@ -194,10 +194,10 @@ public abstract class SpaceObject implements ISerializable
 	public void deserializeNBT(CompoundTag tag)
 	{
 		if(tag.contains(ID))
-			this.location = new ResourceLocation(tag.getString(ID));
+			this.location = ResourceLocation.parse(tag.getString(ID));
 		
 		if(tag.contains(PARENT_LOCATION))
-			this.parentLocation = new ResourceLocation(tag.getString(PARENT_LOCATION));
+			this.parentLocation = ResourceLocation.parse(tag.getString(PARENT_LOCATION));
 		
 		this.coords = new SpaceCoords();
 		coords.deserializeNBT(tag.getCompound(COORDS));

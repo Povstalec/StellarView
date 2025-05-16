@@ -3,6 +3,7 @@ package net.povstalec.stellarview.client.render;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.mojang.blaze3d.vertex.Tesselator;
 import net.minecraft.client.Minecraft;
 import net.povstalec.stellarview.api.common.SpaceRegion;
 import net.povstalec.stellarview.client.render.space_objects.SpaceObjectRenderer;
@@ -122,7 +123,7 @@ public final class SpaceRenderer
 		}
 	}
 	
-	public static void render(ViewCenter viewCenter, SpaceObjectRenderer masterParent, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder)
+	public static void render(ViewCenter viewCenter, SpaceObjectRenderer masterParent, ClientLevel level, Camera camera, float partialTicks, Matrix4f modelViewMatrix, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, Tesselator tesselator)
 	{
 		starsPerTick = 0;
 		dustCloudsPerTick = 0;
@@ -135,7 +136,7 @@ public final class SpaceRenderer
 			for(Map.Entry<SpaceRegion.RegionPos, SpaceRegionRenderer> spaceRegionEntry : SPACE_REGIONS.entrySet())
 			{
 				if(spaceRegionEntry.getKey().isInRange(pos, getRange()))
-					spaceRegionEntry.getValue().renderDustClouds(viewCenter, level, camera, partialTicks, stack, projectionMatrix, setupFog, viewCenter.dustCloudBrightness());
+					spaceRegionEntry.getValue().renderDustClouds(viewCenter, level, camera, partialTicks, modelViewMatrix, projectionMatrix, setupFog, viewCenter.dustCloudBrightness());
 			}
 		}
 		
@@ -145,16 +146,16 @@ public final class SpaceRenderer
 			if(!spaceRegionEntry.getKey().equals(pos))
 			{
 				if(spaceRegionEntry.getKey().isInRange(pos, getRange()))
-					spaceRegionEntry.getValue().render(viewCenter, masterParent, level, camera, partialTicks, stack, projectionMatrix, isFoggy, setupFog, bufferbuilder);
+					spaceRegionEntry.getValue().render(viewCenter, masterParent, level, camera, partialTicks, modelViewMatrix, projectionMatrix, isFoggy, setupFog, tesselator);
 			}
 			else
 				centerRegion = spaceRegionEntry.getValue();
 		}
 		
 		if(centerRegion != null)
-			centerRegion.render(viewCenter, masterParent, level, camera, partialTicks, stack, projectionMatrix, isFoggy, setupFog, bufferbuilder);
+			centerRegion.render(viewCenter, masterParent, level, camera, partialTicks, modelViewMatrix, projectionMatrix, isFoggy, setupFog, tesselator);
 		
-		masterParent.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, NULL_VECTOR, new AxisRotation());
+		masterParent.render(viewCenter, level, partialTicks, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog, tesselator, NULL_VECTOR, new AxisRotation());
 	}
 	
 	
@@ -180,7 +181,7 @@ public final class SpaceRenderer
 			StellarView.LOGGER.error("Could not set Sol as a distinct Space Object because it has already been set");
 			return;
 		}
-
+		
 		StellarView.LOGGER.debug("Setting Sol as a distinct Space Object");
 		
 		sol = solStar;
@@ -196,12 +197,12 @@ public final class SpaceRenderer
 			return;
 		
 		if(OverworldConfig.config_priority.get())
-    	{
+		{
 			SpaceCoords coords = solCoords.copy().add(OverworldConfig.sol_x_offset.get() * 1000, OverworldConfig.sol_y_offset.get() * 1000, OverworldConfig.sol_z_offset.get() * 1000);
-    		AxisRotation axisRotation = solAxisRotation.copy().add(new AxisRotation(OverworldConfig.sol_x_rotation.get(), OverworldConfig.sol_y_rotation.get(), OverworldConfig.sol_z_rotation.get()));
-    		
-    		sol.setPosAndRotation(coords, axisRotation);
-    	}
+			AxisRotation axisRotation = solAxisRotation.copy().add(new AxisRotation(OverworldConfig.sol_x_rotation.get(), OverworldConfig.sol_y_rotation.get(), OverworldConfig.sol_z_rotation.get()));
+			
+			sol.setPosAndRotation(coords, axisRotation);
+		}
 		else
 			sol.setPosAndRotation(solCoords.copy(), solAxisRotation.copy());
 	}

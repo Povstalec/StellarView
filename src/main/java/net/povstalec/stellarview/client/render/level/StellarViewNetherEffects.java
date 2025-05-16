@@ -17,7 +17,7 @@ import net.povstalec.stellarview.compatibility.enhancedcelestials.EnhancedCelest
 
 public class StellarViewNetherEffects extends DimensionSpecialEffects.NetherEffects
 {
-	public static final ResourceLocation NETHER_EFFECTS = new ResourceLocation("the_nether");
+	public static final ResourceLocation NETHER_EFFECTS = ResourceLocation.withDefaultNamespace("the_nether");
 	
 	public StellarViewNetherEffects() {}
 	

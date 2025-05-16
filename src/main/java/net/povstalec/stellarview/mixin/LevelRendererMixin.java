@@ -26,9 +26,9 @@ public class LevelRendererMixin
 	private int ticks;
 	
 	@Inject(method = "renderSky", at = @At("HEAD"), cancellable = true)
-	private void renderSky(PoseStack poseStack, Matrix4f projectionMatrix, float partialTick, Camera camera, boolean isFoggy, Runnable setupFog, CallbackInfo info)
+	private void renderSky(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, float partialTicks, Camera camera, boolean isFoggy, Runnable setupFog, CallbackInfo info)
 	{
-		if(renderViewCenterSky(level) && ViewCenters.renderViewCenterSky(level, ticks, partialTick, poseStack, camera, projectionMatrix, isFoggy, setupFog))
+		if(renderViewCenterSky(level) && ViewCenters.renderViewCenterSky(level, ticks, partialTicks, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog))
 			info.cancel();
 	}
 	

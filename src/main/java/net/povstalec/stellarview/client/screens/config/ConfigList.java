@@ -14,9 +14,9 @@ import net.povstalec.stellarview.common.config.StellarViewConfigValue;
 
 public class ConfigList extends ObjectSelectionList<ConfigList.ConfigEntry>
 {
-	public ConfigList(Minecraft minecraft, int screenWidth, int screenHeight, int yStart, int yEnd, int itemHeight)
+	public ConfigList(Minecraft minecraft, int screenWidth, int listHeight, int headerHeight, int itemHeight)
 	{
-		super(minecraft, screenWidth, screenHeight, yStart, yEnd, itemHeight);
+		super(minecraft, screenWidth, listHeight, headerHeight, itemHeight);
 	}
 	
 	public void add(ConfigEntry entry)

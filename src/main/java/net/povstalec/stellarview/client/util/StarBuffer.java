@@ -2,6 +2,7 @@ package net.povstalec.stellarview.client.util;
 
 import java.nio.ByteBuffer;
 
+import com.mojang.blaze3d.vertex.MeshData;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.povstalec.stellarview.client.render.SpaceRenderer;
 import net.povstalec.stellarview.common.util.SpaceCoords;
@@ -41,30 +42,30 @@ public class StarBuffer implements AutoCloseable
 		this.arrayObjectId = GlStateManager._glGenVertexArrays();
 	}
 	
-	public void upload(BufferBuilder.RenderedBuffer buffer)
+	public void upload(MeshData mesh)
 	{
-		if (!this.isInvalid())
+		if(!this.isInvalid())
 		{
 			RenderSystem.assertOnRenderThread();
 			try
 			{
-				BufferBuilder.DrawState bufferbuilder$drawstate = buffer.drawState();
-				this.format = this.uploadVertexBuffer(bufferbuilder$drawstate, buffer.vertexBuffer());
-				this.sequentialIndices = this.uploadIndexBuffer(bufferbuilder$drawstate, buffer.indexBuffer());
-				this.indexCount = bufferbuilder$drawstate.indexCount();
-				this.indexType = bufferbuilder$drawstate.indexType();
-				this.mode = bufferbuilder$drawstate.mode();
+				final var drawState = mesh.drawState();
+				this.format = this.uploadVertexBuffer(mesh, mesh.vertexBuffer());
+				this.sequentialIndices = this.uploadIndexBuffer(mesh, mesh.indexBuffer());
+				this.indexCount = drawState.indexCount();
+				this.indexType = drawState.indexType();
+				this.mode = drawState.mode();
 			}
 			finally
 			{
-				buffer.release();
+				mesh.close();
 			}
-
 		}
 	}
 	
-	private VertexFormat uploadVertexBuffer(BufferBuilder.DrawState drawState, ByteBuffer vertexBuffer)
+	private VertexFormat uploadVertexBuffer(MeshData mesh, ByteBuffer vertexBuffer)
 	{
+		final var drawState = mesh.drawState();
 		boolean formatEquals = false;
 		if(!drawState.format().equals(this.format))
 		{
@@ -76,7 +77,7 @@ public class StarBuffer implements AutoCloseable
 			formatEquals = true;
 		}
 		
-		if(!drawState.indexOnly())
+		if(mesh.indexBuffer() == null)
 		{
 			if(!formatEquals)
 				GlStateManager._glBindBuffer(GL15C.GL_ARRAY_BUFFER, this.vertexBufferId);
@@ -88,9 +89,10 @@ public class StarBuffer implements AutoCloseable
 	}
 	
 	@Nullable
-	private RenderSystem.AutoStorageIndexBuffer uploadIndexBuffer(BufferBuilder.DrawState drawState, ByteBuffer indexBuffer)
+	private RenderSystem.AutoStorageIndexBuffer uploadIndexBuffer(MeshData mesh, ByteBuffer indexBuffer)
 	{
-		if(!drawState.sequentialIndex())
+		final var drawState = mesh.drawState();
+		if(mesh.vertexBuffer() == null)
 		{
 			GlStateManager._glBindBuffer(GL15C.GL_ELEMENT_ARRAY_BUFFER, this.indexBufferId);
 			RenderSystem.glBufferData(GL15C.GL_ELEMENT_ARRAY_BUFFER, indexBuffer, GL15C.GL_STATIC_DRAW);
@@ -159,9 +161,6 @@ public class StarBuffer implements AutoCloseable
 		if(shaderInstance.PROJECTION_MATRIX != null)
 			shaderInstance.PROJECTION_MATRIX.set(projectionMatrix);
 		
-		if(shaderInstance.INVERSE_VIEW_ROTATION_MATRIX != null)
-			shaderInstance.INVERSE_VIEW_ROTATION_MATRIX.set(RenderSystem.getInverseViewRotationMatrix());
-		
 		if(shaderInstance.COLOR_MODULATOR != null)
 			shaderInstance.COLOR_MODULATOR.set(RenderSystem.getShaderColor());
 		
@@ -194,7 +193,7 @@ public class StarBuffer implements AutoCloseable
 		
 		if(shaderInstance.RELATIVE_SPACE_LY != null)
 			shaderInstance.RELATIVE_SPACE_LY.set(relativeSpaceLy);
-
+		
 		if(shaderInstance.RELATIVE_SPACE_KM != null)
 			shaderInstance.RELATIVE_SPACE_KM.set(relativeSpaceKm);
 		
@@ -240,9 +239,6 @@ public class StarBuffer implements AutoCloseable
 		
 		if(shaderInstance.PROJECTION_MATRIX != null)
 			shaderInstance.PROJECTION_MATRIX.set(projectionMatrix);
-		
-		if(shaderInstance.INVERSE_VIEW_ROTATION_MATRIX != null)
-			shaderInstance.INVERSE_VIEW_ROTATION_MATRIX.set(RenderSystem.getInverseViewRotationMatrix());
 		
 		if(shaderInstance.COLOR_MODULATOR != null)
 			shaderInstance.COLOR_MODULATOR.set(RenderSystem.getShaderColor());
@@ -305,7 +301,7 @@ public class StarBuffer implements AutoCloseable
 	{
 		return this.format;
 	}
-
+	
 	public boolean isInvalid()
 	{
 		return this.arrayObjectId == -1;

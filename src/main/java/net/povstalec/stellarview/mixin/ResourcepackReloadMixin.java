@@ -19,7 +19,7 @@ public class ResourcepackReloadMixin
 	
 	@Inject(
 			method = "<init>",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;createSearchTrees()V", shift = At.Shift.BEFORE)
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;resizeDisplay()V", shift = At.Shift.BEFORE)
 	)
 	private void reload(CallbackInfo info)
 	{

@@ -70,8 +70,8 @@ public class StarField extends SpaceObject
 		}
 	}
 	
-	public static final ResourceLocation DEFAULT_STAR_TEXTURE = new ResourceLocation(StellarView.MODID,"textures/environment/star.png");
-	public static final ResourceLocation DEFAULT_DUST_CLOUD_TEXTURE = new ResourceLocation(StellarView.MODID,"textures/environment/dust_cloud.png");
+	public static final ResourceLocation DEFAULT_STAR_TEXTURE = ResourceLocation.fromNamespaceAndPath(StellarView.MODID,"textures/environment/star.png");
+	public static final ResourceLocation DEFAULT_DUST_CLOUD_TEXTURE = ResourceLocation.fromNamespaceAndPath(StellarView.MODID,"textures/environment/dust_cloud.png");
 	
 	public static final String DUST_CLOUDS = "dust_clouds";
 	public static final String DUST_CLOUD_INFO = "dust_cloud_info";
@@ -270,15 +270,15 @@ public class StarField extends SpaceObject
 		super.deserializeNBT(tag);
 		
 		dustClouds = tag.getInt(DUST_CLOUDS);
-		dustCloudTexture = new ResourceLocation(tag.getString(DUST_CLOUD_TEXTURE));
-		dustCloudInfo = tag.contains(DUST_CLOUD_INFO) ? new ResourceLocation(tag.getString(DUST_CLOUD_INFO)) : null;
+		dustCloudTexture = ResourceLocation.tryParse(tag.getString(DUST_CLOUD_TEXTURE));
+		dustCloudInfo = tag.contains(DUST_CLOUD_INFO) ? ResourceLocation.tryParse(tag.getString(DUST_CLOUD_INFO)) : null;
 		clumpDustCloudsInCenter = tag.getBoolean(CLUMP_DUST_CLOUDS_IN_CENTER);
 		dustCloudStretch = new Stretch();
 		dustCloudStretch.deserializeNBT(tag.getCompound(DUST_CLOUD_STRETCH));
 		
 		stars = tag.getInt(STARS);
-		starTexture = new ResourceLocation(tag.getString(STAR_TEXTURE));
-		starInfo = tag.contains(STAR_INFO) ? new ResourceLocation(tag.getString(STAR_INFO)) : null;
+		starTexture = ResourceLocation.tryParse(tag.getString(STAR_TEXTURE));
+		starInfo = tag.contains(STAR_INFO) ? ResourceLocation.tryParse(tag.getString(STAR_INFO)) : null;
 		clumpStarsInCenter = tag.getBoolean(CLUMP_STARS_IN_CENTER);
 		starStretch = new Stretch();
 		starStretch.deserializeNBT(tag.getCompound(STAR_STRETCH));
@@ -416,7 +416,7 @@ public class StarField extends SpaceObject
 		{
 			armDustClouds = tag.getInt(DUST_CLOUDS);
 			
-			dustCloudInfo = tag.contains(DUST_CLOUD_INFO) ? new ResourceLocation(tag.getString(DUST_CLOUD_INFO)) : null;
+			dustCloudInfo = tag.contains(DUST_CLOUD_INFO) ? ResourceLocation.tryParse(tag.getString(DUST_CLOUD_INFO)) : null;
 			
 			armStars = tag.getInt(STARS);
 			

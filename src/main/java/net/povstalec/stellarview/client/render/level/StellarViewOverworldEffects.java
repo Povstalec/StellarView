@@ -18,7 +18,7 @@ import net.povstalec.stellarview.compatibility.enhancedcelestials.EnhancedCelest
 
 public class StellarViewOverworldEffects extends DimensionSpecialEffects.OverworldEffects
 {
-	public static final ResourceLocation OVERWORLD_EFFECTS = new ResourceLocation("overworld");
+	public static final ResourceLocation OVERWORLD_EFFECTS = ResourceLocation.withDefaultNamespace("overworld");
 	
 	public static final float TWILIGHT_START = 0.4F;
 	

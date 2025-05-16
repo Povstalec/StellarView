@@ -7,6 +7,7 @@ import net.povstalec.stellarview.api.common.space_objects.distinct.Luna;
 import net.povstalec.stellarview.api.common.space_objects.distinct.Sol;
 import net.povstalec.stellarview.api.common.space_objects.resourcepack.*;
 import net.povstalec.stellarview.client.SpaceObjectRenderers;
+import net.povstalec.stellarview.client.render.shader.StellarViewVertexFormat;
 import net.povstalec.stellarview.client.render.space_objects.distinct.LunaRenderer;
 import net.povstalec.stellarview.client.render.space_objects.resourcepack.*;
 import net.povstalec.stellarview.common.config.StellarViewConfig;
@@ -18,6 +19,8 @@ public class StellarViewClient implements ClientModInitializer
 	@Override
 	public void onInitializeClient()
 	{
+		StellarViewVertexFormat.setupVertexFormats();
+		
 		SpaceObjectRenderers.register(Planet.class, PlanetRenderer<Planet>::new);
 		SpaceObjectRenderers.register(Moon.class, MoonRenderer<Moon>::new);
 		SpaceObjectRenderers.register(Luna.class, LunaRenderer::new);

@@ -17,7 +17,7 @@ import net.povstalec.stellarview.compatibility.enhancedcelestials.EnhancedCelest
 
 public class StellarViewEndEffects extends DimensionSpecialEffects.EndEffects
 {
-	public static final ResourceLocation END_EFFECTS = new ResourceLocation("the_end");
+	public static final ResourceLocation END_EFFECTS = ResourceLocation.withDefaultNamespace("the_end");
 	
 	public StellarViewEndEffects() {}
 	

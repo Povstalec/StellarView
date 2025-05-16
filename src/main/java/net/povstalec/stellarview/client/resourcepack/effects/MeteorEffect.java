@@ -4,17 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.mojang.blaze3d.vertex.*;
 import net.povstalec.stellarview.client.render.LightEffects;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Axis;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -102,20 +98,19 @@ public abstract class MeteorEffect
 		return new Color.FloatRGBA(1, 1, 1, brightness);
 	}
 	
-	public abstract void render(ViewCenter viewCenter, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder);
+	public abstract void render(ViewCenter viewCenter, ClientLevel level, Camera camera, float partialTicks, Matrix4f modelViewMatrix, Tesselator tesselator);
 	
-	public void render(ViewCenter viewCenter, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder,
-			float xRotation, float yRotation, float zRotation,
-			MeteorType meteorType, float mulSize, float addRotation)
+	public void render(ViewCenter viewCenter, ClientLevel level, Camera camera, float partialTicks, Matrix4f modelViewMatrix, Tesselator tesselator,
+					   float xRotation, float yRotation, float zRotation,
+					   MeteorType meteorType, float mulSize, float addRotation)
 	{
-		stack.pushPose();
+		final var transformedModelView = new Matrix4f(modelViewMatrix);
 		
-		stack.mulPose(Axis.YP.rotationDegrees(yRotation));
-        stack.mulPose(Axis.ZP.rotationDegrees(zRotation));
-        stack.mulPose(Axis.XP.rotationDegrees(xRotation));
+		transformedModelView.rotate(Axis.YP.rotationDegrees(yRotation));
+		transformedModelView.rotate(Axis.ZP.rotationDegrees(zRotation));
+		transformedModelView.rotate(Axis.XP.rotationDegrees(xRotation));
 		
-		meteorType.render(bufferbuilder, stack.last().pose(), SPHERICAL_START, rgba(viewCenter, level, camera, viewCenter.ticks(), partialTicks), viewCenter.ticks(), mulSize, addRotation);
-		stack.popPose();
+		meteorType.render(tesselator, transformedModelView, SPHERICAL_START, rgba(viewCenter, level, camera, viewCenter.ticks(), partialTicks), viewCenter.ticks(), mulSize, addRotation);
 	}
 	
 	public static class MeteorType
@@ -126,7 +121,7 @@ public abstract class MeteorEffect
 		public static final Codec<MeteorType> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(MeteorType::getTextureLayers),
 				Codec.intRange(1, Integer.MAX_VALUE).fieldOf("weight").forGetter(MeteorType::getWeight)
-				).apply(instance, MeteorType::new));
+		).apply(instance, MeteorType::new));
 		
 		public MeteorType(List<TextureLayer> textureLayers, int weight)
 		{
@@ -144,7 +139,7 @@ public abstract class MeteorEffect
 			return weight;
 		}
 		
-		protected void renderTextureLayer(TextureLayer textureLayer, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, Color.FloatRGBA rgba, long ticks, float mulSize, float addRotation)
+		protected void renderTextureLayer(TextureLayer textureLayer, Tesselator tesselator, Matrix4f lastMatrix, SphericalCoords sphericalCoords, Color.FloatRGBA rgba, long ticks, float mulSize, float addRotation)
 		{
 			if(rgba.alpha() <= 0.0F || textureLayer.rgba().alpha() <= 0)
 				return;
@@ -165,31 +160,31 @@ public abstract class MeteorEffect
 			Vector3f corner10 = StellarCoordinates.placeOnSphere(size, -size, sphericalCoords, rotation);
 			Vector3f corner11 = StellarCoordinates.placeOnSphere(size, size, sphericalCoords, rotation);
 			Vector3f corner01 = StellarCoordinates.placeOnSphere(-size, size, sphericalCoords, rotation);
-		
-		
+			
+			
 			if(textureLayer.shoulBlend())
 				RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 			
 			RenderSystem.setShaderColor(rgba.red() * textureLayer.rgba().red(), rgba.green() * textureLayer.rgba().green(), rgba.blue() * textureLayer.rgba().blue(), rgba.alpha() * textureLayer.rgba().alpha());
 			
 			RenderSystem.setShaderTexture(0, textureLayer.texture());
-	        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-	        
-	        bufferbuilder.vertex(lastMatrix, corner00.x, corner00.y, corner00.z).uv(textureLayer.uv().topRight().u(ticks), textureLayer.uv().topRight().v(ticks)).endVertex();
-	        bufferbuilder.vertex(lastMatrix, corner10.x, corner10.y, corner10.z).uv(textureLayer.uv().bottomRight().u(ticks), textureLayer.uv().bottomRight().v(ticks)).endVertex();
-	        bufferbuilder.vertex(lastMatrix, corner11.x, corner11.y, corner11.z).uv(textureLayer.uv().bottomLeft().u(ticks), textureLayer.uv().bottomLeft().v(ticks)).endVertex();
-	        bufferbuilder.vertex(lastMatrix, corner01.x, corner01.y, corner01.z).uv(textureLayer.uv().topLeft().u(ticks), textureLayer.uv().topLeft().v(ticks)).endVertex();
-	        
-	        BufferUploader.drawWithShader(bufferbuilder.end());
-	        
-	        RenderSystem.defaultBlendFunc();
+			final var bufferbuilder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+			
+			bufferbuilder.addVertex(lastMatrix, corner00.x, corner00.y, corner00.z).setUv(textureLayer.uv().topRight().u(ticks), textureLayer.uv().topRight().v(ticks));
+			bufferbuilder.addVertex(lastMatrix, corner10.x, corner10.y, corner10.z).setUv(textureLayer.uv().bottomRight().u(ticks), textureLayer.uv().bottomRight().v(ticks));
+			bufferbuilder.addVertex(lastMatrix, corner11.x, corner11.y, corner11.z).setUv(textureLayer.uv().bottomLeft().u(ticks), textureLayer.uv().bottomLeft().v(ticks));
+			bufferbuilder.addVertex(lastMatrix, corner01.x, corner01.y, corner01.z).setUv(textureLayer.uv().topLeft().u(ticks), textureLayer.uv().topLeft().v(ticks));
+			
+			BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
+			
+			RenderSystem.defaultBlendFunc();
 		}
 		
-		public final void render(BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, Color.FloatRGBA rgba, long ticks, float mulSize, float addRotation)
+		public final void render(Tesselator tesselator, Matrix4f lastMatrix, SphericalCoords sphericalCoords, Color.FloatRGBA rgba, long ticks, float mulSize, float addRotation)
 		{
 			for(TextureLayer textureLayer : textureLayers)
 			{
-				renderTextureLayer(textureLayer, bufferbuilder, lastMatrix, sphericalCoords, rgba, ticks, mulSize, addRotation);
+				renderTextureLayer(textureLayer, tesselator, lastMatrix, sphericalCoords, rgba, ticks, mulSize, addRotation);
 			}
 		}
 	}
@@ -205,7 +200,7 @@ public abstract class MeteorEffect
 		public static final Codec<ShootingStar> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				MeteorType.CODEC.listOf().fieldOf("meteor_types").forGetter(ShootingStar::getMeteorTypes),
 				Codec.DOUBLE.fieldOf("probability").forGetter(ShootingStar::getRarity)
-				).apply(instance, ShootingStar::new));
+		).apply(instance, ShootingStar::new));
 		
 		public ShootingStar(List<MeteorType> meteorTypes, double rarity)
 		{
@@ -226,14 +221,14 @@ public abstract class MeteorEffect
 		}
 		
 		@Override
-		public final void render(ViewCenter viewCenter, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder)
+		public final void render(ViewCenter viewCenter, ClientLevel level, Camera camera, float partialTicks, Matrix4f modelViewMatrix, Tesselator tesselator)
 		{
 			if(!canRender(viewCenter))
 				return;
 			
 			long tickSeed = viewCenter.ticks() / TICKS;
 			int specificTime = (int) (viewCenter.ticks() % TICKS);
-
+			
 			Random randomizer = new Random(tickSeed);
 			
 			int randomStart = randomizer.nextInt(0, TICKS - DURATION);
@@ -249,13 +244,13 @@ public abstract class MeteorEffect
 				float xRotation = (float) (random.nextInt(0, 45) + Math.PI * Mth.lerp(partialTicks, position - 1, position));
 				float yRotation = random.nextInt(0, 360);
 				float zRotation = random.nextInt(-70, 70);
-
+				
 				MeteorType meteorType = getRandomMeteorType(tickSeed);
 				
 				float rotation = (float) (Math.PI * position / 4);
 				float size = (float) (Math.sin(Math.PI * position / DURATION));
-
-				this.render(viewCenter, level, camera, partialTicks, stack, bufferbuilder, xRotation, yRotation, zRotation, meteorType, size, rotation);
+				
+				this.render(viewCenter, level, camera, partialTicks, modelViewMatrix, tesselator, xRotation, yRotation, zRotation, meteorType, size, rotation);
 			}
 		}
 	}
@@ -271,7 +266,7 @@ public abstract class MeteorEffect
 		public static final Codec<MeteorShower> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				MeteorType.CODEC.listOf().fieldOf("meteor_types").forGetter(MeteorShower::getMeteorTypes),
 				Codec.DOUBLE.fieldOf("probability").forGetter(MeteorShower::getRarity)
-				).apply(instance, MeteorShower::new));
+		).apply(instance, MeteorShower::new));
 		
 		public MeteorShower(List<MeteorType> meteorTypes, double rarity)
 		{
@@ -292,7 +287,7 @@ public abstract class MeteorEffect
 		}
 		
 		@Override
-		public final void render(ViewCenter viewCenter, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder)
+		public final void render(ViewCenter viewCenter, ClientLevel level, Camera camera, float partialTicks, Matrix4f modelViewMatrix, Tesselator tesselator)
 		{
 			if(!canRender(viewCenter))
 				return;
@@ -310,13 +305,13 @@ public abstract class MeteorEffect
 				float xRotation = (float) (random.nextInt(0, 45) + Math.PI * Mth.lerp(partialTicks, position - 1, position));
 				float yRotation = random.nextInt(0, 360);
 				float zRotation = random.nextInt(-70, 70);
-
+				
 				MeteorType meteorType = getRandomMeteorType(dailySeed);
 				
 				float rotation = (float) (Math.PI * position / 4);
 				float size = (float) (Math.sin(Math.PI * position / DURATION));
-
-				this.render(viewCenter, level, camera, partialTicks, stack, bufferbuilder, xRotation, yRotation, zRotation, meteorType, size, rotation);
+				
+				this.render(viewCenter, level, camera, partialTicks, modelViewMatrix, tesselator, xRotation, yRotation, zRotation, meteorType, size, rotation);
 			}
 		}
 	}

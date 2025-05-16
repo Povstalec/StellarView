@@ -24,17 +24,17 @@ public class StellarViewShaders
     {
         public static void registerShaders(ResourceProvider factory, List<Pair<ShaderInstance, Consumer<ShaderInstance>>> programs) throws IOException
         {
-			programs.add(Pair.of(new StarShaderInstance(factory, new ResourceLocation(StellarView.MODID,"rendertype_star"), StellarViewVertexFormat.STAR_POS_COLOR_LY), (shaderInstance) ->
+			programs.add(Pair.of(new StarShaderInstance(factory, ResourceLocation.fromNamespaceAndPath(StellarView.MODID,"rendertype_star"), StellarViewVertexFormat.STAR_POS_COLOR_LY), (shaderInstance) ->
 			{
 				rendertypeStarShader = (StarShaderInstance) shaderInstance;
 			}));
 			
-			programs.add(Pair.of(new StarShaderInstance(factory, new ResourceLocation(StellarView.MODID,"rendertype_star_tex"), StellarViewVertexFormat.STAR_POS_COLOR_LY_TEX), (shaderInstance) ->
+			programs.add(Pair.of(new StarShaderInstance(factory, ResourceLocation.fromNamespaceAndPath(StellarView.MODID,"rendertype_star_tex"), StellarViewVertexFormat.STAR_POS_COLOR_LY_TEX), (shaderInstance) ->
 			{
 				rendertypeStarTexShader = (StarShaderInstance) shaderInstance;
 			}));
 			
-			programs.add(Pair.of(new DustCloudShaderInstance(factory, new ResourceLocation(StellarView.MODID,"rendertype_dust_cloud"), StellarViewVertexFormat.STAR_POS_COLOR_LY_TEX), (shaderInstance) ->
+			programs.add(Pair.of(new DustCloudShaderInstance(factory, ResourceLocation.fromNamespaceAndPath(StellarView.MODID,"rendertype_dust_cloud"), StellarViewVertexFormat.STAR_POS_COLOR_LY_TEX), (shaderInstance) ->
 			{
 				rendertypeDustCloudShader = (DustCloudShaderInstance) shaderInstance;
 			}));

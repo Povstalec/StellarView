@@ -6,7 +6,9 @@
 		"StellarViewShadersMixin",
 		"StellarViewShaderMixin",
 		"ResourcepackReloadMixin",
-		"LevelRendererMixin"
+		"LevelRendererMixin",
+		"VertexFormatElementMixin",
+		"BufferBuilderMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

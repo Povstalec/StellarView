@@ -155,7 +155,7 @@ public class TextureLayer implements ISerializable
 	@Override
 	public void deserializeNBT(CompoundTag tag)
 	{
-		this.texture = new ResourceLocation(tag.getString(TEXTURE));
+		this.texture = ResourceLocation.tryParse(tag.getString(TEXTURE));
 		this.rgba = new Color.FloatRGBA(0, 0, 0);
 		rgba.deserializeNBT(tag.getCompound(RGBA));
 		
