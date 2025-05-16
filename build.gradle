@@ -124,7 +124,7 @@ configurations {
 dependencies {
     implementation ("corgitaco.corgilib:Corgilib-NeoForge:${minecraft_version}-${corgilib_version}")
     implementation ("dev.corgitaco:Data_Anchor-neoforge-${minecraft_version}:${data_anchor_version}")
-    implementation ("maven.modrinth:enhanced-celestials:${enhanced_celestials_version}-neoforge")
+    implementation("corgitaco.enhancedcelestials:Enhanced-Celestials-NeoForge:${enhanced_celestials_version}")
 
     implementation ("curse.maven:the-twilight-forest-227639:5983260")
 
