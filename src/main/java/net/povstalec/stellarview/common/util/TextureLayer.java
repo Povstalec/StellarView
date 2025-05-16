@@ -44,7 +44,7 @@ public class TextureLayer implements INBTSerializable<CompoundTag>
 			Codec.BOOL.fieldOf(BLEND).forGetter(TextureLayer::shoulBlend),
 			
 			Codec.DOUBLE.fieldOf(SIZE).forGetter(TextureLayer::size),
-			Codec.doubleRange(MIN_VISUAL_SIZE, Double.MAX_VALUE).optionalFieldOf(MIN_SIZE, MIN_VISUAL_SIZE).forGetter(TextureLayer::minSize),
+			Codec.doubleRange(0.0D, Double.MAX_VALUE).optionalFieldOf(MIN_SIZE, MIN_VISUAL_SIZE).forGetter(TextureLayer::minSize),
 			Codec.BOOL.optionalFieldOf(CLAMP_AT_MIN_SIZE, false).forGetter(TextureLayer::clampAtMinSize),
 			
 			Codec.DOUBLE.fieldOf(ROTATION).forGetter(TextureLayer::rotation),
