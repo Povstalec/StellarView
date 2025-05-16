@@ -18,6 +18,7 @@ import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.api.client.events.StellarViewEvents;
+import net.povstalec.stellarview.api.common.space_objects.SupernovaLeftover;
 import net.povstalec.stellarview.api.common.space_objects.distinct.Luna;
 import net.povstalec.stellarview.client.SpaceObjectRenderers;
 import net.povstalec.stellarview.client.render.SpaceRenderer;
@@ -35,6 +36,9 @@ import net.povstalec.stellarview.api.common.space_objects.resourcepack.Star;
 import net.povstalec.stellarview.api.common.space_objects.resourcepack.StarField;
 import net.povstalec.stellarview.api.common.space_objects.distinct.Sol;
 import net.povstalec.stellarview.client.render.space_objects.SpaceObjectRenderer;
+import net.povstalec.stellarview.client.render.space_objects.StarLikeRenderer;
+import net.povstalec.stellarview.client.render.space_objects.resourcepack.BlackHoleRenderer;
+import net.povstalec.stellarview.client.render.space_objects.resourcepack.SupernovaLeftoverRenderer;
 import net.povstalec.stellarview.client.resourcepack.effects.MeteorEffect;
 import net.povstalec.stellarview.common.util.DustCloudInfo;
 import net.povstalec.stellarview.common.util.StarInfo;
@@ -405,7 +409,22 @@ public class ResourcepackReloadListener
 						StellarView.LOGGER.error("Failed to find parent for " + spaceObject.toString());
 				}
 				else
+				{
 					SpaceRenderer.addSpaceObjectRenderer(spaceObjectEntry.getValue());
+					if(spaceObjectEntry.getValue().renderedObject() instanceof Star star)
+					{
+						if(star.isSupernova())
+						{
+							Star.SupernovaInfo info = star.supernovaInfo();
+
+							if(info.getSupernovaLeftover() != null)
+							{
+								SupernovaLeftoverRenderer<SupernovaLeftover> renderer = new SupernovaLeftoverRenderer<>(star, info.getSupernovaLeftover());
+								SpaceRenderer.addSpaceObjectRenderer(renderer);
+							}
+						}
+					}
+				}
 			}
 		}
 		

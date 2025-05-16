@@ -66,11 +66,22 @@ public class StarRenderer<T extends Star> extends StarLikeRenderer<T>
 	{
 		double fade = renderedObject.fadeOut(distance);
 		
-		if(fade <= 0 || renderedObject.isSupernova() && renderedObject.supernovaInfo().supernovaEnded(ticks))
+		if(fade <= 0)
 			return;
-		
+
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
-		
+
+		if(renderedObject().isSupernova() && renderedObject.supernovaInfo().supernovaEnded(ticks))
+		{
+			for(TextureLayer textureLayer : renderedObject.supernovaInfo().getNebula().getTextureLayers())
+				renderTextureLayer(textureLayer, viewCenter, level, camera, bufferbuilder, lastMatrix, sphericalCoords, fade, ticks, distance, partialTicks);
+
+			if(!renderedObject.supernovaInfo().getSupernovaLeftover().getTextureLayers().isEmpty())
+				return;
+			if(!renderedObject.supernovaInfo().getNebula().getTextureLayers().isEmpty())
+				return;
+		}
+
 		for(TextureLayer textureLayer : renderedObject.getTextureLayers())
 		{
 			renderTextureLayer(textureLayer, viewCenter, level, camera, bufferbuilder, lastMatrix, sphericalCoords, fade, ticks, distance, partialTicks);
