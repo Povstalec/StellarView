@@ -217,7 +217,7 @@ public class Color
 			this.blue = FastColor.ARGB32.blue(argb) / 255F;
 		}
 		
-		public FloatRGB(int red, int green, int blue)
+		protected FloatRGB(int red, int green, int blue)
 		{
 			if(red > MAX_INT_VALUE || green > MAX_INT_VALUE || blue > MAX_INT_VALUE)
 				throw(new IllegalArgumentException("No value may be higher than 255"));
@@ -331,7 +331,7 @@ public class Color
 			this.alpha = FastColor.ARGB32.alpha(argb) / 255F;
 		}
 		
-		public FloatRGBA(int red, int green, int blue, int alpha)
+		protected FloatRGBA(int red, int green, int blue, int alpha)
 		{
 			super(red, green, blue);
 			
