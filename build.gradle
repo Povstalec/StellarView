@@ -20,6 +20,10 @@ repositories {
 		name = "Terraformers"
 		url = "https://maven.terraformersmc.com/"
 	}
+	maven {
+		name 'JTDev-Maven-Repository'
+		url 'https://maven.jt-dev.tech/releases'
+	}
 }
 
 dependencies {
@@ -32,6 +36,10 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")
+
+	modImplementation ("corgitaco.corgilib:Corgilib-Fabric:${minecraft_version}-${corgilib_version}")
+	modImplementation ("dev.corgitaco:Data_Anchor-fabric-${minecraft_version}:${data_anchor_version}")
+	modImplementation ("corgitaco.enhancedcelestials:Enhanced-Celestials-Fabric:${project.enhanced_celestials_version}")
 }
 
 processResources {

@@ -32,5 +32,6 @@
 		"modmenu": "*"
 	},
 	"suggests": {
+		"enhancedcelestials": "*"
 	}
 }
