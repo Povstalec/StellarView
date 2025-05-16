@@ -136,7 +136,7 @@ repositories {
         }
     }
 
-    maven githubPackage.invoke("The-Aether-Team/The-Aether")
+    maven { url = "https://packages.aether-mod.net/The-Aether" }
 
     maven {
         url "https://cursemaven.com"
