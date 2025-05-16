@@ -76,9 +76,6 @@ public class StarRenderer<T extends Star> extends StarLikeRenderer<T>
 			for(TextureLayer textureLayer : renderedObject.supernovaInfo().getNebula().getTextureLayers())
 				renderTextureLayer(textureLayer, viewCenter, level, camera, bufferbuilder, lastMatrix, sphericalCoords, fade, ticks, distance, partialTicks);
 
-			for (TextureLayer textureLayer : renderedObject.supernovaInfo().getSupernovaLeftover().getTextureLayers())
-				renderTextureLayer(textureLayer, viewCenter, level, camera, bufferbuilder, lastMatrix, sphericalCoords, fade, ticks, distance, partialTicks);
-
 			if(!renderedObject.supernovaInfo().getSupernovaLeftover().getTextureLayers().isEmpty())
 				return;
 			if(!renderedObject.supernovaInfo().getNebula().getTextureLayers().isEmpty())

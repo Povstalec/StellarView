@@ -91,7 +91,6 @@ public class Star extends StarLike
 
 			if(sizeMultiplier < supernovaInfo.getMinSizeMultiplier())
 			{
-				System.out.println("Supernova shrinking error! - " + ticks + " - " + sizeMultiplier);
 				return size*supernovaInfo.getMinSizeMultiplier();
 			}
 			return Math.max(supernovaInfo.getMinSizeMultiplier()*size, sizeMultiplier >= supernovaInfo.getMinSizeMultiplier() || (float) lifetime > supernovaInfo.getDurationTicks() / 2 ? sizeMultiplier * size : size);
