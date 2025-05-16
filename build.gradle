@@ -2,7 +2,7 @@ plugins {
     id 'eclipse'
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '5.1.+'
-    id 'io.github.0ffz.github-packages' version '1.2.1'
+    id 'io.github.0ffz.github-packages' version '[1,2)'
 }
 
 version = "${mod_version}"
@@ -136,7 +136,7 @@ repositories {
         }
     }
 
-    maven githubPackage.invoke("The-Aether-Team/The-Aether")
+    maven { url = "https://packages.aether-mod.net/The-Aether" }
 
     maven {
         url "https://cursemaven.com"
