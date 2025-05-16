@@ -9,7 +9,6 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -313,6 +312,7 @@ public class StellarViewConfigSpec
 		
 		public void save()
 		{
+			System.out.println("Saving " + name + " " + value);
 			spec.writeFile(spec.getFile());
 		}
 		

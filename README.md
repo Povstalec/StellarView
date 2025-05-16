@@ -34,11 +34,3 @@ It's recommended to use IntelliJ with the [mcdev Plugin](https://mcdev.io).
 
 Once the Gradle project is imported into IntelliJ you might need to restart it
 so it recognizes the generated run configs.
-
-### Third Party Code
-
-This project uses third party code by Forge licensed under LGPL 2.1 found
-here http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt.
-
-
-The aforementioned code can be found in the `src/main/java/net/povstalec/stellarview/forge-stuff` package.

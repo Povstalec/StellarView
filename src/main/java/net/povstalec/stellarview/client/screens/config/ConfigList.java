@@ -11,7 +11,6 @@ import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.network.chat.Component;
 import net.povstalec.stellarview.client.render.SpaceRenderer;
 import net.povstalec.stellarview.common.config.StellarViewConfigValue;
-import net.povstalec.stellarview.forge_stuff.ForgeSlider;
 
 public class ConfigList extends ObjectSelectionList<ConfigList.ConfigEntry>
 {
@@ -131,7 +130,7 @@ public class ConfigList extends ObjectSelectionList<ConfigList.ConfigEntry>
 	
 	public static class SliderConfigEntry extends ConfigEntry
 	{
-		protected AbstractWidget sliderButton;
+		protected IntSlider sliderButton;
 		protected StellarViewConfigValue.IntValue value;
 		protected int multiplier;
 		
@@ -139,9 +138,9 @@ public class ConfigList extends ObjectSelectionList<ConfigList.ConfigEntry>
 		{
 			this.value = value;
 			this.multiplier = multiplier;
-			this.sliderButton = new ForgeSlider(0, 0, 200, 20,
+			this.sliderButton = new IntSlider(0, 0, 200, 20,
 					component1, component2,
-					value.getMin() * multiplier, value.getMax() * multiplier, value.get() * multiplier, multiplier, 1, true);
+					value.getMin() * multiplier, value.getMax() * multiplier, value.get() * multiplier, multiplier);
 		}
 		
 		public SliderConfigEntry(Component component1, Component component2, int screenWidth, StellarViewConfigValue.IntValue value)
@@ -152,13 +151,13 @@ public class ConfigList extends ObjectSelectionList<ConfigList.ConfigEntry>
 		protected void reset()
 		{
 			this.value.set(this.value.getDefault());
-			((ForgeSlider) this.sliderButton).setValue((double) this.value.get() * multiplier);
+			this.sliderButton.setValue((double) this.value.get() * multiplier);
 			super.reset();
 		}
 		
 		protected void onChanged()
 		{
-	    	value.set((int) ((ForgeSlider) this.sliderButton).getValue() / multiplier);
+	    	value.set((int) this.sliderButton.getValue() / multiplier);
 	    	update();
 		}
 	    
@@ -166,7 +165,7 @@ public class ConfigList extends ObjectSelectionList<ConfigList.ConfigEntry>
 	    public boolean mouseClicked(double mouseX, double mouseY, int key)
 	    {
 	    	if(this.sliderButton.isMouseOver(mouseX, mouseY))
-	    		((ForgeSlider) this.sliderButton).mouseClicked(mouseX, mouseY, key);
+				this.sliderButton.mouseClicked(mouseX, mouseY, key);
 	    	onChanged();
 	    	
 			return super.mouseClicked(mouseX, mouseY, key);
@@ -176,7 +175,7 @@ public class ConfigList extends ObjectSelectionList<ConfigList.ConfigEntry>
 	    public boolean mouseDragged(double mouseX, double mouseY, int key, double dragX, double dragY)
 	    {
 	    	if(this.sliderButton.isMouseOver(mouseX, mouseY))
-	    		((ForgeSlider) this.sliderButton).mouseDragged(mouseX, mouseY, key, dragX, dragY);
+				this.sliderButton.mouseDragged(mouseX, mouseY, key, dragX, dragY);
 	    	
 			return super.mouseDragged(mouseX, mouseY, key, dragX, dragY);
 	    }
@@ -185,7 +184,7 @@ public class ConfigList extends ObjectSelectionList<ConfigList.ConfigEntry>
 	    public boolean mouseReleased(double mouseX, double mouseY, int key)
 	    {
 	    	if(this.sliderButton.isMouseOver(mouseX, mouseY))
-	    		((ForgeSlider) this.sliderButton).mouseReleased(mouseX, mouseY, key);
+				this.sliderButton.mouseReleased(mouseX, mouseY, key);
 	    	onChanged();
 	    	
 			return super.mouseReleased(mouseX, mouseY, key);
@@ -195,7 +194,7 @@ public class ConfigList extends ObjectSelectionList<ConfigList.ConfigEntry>
 	    public void mouseMoved(double mouseX, double mouseY)
 	    {
 	    	if(this.sliderButton.isMouseOver(mouseX, mouseY))
-	    		((ForgeSlider) this.sliderButton).mouseMoved(mouseX, mouseY);
+				this.sliderButton.mouseMoved(mouseX, mouseY);
 	    	
 			super.mouseMoved(mouseX, mouseY);
 	    }
