@@ -7,7 +7,7 @@ plugins {
     id 'io.github.0ffz.github-packages' version '1.2.1'
 }
 
-version = mod_version
+version = "${mod_version}-Forge"
 group = mod_group_id
 
 base {
