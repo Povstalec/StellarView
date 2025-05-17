@@ -4,7 +4,7 @@ plugins {
     id 'net.minecraftforge.gradle' version '5.1.+'
 }
 
-version = "${mod_version}"
+version = "${mod_version}-Forge"
 group = 'net.povstalec.stellarview' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "${mod_name}-${mc_version}"
 
