@@ -5,7 +5,7 @@ plugins {
     id 'io.github.0ffz.github-packages' version '[1,2)'
 }
 
-version = "${mod_version}"
+version = "${mod_version}-Forge"
 group = 'net.povstalec.stellarview' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "${mod_name}-${mc_version}"
 
