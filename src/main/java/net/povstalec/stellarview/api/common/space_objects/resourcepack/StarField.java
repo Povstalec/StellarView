@@ -19,11 +19,15 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 public class StarField extends SpaceObject
 {
+	public static final long LOD_DISTANCE_HIGH = 10000000L;
+	public static final long LOD_DISTANCE_MEDIUM = 5000000L;
+	public static final long LOD_DISTANCE_LOW = 0L;
+	
 	public enum LevelOfDetail
 	{
-		LOD1((short) 225, 10000000L), // Very far away, most stars can't be seen
-		LOD2((short) 190, 5000000L), // Middle point, some stars can be seen
-		LOD3((short) 0, 0); // Very close, even the dimmest stars are seen
+		LOD1((short) 225, LOD_DISTANCE_HIGH), // Very far away, most stars can't be seen
+		LOD2((short) 190, LOD_DISTANCE_MEDIUM), // Middle point, some stars can be seen
+		LOD3((short) 0, LOD_DISTANCE_LOW); // Very close, even the dimmest stars are seen
 		
 		short minBrightness;
 		long minDistanceSquared;

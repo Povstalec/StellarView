@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 
 import net.minecraft.client.renderer.GameRenderer;
+import net.povstalec.stellarview.api.common.space_objects.resourcepack.Constellation;
 import net.povstalec.stellarview.client.render.SpaceRenderer;
 import net.povstalec.stellarview.client.render.shader.StellarViewShaders;
 import net.povstalec.stellarview.client.render.shader.StellarViewVertexFormat;
@@ -109,6 +110,36 @@ public abstract class StarData
 		}
 		
 		/**
+		 * Creates information for a star based on the provided Star Definition
+		 * @param starDefinition StarType used for obtaining information about what star to create
+		 */
+		public void newStar(Constellation.StarDefinition starDefinition, SpaceCoords starFieldCoords)
+		{
+			// Set up position
+			
+			starCoords[stars][0] = starDefinition.coords().x().toLy() - starFieldCoords.x().toLy();
+			starCoords[stars][1] = starDefinition.coords().y().toLy() - starFieldCoords.y().toLy();
+			starCoords[stars][2] = starDefinition.coords().z().toLy() - starFieldCoords.z().toLy();
+			
+			// Set up size
+			
+			starSizes[stars] = starDefinition.size(); // This randomizes the Star size
+			
+			// Set up color and alpha
+			
+			starRGBA[stars] = new short[] {(short) starDefinition.rgb().red(), (short) starDefinition.rgb().green(), (short) starDefinition.rgb().blue(), starDefinition.brightness()};
+			
+			// sin and cos are used to effectively clamp the random number between two values without actually clamping it,
+			// wwhich would result in some awkward lines as Stars would be brought to the clamped values
+			// Both affect Star size and rotation
+			randoms[stars][0] = Math.sin(starDefinition.rotation()); // sin random
+			randoms[stars][1] = Math.cos(starDefinition.rotation()); // cos random
+			
+			//lod.createStar(builder, hasTexture, lod.size);
+			stars++;
+		}
+		
+		/**
 		 * Creates information for a completely new star
 		 * @param starType StarType used for obtaining information about what star to create
 		 * @param random Random used for randomizing the star information
@@ -119,7 +150,6 @@ public abstract class StarData
 		public void newStar(StarLike.StarType starType, Random random, double x, double y, double z)
 		{
 			// Set up position
-			
 			starCoords[stars][0] = x;
 			starCoords[stars][1] = y;
 			starCoords[stars][2] = z;

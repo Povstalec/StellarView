@@ -58,6 +58,7 @@ public class ResourcepackReloadListener
 	public static final String STAR_INFO = "star_info";
 	public static final String DUST_CLOUD_INFO = "dust_cloud_info";
 	
+	private static final ResourceLocation MILKY_WAY_LOCATION = new ResourceLocation(StellarView.MODID, "star_field/milky_way/milky_way");
 	private static final ResourceLocation SOL_LOCATION = new ResourceLocation(StellarView.MODID, "star/milky_way/sol");
 	private static final ResourceLocation LUNA_LOCATION = new ResourceLocation(StellarView.MODID, "moon/milky_way/sol/earth/luna");
 	
@@ -347,6 +348,7 @@ public class ResourcepackReloadListener
 		{
 			try
 			{
+				
 				JsonObject json = GsonHelper.convertToJsonObject(element, "star_field");
 				StarField starField = StarField.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Star Field", msg));
 				
