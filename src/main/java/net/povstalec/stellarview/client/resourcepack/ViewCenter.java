@@ -380,7 +380,7 @@ public class ViewCenter
 		if(rotationPeriod <= 0)
 			return 0;
 		
-		double d0 = Mth.frac((double) ((this.oldDayTicks + dayTickDifference() * partialTicks) % rotationPeriod) / (double) rotationPeriod - 0.25D);
+		double d0 = Mth.frac((double) (this.oldDayTicks % this.rotationPeriod + dayTickDifference() * partialTicks) / (double) this.rotationPeriod - 0.25D);
 		double d1 = 0.5D - Math.cos(d0 * Math.PI) / 2.0D;
 		
 		return (float) (d0 * 2.0D + d1) / 3.0F;
@@ -411,9 +411,10 @@ public class ViewCenter
 				this.dayTicks = level.getDayTime();
 			}
 			double rotation = 2 * Math.PI * getTimeOfDay(partialTicks) + Math.PI;
+			level.getTimeOfDay(partialTicks);
 			
-			if(viewObject.orbitInfo() != null)
-				rotation -= viewObject.orbitInfo().meanAnomaly(this.ticks % viewObject.orbitInfo().orbitalPeriod().ticks(), tickDifference() * partialTicks);
+			//if(viewObject.orbitInfo() != null)
+			//	rotation -= viewObject.orbitInfo().meanAnomaly(this.ticks % viewObject.orbitInfo().orbitalPeriod().ticks(), tickDifference() * partialTicks);
 			
 			stack.mulPose(Axis.YP.rotation((float) getAxisRotation().yAxis()));
 			stack.mulPose(Axis.ZP.rotation((float) getAxisRotation().zAxis()));
