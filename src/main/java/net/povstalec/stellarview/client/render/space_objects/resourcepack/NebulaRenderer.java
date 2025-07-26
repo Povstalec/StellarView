@@ -2,6 +2,7 @@ package net.povstalec.stellarview.client.render.space_objects.resourcepack;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.povstalec.stellarview.api.common.space_objects.resourcepack.Nebula;
 import net.povstalec.stellarview.client.render.LightEffects;
@@ -19,6 +20,7 @@ public class NebulaRenderer<T extends Nebula> extends TexturedObjectRenderer<T>
 	{
 		super(nebula);
 	}
+	private static Minecraft minecraft = Minecraft.getInstance();
 	
 	//============================================================================================
 	//*****************************************Rendering******************************************
@@ -50,9 +52,11 @@ public class NebulaRenderer<T extends Nebula> extends TexturedObjectRenderer<T>
 			else
 				return;
 		}
-		
+
+		minecraft.getProfiler().push("nebula");
 		renderOnSphere(textureLayer.rgba(), nebulaRGBA, textureLayer.texture(), textureLayer.uv(),
 				level, camera, bufferbuilder, lastMatrix, sphericalCoords,
 				ticks, distance, partialTicks, LightEffects.nebulaBrightness(viewCenter, size, ticks, level, camera, partialTicks) * (float) fade, size, (float) textureLayer.rotation(), textureLayer.shoulBlend());
+		minecraft.getProfiler().pop();
 	}
 }

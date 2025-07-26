@@ -5,6 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.client.renderer.GameRenderer;
@@ -37,6 +38,7 @@ import java.util.Random;
 
 public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<T>
 {
+	private static Minecraft minecraft = Minecraft.getInstance();
 	protected boolean hasTexture = GeneralConfig.textured_stars.get();
 	
 	@Nullable
@@ -66,7 +68,7 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 	public StarFieldRenderer(T starField)
 	{
 		super(starField);
-		
+
 		this.totalDustClouds = starField.getDustClouds();
 		
 		this.armDustCloudInfo = new DustCloudInfo[this.renderedObject.getSpiralArms().size()];
@@ -467,6 +469,7 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 	@Override
 	public void render(ViewCenter viewCenter, ClientLevel level, float partialTicks, PoseStack stack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder, Vector3f parentVector, AxisRotation parentRotation)
 	{
+		minecraft.getProfiler().push("starfield");
 		SpaceCoords difference = viewCenter.getCoords().sub(spaceCoords());
 		
 		if(starData == null)
@@ -502,6 +505,7 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 		{
 			child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, parentVector, new AxisRotation(0, 0, 0));
 		}
+		minecraft.getProfiler().pop();
 	}
 	
 	public void renderDustClouds(ViewCenter viewCenter, ClientLevel level, float partialTicks, PoseStack stack, Camera camera,

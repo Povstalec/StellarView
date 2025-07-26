@@ -3,6 +3,7 @@ package net.povstalec.stellarview.client.render.space_objects.resourcepack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.GameRenderer;
 import net.povstalec.stellarview.api.common.space_objects.resourcepack.Star;
@@ -17,6 +18,8 @@ import org.joml.Matrix4f;
 
 public class StarRenderer<T extends Star> extends StarLikeRenderer<T>
 {
+	private static Minecraft minecraft = Minecraft.getInstance();
+
 	public StarRenderer(T star)
 	{
 		super(star);
@@ -52,13 +55,14 @@ public class StarRenderer<T extends Star> extends StarLikeRenderer<T>
 			else
 				return;
 		}
-		
+
+		minecraft.getProfiler().push("star");
 		if(renderedObject.isSupernova())
 			size = renderedObject.supernovaSize(size, ticks, lyDistance);
-		
 		renderOnSphere(textureLayer.rgba(), starRGBA, textureLayer.texture(), textureLayer.uv(),
 				level, camera, bufferbuilder, lastMatrix, sphericalCoords,
 				ticks, distance, partialTicks, LightEffects.starDayBrightness(viewCenter, size, ticks, level, camera, partialTicks) * (float) fade, size, (float) textureLayer.rotation() + renderedObject.rotation(ticks), textureLayer.shoulBlend());
+		minecraft.getProfiler().pop();
 	}
 	
 	@Override

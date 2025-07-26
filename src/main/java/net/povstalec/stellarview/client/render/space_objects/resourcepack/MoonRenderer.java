@@ -2,6 +2,7 @@ package net.povstalec.stellarview.client.render.space_objects.resourcepack;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.api.common.space_objects.resourcepack.Moon;
@@ -18,6 +19,7 @@ public class MoonRenderer<T extends Moon> extends PlanetRenderer<T>
 	{
 		super(moon);
 	}
+	private static Minecraft minecraft = Minecraft.getInstance();
 	
 	//============================================================================================
 	//*****************************************Rendering******************************************
@@ -48,11 +50,13 @@ public class MoonRenderer<T extends Moon> extends PlanetRenderer<T>
 			else
 				return;
 		}
-		
+
+		minecraft.getProfiler().push("moon");
 		size *= renderedObject.sizeMultiplier(level);
 		
 		renderOnSphere(textureLayer.rgba(), moonRGBA, textureLayer.texture(), textureLayer.uv(),
 				level, camera, bufferbuilder, lastMatrix, sphericalCoords,
 				ticks, distance, partialTicks, LightEffects.dayBrightness(viewCenter, size, ticks, level, camera, partialTicks) * (float) fade, size, (float) textureLayer.rotation(), textureLayer.shoulBlend());
+		minecraft.getProfiler().pop();
 	}
 }

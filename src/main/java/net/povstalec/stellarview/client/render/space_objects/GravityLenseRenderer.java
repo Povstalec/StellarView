@@ -3,6 +3,7 @@ package net.povstalec.stellarview.client.render.space_objects;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.povstalec.stellarview.api.common.space_objects.GravityLense;
 import net.povstalec.stellarview.client.render.LightEffects;
@@ -17,6 +18,8 @@ import org.joml.Vector3f;
 public abstract class GravityLenseRenderer<T extends GravityLense> extends StarLikeRenderer<T>
 {
 	protected SphericalCoords sphericalCoords;
+
+	private static Minecraft minecraft = Minecraft.getInstance();
 	
 	public GravityLenseRenderer(T gravityLense)
 	{
@@ -94,6 +97,7 @@ public abstract class GravityLenseRenderer<T extends GravityLense> extends StarL
 					   Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder,
 					   Vector3f parentVector, AxisRotation parentRotation)
 	{
+		minecraft.getProfiler().push("gravLensing");
 		Vector3f positionVector = getPosition(viewCenter, parentRotation, viewCenter.ticks(), partialTicks).add(parentVector); // Handles orbits 'n stuff
 		
 		// Add parent vector to current coords
@@ -129,5 +133,6 @@ public abstract class GravityLenseRenderer<T extends GravityLense> extends StarL
 					child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, positionVector, axisRotation());
 			}
 		}
+		minecraft.getProfiler().pop();
 	}
 }

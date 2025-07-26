@@ -3,6 +3,7 @@ package net.povstalec.stellarview.client.render.space_objects.distinct;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
@@ -23,6 +24,7 @@ import org.joml.Matrix4f;
 public class LunaRenderer extends MoonRenderer<Luna>
 {
 	public static final ResourceLocation MOON_LOCATION = new ResourceLocation("textures/environment/moon_phases.png");
+	private static Minecraft minecraft = Minecraft.getInstance();
 	
 	public static final UV.Quad MOON_QUAD = new UV.Quad(new UV.PhaseHandler(24000, 0, 4, 2), true);
 	public static final TextureLayer MOON_TEXTURE_LAYER = new TextureLayer(MOON_LOCATION,new Color.FloatRGBA(255, 255, 255, 255),
@@ -45,7 +47,8 @@ public class LunaRenderer extends MoonRenderer<Luna>
 		
 		if(fade <= 0)
 			return;
-		
+
+		minecraft.getProfiler().push("luna");
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		
 		if(OverworldConfig.vanilla_moon.get())
@@ -57,5 +60,6 @@ public class LunaRenderer extends MoonRenderer<Luna>
 				renderTextureLayer(textureLayer, viewCenter, level, camera, bufferbuilder, lastMatrix, sphericalCoords, fade, ticks, distance, partialTicks);
 			}
 		}
+		minecraft.getProfiler().pop();
 	}
 }

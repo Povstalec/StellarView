@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
@@ -18,6 +19,7 @@ import org.joml.Vector3f;
 public abstract class TexturedObjectRenderer<T extends TexturedObject> extends SpaceObjectRenderer<T>
 {
 	public static final float DEFAULT_DISTANCE = 100.0F;
+	private static Minecraft minecraft = Minecraft.getInstance();
 	
 	public TexturedObjectRenderer(T texturedObject)
 	{
@@ -75,6 +77,7 @@ public abstract class TexturedObjectRenderer<T extends TexturedObject> extends S
 									  ClientLevel level, Camera camera, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords,
 									  long ticks, double distance, float partialTicks, float brightness, float size, float rotation, boolean shouldBlend)
 	{
+		minecraft.getProfiler().push("renderOnSphere");
 		Vector3f corner00 = new Vector3f(size, DEFAULT_DISTANCE, size);
 		Vector3f corner10 = new Vector3f(-size, DEFAULT_DISTANCE, size);
 		Vector3f corner11 = new Vector3f(-size, DEFAULT_DISTANCE, -size);
@@ -107,6 +110,7 @@ public abstract class TexturedObjectRenderer<T extends TexturedObject> extends S
 		BufferUploader.drawWithShader(bufferbuilder.end());
 		
 		RenderSystem.defaultBlendFunc();
+		minecraft.getProfiler().pop();
 	}
 	
 	/**
@@ -135,11 +139,13 @@ public abstract class TexturedObjectRenderer<T extends TexturedObject> extends S
 			else
 				return;
 		}
-		
+
+		minecraft.getProfiler().push("texturedObject");
 		renderOnSphere(textureLayer.rgba(), Color.FloatRGBA.DEFAULT, textureLayer.texture(), textureLayer.uv(),
 				level, camera, bufferbuilder, lastMatrix, sphericalCoords,
 				ticks, distance, partialTicks, LightEffects.dayBrightness(viewCenter, size, ticks, level, camera, partialTicks) * (float) fade,
 				size, (float) textureLayer.rotation(), textureLayer.shoulBlend());
+		minecraft.getProfiler().pop();
 	}
 	
 	protected void renderTextureLayers(ViewCenter viewCenter, ClientLevel level, Camera camera, BufferBuilder bufferbuilder, Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance, float partialTicks)
