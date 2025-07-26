@@ -441,6 +441,8 @@ public class ViewCenter
 	
 	public boolean renderSky(ClientLevel level, int ticks, float partialTicks, PoseStack stack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
 	{
+		minecraft.getProfiler().push(StellarView.MODID);
+		
 		if(viewObject == null && skyboxes == null)
 			return false;
 		
@@ -517,6 +519,8 @@ public class ViewCenter
 		
 		if(this.updateTicks)
 			this.updateTicks = false;
+		
+		minecraft.getProfiler().pop();
 		
 		return true;
 	}
