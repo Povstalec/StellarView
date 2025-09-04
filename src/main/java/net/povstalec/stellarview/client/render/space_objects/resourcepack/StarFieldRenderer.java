@@ -76,27 +76,22 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 		this.lod1definedStars = new ArrayList<>();
 		this.lod2definedStars = new ArrayList<>();
 		this.lod3definedStars = new ArrayList<>();
+	}
+	
+	@Override
+	public void addChild(SpaceObjectRenderer<?> child)
+	{
+		super.addChild(child);
 		
-		if(new ResourceLocation(StellarView.MODID, "milky_way/milky_way_core_distribution").equals(this.renderedObject().getDustCloudInfo()))
-			addConstellation(Constellation.ORION);
+		if(child instanceof ConstellationRenderer<?> constellation)
+			addConstellation(constellation.renderedObject());
 	}
 	
 	public void addConstellation(Constellation constellation)
 	{
-		for(Constellation.StarDefinition star : constellation.lod1stars())
-		{
-			this.lod1definedStars.add(star);
-		}
-		
-		for(Constellation.StarDefinition star : constellation.lod2stars())
-		{
-			this.lod2definedStars.add(star);
-		}
-		
-		for(Constellation.StarDefinition star : constellation.lod3stars())
-		{
-			this.lod3definedStars.add(star);
-		}
+		this.lod1definedStars.addAll(constellation.lod1stars());
+		this.lod2definedStars.addAll(constellation.lod2stars());
+		this.lod3definedStars.addAll(constellation.lod3stars());
 	}
 	
 	protected void setupLOD(StarInfo starInfo)
@@ -498,7 +493,7 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 			stack.popPose();
 		}
 		
-		for(SpaceObjectRenderer child : children)
+		for(SpaceObjectRenderer<?> child : children)
 		{
 			child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, parentVector, new AxisRotation(0, 0, 0));
 		}

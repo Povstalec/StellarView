@@ -67,7 +67,7 @@ public abstract class SpaceObjectRenderer<RenderedObject extends SpaceObject>
 		renderedObject.addChildRaw(child.renderedObject);
 	}
 	
-	public void addChild(SpaceObjectRenderer child)
+	public void addChild(SpaceObjectRenderer<?> child)
 	{
 		if(child.parent != null)
 		{

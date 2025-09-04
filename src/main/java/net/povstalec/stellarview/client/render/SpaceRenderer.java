@@ -126,6 +126,7 @@ public final class SpaceRenderer
 		for(Map.Entry<SpaceRegion.RegionPos, SpaceRegionRenderer> spaceRegionEntry : SPACE_REGIONS.entrySet())
 		{
 			spaceRegionEntry.getValue().resetStarFields();
+			spaceRegionEntry.getValue().resetConstellations();
 		}
 	}
 	
