@@ -7,8 +7,8 @@
 			"texture": "stellarview:textures/environment/halo_template.png",
 			"rgba": {"red": 255, "green": 0, "blue": 0, "alpha": 255},
 			"blend": true,
-			"size": 4488626469,
-			"min_size": 0.9,
+			"size": 175000000000000000,
+			"min_size": 0.05,
 			"clamp_at_min_size": true,
 			"rotation": 0,
 			"uv": { "flip_uv": false }
@@ -17,8 +17,8 @@
 			"texture": "stellarview:textures/environment/nebula/eagle_nebula.png",
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
 			"blend": true,
-			"size": 4488626469,
-			"min_size": 0.5,
+			"size": 175000000000000000,
+			"min_size": 0.05,
 			"clamp_at_min_size": true,
 			"rotation": 0,
 			"uv": { "flip_uv": false }
