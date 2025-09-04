@@ -222,7 +222,7 @@ public abstract class DustCloudData
 				dustCloudBuffer.bind();
 				dustCloudBuffer.upload(bufferbuilder$renderedbuffer);
 				if(isStatic)
-					dustCloudBuffer.drawWithShader(pose, projectionMatrix, GameRenderer.getPositionColorTexShader());
+					dustCloudBuffer.drawWithShader(pose, projectionMatrix, GameRenderer.getPositionTexColorShader());
 				else
 					dustCloudBuffer.drawWithShader(pose, projectionMatrix, difference, StellarViewShaders.starDustCloudShader());
 				VertexBuffer.unbind();
@@ -233,7 +233,7 @@ public abstract class DustCloudData
 			{
 				dustCloudBuffer.bind();
 				if(isStatic)
-					dustCloudBuffer.drawWithShader(pose, projectionMatrix, GameRenderer.getPositionColorTexShader());
+					dustCloudBuffer.drawWithShader(pose, projectionMatrix, GameRenderer.getPositionTexColorShader());
 				else
 					dustCloudBuffer.drawWithShader(pose, projectionMatrix, difference, StellarViewShaders.starDustCloudShader());
 				VertexBuffer.unbind();
@@ -246,7 +246,7 @@ public abstract class DustCloudData
 		
 		public BufferBuilder.RenderedBuffer getStaticDustCloudBuffer(BufferBuilder bufferBuilder, SpaceCoords difference)
 		{
-			bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
+			bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
 			
 			for(int i = 0; i < dustClouds; i++)
 			{
@@ -410,7 +410,7 @@ public abstract class DustCloudData
 				double projectedX = heightProjectionXZ * sinTheta - width * cosTheta;
 				double projectedZ = width * sinTheta + heightProjectionXZ * cosTheta;
 				
-				builder.vertex(starX + projectedX, starY + heightProjectionY, starZ + projectedZ).color(dustCloudRGBA[i][0], dustCloudRGBA[i][1] , dustCloudRGBA[i][2], alpha).uv( (float) (aLocation + 1) / 2F, (float) (bLocation + 1) / 2F).endVertex();
+				builder.vertex(starX + projectedX, starY + heightProjectionY, starZ + projectedZ).uv( (float) (aLocation + 1) / 2F, (float) (bLocation + 1) / 2F).color(dustCloudRGBA[i][0], dustCloudRGBA[i][1] , dustCloudRGBA[i][2], alpha).endVertex();
 			}
 		}
 	}

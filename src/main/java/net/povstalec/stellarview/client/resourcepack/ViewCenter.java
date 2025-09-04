@@ -411,10 +411,9 @@ public class ViewCenter
 				this.dayTicks = level.getDayTime();
 			}
 			double rotation = 2 * Math.PI * getTimeOfDay(partialTicks) + Math.PI;
-			level.getTimeOfDay(partialTicks);
 			
-			//if(viewObject.orbitInfo() != null)
-			//	rotation -= viewObject.orbitInfo().meanAnomaly(this.ticks % viewObject.orbitInfo().orbitalPeriod().ticks(), tickDifference() * partialTicks);
+			if(viewObject.orbitInfo() != null)
+				rotation -= viewObject.orbitInfo().meanAnomaly(this.ticks % viewObject.orbitInfo().orbitalPeriod().ticks(), tickDifference() * partialTicks);
 			
 			stack.mulPose(Axis.YP.rotation((float) getAxisRotation().yAxis()));
 			stack.mulPose(Axis.ZP.rotation((float) getAxisRotation().zAxis()));
