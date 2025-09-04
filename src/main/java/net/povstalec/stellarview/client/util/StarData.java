@@ -10,6 +10,7 @@ import net.povstalec.stellarview.client.render.shader.StellarViewShaders;
 import net.povstalec.stellarview.client.render.shader.StellarViewVertexFormat;
 import net.povstalec.stellarview.api.common.space_objects.resourcepack.StarField;
 import net.povstalec.stellarview.api.common.space_objects.StarLike;
+import net.povstalec.stellarview.client.render.shader.VertexOrder;
 import net.povstalec.stellarview.common.util.Color;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 import net.povstalec.stellarview.common.util.SphericalCoords;
@@ -281,7 +282,7 @@ public abstract class StarData
 				starBuffer.bind();
 				starBuffer.upload(bufferbuilder$renderedbuffer);
 				if(isStatic)
-					starBuffer.drawWithShader(pose, projectionMatrix, hasTexture ? GameRenderer.getPositionTexColorShader() : GameRenderer.getPositionColorShader());
+					starBuffer.drawWithShader(pose, projectionMatrix, hasTexture ? VertexOrder.texColorShader() : GameRenderer.getPositionColorShader());
 				else
 					starBuffer.drawWithShader(pose, projectionMatrix, difference, hasTexture ? StellarViewShaders.starTexShader() : StellarViewShaders.starShader());
 				VertexBuffer.unbind();
@@ -292,7 +293,7 @@ public abstract class StarData
 			{
 				starBuffer.bind();
 				if(isStatic)
-					starBuffer.drawWithShader(pose, projectionMatrix, hasTexture ? GameRenderer.getPositionTexColorShader() : GameRenderer.getPositionColorShader());
+					starBuffer.drawWithShader(pose, projectionMatrix, hasTexture ? VertexOrder.texColorShader() : GameRenderer.getPositionColorShader());
 				else
 					starBuffer.drawWithShader(pose, projectionMatrix, difference, hasTexture ? StellarViewShaders.starTexShader() : StellarViewShaders.starShader());
 				VertexBuffer.unbind();
@@ -305,7 +306,7 @@ public abstract class StarData
 		
 		public BufferBuilder.RenderedBuffer getStaticStarBuffer(BufferBuilder bufferBuilder, boolean hasTexture, SpaceCoords difference)
 		{
-			bufferBuilder.begin(VertexFormat.Mode.QUADS, hasTexture ? DefaultVertexFormat.POSITION_TEX_COLOR : DefaultVertexFormat.POSITION_COLOR);
+			bufferBuilder.begin(VertexFormat.Mode.QUADS, hasTexture ? VertexOrder.texColorFormat() : DefaultVertexFormat.POSITION_COLOR);
 			
 			for(int i = 0; i < stars; i++)
 			{
@@ -460,7 +461,12 @@ public abstract class StarData
 				double projectedZ = width * sinTheta + heightProjectionXZ * cosTheta;
 				
 				if(hasTexture)
-					builder.vertex(starX + projectedX, starY + heightProjectionY, starZ + projectedZ).uv( (float) (aLocation + 1) / 2F, (float) (bLocation + 1) / 2F).color(starRGBA[i][0], starRGBA[i][1] , starRGBA[i][2], alpha).endVertex();
+				{
+					if(VertexOrder.texColor())
+						builder.vertex(starX + projectedX, starY + heightProjectionY, starZ + projectedZ).uv( (float) (aLocation + 1) / 2F, (float) (bLocation + 1) / 2F).color(starRGBA[i][0], starRGBA[i][1] , starRGBA[i][2], alpha).endVertex();
+					else
+						builder.vertex(starX + projectedX, starY + heightProjectionY, starZ + projectedZ).color(starRGBA[i][0], starRGBA[i][1] , starRGBA[i][2], alpha).uv( (float) (aLocation + 1) / 2F, (float) (bLocation + 1) / 2F).endVertex();
+				}
 				else
 					builder.vertex(starX + projectedX, starY + heightProjectionY, starZ + projectedZ).color(starRGBA[i][0], starRGBA[i][1], starRGBA[i][2], alpha).endVertex();
 			}

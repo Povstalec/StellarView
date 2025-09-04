@@ -8,6 +8,7 @@ import net.povstalec.stellarview.api.common.space_objects.resourcepack.StarField
 import net.povstalec.stellarview.client.render.SpaceRenderer;
 import net.povstalec.stellarview.client.render.shader.StellarViewShaders;
 import net.povstalec.stellarview.client.render.shader.StellarViewVertexFormat;
+import net.povstalec.stellarview.client.render.shader.VertexOrder;
 import net.povstalec.stellarview.common.util.Color;
 import net.povstalec.stellarview.common.util.DustCloudInfo;
 import net.povstalec.stellarview.common.util.SpaceCoords;
@@ -222,7 +223,7 @@ public abstract class DustCloudData
 				dustCloudBuffer.bind();
 				dustCloudBuffer.upload(bufferbuilder$renderedbuffer);
 				if(isStatic)
-					dustCloudBuffer.drawWithShader(pose, projectionMatrix, GameRenderer.getPositionTexColorShader());
+					dustCloudBuffer.drawWithShader(pose, projectionMatrix, VertexOrder.texColorShader());
 				else
 					dustCloudBuffer.drawWithShader(pose, projectionMatrix, difference, StellarViewShaders.starDustCloudShader());
 				VertexBuffer.unbind();
@@ -233,7 +234,7 @@ public abstract class DustCloudData
 			{
 				dustCloudBuffer.bind();
 				if(isStatic)
-					dustCloudBuffer.drawWithShader(pose, projectionMatrix, GameRenderer.getPositionTexColorShader());
+					dustCloudBuffer.drawWithShader(pose, projectionMatrix, VertexOrder.texColorShader());
 				else
 					dustCloudBuffer.drawWithShader(pose, projectionMatrix, difference, StellarViewShaders.starDustCloudShader());
 				VertexBuffer.unbind();
@@ -246,7 +247,7 @@ public abstract class DustCloudData
 		
 		public BufferBuilder.RenderedBuffer getStaticDustCloudBuffer(BufferBuilder bufferBuilder, SpaceCoords difference)
 		{
-			bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+			bufferBuilder.begin(VertexFormat.Mode.QUADS, VertexOrder.texColorFormat());
 			
 			for(int i = 0; i < dustClouds; i++)
 			{
@@ -410,7 +411,10 @@ public abstract class DustCloudData
 				double projectedX = heightProjectionXZ * sinTheta - width * cosTheta;
 				double projectedZ = width * sinTheta + heightProjectionXZ * cosTheta;
 				
-				builder.vertex(starX + projectedX, starY + heightProjectionY, starZ + projectedZ).uv( (float) (aLocation + 1) / 2F, (float) (bLocation + 1) / 2F).color(dustCloudRGBA[i][0], dustCloudRGBA[i][1] , dustCloudRGBA[i][2], alpha).endVertex();
+				if(VertexOrder.texColor())
+					builder.vertex(starX + projectedX, starY + heightProjectionY, starZ + projectedZ).uv( (float) (aLocation + 1) / 2F, (float) (bLocation + 1) / 2F).color(dustCloudRGBA[i][0], dustCloudRGBA[i][1] , dustCloudRGBA[i][2], alpha).endVertex();
+				else
+					builder.vertex(starX + projectedX, starY + heightProjectionY, starZ + projectedZ).color(dustCloudRGBA[i][0], dustCloudRGBA[i][1] , dustCloudRGBA[i][2], alpha).uv( (float) (aLocation + 1) / 2F, (float) (bLocation + 1) / 2F).endVertex();
 			}
 		}
 	}
