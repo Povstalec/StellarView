@@ -26,6 +26,10 @@ public abstract class StarData
 	public static final float MIN_STAR_SIZE = 0.02F;
 	public static final float MIN_TEX_STAR_SIZE = 0.08F;
 	
+	public static final int HEIGHT_OFFSET = 0;
+	public static final int WIDTH_OFFSET = HEIGHT_OFFSET + Float.BYTES;
+	public static final int STAR_SIZE_OFFSET = WIDTH_OFFSET + Float.BYTES;
+	
 	private LOD lod1;
 	private LOD lod2;
 	private LOD lod3;
@@ -237,9 +241,9 @@ public abstract class StarData
 				
 				builder.vertex(starCoords[i][0], starCoords[i][1], starCoords[i][2]).color(starRGBA[i][0], starRGBA[i][1], starRGBA[i][2], starRGBA[i][3]);
 				// These next few lines add a "custom" element defined as HeightWidthSize in StellarViewVertexFormat
-				builder.putFloat(0, (float) height);
-				builder.putFloat(4, (float) width);
-				builder.putFloat(8, (float) starSizes[i]);
+				builder.putFloat(HEIGHT_OFFSET, (float) height);
+				builder.putFloat(WIDTH_OFFSET, (float) width);
+				builder.putFloat(STAR_SIZE_OFFSET, (float) starSizes[i]);
 				builder.nextElement();
 				
 				if(hasTexture)
@@ -285,7 +289,7 @@ public abstract class StarData
 					starBuffer.drawWithShader(pose, projectionMatrix, hasTexture ? VertexOrder.texColorShader() : GameRenderer.getPositionColorShader());
 				else
 					starBuffer.drawWithShader(pose, projectionMatrix, difference, hasTexture ? StellarViewShaders.starTexShader() : StellarViewShaders.starShader());
-				VertexBuffer.unbind();
+				StarBuffer.unbind();
 				
 				SpaceRenderer.loadedStars(stars);
 			}
@@ -296,7 +300,7 @@ public abstract class StarData
 					starBuffer.drawWithShader(pose, projectionMatrix, hasTexture ? VertexOrder.texColorShader() : GameRenderer.getPositionColorShader());
 				else
 					starBuffer.drawWithShader(pose, projectionMatrix, difference, hasTexture ? StellarViewShaders.starTexShader() : StellarViewShaders.starShader());
-				VertexBuffer.unbind();
+				StarBuffer.unbind();
 			}
 		}
 		

@@ -4,12 +4,15 @@ import java.nio.ByteBuffer;
 
 import javax.annotation.Nullable;
 
+import com.mojang.blaze3d.platform.MemoryTracker;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.povstalec.stellarview.client.render.SpaceRenderer;
+import net.povstalec.stellarview.client.render.shader.VertexOrder;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import org.lwjgl.opengl.GL15C;
+import org.lwjgl.opengl.*;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.Window;
@@ -82,7 +85,7 @@ public class StarBuffer implements AutoCloseable
 			if(!formatEquals)
 				GlStateManager._glBindBuffer(GL15C.GL_ARRAY_BUFFER, this.vertexBufferId);
 			
-			RenderSystem.glBufferData(GL15C.GL_ARRAY_BUFFER, vertexBuffer, 35044);
+			RenderSystem.glBufferData(GL15C.GL_ARRAY_BUFFER, vertexBuffer, GL15C.GL_STATIC_DRAW);
 		}
 		
 		return drawState.format();
@@ -122,6 +125,13 @@ public class StarBuffer implements AutoCloseable
 	public void draw()
 	{
 		RenderSystem.drawElements(this.mode.asGLMode, this.indexCount, this.getIndexType().asGLType);
+		
+		//GL31C.glDrawElementsInstanced(this.mode.asGLMode, this.indexCount, this.getIndexType().asGLType, 0L, 1);
+		
+		// Old attempts
+		//GL31C.glDrawArraysInstanced(GL40C.GL_PATCHES, 0, indexCount, 1);
+		//GL31C.glDrawArraysInstanced(GL40C.GL_PATCHES, 0, 1, indexCount);
+		//GL31C.glDrawArraysInstanced(GL40C.GL_PATCHES, 0, indexCount * 4, 10);
 	}
 	
 	private VertexFormat.IndexType getIndexType()
@@ -281,6 +291,7 @@ public class StarBuffer implements AutoCloseable
 		shaderInstance.clear();
 	}
 	
+	@Override
 	public void close()
 	{
 		if(this.vertexBufferId >= 0)

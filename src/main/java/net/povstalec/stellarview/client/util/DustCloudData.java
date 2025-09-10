@@ -226,7 +226,7 @@ public abstract class DustCloudData
 					dustCloudBuffer.drawWithShader(pose, projectionMatrix, VertexOrder.texColorShader());
 				else
 					dustCloudBuffer.drawWithShader(pose, projectionMatrix, difference, StellarViewShaders.starDustCloudShader());
-				VertexBuffer.unbind();
+				DustCloudBuffer.unbind();
 				
 				SpaceRenderer.loadedDustClouds(dustClouds);
 			}
@@ -237,7 +237,7 @@ public abstract class DustCloudData
 					dustCloudBuffer.drawWithShader(pose, projectionMatrix, VertexOrder.texColorShader());
 				else
 					dustCloudBuffer.drawWithShader(pose, projectionMatrix, difference, StellarViewShaders.starDustCloudShader());
-				VertexBuffer.unbind();
+				DustCloudBuffer.unbind();
 			}
 		}
 		
