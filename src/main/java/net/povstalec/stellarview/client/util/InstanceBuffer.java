@@ -110,6 +110,54 @@ public class InstanceBuffer implements AutoCloseable
 		}
 	}
 	
+	public static float[] instances()
+	{
+		return new float[]
+				{
+						0, 0, 0,
+						3, 0, 0,
+						6, 0, 0,
+						9, 0, 0
+				};
+	}
+	
+	public static float[] createVertices()
+	{
+		return new float[]
+				{
+						-1f, 1f, 2f,	1.0f, 0.0f, 0.0f, 1.0f,
+						1f, -1f, 2f,	0.0f, 1.0f, 0.0f, 1.0f,
+						-1f, -1f, 2f,	0.0f, 0.0f, 1.0f, 1.0f,
+						
+						1f, -1f, 2f,	0.0f, 1.0f, 0.0f, 1.0f,
+						-1f, 1f, 2f,	1.0f, 0.0f, 0.0f, 1.0f,
+						1f, 1f, 2f,		0.0f, 1.0f, 1.0f, 1.0f
+				};
+	}
+	
+	public void upload(float[] vertices, float[] instances)
+	{
+		GL20C.glBindBuffer(GL15C.GL_ARRAY_BUFFER, instanceBufferId);
+		GL20C.glBufferData(GL15C.GL_ARRAY_BUFFER, instances, GL15C.GL_STATIC_DRAW);
+		GL20C.glBindBuffer(GL15C.GL_ARRAY_BUFFER, 0);
+		
+		
+		GL30C.glBindVertexArray(arrayObjectId);
+		GL30C.glBindBuffer(GL15C.GL_ARRAY_BUFFER, vertexBufferId);
+		GL15.glBufferData(GL15C.GL_ARRAY_BUFFER, vertices, GL15C.GL_STATIC_DRAW);
+		GL20C.glEnableVertexAttribArray(0);
+		GL20C.glVertexAttribPointer(0, 3, GL20C.GL_FLOAT, false, 7 * Float.BYTES, 0);
+		GL20C.glEnableVertexAttribArray(1);
+		GL20C.glVertexAttribPointer(1, 4, GL20C.GL_FLOAT, false, 7 * Float.BYTES, 3 * Float.BYTES);
+		
+		// Set instance data
+		GL20C.glEnableVertexAttribArray(2);
+		GlStateManager._glBindBuffer(GL15C.GL_ARRAY_BUFFER, instanceBufferId); // This attribute comes from a different vertex buffer
+		GL20C.glVertexAttribPointer(2, 3, GL20C.GL_FLOAT, false, 3 * Float.BYTES, 0);
+		GlStateManager._glBindBuffer(GL15C.GL_ARRAY_BUFFER, 0);
+		GL43C.glVertexBindingDivisor(2, 1); // Tells OpenGL this is an instanced vertex attribute (6 vertices per 1 instance)
+	}
+	
 	private void uploadInstanceBuffer(ByteBuffer instanceBuffer)
 	{
 		GlStateManager._glBindBuffer(GL15C.GL_ARRAY_BUFFER, this.instanceBufferId);
@@ -190,7 +238,8 @@ public class InstanceBuffer implements AutoCloseable
 	
 	public void draw()
 	{
-		GL31C.glDrawElementsInstanced(this.mode.asGLMode, this.indexCount, this.getIndexType().asGLType, 0L, 4);
+		//GL31C.glDrawElementsInstanced(this.mode.asGLMode, this.indexCount, this.getIndexType().asGLType, 0L, 4);
+		GL31C.glDrawArraysInstanced(GL20C.GL_TRIANGLES, 0, 6, 4);
 	}
 	
 	private VertexFormat.IndexType getIndexType()

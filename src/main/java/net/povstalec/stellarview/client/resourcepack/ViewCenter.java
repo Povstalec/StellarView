@@ -441,7 +441,8 @@ public class ViewCenter
 			BufferBuilder.RenderedBuffer bufferbuilder$renderedbuffer = InstanceBuffer.createStarMesh(bufferBuilder);
 			
 			instanceBuffer.bind();
-			instanceBuffer.upload(bufferbuilder$renderedbuffer);
+			//instanceBuffer.upload(bufferbuilder$renderedbuffer);
+			instanceBuffer.upload(InstanceBuffer.createVertices(), InstanceBuffer.instances());
 			instanceBuffer.drawWithShader(stack.last().pose(), projectionMatrix, StellarViewShaders.instancedShader());
 			InstanceBuffer.unbind();
 		}
