@@ -2,6 +2,8 @@ package net.povstalec.stellarview.client.render.shader;
 
 import java.io.IOException;
 
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import net.minecraft.client.renderer.ShaderInstance;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.resources.ResourceLocation;
@@ -17,6 +19,8 @@ public class StellarViewShaders
     private static StarShaderInstance rendertypeStarShader;
 	private static StarShaderInstance rendertypeStarTexShader;
 	private static DustCloudShaderInstance rendertypeDustCloudShader;
+	
+	private static ShaderInstance rendertypeInstanced;
 	
 	@Mod.EventBusSubscriber(modid = StellarView.MODID, value = Dist.CLIENT, bus= Mod.EventBusSubscriber.Bus.MOD)
     public static class ShaderInit
@@ -41,6 +45,12 @@ public class StellarViewShaders
 					{
 						rendertypeDustCloudShader = (DustCloudShaderInstance) shaderInstance;
 					});
+			
+			event.registerShader(new ShaderInstance(event.getResourceProvider(), new ResourceLocation(StellarView.MODID,"rendertype_instanced"), DefaultVertexFormat.POSITION_COLOR),
+					(shaderInstance) ->
+					{
+						rendertypeInstanced = shaderInstance;
+					});
         }
     }
 	
@@ -57,5 +67,10 @@ public class StellarViewShaders
 	public static DustCloudShaderInstance starDustCloudShader()
 	{
 		return rendertypeDustCloudShader;
+	}
+	
+	public static ShaderInstance instancedShader()
+	{
+		return rendertypeInstanced;
 	}
 }

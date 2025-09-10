@@ -7,13 +7,12 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
-import net.povstalec.stellarview.api.common.space_objects.resourcepack.StarField;
-import net.povstalec.stellarview.api.common.space_objects.StarLike;
-import net.povstalec.stellarview.api.common.space_objects.ViewObject;
 import net.povstalec.stellarview.client.render.LightEffects;
 import net.povstalec.stellarview.client.render.SpaceRenderer;
+import net.povstalec.stellarview.client.render.shader.StellarViewShaders;
 import net.povstalec.stellarview.client.render.space_objects.SpaceObjectRenderer;
 import net.povstalec.stellarview.client.render.space_objects.ViewObjectRenderer;
+import net.povstalec.stellarview.client.util.InstanceBuffer;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -78,6 +77,8 @@ public class ViewCenter
 	protected VertexBuffer skyBuffer;
 	@Nullable
 	protected VertexBuffer darkBuffer;
+	//TODO
+	protected InstanceBuffer instanceBuffer;
 	
 	protected SpaceCoords coords;
 	protected AxisRotation axisRotation;
@@ -403,6 +404,10 @@ public class ViewCenter
 		
 		stack.pushPose();
 		
+		//TODO
+		// Bind the celestial sphere to a physical location in the world
+		stack.translate(-camera.getPosition().x(), -camera.getPosition().y() + 300, -camera.getPosition().z());
+		
 		if(!GeneralConfig.disable_view_center_rotation.get())
 		{
 			if(updateTicks)
@@ -424,7 +429,29 @@ public class ViewCenter
 		}
 		
 		viewObject.renderFrom(this, level, tickDifference() * partialTicks, stack, camera, projectionMatrix, StellarViewFogEffects.isFoggy(minecraft, camera), setupFog, bufferbuilder);
-
+		
+		//TODO Test Buffer
+		if(instanceBuffer == null)
+		{
+			instanceBuffer = new InstanceBuffer();
+			
+			Tesselator tesselator = Tesselator.getInstance();
+			BufferBuilder bufferBuilder = tesselator.getBuilder();
+			RenderSystem.setShader(GameRenderer::getPositionShader);
+			BufferBuilder.RenderedBuffer bufferbuilder$renderedbuffer = InstanceBuffer.createStarMesh(bufferBuilder);
+			
+			instanceBuffer.bind();
+			instanceBuffer.upload(bufferbuilder$renderedbuffer);
+			instanceBuffer.drawWithShader(stack.last().pose(), projectionMatrix, StellarViewShaders.instancedShader());
+			InstanceBuffer.unbind();
+		}
+		else
+		{
+			instanceBuffer.bind();
+			instanceBuffer.drawWithShader(stack.last().pose(), projectionMatrix, StellarViewShaders.instancedShader());
+			InstanceBuffer.unbind();
+		}
+		
 		stack.popPose();
 
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
