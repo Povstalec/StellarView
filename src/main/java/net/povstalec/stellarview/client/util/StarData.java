@@ -30,6 +30,8 @@ public abstract class StarData
 	public static final int WIDTH_OFFSET = HEIGHT_OFFSET + Float.BYTES;
 	public static final int STAR_SIZE_OFFSET = WIDTH_OFFSET + Float.BYTES;
 	
+	public static final int STAR_INSTANCE_SIZE = 3 + 4 + 3; // Pos + Color + HeightWidthSize
+	
 	private LOD lod1;
 	private LOD lod2;
 	private LOD lod3;
@@ -251,6 +253,30 @@ public abstract class StarData
 				
 				builder.endVertex();
 			}
+		}
+		
+		public float[] getInstancedStars()
+		{
+			float[] instances = new float[stars * STAR_INSTANCE_SIZE];
+			
+			for(int i = 0; i < stars; i++)
+			{
+				// Star Position
+				instances[i] = (float) starCoords[i][0];
+				instances[i + 1] = (float) starCoords[i][1];
+				instances[i + 2] = (float) starCoords[i][2];
+				// Color
+				instances[i + 3] = (float) starRGBA[i][0] / 255F;
+				instances[i + 4] = (float) starRGBA[i][1] / 255F;
+				instances[i + 5] = (float) starRGBA[i][2] / 255F;
+				instances[i + 6] = (float) starRGBA[i][3] / 255F;
+				// Size, Rotation, Max Distance
+				instances[i + 7] = (float) starSizes[i];
+				instances[i + 8] = (float) randoms[i][0]; //TODO Change this
+				instances[i + 9] = (float) StarField.LOD_DISTANCE_HIGH; //TODO Change this
+			}
+			
+			return instances;
 		}
 		
 		public BufferBuilder.RenderedBuffer getStarBuffer(BufferBuilder bufferBuilder, boolean hasTexture)

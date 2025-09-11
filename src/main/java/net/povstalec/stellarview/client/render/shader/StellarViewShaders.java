@@ -46,7 +46,7 @@ public class StellarViewShaders
 						rendertypeDustCloudShader = (DustCloudShaderInstance) shaderInstance;
 					});
 			
-			event.registerShader(new ShaderInstance(event.getResourceProvider(), new ResourceLocation(StellarView.MODID,"rendertype_instanced"), DefaultVertexFormat.POSITION_COLOR),
+			event.registerShader(new ShaderInstance(event.getResourceProvider(), new ResourceLocation(StellarView.MODID,"rendertype_instanced"), DefaultVertexFormat.POSITION_TEX),
 					(shaderInstance) ->
 					{
 						rendertypeInstanced = shaderInstance;

@@ -6,7 +6,9 @@ import java.util.Optional;
 
 import javax.annotation.Nullable;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
+import net.povstalec.stellarview.api.common.space_objects.resourcepack.StarField;
 import net.povstalec.stellarview.client.render.LightEffects;
 import net.povstalec.stellarview.client.render.SpaceRenderer;
 import net.povstalec.stellarview.client.render.shader.StellarViewShaders;
@@ -430,19 +432,15 @@ public class ViewCenter
 		
 		viewObject.renderFrom(this, level, tickDifference() * partialTicks, stack, camera, projectionMatrix, StellarViewFogEffects.isFoggy(minecraft, camera), setupFog, bufferbuilder);
 		
+		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+		RenderSystem.setShaderTexture(0, StarField.DEFAULT_STAR_TEXTURE);
 		//TODO Test Buffer
 		if(instanceBuffer == null)
 		{
 			instanceBuffer = new InstanceBuffer();
 			
-			Tesselator tesselator = Tesselator.getInstance();
-			BufferBuilder bufferBuilder = tesselator.getBuilder();
-			RenderSystem.setShader(GameRenderer::getPositionShader);
-			BufferBuilder.RenderedBuffer bufferbuilder$renderedbuffer = InstanceBuffer.createStarMesh(bufferBuilder);
-			
 			instanceBuffer.bind();
-			//instanceBuffer.upload(bufferbuilder$renderedbuffer);
-			instanceBuffer.upload(InstanceBuffer.createVertices(), InstanceBuffer.instances());
+			instanceBuffer.upload(new float[] { 0, 0, 0,   3, 0, 0,   6, 0, 0,   9, 0, 0 });
 			instanceBuffer.drawWithShader(stack.last().pose(), projectionMatrix, StellarViewShaders.instancedShader());
 			InstanceBuffer.unbind();
 		}
