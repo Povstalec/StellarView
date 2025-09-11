@@ -3,8 +3,6 @@ package net.povstalec.stellarview.client.util;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.renderer.GameRenderer;
-import net.povstalec.stellarview.api.common.space_objects.StarLike;
-import net.povstalec.stellarview.api.common.space_objects.resourcepack.StarField;
 import net.povstalec.stellarview.client.render.SpaceRenderer;
 import net.povstalec.stellarview.client.render.shader.StellarViewShaders;
 import net.povstalec.stellarview.client.render.shader.StellarViewVertexFormat;
@@ -47,7 +45,7 @@ public abstract class DustCloudData
 	public static class LOD
 	{
 		@Nullable
-		protected DustCloudBuffer dustCloudBuffer;
+		protected CelestialBuffer celestialBuffer;
 		
 		private double[][] dustCloudCoords;
 		private double[] dustCloudSizes;
@@ -72,22 +70,21 @@ public abstract class DustCloudData
 		
 		public void reset()
 		{
-			if(dustCloudBuffer == null)
-				return;
-			
-			dustCloudBuffer.close();
-			dustCloudBuffer = null;
+			if(celestialBuffer != null)
+			{
+				celestialBuffer.close();
+				celestialBuffer = null;
+			}
 		}
 		
 		/**
 		 * Creates information for a completely new star
-		 * @param builder BufferBuilder used for building the vertexes
+		 * @param dustCloudType TODO
 		 * @param random Random used for randomizing the star information
-		 * @param relativeCoords SpaceCoords that give a relative position between the observer and the star
 		 * @param x X coordinate of the star
 		 * @param y Y coordinate of the star
 		 * @param z Z coordinate of the star
-		 * @param i Index of the star
+		 * @param sizeMultiplier TODO
 		 */
 		public void newDustCloud(DustCloudInfo.DustCloudType dustCloudType, Random random, double x, double y, double z, double sizeMultiplier)
 		{
@@ -206,12 +203,12 @@ public abstract class DustCloudData
 			if(dustClouds == 0)
 				return;
 			
-			if(dustCloudBuffer == null) // Buffer requires setup
+			if(celestialBuffer == null) // Buffer requires setup
 			{
 				if(!SpaceRenderer.loadNewDustClouds())
 					return;
 				
-				dustCloudBuffer = new DustCloudBuffer();
+				celestialBuffer = new CelestialBuffer();
 				
 				Tesselator tesselator = Tesselator.getInstance();
 				BufferBuilder bufferBuilder = tesselator.getBuilder();
@@ -220,24 +217,24 @@ public abstract class DustCloudData
 				
 				bufferbuilder$renderedbuffer = isStatic ? getStaticDustCloudBuffer(bufferBuilder, difference) : getDustCloudBuffer(bufferBuilder);
 				
-				dustCloudBuffer.bind();
-				dustCloudBuffer.upload(bufferbuilder$renderedbuffer);
+				celestialBuffer.bind();
+				celestialBuffer.upload(bufferbuilder$renderedbuffer);
 				if(isStatic)
-					dustCloudBuffer.drawWithShader(pose, projectionMatrix, VertexOrder.texColorShader());
+					celestialBuffer.drawWithShader(pose, projectionMatrix, VertexOrder.texColorShader());
 				else
-					dustCloudBuffer.drawWithShader(pose, projectionMatrix, difference, StellarViewShaders.starDustCloudShader());
-				DustCloudBuffer.unbind();
+					celestialBuffer.drawWithShader(pose, projectionMatrix, difference, StellarViewShaders.starDustCloudShader());
+				CelestialBuffer.unbind();
 				
 				SpaceRenderer.loadedDustClouds(dustClouds);
 			}
 			else
 			{
-				dustCloudBuffer.bind();
+				celestialBuffer.bind();
 				if(isStatic)
-					dustCloudBuffer.drawWithShader(pose, projectionMatrix, VertexOrder.texColorShader());
+					celestialBuffer.drawWithShader(pose, projectionMatrix, VertexOrder.texColorShader());
 				else
-					dustCloudBuffer.drawWithShader(pose, projectionMatrix, difference, StellarViewShaders.starDustCloudShader());
-				DustCloudBuffer.unbind();
+					celestialBuffer.drawWithShader(pose, projectionMatrix, difference, StellarViewShaders.starDustCloudShader());
+				CelestialBuffer.unbind();
 			}
 		}
 		

@@ -84,7 +84,7 @@ public abstract class StarData
 	public static class LOD
 	{
 		@Nullable
-		private StarBuffer starBuffer;
+		private CelestialBuffer starBuffer;
 		
 		private double[][] starCoords;
 		private double[] starSizes;
@@ -300,7 +300,7 @@ public abstract class StarData
 				if(!SpaceRenderer.loadNewStars())
 					return;
 				
-				starBuffer = new StarBuffer();
+				starBuffer = new CelestialBuffer();
 				
 				Tesselator tesselator = Tesselator.getInstance();
 				BufferBuilder bufferBuilder = tesselator.getBuilder();
@@ -315,7 +315,7 @@ public abstract class StarData
 					starBuffer.drawWithShader(pose, projectionMatrix, hasTexture ? VertexOrder.texColorShader() : GameRenderer.getPositionColorShader());
 				else
 					starBuffer.drawWithShader(pose, projectionMatrix, difference, hasTexture ? StellarViewShaders.starTexShader() : StellarViewShaders.starShader());
-				StarBuffer.unbind();
+				CelestialBuffer.unbind();
 				
 				SpaceRenderer.loadedStars(stars);
 			}
@@ -326,7 +326,7 @@ public abstract class StarData
 					starBuffer.drawWithShader(pose, projectionMatrix, hasTexture ? VertexOrder.texColorShader() : GameRenderer.getPositionColorShader());
 				else
 					starBuffer.drawWithShader(pose, projectionMatrix, difference, hasTexture ? StellarViewShaders.starTexShader() : StellarViewShaders.starShader());
-				StarBuffer.unbind();
+				CelestialBuffer.unbind();
 			}
 		}
 		

@@ -3,20 +3,14 @@ package net.povstalec.stellarview.client.render.space_objects.resourcepack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import com.mojang.datafixers.util.Either;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.FogRenderer;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
-import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.api.common.space_objects.resourcepack.Constellation;
 import net.povstalec.stellarview.api.common.space_objects.resourcepack.StarField;
 import net.povstalec.stellarview.client.render.StellarViewEffects;
-import net.povstalec.stellarview.client.render.shader.StellarViewShaders;
-import net.povstalec.stellarview.client.render.shader.StellarViewVertexFormat;
 import net.povstalec.stellarview.client.render.space_objects.SpaceObjectRenderer;
-import net.povstalec.stellarview.client.util.DustCloudBuffer;
 import net.povstalec.stellarview.client.util.StarData;
 import net.povstalec.stellarview.common.util.DustCloudInfo;
 import net.povstalec.stellarview.common.util.StarInfo;
@@ -31,8 +25,6 @@ import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
 
 public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<T>

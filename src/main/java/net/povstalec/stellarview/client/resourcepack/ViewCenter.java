@@ -14,7 +14,7 @@ import net.povstalec.stellarview.client.render.SpaceRenderer;
 import net.povstalec.stellarview.client.render.shader.StellarViewShaders;
 import net.povstalec.stellarview.client.render.space_objects.SpaceObjectRenderer;
 import net.povstalec.stellarview.client.render.space_objects.ViewObjectRenderer;
-import net.povstalec.stellarview.client.util.InstanceBuffer;
+import net.povstalec.stellarview.client.util.CelestialInstancedBuffer;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -80,7 +80,7 @@ public class ViewCenter
 	@Nullable
 	protected VertexBuffer darkBuffer;
 	//TODO
-	protected InstanceBuffer instanceBuffer;
+	protected CelestialInstancedBuffer instanceBuffer;
 	
 	protected SpaceCoords coords;
 	protected AxisRotation axisRotation;
@@ -437,18 +437,18 @@ public class ViewCenter
 		//TODO Test Buffer
 		if(instanceBuffer == null)
 		{
-			instanceBuffer = new InstanceBuffer();
+			instanceBuffer = new CelestialInstancedBuffer();
 			
 			instanceBuffer.bind();
 			instanceBuffer.upload(new float[] { 0, 0, 0,   3, 0, 0,   6, 0, 0,   9, 0, 0 });
 			instanceBuffer.drawWithShader(stack.last().pose(), projectionMatrix, StellarViewShaders.instancedShader());
-			InstanceBuffer.unbind();
+			CelestialInstancedBuffer.unbind();
 		}
 		else
 		{
 			instanceBuffer.bind();
 			instanceBuffer.drawWithShader(stack.last().pose(), projectionMatrix, StellarViewShaders.instancedShader());
-			InstanceBuffer.unbind();
+			CelestialInstancedBuffer.unbind();
 		}
 		
 		stack.popPose();

@@ -1,21 +1,13 @@
 package net.povstalec.stellarview.client.util;
 
 import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.platform.MemoryTracker;
-import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ShaderInstance;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.*;
 
-import javax.annotation.Nullable;
-import java.nio.ByteBuffer;
-
-public class InstanceBuffer implements AutoCloseable
+public class CelestialInstancedBuffer implements AutoCloseable
 {
 	public static final float[] STAR_VERTICES = new float[]
 			{
@@ -33,7 +25,7 @@ public class InstanceBuffer implements AutoCloseable
 	private int indexBufferId;
 	private int arrayObjectId;
 	
-	public InstanceBuffer()
+	public CelestialInstancedBuffer()
 	{
 		RenderSystem.assertOnRenderThread();
 		this.instanceBufferId = GlStateManager._glGenBuffers();

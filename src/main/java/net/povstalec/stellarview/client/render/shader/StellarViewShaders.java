@@ -16,9 +16,9 @@ import net.povstalec.stellarview.StellarView;
 public class StellarViewShaders
 {
 	@Nullable
-    private static StarShaderInstance rendertypeStarShader;
-	private static StarShaderInstance rendertypeStarTexShader;
-	private static DustCloudShaderInstance rendertypeDustCloudShader;
+    private static CelestialShaderInstance rendertypeStarShader;
+	private static CelestialShaderInstance rendertypeStarTexShader;
+	private static CelestialShaderInstance rendertypeDustCloudShader;
 	
 	private static ShaderInstance rendertypeInstanced;
 	
@@ -28,22 +28,22 @@ public class StellarViewShaders
         @SubscribeEvent
         public static void registerShaders(RegisterShadersEvent event) throws IOException
         {
-            event.registerShader(new StarShaderInstance(event.getResourceProvider(), new ResourceLocation(StellarView.MODID,"rendertype_star"), StellarViewVertexFormat.STAR_POS_COLOR_LY),
+            event.registerShader(new CelestialShaderInstance(event.getResourceProvider(), new ResourceLocation(StellarView.MODID,"rendertype_star"), StellarViewVertexFormat.STAR_POS_COLOR_LY),
             		(shaderInstance) ->
             		{
-            			rendertypeStarShader = (StarShaderInstance) shaderInstance;
+            			rendertypeStarShader = (CelestialShaderInstance) shaderInstance;
             		});
 			
-			event.registerShader(new StarShaderInstance(event.getResourceProvider(), new ResourceLocation(StellarView.MODID,"rendertype_star_tex"), StellarViewVertexFormat.STAR_POS_COLOR_LY_TEX),
+			event.registerShader(new CelestialShaderInstance(event.getResourceProvider(), new ResourceLocation(StellarView.MODID,"rendertype_star_tex"), StellarViewVertexFormat.STAR_POS_COLOR_LY_TEX),
 					(shaderInstance) ->
 					{
-						rendertypeStarTexShader = (StarShaderInstance) shaderInstance;
+						rendertypeStarTexShader = (CelestialShaderInstance) shaderInstance;
 					});
 			
-			event.registerShader(new DustCloudShaderInstance(event.getResourceProvider(), new ResourceLocation(StellarView.MODID,"rendertype_dust_cloud"), StellarViewVertexFormat.STAR_POS_COLOR_LY_TEX),
+			event.registerShader(new CelestialShaderInstance(event.getResourceProvider(), new ResourceLocation(StellarView.MODID,"rendertype_dust_cloud"), StellarViewVertexFormat.STAR_POS_COLOR_LY_TEX),
 					(shaderInstance) ->
 					{
-						rendertypeDustCloudShader = (DustCloudShaderInstance) shaderInstance;
+						rendertypeDustCloudShader = (CelestialShaderInstance) shaderInstance;
 					});
 			
 			event.registerShader(new ShaderInstance(event.getResourceProvider(), new ResourceLocation(StellarView.MODID,"rendertype_instanced"), DefaultVertexFormat.POSITION_TEX),
@@ -54,17 +54,17 @@ public class StellarViewShaders
         }
     }
 	
-	public static StarShaderInstance starShader()
+	public static CelestialShaderInstance starShader()
 	{
 		return rendertypeStarShader;
 	}
 	
-	public static StarShaderInstance starTexShader()
+	public static CelestialShaderInstance starTexShader()
 	{
 		return rendertypeStarTexShader;
 	}
 	
-	public static DustCloudShaderInstance starDustCloudShader()
+	public static CelestialShaderInstance starDustCloudShader()
 	{
 		return rendertypeDustCloudShader;
 	}
