@@ -1,11 +1,14 @@
 package net.povstalec.stellarview.client.util;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.platform.MemoryTracker;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferUploader;
 import net.minecraft.client.renderer.ShaderInstance;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.*;
+
+import java.nio.ByteBuffer;
 
 public class CelestialInstancedBuffer implements AutoCloseable
 {
@@ -14,11 +17,10 @@ public class CelestialInstancedBuffer implements AutoCloseable
 					-1F, 1F, 0F,	0.0F, 1.0F,
 					1F, -1F, 0F,	1.0F, 0.0F,
 					-1F, -1F, 0F,	0.0F, 0.0F,
-					
-					1F, -1F, 0F,	1.0F, 0.0F,
-					-1F, 1F, 0F,	0.0F, 1.0F,
 					1F, 1F, 0F,		1.0F, 1.0F,
 			};
+	
+	public static final ByteBuffer INDEX_BUFFER = indexBuffer();
 	
 	private int instanceBufferId;
 	private int vertexBufferId;
@@ -34,32 +36,36 @@ public class CelestialInstancedBuffer implements AutoCloseable
 		this.arrayObjectId = GlStateManager._glGenVertexArrays();
 	}
 	
-	//TODO Add an index buffer
-	/*public static ByteBuffer indexBuffer()
+	public static ByteBuffer indexBuffer()
 	{
 		ByteBuffer instanceBuffer = MemoryTracker.create(6);
 		
-		instanceBuffer.put((byte) 0);
-		instanceBuffer.put((byte) 1);
-		instanceBuffer.put((byte) 2);
-		instanceBuffer.put((byte) 1);
-		instanceBuffer.put((byte) 0);
-		instanceBuffer.put((byte) 3);
+		// For some reason using just "put((byte) 0)" leads to an OUT_OF_MEMORY_ERROR, but put(0, (byte) 0) works just fine
+		instanceBuffer.put(0, (byte) 0);
+		instanceBuffer.put(1, (byte) 1);
+		instanceBuffer.put(2, (byte) 2);
+		instanceBuffer.put(3, (byte) 1);
+		instanceBuffer.put(4, (byte) 0);
+		instanceBuffer.put(5, (byte) 3);
 		
 		return instanceBuffer;
-	}*/
+	}
 	
 	public void upload(float[] instances)
 	{
 		// Instance Buffer setup
-		GL20C.glBindBuffer(GL15C.GL_ARRAY_BUFFER, this.instanceBufferId);
-		GL20C.glBufferData(GL15C.GL_ARRAY_BUFFER, instances, GL15C.GL_STATIC_DRAW);
-		GL20C.glBindBuffer(GL15C.GL_ARRAY_BUFFER, 0);
+		GL15C.glBindBuffer(GL15C.GL_ARRAY_BUFFER, this.instanceBufferId);
+		GL15C.glBufferData(GL15C.GL_ARRAY_BUFFER, instances, GL15C.GL_STATIC_DRAW);
+		GL15C.glBindBuffer(GL15C.GL_ARRAY_BUFFER, 0);
 		
 		// Vertex Buffer and Array Object setup
 		GL30C.glBindVertexArray(this.arrayObjectId);
-		GL30C.glBindBuffer(GL15C.GL_ARRAY_BUFFER, this.vertexBufferId);
+		GL15C.glBindBuffer(GL15C.GL_ARRAY_BUFFER, this.vertexBufferId);
 		GL15.glBufferData(GL15C.GL_ARRAY_BUFFER, STAR_VERTICES, GL15C.GL_STATIC_DRAW);
+		
+		GL15.glBindBuffer(GL15C.GL_ELEMENT_ARRAY_BUFFER, this.indexBufferId);
+		GL15.glBufferData(GL15C.GL_ELEMENT_ARRAY_BUFFER, INDEX_BUFFER, GL15C.GL_STATIC_DRAW);
+		
 		// Position
 		GL20C.glEnableVertexAttribArray(0);
 		GL20C.glVertexAttribPointer(0, 3, GL20C.GL_FLOAT, false, 5 * Float.BYTES, 0);
@@ -67,17 +73,16 @@ public class CelestialInstancedBuffer implements AutoCloseable
 		GL20C.glEnableVertexAttribArray(1);
 		GL20C.glVertexAttribPointer(1, 2, GL20C.GL_FLOAT, false, 5 * Float.BYTES, 3 * Float.BYTES);
 		
-		//TODO Index Buffer setup
-		//GlStateManager._glBindBuffer(GL15C.GL_ELEMENT_ARRAY_BUFFER, this.indexBufferId);
-		//RenderSystem.glBufferData(GL15C.GL_ELEMENT_ARRAY_BUFFER, indexBuffer(), GL15C.GL_STATIC_DRAW);
-		
 		// Set instance data
 		// Position Offset
 		GL20C.glEnableVertexAttribArray(2);
-		GlStateManager._glBindBuffer(GL15C.GL_ARRAY_BUFFER, this.instanceBufferId); // This attribute comes from the instance buffer, rather than the vertex buffer
+		GL15.glBindBuffer(GL15C.GL_ARRAY_BUFFER, this.instanceBufferId); // This attribute comes from the instance buffer, rather than the vertex buffer
 		GL20C.glVertexAttribPointer(2, 2, GL20C.GL_FLOAT, false, 3 * Float.BYTES, 0);
-		GlStateManager._glBindBuffer(GL15C.GL_ARRAY_BUFFER, 0);
+		GL15.glBindBuffer(GL15C.GL_ARRAY_BUFFER, 0);
 		GL43C.glVertexBindingDivisor(2, 1); // Tells OpenGL this is an instanced vertex attribute
+		
+		GL30C.glBindVertexArray(0);
+		GL15C.glBindBuffer(GL15C.GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 	
 	public void bind()
@@ -92,10 +97,10 @@ public class CelestialInstancedBuffer implements AutoCloseable
 		GlStateManager._glBindVertexArray(0);
 	}
 	
-	public void draw()
+	public void draw(int instances)
 	{
-		//GL31C.glDrawElementsInstanced(GL20C.GL_TRIANGLES, 6, GL20C.GL_UNSIGNED_BYTE, 0L, 4);
-		GL31C.glDrawArraysInstanced(GL20C.GL_TRIANGLES, 0, 6, 4);
+		//GL31C.glDrawArraysInstanced(GL20C.GL_TRIANGLES, 0, 6, 4);
+		GL31C.glDrawElementsInstanced(GL20C.GL_TRIANGLES, 6, GL20C.GL_UNSIGNED_BYTE, 0L, instances);
 	}
 	
 	public void drawWithShader(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, ShaderInstance shaderInstance)
@@ -128,7 +133,7 @@ public class CelestialInstancedBuffer implements AutoCloseable
 		
 		RenderSystem.setupShaderLights(shaderInstance);
 		shaderInstance.apply();
-		this.draw();
+		this.draw(4);
 		shaderInstance.clear();
 	}
 	

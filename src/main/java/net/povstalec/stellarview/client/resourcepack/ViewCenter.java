@@ -438,18 +438,11 @@ public class ViewCenter
 		if(instanceBuffer == null)
 		{
 			instanceBuffer = new CelestialInstancedBuffer();
-			
-			instanceBuffer.bind();
 			instanceBuffer.upload(new float[] { 0, 0, 0,   3, 0, 0,   6, 0, 0,   9, 0, 0 });
-			instanceBuffer.drawWithShader(stack.last().pose(), projectionMatrix, StellarViewShaders.instancedShader());
-			CelestialInstancedBuffer.unbind();
 		}
-		else
-		{
-			instanceBuffer.bind();
-			instanceBuffer.drawWithShader(stack.last().pose(), projectionMatrix, StellarViewShaders.instancedShader());
-			CelestialInstancedBuffer.unbind();
-		}
+		instanceBuffer.bind();
+		instanceBuffer.drawWithShader(stack.last().pose(), projectionMatrix, StellarViewShaders.instancedShader());
+		CelestialInstancedBuffer.unbind();
 		
 		stack.popPose();
 
