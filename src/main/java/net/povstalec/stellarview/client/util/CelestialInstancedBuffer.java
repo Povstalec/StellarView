@@ -5,19 +5,30 @@ import com.mojang.blaze3d.platform.MemoryTracker;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferUploader;
 import net.minecraft.client.renderer.ShaderInstance;
+import net.povstalec.stellarview.client.render.SpaceRenderer;
+import net.povstalec.stellarview.client.render.shader.CelestialShaderInstance;
+import net.povstalec.stellarview.common.util.SpaceCoords;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.lwjgl.opengl.*;
 
 import java.nio.ByteBuffer;
 
 public class CelestialInstancedBuffer implements AutoCloseable
 {
+	public static final int POS_SIZE = 3;
+	public static final int COLOR_SIZE = 4;
+	public static final int ROTATION_SIZE = 1;
+	public static final int SIZE_SIZE = 1;
+	public static final int MAX_DISTANCE_SIZE = 1;
+	public static final int STAR_INSTANCE_SIZE = POS_SIZE + COLOR_SIZE + ROTATION_SIZE + SIZE_SIZE + MAX_DISTANCE_SIZE;
+	
 	public static final float[] STAR_VERTICES = new float[]
 			{
-					-1F, 1F, 0F,	0.0F, 1.0F,
-					1F, -1F, 0F,	1.0F, 0.0F,
 					-1F, -1F, 0F,	0.0F, 0.0F,
+					-1F, 1F, 0F,	0.0F, 1.0F,
 					1F, 1F, 0F,		1.0F, 1.0F,
+					1F, -1F, 0F,	1.0F, 0.0F,
 			};
 	
 	public static final ByteBuffer INDEX_BUFFER = indexBuffer();
@@ -44,9 +55,9 @@ public class CelestialInstancedBuffer implements AutoCloseable
 		instanceBuffer.put(0, (byte) 0);
 		instanceBuffer.put(1, (byte) 1);
 		instanceBuffer.put(2, (byte) 2);
-		instanceBuffer.put(3, (byte) 1);
-		instanceBuffer.put(4, (byte) 0);
-		instanceBuffer.put(5, (byte) 3);
+		instanceBuffer.put(3, (byte) 2);
+		instanceBuffer.put(4, (byte) 3);
+		instanceBuffer.put(5, (byte) 0);
 		
 		return instanceBuffer;
 	}
@@ -74,13 +85,29 @@ public class CelestialInstancedBuffer implements AutoCloseable
 		GL20C.glVertexAttribPointer(1, 2, GL20C.GL_FLOAT, false, 5 * Float.BYTES, 3 * Float.BYTES);
 		
 		// Set instance data
-		// Position Offset
-		GL20C.glEnableVertexAttribArray(2);
 		GL15.glBindBuffer(GL15C.GL_ARRAY_BUFFER, this.instanceBufferId); // This attribute comes from the instance buffer, rather than the vertex buffer
-		GL20C.glVertexAttribPointer(2, 2, GL20C.GL_FLOAT, false, 3 * Float.BYTES, 0);
-		GL15.glBindBuffer(GL15C.GL_ARRAY_BUFFER, 0);
+		// StarPos (Position Offset)
+		GL20C.glEnableVertexAttribArray(2);
+		GL20C.glVertexAttribPointer(2, POS_SIZE, GL20C.GL_FLOAT, false, STAR_INSTANCE_SIZE * Float.BYTES, 0);
 		GL43C.glVertexBindingDivisor(2, 1); // Tells OpenGL this is an instanced vertex attribute
+		// Color
+		GL20C.glEnableVertexAttribArray(3);
+		GL20C.glVertexAttribPointer(3, COLOR_SIZE, GL20C.GL_FLOAT, false, STAR_INSTANCE_SIZE * Float.BYTES, 3 * Float.BYTES);
+		GL43C.glVertexBindingDivisor(3, 1); // Tells OpenGL this is an instanced vertex attribute
+		// Rotation
+		GL20C.glEnableVertexAttribArray(4);
+		GL20C.glVertexAttribPointer(4, ROTATION_SIZE, GL20C.GL_FLOAT, false, STAR_INSTANCE_SIZE * Float.BYTES, 7 * Float.BYTES);
+		GL43C.glVertexBindingDivisor(4, 1); // Tells OpenGL this is an instanced vertex attribute
+		// Size
+		GL20C.glEnableVertexAttribArray(5);
+		GL20C.glVertexAttribPointer(5, SIZE_SIZE, GL20C.GL_FLOAT, false, STAR_INSTANCE_SIZE * Float.BYTES, 8 * Float.BYTES);
+		GL43C.glVertexBindingDivisor(5, 1); // Tells OpenGL this is an instanced vertex attribute
+		// Max Distance
+		GL20C.glEnableVertexAttribArray(6);
+		GL20C.glVertexAttribPointer(6, MAX_DISTANCE_SIZE, GL20C.GL_FLOAT, false, STAR_INSTANCE_SIZE * Float.BYTES, 9 * Float.BYTES);
+		GL43C.glVertexBindingDivisor(6, 1); // Tells OpenGL this is an instanced vertex attribute
 		
+		GL15.glBindBuffer(GL15C.GL_ARRAY_BUFFER, 0);
 		GL30C.glBindVertexArray(0);
 		GL15C.glBindBuffer(GL15C.GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
@@ -103,21 +130,23 @@ public class CelestialInstancedBuffer implements AutoCloseable
 		GL31C.glDrawElementsInstanced(GL20C.GL_TRIANGLES, 6, GL20C.GL_UNSIGNED_BYTE, 0L, instances);
 	}
 	
-	public void drawWithShader(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, ShaderInstance shaderInstance)
+	public void drawWithShader(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, SpaceCoords relativeSpacePos, CelestialShaderInstance shaderInstance, int instances)
 	{
+		Vector3f relativeVectorLy = new Vector3f((float) relativeSpacePos.x().ly(), (float) relativeSpacePos.y().ly(), (float) relativeSpacePos.z().ly());
+		Vector3f relativeVectorKm = new Vector3f((float) relativeSpacePos.x().km(), (float) relativeSpacePos.y().km(), (float) relativeSpacePos.z().km());
+		
 		if(!RenderSystem.isOnRenderThread())
 		{
 			RenderSystem.recordRenderCall(() ->
 			{
-				this._drawWithShader(new Matrix4f(modelViewMatrix), new Matrix4f(projectionMatrix), shaderInstance);
+				this._drawWithShader(new Matrix4f(modelViewMatrix), new Matrix4f(projectionMatrix), relativeVectorLy, relativeVectorKm, shaderInstance, instances);
 			});
 		}
 		else
-			this._drawWithShader(modelViewMatrix, projectionMatrix, shaderInstance);
-		
+			this._drawWithShader(modelViewMatrix, projectionMatrix, relativeVectorLy, relativeVectorKm, shaderInstance, instances);
 	}
 	
-	private void _drawWithShader(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, ShaderInstance shaderInstance)
+	private void _drawWithShader(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, Vector3f relativeSpaceLy, Vector3f relativeSpaceKm, CelestialShaderInstance shaderInstance, int instances)
 	{
 		for(int i = 0; i < 12; ++i)
 		{
@@ -131,9 +160,24 @@ public class CelestialInstancedBuffer implements AutoCloseable
 		if(shaderInstance.PROJECTION_MATRIX != null)
 			shaderInstance.PROJECTION_MATRIX.set(projectionMatrix);
 		
+		if(shaderInstance.RELATIVE_SPACE_LY != null)
+			shaderInstance.RELATIVE_SPACE_LY.set(relativeSpaceLy);
+		
+		if(shaderInstance.RELATIVE_SPACE_KM != null)
+			shaderInstance.RELATIVE_SPACE_KM.set(relativeSpaceKm);
+		
+		if(shaderInstance.LENSING_MAT != null)
+			shaderInstance.LENSING_MAT.set(SpaceRenderer.lensingMatrix);
+		
+		if(shaderInstance.LENSING_MAT_INV != null)
+			shaderInstance.LENSING_MAT_INV.set(SpaceRenderer.lensingMatrixInv);
+		
+		if(shaderInstance.LENSING_INTENSITY != null)
+			shaderInstance.LENSING_INTENSITY.set(SpaceRenderer.lensingIntensity);
+		
 		RenderSystem.setupShaderLights(shaderInstance);
 		shaderInstance.apply();
-		this.draw(4);
+		this.draw(instances);
 		shaderInstance.clear();
 	}
 	

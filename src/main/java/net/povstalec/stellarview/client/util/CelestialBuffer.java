@@ -119,13 +119,6 @@ public class CelestialBuffer implements AutoCloseable
 	public void draw()
 	{
 		RenderSystem.drawElements(this.mode.asGLMode, this.indexCount, this.getIndexType().asGLType);
-		
-		//GL31C.glDrawElementsInstanced(this.mode.asGLMode, this.indexCount, this.getIndexType().asGLType, 0L, 1);
-		
-		// Old attempts
-		//GL31C.glDrawArraysInstanced(GL40C.GL_PATCHES, 0, indexCount, 1);
-		//GL31C.glDrawArraysInstanced(GL40C.GL_PATCHES, 0, 1, indexCount);
-		//GL31C.glDrawArraysInstanced(GL40C.GL_PATCHES, 0, indexCount * 4, 10);
 	}
 	
 	private VertexFormat.IndexType getIndexType()

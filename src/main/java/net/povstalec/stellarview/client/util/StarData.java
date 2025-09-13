@@ -13,9 +13,8 @@ import net.povstalec.stellarview.api.common.space_objects.StarLike;
 import net.povstalec.stellarview.client.render.shader.VertexOrder;
 import net.povstalec.stellarview.common.util.Color;
 import net.povstalec.stellarview.common.util.SpaceCoords;
-import net.povstalec.stellarview.common.util.SphericalCoords;
 import org.joml.Matrix4f;
-import org.joml.Vector3d;
+import org.lwjgl.opengl.GL;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -30,7 +29,7 @@ public abstract class StarData
 	public static final int WIDTH_OFFSET = HEIGHT_OFFSET + Float.BYTES;
 	public static final int STAR_SIZE_OFFSET = WIDTH_OFFSET + Float.BYTES;
 	
-	public static final int STAR_INSTANCE_SIZE = 3 + 4 + 3; // Pos + Color + HeightWidthSize
+	public static final int STAR_INSTANCE_SIZE = CelestialInstancedBuffer.STAR_INSTANCE_SIZE;
 	
 	private LOD lod1;
 	private LOD lod2;
@@ -60,20 +59,41 @@ public abstract class StarData
 	
 	public void renderStars(StarField.LevelOfDetail levelOfDetail, Matrix4f pose, Matrix4f projectionMatrix, SpaceCoords difference, boolean isStatic, boolean hasTexture)
 	{
-		switch(levelOfDetail)
+		if(GL.getCapabilities().GL_ARB_vertex_attrib_binding) // Use instancing if possible
 		{
-		case LOD3:
-			if(lod3 == null)
-				lod3 = newStars(StarField.LevelOfDetail.LOD3);
-			lod3.renderStarBuffer(pose, projectionMatrix, difference, isStatic, hasTexture);
-		case LOD2:
-			if(lod2 == null)
-				lod2 = newStars(StarField.LevelOfDetail.LOD2);
-			lod2.renderStarBuffer(pose, projectionMatrix, difference, isStatic, hasTexture);
-		case LOD1:
-			if(lod1 == null)
-				lod1 = newStars(StarField.LevelOfDetail.LOD1);
-			lod1.renderStarBuffer(pose, projectionMatrix, difference, isStatic, hasTexture);
+			switch(levelOfDetail)
+			{
+				case LOD3:
+					if(lod3 == null)
+						lod3 = newStars(StarField.LevelOfDetail.LOD3);
+					lod3.renderInstancedStarBuffer(pose, projectionMatrix, difference, isStatic, hasTexture);
+				case LOD2:
+					if(lod2 == null)
+						lod2 = newStars(StarField.LevelOfDetail.LOD2);
+					lod2.renderInstancedStarBuffer(pose, projectionMatrix, difference, isStatic, hasTexture);
+				case LOD1:
+					if(lod1 == null)
+						lod1 = newStars(StarField.LevelOfDetail.LOD1);
+					lod1.renderInstancedStarBuffer(pose, projectionMatrix, difference, isStatic, hasTexture);
+			}
+		}
+		else
+		{
+			switch(levelOfDetail)
+			{
+				case LOD3:
+					if(lod3 == null)
+						lod3 = newStars(StarField.LevelOfDetail.LOD3);
+					lod3.renderStarBuffer(pose, projectionMatrix, difference, isStatic, hasTexture);
+				case LOD2:
+					if(lod2 == null)
+						lod2 = newStars(StarField.LevelOfDetail.LOD2);
+					lod2.renderStarBuffer(pose, projectionMatrix, difference, isStatic, hasTexture);
+				case LOD1:
+					if(lod1 == null)
+						lod1 = newStars(StarField.LevelOfDetail.LOD1);
+					lod1.renderStarBuffer(pose, projectionMatrix, difference, isStatic, hasTexture);
+			}
 		}
 	}
 	
@@ -85,13 +105,15 @@ public abstract class StarData
 	{
 		@Nullable
 		private CelestialBuffer starBuffer;
+		@Nullable
+		private CelestialInstancedBuffer instancedStarBuffer;
 		
 		private double[][] starCoords;
 		private double[] starSizes;
 		
 		private short[][] starRGBA;
 		
-		private double[][] randoms;
+		private double[] starRotations;
 		
 		private int stars;
 		
@@ -100,7 +122,7 @@ public abstract class StarData
 			this.starCoords = new double[stars][3];
 			this.starSizes = new double[stars];
 			
-			this.randoms = new double[stars][2];
+			this.starRotations = new double[stars];
 			
 			this.starRGBA = new short[stars][4];
 			
@@ -139,8 +161,7 @@ public abstract class StarData
 			// sin and cos are used to effectively clamp the random number between two values without actually clamping it,
 			// wwhich would result in some awkward lines as Stars would be brought to the clamped values
 			// Both affect Star size and rotation
-			randoms[stars][0] = Math.sin(starDefinition.rotation()); // sin random
-			randoms[stars][1] = Math.cos(starDefinition.rotation()); // cos random
+			starRotations[stars] = starDefinition.rotation();
 			
 			//lod.createStar(builder, hasTexture, lod.size);
 			stars++;
@@ -172,12 +193,7 @@ public abstract class StarData
 			
 			starRGBA[stars] = new short[] {(short) rgb.red(), (short) rgb.green(), (short) rgb.blue(), alpha};
 			
-			// sin and cos are used to effectively clamp the random number between two values without actually clamping it,
-			// wwhich would result in some awkward lines as Stars would be brought to the clamped values
-			// Both affect Star size and rotation
-			double randomValue = random.nextDouble() * Math.PI * 2.0D;
-			randoms[stars][0] = Math.sin(randomValue); // sin random
-			randoms[stars][1] = Math.cos(randomValue); // cos random
+			starRotations[stars] = random.nextDouble() * Math.PI * 2.0D;
 			
 			//lod.createStar(builder, hasTexture, lod.size);
 			stars++;
@@ -185,8 +201,11 @@ public abstract class StarData
 		
 		public void createStar(BufferBuilder builder, boolean hasTexture, int i)
 		{
-			double sinRandom = randoms[i][0];
-			double cosRandom = randoms[i][1];
+			// sin and cos are used to effectively clamp the random number between two values without actually clamping it,
+			// wwhich would result in some awkward lines as Stars would be brought to the clamped values
+			// Both affect Star size and rotation
+			double sinRandom = Math.sin(starRotations[i]);
+			double cosRandom = Math.cos(starRotations[i]);
 			
 			// This loop creates the 4 corners of a Star
 			for(int j = 0; j < 4; ++j)
@@ -262,18 +281,20 @@ public abstract class StarData
 			for(int i = 0; i < stars; i++)
 			{
 				// Star Position
-				instances[i] = (float) starCoords[i][0];
-				instances[i + 1] = (float) starCoords[i][1];
-				instances[i + 2] = (float) starCoords[i][2];
+				instances[STAR_INSTANCE_SIZE * i] = (float) starCoords[i][0];
+				instances[STAR_INSTANCE_SIZE * i + 1] = (float) starCoords[i][1];
+				instances[STAR_INSTANCE_SIZE * i + 2] = (float) starCoords[i][2];
 				// Color
-				instances[i + 3] = (float) starRGBA[i][0] / 255F;
-				instances[i + 4] = (float) starRGBA[i][1] / 255F;
-				instances[i + 5] = (float) starRGBA[i][2] / 255F;
-				instances[i + 6] = (float) starRGBA[i][3] / 255F;
-				// Size, Rotation, Max Distance
-				instances[i + 7] = (float) starSizes[i];
-				instances[i + 8] = (float) randoms[i][0]; //TODO Change this
-				instances[i + 9] = (float) StarField.LOD_DISTANCE_HIGH; //TODO Change this
+				instances[STAR_INSTANCE_SIZE * i + 3] = (float) starRGBA[i][0] / 255F;
+				instances[STAR_INSTANCE_SIZE * i + 4] = (float) starRGBA[i][1] / 255F;
+				instances[STAR_INSTANCE_SIZE * i + 5] = (float) starRGBA[i][2] / 255F;
+				instances[STAR_INSTANCE_SIZE * i + 6] = (float) starRGBA[i][3] / 255F;
+				// Rotation
+				instances[STAR_INSTANCE_SIZE * i + 7] = (float) starRotations[i];
+				// Size
+				instances[STAR_INSTANCE_SIZE * i + 8] = (float) starSizes[i];
+				// Max Distance
+				instances[STAR_INSTANCE_SIZE * i + 9] = (float) StarField.LOD_DISTANCE_HIGH; //TODO Change this
 			}
 			
 			return instances;
@@ -328,6 +349,26 @@ public abstract class StarData
 					starBuffer.drawWithShader(pose, projectionMatrix, difference, hasTexture ? StellarViewShaders.starTexShader() : StellarViewShaders.starShader());
 				CelestialBuffer.unbind();
 			}
+		}
+		
+		private void renderInstancedStarBuffer(Matrix4f pose, Matrix4f projectionMatrix, SpaceCoords difference, boolean isStatic, boolean hasTexture)
+		{
+			if(stars == 0)
+				return;
+			
+			if(instancedStarBuffer == null) // Buffer requires setup
+			{
+				if(!SpaceRenderer.loadNewStars())
+					return;
+				
+				instancedStarBuffer = new CelestialInstancedBuffer();
+				instancedStarBuffer.upload(getInstancedStars());
+				SpaceRenderer.loadedStars(stars);
+			}
+			
+			instancedStarBuffer.bind();
+			instancedStarBuffer.drawWithShader(pose, projectionMatrix, difference, StellarViewShaders.instancedShader(), stars);
+			CelestialInstancedBuffer.unbind();
 		}
 		
 		//============================================================================================
@@ -417,8 +458,11 @@ public abstract class StarData
 			double sinPhi = Math.sin(sphericalPhi);
 			double cosPhi = Math.cos(sphericalPhi);
 			
-			double sinRandom = randoms[i][0];
-			double cosRandom = randoms[i][1];
+			// sin and cos are used to effectively clamp the random number between two values without actually clamping it,
+			// wwhich would result in some awkward lines as Stars would be brought to the clamped values
+			// Both affect Star size and rotation
+			double sinRandom = Math.sin(starRotations[i]);
+			double cosRandom = Math.sin(starRotations[i]);
 			
 			// This loop creates the 4 corners of a Star
 			for(int j = 0; j < 4; ++j)

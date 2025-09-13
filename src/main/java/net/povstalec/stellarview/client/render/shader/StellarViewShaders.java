@@ -20,7 +20,7 @@ public class StellarViewShaders
 	private static CelestialShaderInstance rendertypeStarTexShader;
 	private static CelestialShaderInstance rendertypeDustCloudShader;
 	
-	private static ShaderInstance rendertypeInstanced;
+	private static CelestialShaderInstance rendertypeInstanced;
 	
 	@Mod.EventBusSubscriber(modid = StellarView.MODID, value = Dist.CLIENT, bus= Mod.EventBusSubscriber.Bus.MOD)
     public static class ShaderInit
@@ -46,10 +46,10 @@ public class StellarViewShaders
 						rendertypeDustCloudShader = (CelestialShaderInstance) shaderInstance;
 					});
 			
-			event.registerShader(new ShaderInstance(event.getResourceProvider(), new ResourceLocation(StellarView.MODID,"rendertype_instanced"), DefaultVertexFormat.POSITION_TEX),
+			event.registerShader(new CelestialShaderInstance(event.getResourceProvider(), new ResourceLocation(StellarView.MODID,"rendertype_instanced"), DefaultVertexFormat.POSITION_TEX),
 					(shaderInstance) ->
 					{
-						rendertypeInstanced = shaderInstance;
+						rendertypeInstanced = (CelestialShaderInstance) shaderInstance;
 					});
         }
     }
@@ -69,7 +69,7 @@ public class StellarViewShaders
 		return rendertypeDustCloudShader;
 	}
 	
-	public static ShaderInstance instancedShader()
+	public static CelestialShaderInstance instancedShader()
 	{
 		return rendertypeInstanced;
 	}
