@@ -29,7 +29,7 @@ public abstract class StarData
 	public static final int WIDTH_OFFSET = HEIGHT_OFFSET + Float.BYTES;
 	public static final int STAR_SIZE_OFFSET = WIDTH_OFFSET + Float.BYTES;
 	
-	public static final int STAR_INSTANCE_SIZE = CelestialInstancedBuffer.STAR_INSTANCE_SIZE;
+	public static final int INSTANCE_SIZE = CelestialInstancedBuffer.INSTANCE_SIZE;
 	
 	private LOD lod1;
 	private LOD lod2;
@@ -59,22 +59,22 @@ public abstract class StarData
 	
 	public void renderStars(StarField.LevelOfDetail levelOfDetail, Matrix4f pose, Matrix4f projectionMatrix, SpaceCoords difference, boolean isStatic, boolean hasTexture)
 	{
-		if(GL.getCapabilities().GL_ARB_vertex_attrib_binding) // Use instancing if possible
+		if(!isStatic && GL.getCapabilities().GL_ARB_vertex_attrib_binding) // Use instancing if possible
 		{
 			switch(levelOfDetail)
 			{
 				case LOD3:
 					if(lod3 == null)
 						lod3 = newStars(StarField.LevelOfDetail.LOD3);
-					lod3.renderInstancedStarBuffer(pose, projectionMatrix, difference, isStatic, hasTexture);
+					lod3.renderInstancedStarBuffer(pose, projectionMatrix, difference, hasTexture);
 				case LOD2:
 					if(lod2 == null)
 						lod2 = newStars(StarField.LevelOfDetail.LOD2);
-					lod2.renderInstancedStarBuffer(pose, projectionMatrix, difference, isStatic, hasTexture);
+					lod2.renderInstancedStarBuffer(pose, projectionMatrix, difference, hasTexture);
 				case LOD1:
 					if(lod1 == null)
 						lod1 = newStars(StarField.LevelOfDetail.LOD1);
-					lod1.renderInstancedStarBuffer(pose, projectionMatrix, difference, isStatic, hasTexture);
+					lod1.renderInstancedStarBuffer(pose, projectionMatrix, difference, hasTexture);
 			}
 		}
 		else
@@ -276,25 +276,25 @@ public abstract class StarData
 		
 		public float[] getInstancedStars()
 		{
-			float[] instances = new float[stars * STAR_INSTANCE_SIZE];
+			float[] instances = new float[stars * INSTANCE_SIZE];
 			
 			for(int i = 0; i < stars; i++)
 			{
 				// Star Position
-				instances[STAR_INSTANCE_SIZE * i] = (float) starCoords[i][0];
-				instances[STAR_INSTANCE_SIZE * i + 1] = (float) starCoords[i][1];
-				instances[STAR_INSTANCE_SIZE * i + 2] = (float) starCoords[i][2];
+				instances[INSTANCE_SIZE * i] = (float) starCoords[i][0];
+				instances[INSTANCE_SIZE * i + 1] = (float) starCoords[i][1];
+				instances[INSTANCE_SIZE * i + 2] = (float) starCoords[i][2];
 				// Color
-				instances[STAR_INSTANCE_SIZE * i + 3] = (float) starRGBA[i][0] / 255F;
-				instances[STAR_INSTANCE_SIZE * i + 4] = (float) starRGBA[i][1] / 255F;
-				instances[STAR_INSTANCE_SIZE * i + 5] = (float) starRGBA[i][2] / 255F;
-				instances[STAR_INSTANCE_SIZE * i + 6] = (float) starRGBA[i][3] / 255F;
+				instances[INSTANCE_SIZE * i + 3] = (float) starRGBA[i][0] / 255F;
+				instances[INSTANCE_SIZE * i + 4] = (float) starRGBA[i][1] / 255F;
+				instances[INSTANCE_SIZE * i + 5] = (float) starRGBA[i][2] / 255F;
+				instances[INSTANCE_SIZE * i + 6] = (float) starRGBA[i][3] / 255F;
 				// Rotation
-				instances[STAR_INSTANCE_SIZE * i + 7] = (float) starRotations[i];
+				instances[INSTANCE_SIZE * i + 7] = (float) starRotations[i];
 				// Size
-				instances[STAR_INSTANCE_SIZE * i + 8] = (float) starSizes[i];
+				instances[INSTANCE_SIZE * i + 8] = (float) starSizes[i];
 				// Max Distance
-				instances[STAR_INSTANCE_SIZE * i + 9] = (float) StarField.LOD_DISTANCE_HIGH; //TODO Change this
+				instances[INSTANCE_SIZE * i + 9] = (float) StarField.LOD_DISTANCE_HIGH; //TODO Change this
 			}
 			
 			return instances;
@@ -351,7 +351,7 @@ public abstract class StarData
 			}
 		}
 		
-		private void renderInstancedStarBuffer(Matrix4f pose, Matrix4f projectionMatrix, SpaceCoords difference, boolean isStatic, boolean hasTexture)
+		private void renderInstancedStarBuffer(Matrix4f pose, Matrix4f projectionMatrix, SpaceCoords difference, boolean hasTexture)
 		{
 			if(stars == 0)
 				return;
@@ -367,7 +367,7 @@ public abstract class StarData
 			}
 			
 			instancedStarBuffer.bind();
-			instancedStarBuffer.drawWithShader(pose, projectionMatrix, difference, StellarViewShaders.instancedShader(), stars);
+			instancedStarBuffer.drawWithShader(pose, projectionMatrix, difference, StellarViewShaders.instancedStarTexShader(), stars);
 			CelestialInstancedBuffer.unbind();
 		}
 		

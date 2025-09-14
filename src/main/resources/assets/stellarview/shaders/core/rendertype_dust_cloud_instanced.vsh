@@ -1,12 +1,18 @@
-#version 150
+#version 330 core
+#extension GL_ARB_explicit_uniform_location : require
 
-in vec3 StarPos;
-in vec4 Color;
-in vec3 HeightWidthSize;
-in vec2 UV0;
+layout (location = 0) in vec3 Position;
+layout (location = 1) in vec2 UV0;
+// Instanced
+layout (location = 2) in vec3 StarPos;
+layout (location = 3) in vec4 Color;
+layout (location = 4) in float Rotation;
+layout (location = 5) in float Size;
+layout (location = 6) in float MaxDistance;
 
 uniform mat4 ModelViewMat;
 uniform mat4 ProjMat;
+
 uniform vec3 RelativeSpaceLy;
 uniform vec3 RelativeSpaceKm;
 
@@ -20,8 +26,8 @@ const float MAX_ALPHA = 0.025;
 
 const float KM_PER_LY = 9460730472581.2;
 
-out vec4 vertexColor;
 out vec2 texCoord0;
+out vec4 vertexColor;
 
 float clampDustCloud(float size, float distance)
 {
@@ -62,7 +68,7 @@ void main()
 	
 	// COLOR END
 	
-	float starSize = clampDustCloud(HeightWidthSize.z * 4, distance);
+	float starSize = clampDustCloud(Size * 4, distance);
 	
 	distance = 1.0 / distance;
 	xyz.x *= distance;
@@ -100,21 +106,22 @@ void main()
 	
 	float xzLength = sqrt(xyz.x * xyz.x + xyz.z * xyz.z);
 	float sphericalPhi = atan(xzLength, xyz.y);
-	float sinPhi = sin(sphericalPhi); //TODO These don't repeat so remove them
-	float cosPhi = cos(sphericalPhi); //
+	float sinPhi = sin(sphericalPhi);
+	float cosPhi = cos(sphericalPhi);
 	
-	float height = HeightWidthSize.x * starSize;
-	float width;
+	float sinRotation = sin(Rotation);
+	float cosRotation = cos(Rotation);
+	
+	float height = (Position.x * cosRotation - Position.y * sinRotation) * starSize;
+	float width = (Position.y * cosRotation + Position.x * sinRotation) * starSize;
 	if(LensingIntensity > 1.0)
 	{
 		float lensingAmount = cosPhi * LensingIntensity;
-		width = lensingAmount > 1.0 ? lensingAmount * HeightWidthSize.y * starSize :  HeightWidthSize.y * starSize;
+		if(lensingAmount > 1.0)
+			width = lensingAmount * width;
 	}
-	else
-		width = HeightWidthSize.y * starSize;
 	
 	float heightProjectionY = height * sinPhi;
-	
 	float heightProjectionXZ = - height * cosPhi;
 	
 	/* 
@@ -133,7 +140,7 @@ void main()
 	vec3 pos = LensingIntensity > 1.0 ? LensingMatInv * vec3(projectedX + starX, heightProjectionY + starY, projectedZ + starZ) : vec3(projectedX + starX, heightProjectionY + starY, projectedZ + starZ);
 	
 	gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
-	
+
 	vertexColor = vec4(Color.x, Color.y, Color.z, alpha);
     texCoord0 = UV0;
 }

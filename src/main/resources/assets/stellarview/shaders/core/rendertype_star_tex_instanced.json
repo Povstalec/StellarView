@@ -4,8 +4,8 @@
         "srcrgb": "srcalpha",
         "dstrgb": "1-srcalpha"
     },
-    "vertex": "stellarview:rendertype_instanced",
-    "fragment": "stellarview:rendertype_instanced",
+    "vertex": "stellarview:rendertype_star_tex_instanced",
+    "fragment": "stellarview:rendertype_star_tex_instanced",
     "attributes": [
         "Position",
         "UV0"

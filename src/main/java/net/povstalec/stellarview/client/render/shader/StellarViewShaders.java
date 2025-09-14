@@ -20,7 +20,8 @@ public class StellarViewShaders
 	private static CelestialShaderInstance rendertypeStarTexShader;
 	private static CelestialShaderInstance rendertypeDustCloudShader;
 	
-	private static CelestialShaderInstance rendertypeInstanced;
+	private static CelestialShaderInstance rendertypeStarTexInstanced;
+	private static CelestialShaderInstance rendertypeDustCloudInstanced;
 	
 	@Mod.EventBusSubscriber(modid = StellarView.MODID, value = Dist.CLIENT, bus= Mod.EventBusSubscriber.Bus.MOD)
     public static class ShaderInit
@@ -40,16 +41,24 @@ public class StellarViewShaders
 						rendertypeStarTexShader = (CelestialShaderInstance) shaderInstance;
 					});
 			
+			event.registerShader(new CelestialShaderInstance(event.getResourceProvider(), new ResourceLocation(StellarView.MODID,"rendertype_star_tex_instanced"), DefaultVertexFormat.POSITION_TEX),
+					(shaderInstance) ->
+					{
+						rendertypeStarTexInstanced = (CelestialShaderInstance) shaderInstance;
+					});
+			
+			
+			
 			event.registerShader(new CelestialShaderInstance(event.getResourceProvider(), new ResourceLocation(StellarView.MODID,"rendertype_dust_cloud"), StellarViewVertexFormat.STAR_POS_COLOR_LY_TEX),
 					(shaderInstance) ->
 					{
 						rendertypeDustCloudShader = (CelestialShaderInstance) shaderInstance;
 					});
 			
-			event.registerShader(new CelestialShaderInstance(event.getResourceProvider(), new ResourceLocation(StellarView.MODID,"rendertype_instanced"), DefaultVertexFormat.POSITION_TEX),
+			event.registerShader(new CelestialShaderInstance(event.getResourceProvider(), new ResourceLocation(StellarView.MODID,"rendertype_dust_cloud_instanced"), DefaultVertexFormat.POSITION_TEX),
 					(shaderInstance) ->
 					{
-						rendertypeInstanced = (CelestialShaderInstance) shaderInstance;
+						rendertypeDustCloudInstanced = (CelestialShaderInstance) shaderInstance;
 					});
         }
     }
@@ -69,8 +78,13 @@ public class StellarViewShaders
 		return rendertypeDustCloudShader;
 	}
 	
-	public static CelestialShaderInstance instancedShader()
+	public static CelestialShaderInstance instancedStarTexShader()
 	{
-		return rendertypeInstanced;
+		return rendertypeStarTexInstanced;
+	}
+	
+	public static CelestialShaderInstance instancedDustCloudShader()
+	{
+		return rendertypeDustCloudInstanced;
 	}
 }

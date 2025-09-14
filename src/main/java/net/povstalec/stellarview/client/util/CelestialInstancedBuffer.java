@@ -4,7 +4,6 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.MemoryTracker;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferUploader;
-import net.minecraft.client.renderer.ShaderInstance;
 import net.povstalec.stellarview.client.render.SpaceRenderer;
 import net.povstalec.stellarview.client.render.shader.CelestialShaderInstance;
 import net.povstalec.stellarview.common.util.SpaceCoords;
@@ -21,7 +20,7 @@ public class CelestialInstancedBuffer implements AutoCloseable
 	public static final int ROTATION_SIZE = 1;
 	public static final int SIZE_SIZE = 1;
 	public static final int MAX_DISTANCE_SIZE = 1;
-	public static final int STAR_INSTANCE_SIZE = POS_SIZE + COLOR_SIZE + ROTATION_SIZE + SIZE_SIZE + MAX_DISTANCE_SIZE;
+	public static final int INSTANCE_SIZE = POS_SIZE + COLOR_SIZE + ROTATION_SIZE + SIZE_SIZE + MAX_DISTANCE_SIZE;
 	
 	public static final float[] STAR_VERTICES = new float[]
 			{
@@ -88,23 +87,23 @@ public class CelestialInstancedBuffer implements AutoCloseable
 		GL15.glBindBuffer(GL15C.GL_ARRAY_BUFFER, this.instanceBufferId); // This attribute comes from the instance buffer, rather than the vertex buffer
 		// StarPos (Position Offset)
 		GL20C.glEnableVertexAttribArray(2);
-		GL20C.glVertexAttribPointer(2, POS_SIZE, GL20C.GL_FLOAT, false, STAR_INSTANCE_SIZE * Float.BYTES, 0);
+		GL20C.glVertexAttribPointer(2, POS_SIZE, GL20C.GL_FLOAT, false, INSTANCE_SIZE * Float.BYTES, 0);
 		GL43C.glVertexBindingDivisor(2, 1); // Tells OpenGL this is an instanced vertex attribute
 		// Color
 		GL20C.glEnableVertexAttribArray(3);
-		GL20C.glVertexAttribPointer(3, COLOR_SIZE, GL20C.GL_FLOAT, false, STAR_INSTANCE_SIZE * Float.BYTES, 3 * Float.BYTES);
+		GL20C.glVertexAttribPointer(3, COLOR_SIZE, GL20C.GL_FLOAT, false, INSTANCE_SIZE * Float.BYTES, 3 * Float.BYTES);
 		GL43C.glVertexBindingDivisor(3, 1); // Tells OpenGL this is an instanced vertex attribute
 		// Rotation
 		GL20C.glEnableVertexAttribArray(4);
-		GL20C.glVertexAttribPointer(4, ROTATION_SIZE, GL20C.GL_FLOAT, false, STAR_INSTANCE_SIZE * Float.BYTES, 7 * Float.BYTES);
+		GL20C.glVertexAttribPointer(4, ROTATION_SIZE, GL20C.GL_FLOAT, false, INSTANCE_SIZE * Float.BYTES, 7 * Float.BYTES);
 		GL43C.glVertexBindingDivisor(4, 1); // Tells OpenGL this is an instanced vertex attribute
 		// Size
 		GL20C.glEnableVertexAttribArray(5);
-		GL20C.glVertexAttribPointer(5, SIZE_SIZE, GL20C.GL_FLOAT, false, STAR_INSTANCE_SIZE * Float.BYTES, 8 * Float.BYTES);
+		GL20C.glVertexAttribPointer(5, SIZE_SIZE, GL20C.GL_FLOAT, false, INSTANCE_SIZE * Float.BYTES, 8 * Float.BYTES);
 		GL43C.glVertexBindingDivisor(5, 1); // Tells OpenGL this is an instanced vertex attribute
 		// Max Distance
 		GL20C.glEnableVertexAttribArray(6);
-		GL20C.glVertexAttribPointer(6, MAX_DISTANCE_SIZE, GL20C.GL_FLOAT, false, STAR_INSTANCE_SIZE * Float.BYTES, 9 * Float.BYTES);
+		GL20C.glVertexAttribPointer(6, MAX_DISTANCE_SIZE, GL20C.GL_FLOAT, false, INSTANCE_SIZE * Float.BYTES, 9 * Float.BYTES);
 		GL43C.glVertexBindingDivisor(6, 1); // Tells OpenGL this is an instanced vertex attribute
 		
 		GL15.glBindBuffer(GL15C.GL_ARRAY_BUFFER, 0);
