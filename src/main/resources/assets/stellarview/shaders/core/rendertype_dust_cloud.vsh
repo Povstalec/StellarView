@@ -2,7 +2,7 @@
 
 in vec3 StarPos;
 in vec4 Color;
-in vec3 HeightWidthSize;
+in vec3 HeightWidthSizeDistance;
 in vec2 UV0;
 
 uniform mat4 ModelViewMat;
@@ -62,7 +62,7 @@ void main()
 	
 	// COLOR END
 	
-	float starSize = clampDustCloud(HeightWidthSize.z * 4, distance);
+	float starSize = clampDustCloud(HeightWidthSizeDistance.z * 4, distance);
 	
 	distance = 1.0 / distance;
 	xyz.x *= distance;
@@ -103,15 +103,15 @@ void main()
 	float sinPhi = sin(sphericalPhi); //TODO These don't repeat so remove them
 	float cosPhi = cos(sphericalPhi); //
 	
-	float height = HeightWidthSize.x * starSize;
+	float height = HeightWidthSizeDistance.x * starSize;
 	float width;
 	if(LensingIntensity > 1.0)
 	{
 		float lensingAmount = cosPhi * LensingIntensity;
-		width = lensingAmount > 1.0 ? lensingAmount * HeightWidthSize.y * starSize :  HeightWidthSize.y * starSize;
+		width = lensingAmount > 1.0 ? lensingAmount * HeightWidthSizeDistance.y * starSize :  HeightWidthSizeDistance.y * starSize;
 	}
 	else
-		width = HeightWidthSize.y * starSize;
+		width = HeightWidthSizeDistance.y * starSize;
 	
 	float heightProjectionY = height * sinPhi;
 	

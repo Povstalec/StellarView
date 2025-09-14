@@ -28,6 +28,7 @@ public abstract class StarData
 	public static final int HEIGHT_OFFSET = 0;
 	public static final int WIDTH_OFFSET = HEIGHT_OFFSET + Float.BYTES;
 	public static final int STAR_SIZE_OFFSET = WIDTH_OFFSET + Float.BYTES;
+	public static final int DISTANCE_OFFSET = STAR_SIZE_OFFSET + Float.BYTES;
 	
 	public static final int INSTANCE_SIZE = CelestialInstancedBuffer.INSTANCE_SIZE;
 	
@@ -131,11 +132,17 @@ public abstract class StarData
 		
 		public void reset()
 		{
-			if(starBuffer == null)
-				return;
+			if(starBuffer != null)
+			{
+				starBuffer.close();
+				starBuffer = null;
+			}
 			
-			starBuffer.close();
-			starBuffer = null;
+			if(instancedStarBuffer != null)
+			{
+				instancedStarBuffer.close();
+				instancedStarBuffer = null;
+			}
 		}
 		
 		/**
@@ -265,6 +272,7 @@ public abstract class StarData
 				builder.putFloat(HEIGHT_OFFSET, (float) height);
 				builder.putFloat(WIDTH_OFFSET, (float) width);
 				builder.putFloat(STAR_SIZE_OFFSET, (float) starSizes[i]);
+				builder.putFloat(DISTANCE_OFFSET, (float) StarField.LOD_DISTANCE_HIGH);
 				builder.nextElement();
 				
 				if(hasTexture)
@@ -462,7 +470,7 @@ public abstract class StarData
 			// wwhich would result in some awkward lines as Stars would be brought to the clamped values
 			// Both affect Star size and rotation
 			double sinRandom = Math.sin(starRotations[i]);
-			double cosRandom = Math.sin(starRotations[i]);
+			double cosRandom = Math.cos(starRotations[i]);
 			
 			// This loop creates the 4 corners of a Star
 			for(int j = 0; j < 4; ++j)

@@ -94,6 +94,12 @@ public abstract class DustCloudData
 				dustCloudBuffer.close();
 				dustCloudBuffer = null;
 			}
+			
+			if(instancedDustCloudBuffer != null)
+			{
+				instancedDustCloudBuffer.close();
+				instancedDustCloudBuffer = null;
+			}
 		}
 		
 		/**
@@ -196,6 +202,7 @@ public abstract class DustCloudData
 				builder.putFloat(0, (float) height);
 				builder.putFloat(4, (float) width);
 				builder.putFloat(8, (float) dustCloudSizes[i]);
+				builder.putFloat(12, (float) StarField.LOD_DISTANCE_HIGH);
 				builder.nextElement();
 				
 				builder.uv( (float) (aLocation + 1) / 2F, (float) (bLocation + 1) / 2F);
