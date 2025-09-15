@@ -91,12 +91,6 @@ void main()
 	if(LensingIntensity > 1.0)
 		xyz = LensingMat * xyz;
 	
-	// This effectively pushes the Star away from the camera
-	// It's better to have them very far away, otherwise they will appear as though they're shaking when the Player is walking
-	float starX = xyz.x * DEFAULT_DISTANCE;
-	float starY = xyz.y * DEFAULT_DISTANCE;
-	float starZ = xyz.z * DEFAULT_DISTANCE;
-	
 	/* These very obviously represent Spherical Coordinates (r, theta, phi)
 	 * 
 	 * Spherical equations (adjusted for Minecraft, since usually +Z is up, while in Minecraft +Y is up):
@@ -148,8 +142,15 @@ void main()
 	 */
 	float projectedX = heightProjectionXZ * sinTheta - width * cosTheta;
 	float projectedZ = width * sinTheta + heightProjectionXZ * cosTheta;
+		
+	// This effectively pushes the Star away from the camera
+	// It's better to have them very far away, otherwise they will appear as though they're shaking when the Player is walking
+	xyz *= DEFAULT_DISTANCE;
 	
-	vec3 pos = LensingIntensity > 0.0 ? LensingMatInv * vec3(projectedX + starX, heightProjectionY + starY, projectedZ + starZ) : vec3(projectedX + starX, heightProjectionY + starY, projectedZ + starZ);
+	vec3 pos = vec3(projectedX + xyz.x, heightProjectionY + xyz.y, projectedZ + xyz.z);
+	
+	if(LensingIntensity > 1.0)
+		pos = LensingMatInv * pos;
 	
 	gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
 	
