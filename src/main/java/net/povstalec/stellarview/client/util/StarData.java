@@ -289,7 +289,7 @@ public abstract class StarData
 			}
 		}
 		
-		public float[] getInstancedStars()
+		public float[] getInstancedStars(boolean hasTexture)
 		{
 			float[] instances = new float[stars * INSTANCE_SIZE];
 			
@@ -307,7 +307,7 @@ public abstract class StarData
 				// Rotation
 				instances[INSTANCE_SIZE * i + 7] = (float) starRotations[i];
 				// Size
-				instances[INSTANCE_SIZE * i + 8] = (float) starSizes[i] * 4F;
+				instances[INSTANCE_SIZE * i + 8] = hasTexture ? (float) starSizes[i] * 4F : (float) starSizes[i];
 				// Max Distance
 				instances[INSTANCE_SIZE * i + 9] = (float) starDistances[i];
 			}
@@ -377,7 +377,7 @@ public abstract class StarData
 					return;
 				
 				instancedStarBuffer = new CelestialInstancedBuffer();
-				instancedStarBuffer.upload(getInstancedStars(), hasTexture);
+				instancedStarBuffer.upload(getInstancedStars(hasTexture), hasTexture);
 				SpaceRenderer.loadedStars(stars);
 			}
 			
