@@ -306,7 +306,7 @@ public abstract class StarData
 				// Rotation
 				instances[INSTANCE_SIZE * i + 7] = (float) starRotations[i];
 				// Size
-				instances[INSTANCE_SIZE * i + 8] = (float) starSizes[i];
+				instances[INSTANCE_SIZE * i + 8] = (float) starSizes[i] * 4F;
 				// Max Distance
 				instances[INSTANCE_SIZE * i + 9] = (float) starDistances[i];
 			}

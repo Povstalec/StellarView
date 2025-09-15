@@ -33,10 +33,10 @@ public class CelestialInstancedBuffer implements AutoCloseable
 	// These are bigger because of how the texture behaves
 	public static final float[] STAR_TEX_VERTICES = new float[]
 			{
-					-4F, -4F, 0F,	0.0F, 0.0F,
-					-4F, 4F, 0F,	0.0F, 1.0F,
-					4F, 4F, 0F,		1.0F, 1.0F,
-					4F, -4F, 0F,	1.0F, 0.0F,
+					-1F, -1F, 0F,	0.0F, 0.0F,
+					-1F, 1F, 0F,	0.0F, 1.0F,
+					1F, 1F, 0F,		1.0F, 1.0F,
+					1F, -1F, 0F,	1.0F, 0.0F,
 			};
 	
 	public static final ByteBuffer INDEX_BUFFER = indexBuffer();

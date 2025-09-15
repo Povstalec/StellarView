@@ -230,7 +230,7 @@ public abstract class DustCloudData
 				// Rotation
 				instances[INSTANCE_SIZE * i + 7] = (float) dustCloudRotations[i];
 				// Size
-				instances[INSTANCE_SIZE * i + 8] = (float) dustCloudSizes[i];
+				instances[INSTANCE_SIZE * i + 8] = (float) dustCloudSizes[i] * 4F;
 				// Max Distance
 				instances[INSTANCE_SIZE * i + 9] = (float) StarField.LOD_DISTANCE_HIGH;
 			}

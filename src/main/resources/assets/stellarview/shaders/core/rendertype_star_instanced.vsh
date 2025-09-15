@@ -29,14 +29,12 @@ out vec4 vertexColor;
 
 float clampStar(float starSize, float distance)
 {
-	//float maxStarSize = 0.2 + starSize / 5;
-	
 	starSize -= starSize * distance / 1000000.0;
 	
 	if(starSize < MIN_STAR_SIZE)
 		return MIN_STAR_SIZE;
 	
-	return starSize;// > maxStarSize ? maxStarSize : starSize;
+	return starSize;
 }
 
 // Adjusts the brightness (alpha) of the star based on its distance
