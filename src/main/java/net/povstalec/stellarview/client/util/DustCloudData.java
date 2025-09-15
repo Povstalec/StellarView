@@ -202,7 +202,7 @@ public abstract class DustCloudData
 				// These next few lines add a "custom" element defined as HeightWidthSize in StellarViewVertexFormat
 				builder.putFloat(HEIGHT_OFFSET, (float) height);
 				builder.putFloat(WIDTH_OFFSET, (float) width);
-				builder.putFloat(STAR_SIZE_OFFSET, (float) dustCloudSizes[i]);
+				builder.putFloat(STAR_SIZE_OFFSET, (float) dustCloudSizes[i] * 4F);
 				builder.putFloat(DISTANCE_OFFSET, (float) StarField.LOD_DISTANCE_HIGH);
 				builder.nextElement();
 				
@@ -300,7 +300,7 @@ public abstract class DustCloudData
 					return;
 				
 				instancedDustCloudBuffer = new CelestialInstancedBuffer();
-				instancedDustCloudBuffer.upload(getInstancedDustClouds());
+				instancedDustCloudBuffer.upload(getInstancedDustClouds(), true);
 				SpaceRenderer.loadedStars(dustClouds);
 			}
 			
@@ -368,7 +368,7 @@ public abstract class DustCloudData
 			
 			// COLOR END
 			
-			double starSize = clampDustCloud(dustCloudSizes[i] * 4, distance);
+			double starSize = clampDustCloud(dustCloudSizes[i] * 4F, distance);
 			
 			distance = 1.0D / distance; // Regular distance
 			x *= distance;

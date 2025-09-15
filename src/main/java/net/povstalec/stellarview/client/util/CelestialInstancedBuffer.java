@@ -24,10 +24,19 @@ public class CelestialInstancedBuffer implements AutoCloseable
 	
 	public static final float[] STAR_VERTICES = new float[]
 			{
-					-1F, -1F, 0F,	0.0F, 0.0F,
-					-1F, 1F, 0F,	0.0F, 1.0F,
-					1F, 1F, 0F,		1.0F, 1.0F,
-					1F, -1F, 0F,	1.0F, 0.0F,
+					-1F, -1F, 0F,
+					-1F, 1F, 0F,
+					1F, 1F, 0F,
+					1F, -1F, 0F,
+			};
+	
+	// These are bigger because of how the texture behaves
+	public static final float[] STAR_TEX_VERTICES = new float[]
+			{
+					-4F, -4F, 0F,	0.0F, 0.0F,
+					-4F, 4F, 0F,	0.0F, 1.0F,
+					4F, 4F, 0F,		1.0F, 1.0F,
+					4F, -4F, 0F,	1.0F, 0.0F,
 			};
 	
 	public static final ByteBuffer INDEX_BUFFER = indexBuffer();
@@ -61,7 +70,14 @@ public class CelestialInstancedBuffer implements AutoCloseable
 		return instanceBuffer;
 	}
 	
-	public void upload(float[] instances)
+	private static void attribute(int index, int size, int stride, int offset)
+	{
+		GL20C.glEnableVertexAttribArray(index);
+		GL20C.glVertexAttribPointer(index, size, GL20C.GL_FLOAT, false, stride, offset);
+		GL43C.glVertexBindingDivisor(index, 1); // Tells OpenGL this is an instanced vertex attribute
+	}
+	
+	public void upload(float[] instances, boolean hasTexture)
 	{
 		// Instance Buffer setup
 		GL15C.glBindBuffer(GL15C.GL_ARRAY_BUFFER, this.instanceBufferId);
@@ -71,40 +87,35 @@ public class CelestialInstancedBuffer implements AutoCloseable
 		// Vertex Buffer and Array Object setup
 		GL30C.glBindVertexArray(this.arrayObjectId);
 		GL15C.glBindBuffer(GL15C.GL_ARRAY_BUFFER, this.vertexBufferId);
-		GL15.glBufferData(GL15C.GL_ARRAY_BUFFER, STAR_VERTICES, GL15C.GL_STATIC_DRAW);
+		GL15.glBufferData(GL15C.GL_ARRAY_BUFFER, hasTexture ? STAR_TEX_VERTICES : STAR_VERTICES, GL15C.GL_STATIC_DRAW);
 		
 		GL15.glBindBuffer(GL15C.GL_ELEMENT_ARRAY_BUFFER, this.indexBufferId);
 		GL15.glBufferData(GL15C.GL_ELEMENT_ARRAY_BUFFER, INDEX_BUFFER, GL15C.GL_STATIC_DRAW);
 		
 		// Position
 		GL20C.glEnableVertexAttribArray(0);
-		GL20C.glVertexAttribPointer(0, 3, GL20C.GL_FLOAT, false, 5 * Float.BYTES, 0);
-		// UV
-		GL20C.glEnableVertexAttribArray(1);
-		GL20C.glVertexAttribPointer(1, 2, GL20C.GL_FLOAT, false, 5 * Float.BYTES, 3 * Float.BYTES);
+		GL20C.glVertexAttribPointer(0, 3, GL20C.GL_FLOAT, false, hasTexture ? 5 * Float.BYTES : 3 * Float.BYTES, 0);
 		
+		if(hasTexture)
+		{
+			// UV
+			GL20C.glEnableVertexAttribArray(1);
+			GL20C.glVertexAttribPointer(1, 2, GL20C.GL_FLOAT, false, 5 * Float.BYTES, 3 * Float.BYTES);
+		}
+		
+		int attributeStart = hasTexture ? 2 : 1;
 		// Set instance data
 		GL15.glBindBuffer(GL15C.GL_ARRAY_BUFFER, this.instanceBufferId); // This attribute comes from the instance buffer, rather than the vertex buffer
 		// StarPos (Position Offset)
-		GL20C.glEnableVertexAttribArray(2);
-		GL20C.glVertexAttribPointer(2, POS_SIZE, GL20C.GL_FLOAT, false, INSTANCE_SIZE * Float.BYTES, 0);
-		GL43C.glVertexBindingDivisor(2, 1); // Tells OpenGL this is an instanced vertex attribute
+		attribute(attributeStart, POS_SIZE, INSTANCE_SIZE * Float.BYTES, 0);
 		// Color
-		GL20C.glEnableVertexAttribArray(3);
-		GL20C.glVertexAttribPointer(3, COLOR_SIZE, GL20C.GL_FLOAT, false, INSTANCE_SIZE * Float.BYTES, 3 * Float.BYTES);
-		GL43C.glVertexBindingDivisor(3, 1); // Tells OpenGL this is an instanced vertex attribute
+		attribute(attributeStart + 1, COLOR_SIZE, INSTANCE_SIZE * Float.BYTES, 3 * Float.BYTES);
 		// Rotation
-		GL20C.glEnableVertexAttribArray(4);
-		GL20C.glVertexAttribPointer(4, ROTATION_SIZE, GL20C.GL_FLOAT, false, INSTANCE_SIZE * Float.BYTES, 7 * Float.BYTES);
-		GL43C.glVertexBindingDivisor(4, 1); // Tells OpenGL this is an instanced vertex attribute
+		attribute(attributeStart + 2, ROTATION_SIZE, INSTANCE_SIZE * Float.BYTES, 7 * Float.BYTES);
 		// Size
-		GL20C.glEnableVertexAttribArray(5);
-		GL20C.glVertexAttribPointer(5, SIZE_SIZE, GL20C.GL_FLOAT, false, INSTANCE_SIZE * Float.BYTES, 8 * Float.BYTES);
-		GL43C.glVertexBindingDivisor(5, 1); // Tells OpenGL this is an instanced vertex attribute
+		attribute(attributeStart + 3, SIZE_SIZE, INSTANCE_SIZE * Float.BYTES, 8 * Float.BYTES);
 		// Max Distance
-		GL20C.glEnableVertexAttribArray(6);
-		GL20C.glVertexAttribPointer(6, MAX_DISTANCE_SIZE, GL20C.GL_FLOAT, false, INSTANCE_SIZE * Float.BYTES, 9 * Float.BYTES);
-		GL43C.glVertexBindingDivisor(6, 1); // Tells OpenGL this is an instanced vertex attribute
+		attribute(attributeStart + 4, MAX_DISTANCE_SIZE, INSTANCE_SIZE * Float.BYTES, 9 * Float.BYTES);
 		
 		GL15.glBindBuffer(GL15C.GL_ARRAY_BUFFER, 0);
 		GL30C.glBindVertexArray(0);

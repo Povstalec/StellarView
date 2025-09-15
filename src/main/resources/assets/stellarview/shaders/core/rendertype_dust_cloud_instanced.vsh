@@ -41,6 +41,7 @@ float clampDustCloud(float size, float distance)
 	return size < minSize ? minSize : size;
 }
 
+// Adjusts the brightness (alpha) of the star based on its distance
 float clampAlpha(float alpha, float distance)
 {
 	float minAlpha = alpha * 0.005;
@@ -61,14 +62,8 @@ void main()
 	
 	float distance = sqrt(xyz.x * xyz.x + xyz.y * xyz.y + xyz.z * xyz.z);
 	
-	// COLOR START - Adjusts the brightness (alpha) of the star based on its distance
-	
-	float alpha = Color.w;
-	alpha = clampAlpha(alpha, distance);
-	
-	// COLOR END
-	
-	float starSize = clampDustCloud(Size * 4, distance);
+	float starSize = clampDustCloud(Size, distance);
+	float alpha = clampAlpha(Color.w, distance);
 	
 	// Normalize
 	xyz /= distance;

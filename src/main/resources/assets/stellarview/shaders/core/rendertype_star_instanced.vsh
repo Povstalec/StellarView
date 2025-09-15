@@ -2,13 +2,12 @@
 #extension GL_ARB_explicit_uniform_location : require
 
 layout (location = 0) in vec3 Position;
-layout (location = 1) in vec2 UV0;
 // Instanced
-layout (location = 2) in vec3 StarPos;
-layout (location = 3) in vec4 Color;
-layout (location = 4) in float Rotation;
-layout (location = 5) in float Size;
-layout (location = 6) in float MaxDistance;
+layout (location = 1) in vec3 StarPos;
+layout (location = 2) in vec4 Color;
+layout (location = 3) in float Rotation;
+layout (location = 4) in float Size;
+layout (location = 5) in float MaxDistance;
 
 uniform mat4 ModelViewMat;
 uniform mat4 ProjMat;
@@ -21,7 +20,7 @@ uniform mat3 LensingMatInv;
 uniform float LensingIntensity;
 
 const float DEFAULT_DISTANCE = 100;
-const float MIN_STAR_SIZE = 0.08;
+const float MIN_STAR_SIZE = 0.02;
 
 const float KM_PER_LY = 9460730472581.2;
 
@@ -64,7 +63,6 @@ void main()
 	{
 		gl_Position = vec4(0.0, 0.0, 0.0, 0.0);
 		vertexColor = vec4(0.0, 0.0, 0.0, 0.0);
-		texCoord0 = UV0;
 	}
 	else
 	{
@@ -141,6 +139,5 @@ void main()
 		
 		gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
 		vertexColor = vec4(Color.x, Color.y, Color.z, alpha);
-		texCoord0 = UV0;
 	}
 }

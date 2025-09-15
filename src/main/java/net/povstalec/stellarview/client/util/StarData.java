@@ -277,7 +277,7 @@ public abstract class StarData
 				// These next few lines add a "custom" element defined as HeightWidthSize in StellarViewVertexFormat
 				builder.putFloat(HEIGHT_OFFSET, (float) height);
 				builder.putFloat(WIDTH_OFFSET, (float) width);
-				builder.putFloat(STAR_SIZE_OFFSET, (float) starSizes[i]);
+				builder.putFloat(STAR_SIZE_OFFSET, hasTexture ? (float) starSizes[i] * 4F : (float) starSizes[i]); // Multiplication by 4 because the non-textured star takes up the full quad, whereas the non-textured star takes up less
 				builder.putFloat(DISTANCE_OFFSET, (float) starDistances[i]);
 				builder.nextElement();
 				
@@ -376,12 +376,12 @@ public abstract class StarData
 					return;
 				
 				instancedStarBuffer = new CelestialInstancedBuffer();
-				instancedStarBuffer.upload(getInstancedStars());
+				instancedStarBuffer.upload(getInstancedStars(), hasTexture);
 				SpaceRenderer.loadedStars(stars);
 			}
 			
 			instancedStarBuffer.bind();
-			instancedStarBuffer.drawWithShader(pose, projectionMatrix, difference, StellarViewShaders.instancedStarTexShader(), stars);
+			instancedStarBuffer.drawWithShader(pose, projectionMatrix, difference, hasTexture ? StellarViewShaders.instancedStarTexShader() : StellarViewShaders.instancedStarShader(), stars);
 			CelestialInstancedBuffer.unbind();
 		}
 		
@@ -434,7 +434,7 @@ public abstract class StarData
 			
 			// COLOR END
 			
-			double starSize = clampStar(hasTexture ? starSizes[i] * 4 : starSizes[i], hasTexture ? MIN_TEX_STAR_SIZE : MIN_STAR_SIZE, distance);
+			double starSize = clampStar(hasTexture ? starSizes[i] * 4F : starSizes[i], hasTexture ? MIN_TEX_STAR_SIZE : MIN_STAR_SIZE, distance);
 			
 			distance = 1.0D / distance; // Regular distance
 			x *= distance;

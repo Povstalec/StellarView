@@ -32,58 +32,28 @@ float clampStar(float starSize, float distance)
 	return starSize;// > maxStarSize ? maxStarSize : starSize;
 }
 
+// Adjusts the brightness (alpha) of the star based on its distance
+float clampAlpha(float alpha, float distance)
+{
+	float minAlpha = alpha * 0.1;
+	
+	// Stars appear dimmer the further away they are
+	alpha -= distance / 100000.0;
+	
+	if(alpha < minAlpha)
+		return minAlpha;
+	
+	return alpha;
+}
+
 void main()
 {
 	vec3 xyz = vec3(StarPos.x - RelativeSpaceLy.x - RelativeSpaceKm.z / KM_PER_LY, StarPos.y - RelativeSpaceLy.y - RelativeSpaceKm.z / KM_PER_LY, StarPos.z - RelativeSpaceLy.z - RelativeSpaceKm.z / KM_PER_LY);
 	
 	float distance = sqrt(xyz.x * xyz.x + xyz.y * xyz.y + xyz.z * xyz.z);
 	
-	// COLOR START - Adjusts the brightness (alpha) of the star based on its distance
-	
-	float alpha = Color.w;
-	float minAlpha = alpha * 0.1;
-	
-	// Stars appear dimmer the further away they are
-	alpha -= distance / 100000;
-	
-	if(alpha < minAlpha)
-	{
-		alpha = minAlpha;
-		
-		/*if(distance > 3000000)
-		{
-			if(minAlpha < 0.08)
-			{
-				if(distance < 4000000)
-				{
-					alpha = ( minAlpha * (4000000 - distance) ) / 1000000;
-					
-					if(alpha < 0)
-						alpha = 0;
-				}
-				else
-					alpha = 0;
-			}
-			else
-			{
-				float lowerAlpha = minAlpha * 0.5; // TODO This should ideally be a value provided for the vertex format
-				
-				if(distance < 4000000)
-				{
-					alpha = ( minAlpha * (4000000 - distance) ) / 1000000;
-					
-					if(alpha < lowerAlpha)
-						alpha = lowerAlpha;
-				}
-				else
-					alpha = lowerAlpha;
-			}
-		}*/
-	}
-	
-	// COLOR END
-	
 	float starSize = clampStar(HeightWidthSizeDistance.z, distance);
+	float alpha = clampAlpha(Color.w, distance);
 	
 	// Normalize
 	xyz /= distance;
