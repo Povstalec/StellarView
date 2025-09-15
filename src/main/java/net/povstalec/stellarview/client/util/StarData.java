@@ -11,6 +11,7 @@ import net.povstalec.stellarview.client.render.shader.StellarViewVertexFormat;
 import net.povstalec.stellarview.api.common.space_objects.resourcepack.StarField;
 import net.povstalec.stellarview.api.common.space_objects.StarLike;
 import net.povstalec.stellarview.client.render.shader.VertexOrder;
+import net.povstalec.stellarview.common.config.GeneralConfig;
 import net.povstalec.stellarview.common.util.Color;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 import org.joml.Matrix4f;
@@ -60,7 +61,7 @@ public abstract class StarData
 	
 	public void renderStars(StarField.LevelOfDetail levelOfDetail, Matrix4f pose, Matrix4f projectionMatrix, SpaceCoords difference, boolean isStatic, boolean hasTexture)
 	{
-		if(!isStatic && GL.getCapabilities().GL_ARB_vertex_attrib_binding) // Use instancing if possible
+		if(!isStatic && GeneralConfig.instancing.get() && GL.getCapabilities().GL_ARB_vertex_attrib_binding) // Use instancing if possible
 		{
 			switch(levelOfDetail)
 			{

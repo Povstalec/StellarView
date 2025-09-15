@@ -13,6 +13,7 @@
 	"gui.stellarview.disable_view_center_rotation": "Vypnout rotaci centra pohledu",
 	"gui.stellarview.gravitational_lensing": "Gravitační čočka",
 	"gui.stellarview.static_stars": "[Shader compat] Statická obloha",
+	"gui.stellarview.instancing": "Instancing",
 	"gui.stellarview.alt_vertex_build_order": "Alternativní pořadí stavby vertexů",
 	"gui.stellarview.disable_stars": "Zakázat hvězdy",
 	"gui.stellarview.day_stars": "Hvězdy během dne",

@@ -42,6 +42,8 @@ public class GeneralConfigScreen extends Screen
 		
 		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.static_sky"),
 				this.width, GeneralConfig.static_sky));
+		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.instancing"),
+				this.width, GeneralConfig.instancing));
 		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.alt_vertex_build_order"),
 				this.width, GeneralConfig.alt_vertex_build_order));
 		
