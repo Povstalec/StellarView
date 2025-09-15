@@ -4,9 +4,7 @@ import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.resources.ResourceLocation;
-import net.povstalec.stellarview.api.common.space_objects.OrbitingObject;
 import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
-import net.povstalec.stellarview.api.common.space_objects.TexturedObject;
 import net.povstalec.stellarview.common.util.*;
 
 import javax.annotation.Nullable;
@@ -27,7 +25,7 @@ public class Constellation extends SpaceObject
 	protected ResourceLocation starTexture;
 	
 	public static final Codec<Constellation> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			ResourceLocation.CODEC.optionalFieldOf(PARENT_LOCATION).forGetter(Constellation::getParentLocation),
+			ParentInfo.CODEC.optionalFieldOf(PARENT).forGetter(Constellation::getParentInfo),
 			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf(COORDS).forGetter(constellation -> Either.left(constellation.getCoords())),
 			AxisRotation.CODEC.fieldOf(AXIS_ROTATION).forGetter(Constellation::getAxisRotation),
 			
@@ -35,7 +33,7 @@ public class Constellation extends SpaceObject
 			StarDefinition.CODEC.listOf().fieldOf(STARS).forGetter(constellation -> new ArrayList<>())
 	).apply(instance, Constellation::new));
 	
-	public Constellation(Optional<ResourceLocation> parentLocation, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation, Optional<ResourceLocation> starTexture, List<StarDefinition> stars)
+	public Constellation(Optional<ParentInfo> parentLocation, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation, Optional<ResourceLocation> starTexture, List<StarDefinition> stars)
 	{
 		super(parentLocation, coords, axisRotation);
 		
@@ -58,10 +56,29 @@ public class Constellation extends SpaceObject
 		}
 	}
 	
+	// Make stars relative to the constellation center coords
+	public void relativeStars()
+	{
+		for(StarDefinition star : this.lod1stars)
+		{
+			star.offsetCoords(this.coords);
+		}
+		
+		for(StarDefinition star : this.lod2stars)
+		{
+			star.offsetCoords(this.coords);
+		}
+		
+		for(StarDefinition star : this.lod3stars)
+		{
+			star.offsetCoords(this.coords);
+		}
+	}
+	
 	@Nullable
 	public ResourceLocation getStarTexture()
 	{
-		return this.starTexture;
+		return starTexture;
 	}
 	
 	public ArrayList<StarDefinition> lod1stars()
@@ -81,7 +98,7 @@ public class Constellation extends SpaceObject
 	
 	public boolean hasStarField()
 	{
-		return this.parent instanceof StarField;
+		return parent instanceof StarField;
 	}
 	
 	
@@ -122,6 +139,11 @@ public class Constellation extends SpaceObject
 			this.size = size;
 			this.rotation = Math.toRadians(rotation);
 			this.maxVisibleDistance = maxVisibleDistance;
+		}
+		
+		public void offsetCoords(SpaceCoords offset)
+		{
+			coords = coords.add(offset);
 		}
 		
 		public SpaceCoords coords()

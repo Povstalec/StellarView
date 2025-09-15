@@ -152,27 +152,22 @@ public abstract class StarData
 		 * Creates information for a star based on the provided Star Definition
 		 * @param starDefinition StarType used for obtaining information about what star to create
 		 */
-		public void newStar(Constellation.StarDefinition starDefinition, SpaceCoords starFieldCoords)
+		public void newStar(Constellation.StarDefinition starDefinition, SpaceCoords offsetCoords)
 		{
 			// Set up position
-			
-			starCoords[stars][0] = starDefinition.coords().x().toLy() - starFieldCoords.x().toLy();
-			starCoords[stars][1] = starDefinition.coords().y().toLy() - starFieldCoords.y().toLy();
-			starCoords[stars][2] = starDefinition.coords().z().toLy() - starFieldCoords.z().toLy();
+			starCoords[stars][0] = starDefinition.coords().x().toLy() - offsetCoords.x().toLy();
+			starCoords[stars][1] = starDefinition.coords().y().toLy() - offsetCoords.y().toLy();
+			starCoords[stars][2] = starDefinition.coords().z().toLy() - offsetCoords.z().toLy();
 			
 			// Set up size
-			
 			starSizes[stars] = starDefinition.size(); // This randomizes the Star size
 			
+			// Set up distance
 			starDistances[stars] = starDefinition.maxVisibleDistance();
 			
 			// Set up color and alpha
-			
 			starRGBA[stars] = new short[] {(short) starDefinition.rgb().red(), (short) starDefinition.rgb().green(), (short) starDefinition.rgb().blue(), starDefinition.brightness()};
 			
-			// sin and cos are used to effectively clamp the random number between two values without actually clamping it,
-			// wwhich would result in some awkward lines as Stars would be brought to the clamped values
-			// Both affect Star size and rotation
 			starRotations[stars] = starDefinition.rotation();
 			
 			//lod.createStar(builder, hasTexture, lod.size);
@@ -200,11 +195,9 @@ public abstract class StarData
 			Color.IntRGB rgb = starType.getRGB();
 			
 			// Set up size
-			
 			starSizes[stars] = starType.randomSize(random); // This randomizes the Star size
 			
 			// Set up color and alpha
-			
 			starRGBA[stars] = new short[] {(short) rgb.red(), (short) rgb.green(), (short) rgb.blue(), alpha};
 			
 			starRotations[stars] = random.nextDouble() * Math.PI * 2.0D;

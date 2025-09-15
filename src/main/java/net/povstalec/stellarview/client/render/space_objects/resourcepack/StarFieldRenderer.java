@@ -81,6 +81,7 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 	
 	public void addConstellation(Constellation constellation)
 	{
+		constellation.relativeStars();
 		this.lod1definedStars.addAll(constellation.lod1stars());
 		this.lod2definedStars.addAll(constellation.lod2stars());
 		this.lod3definedStars.addAll(constellation.lod3stars());

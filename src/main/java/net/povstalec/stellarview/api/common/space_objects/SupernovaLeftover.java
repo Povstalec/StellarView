@@ -17,7 +17,7 @@ import net.povstalec.stellarview.common.util.TextureLayer;
 public class SupernovaLeftover extends GravityLense
 {
 	public static final Codec<SupernovaLeftover> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			ResourceLocation.CODEC.optionalFieldOf("parent").forGetter(SupernovaLeftover::getParentLocation),
+			ParentInfo.CODEC.optionalFieldOf("parent").forGetter(SupernovaLeftover::getParentInfo),
 			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf("coords").forGetter(object -> Either.left(object.getCoords())),
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(SupernovaLeftover::getAxisRotation),
 			OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(leftover -> Optional.ofNullable(leftover.orbitInfo())),
@@ -35,7 +35,7 @@ public class SupernovaLeftover extends GravityLense
 	
 	public SupernovaLeftover() {}
 	
-	public SupernovaLeftover(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
+	public SupernovaLeftover(Optional<ParentInfo> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
 			Optional<OrbitInfo> orbitInfo, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler,
 			float minStarSize, float maxStarAlpha, float minStarAlpha,
 			float lensingIntensity, double maxLensingDistance)
