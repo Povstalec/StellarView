@@ -1,11 +1,17 @@
-#version 150
+#version 330 core
+#extension GL_ARB_explicit_uniform_location : require
 
-in vec3 StarPos;
-in vec4 Color;
-in vec4 HeightWidthSizeDistance;
+layout (location = 0) in vec3 Position;
+// Instanced
+layout (location = 1) in vec3 StarPos;
+layout (location = 2) in vec4 Color;
+layout (location = 3) in float Rotation;
+layout (location = 4) in float Size;
+layout (location = 5) in float MaxDistance;
 
 uniform mat4 ModelViewMat;
 uniform mat4 ProjMat;
+
 uniform vec3 RelativeSpaceLy;
 uniform vec3 RelativeSpaceKm;
 
@@ -18,6 +24,7 @@ const float MIN_STAR_SIZE = 0.02;
 
 const float KM_PER_LY = 9460730472581.2;
 
+out vec2 texCoord0;
 out vec4 vertexColor;
 
 float clampStar(float starSize, float distance)
@@ -50,14 +57,14 @@ void main()
 	
 	float distance = sqrt(xyz.x * xyz.x + xyz.y * xyz.y + xyz.z * xyz.z);
 	
-	if(distance > HeightWidthSizeDistance.w)
+	if(distance > MaxDistance)
 	{
 		gl_Position = vec4(0.0, 0.0, 0.0, 0.0);
 		vertexColor = vec4(0.0, 0.0, 0.0, 0.0);
 	}
 	else
 	{
-		float starSize = clampStar(HeightWidthSizeDistance.z, distance);
+		float starSize = clampStar(Size, distance);
 		float alpha = clampAlpha(Color.w, distance);
 		
 		// Normalize
@@ -88,11 +95,14 @@ void main()
 		
 		float xzLength = sqrt(xyz.x * xyz.x + xyz.z * xyz.z);
 		float sphericalPhi = atan(xzLength, xyz.y);
-		float sinPhi = sin(sphericalPhi); //TODO These don't repeat so remove them
-		float cosPhi = cos(sphericalPhi); //
+		float sinPhi = sin(sphericalPhi);
+		float cosPhi = cos(sphericalPhi);
 		
-		float height = HeightWidthSizeDistance.x * starSize;
-		float width = HeightWidthSizeDistance.y * starSize;
+		float sinRotation = sin(Rotation);
+		float cosRotation = cos(Rotation);
+		
+		float height = (Position.x * cosRotation - Position.y * sinRotation) * starSize;
+		float width = (Position.y * cosRotation + Position.x * sinRotation) * starSize;
 		if(LensingIntensity > 1.0)
 		{
 			float lensingAmount = cosPhi * LensingIntensity;
@@ -101,7 +111,6 @@ void main()
 		}
 		
 		float heightProjectionY = height * sinPhi;
-		
 		float heightProjectionXZ = - height * cosPhi;
 		
 		/* 
@@ -116,7 +125,7 @@ void main()
 		 */
 		float projectedX = heightProjectionXZ * sinTheta - width * cosTheta;
 		float projectedZ = width * sinTheta + heightProjectionXZ * cosTheta;
-			
+		
 		// This effectively pushes the Star away from the camera
 		// It's better to have them very far away, otherwise they will appear as though they're shaking when the Player is walking
 		xyz *= DEFAULT_DISTANCE;

@@ -1,11 +1,18 @@
-#version 150
+#version 330 core
+#extension GL_ARB_explicit_uniform_location : require
 
-in vec3 StarPos;
-in vec4 Color;
-in vec4 HeightWidthSizeDistance;
+layout (location = 0) in vec3 Position;
+layout (location = 1) in vec2 UV0;
+// Instanced
+layout (location = 2) in vec3 StarPos;
+layout (location = 3) in vec4 Color;
+layout (location = 4) in float Rotation;
+layout (location = 5) in float Size;
+layout (location = 6) in float MaxDistance;
 
 uniform mat4 ModelViewMat;
 uniform mat4 ProjMat;
+
 uniform vec3 RelativeSpaceLy;
 uniform vec3 RelativeSpaceKm;
 
@@ -14,34 +21,39 @@ uniform mat3 LensingMatInv;
 uniform float LensingIntensity;
 
 const float DEFAULT_DISTANCE = 100;
-const float MIN_STAR_SIZE = 0.02;
+const float MAX_SIZE = 50;
+const float MAX_ALPHA = 0.025;
 
 const float KM_PER_LY = 9460730472581.2;
 
+out vec2 texCoord0;
 out vec4 vertexColor;
 
-float clampStar(float starSize, float distance)
+float clampDustCloud(float size, float distance)
 {
-	starSize -= starSize * distance / 1000000.0;
+	float minSize = size * 0.04;
+
+	size = 100000 * size / distance;
 	
-	if(starSize < MIN_STAR_SIZE)
-		return MIN_STAR_SIZE;
+	if(size > MAX_SIZE)
+		return MAX_SIZE;
 	
-	return starSize;
+	return size < minSize ? minSize : size;
 }
 
 // Adjusts the brightness (alpha) of the star based on its distance
 float clampAlpha(float alpha, float distance)
 {
-	float minAlpha = alpha * 0.1;
+	float minAlpha = alpha * 0.005;
 	
 	// Stars appear dimmer the further away they are
-	alpha -= distance / 100000.0;
+	//alpha -= distance / 100000;
+	alpha = 100000 * alpha / distance;
 	
 	if(alpha < minAlpha)
 		return minAlpha;
-	
-	return alpha;
+		
+	return alpha > MAX_ALPHA ? MAX_ALPHA : alpha;
 }
 
 void main()
@@ -50,14 +62,15 @@ void main()
 	
 	float distance = sqrt(xyz.x * xyz.x + xyz.y * xyz.y + xyz.z * xyz.z);
 	
-	if(distance > HeightWidthSizeDistance.w)
+	if(distance > MaxDistance)
 	{
 		gl_Position = vec4(0.0, 0.0, 0.0, 0.0);
 		vertexColor = vec4(0.0, 0.0, 0.0, 0.0);
+		texCoord0 = UV0;
 	}
 	else
 	{
-		float starSize = clampStar(HeightWidthSizeDistance.z, distance);
+		float starSize = clampDustCloud(Size, distance);
 		float alpha = clampAlpha(Color.w, distance);
 		
 		// Normalize
@@ -88,11 +101,14 @@ void main()
 		
 		float xzLength = sqrt(xyz.x * xyz.x + xyz.z * xyz.z);
 		float sphericalPhi = atan(xzLength, xyz.y);
-		float sinPhi = sin(sphericalPhi); //TODO These don't repeat so remove them
-		float cosPhi = cos(sphericalPhi); //
+		float sinPhi = sin(sphericalPhi);
+		float cosPhi = cos(sphericalPhi);
 		
-		float height = HeightWidthSizeDistance.x * starSize;
-		float width = HeightWidthSizeDistance.y * starSize;
+		float sinRotation = sin(Rotation);
+		float cosRotation = cos(Rotation);
+		
+		float height = (Position.x * cosRotation - Position.y * sinRotation) * starSize;
+		float width = (Position.y * cosRotation + Position.x * sinRotation) * starSize;
 		if(LensingIntensity > 1.0)
 		{
 			float lensingAmount = cosPhi * LensingIntensity;
@@ -101,7 +117,6 @@ void main()
 		}
 		
 		float heightProjectionY = height * sinPhi;
-		
 		float heightProjectionXZ = - height * cosPhi;
 		
 		/* 
@@ -128,5 +143,6 @@ void main()
 		
 		gl_Position = ProjMat * ModelViewMat * vec4(pos, 1.0);
 		vertexColor = vec4(Color.x, Color.y, Color.z, alpha);
+		texCoord0 = UV0;
 	}
 }

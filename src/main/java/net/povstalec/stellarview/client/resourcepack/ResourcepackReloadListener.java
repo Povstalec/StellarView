@@ -19,6 +19,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.api.client.events.StellarViewEvents;
 import net.povstalec.stellarview.api.common.space_objects.distinct.Luna;
+import net.povstalec.stellarview.api.common.space_objects.resourcepack.*;
 import net.povstalec.stellarview.client.SpaceObjectRenderers;
 import net.povstalec.stellarview.client.render.SpaceRenderer;
 import net.povstalec.stellarview.client.render.StellarViewEffects;
@@ -26,13 +27,7 @@ import net.povstalec.stellarview.client.render.ViewCenters;
 import net.povstalec.stellarview.client.render.level.StellarViewEndEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewNetherEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewOverworldEffects;
-import net.povstalec.stellarview.api.common.space_objects.resourcepack.BlackHole;
-import net.povstalec.stellarview.api.common.space_objects.resourcepack.Moon;
-import net.povstalec.stellarview.api.common.space_objects.resourcepack.Nebula;
-import net.povstalec.stellarview.api.common.space_objects.resourcepack.Planet;
 import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
-import net.povstalec.stellarview.api.common.space_objects.resourcepack.Star;
-import net.povstalec.stellarview.api.common.space_objects.resourcepack.StarField;
 import net.povstalec.stellarview.api.common.space_objects.distinct.Sol;
 import net.povstalec.stellarview.client.render.space_objects.SpaceObjectRenderer;
 import net.povstalec.stellarview.client.resourcepack.effects.MeteorEffect;
@@ -41,6 +36,8 @@ import net.povstalec.stellarview.common.util.StarInfo;
 
 public class ResourcepackReloadListener
 {
+	public static final ResourceLocation REMOVE = new ResourceLocation(StellarView.MODID, "remove");
+	
 	public static final String PATH = "stellarview";
 	
 	public static final String VIEW_CENTERS = "view_centers";
@@ -52,12 +49,14 @@ public class ResourcepackReloadListener
 	public static final String STAR = "star";
 	public static final String BLACK_HOLE = "black_hole";
 	public static final String STAR_FIELD = "star_field";
+	public static final String CONSTELLATION = "constellation";
 	public static final String NEBULA = "nebula";
 	
 	public static final String EFFECTS = "effects";
 	public static final String STAR_INFO = "star_info";
 	public static final String DUST_CLOUD_INFO = "dust_cloud_info";
 	
+	private static final ResourceLocation MILKY_WAY_LOCATION = new ResourceLocation(StellarView.MODID, "star_field/milky_way/milky_way");
 	private static final ResourceLocation SOL_LOCATION = new ResourceLocation(StellarView.MODID, "star/milky_way/sol");
 	private static final ResourceLocation LUNA_LOCATION = new ResourceLocation(StellarView.MODID, "moon/milky_way/sol/earth/luna");
 	
@@ -122,13 +121,16 @@ public class ResourcepackReloadListener
 					else if(canShortenPath(location, STAR_FIELD))
 						spaceObject = makeStarField(location, element);
 					
+					else if(canShortenPath(location, CONSTELLATION))
+						spaceObject = makeConstellation(location, element);
+					
 					else if(canShortenPath(location, BLACK_HOLE))
 						spaceObject = makeBlackHole(location, element);
 					
 					else if(canShortenPath(location, NEBULA))
 						spaceObject = makeNebula(location, element);
 					
-					if(spaceObject != null)
+					if(spaceObject != null && !shouldIgnore(spaceObject))
 					{
 						SpaceObjectRenderer renderer = SpaceObjectRenderers.constructObjectRenderer(spaceObject);
 						
@@ -255,6 +257,15 @@ public class ResourcepackReloadListener
 		//*****************************************Celestials*****************************************
 		//============================================================================================
 		
+		public static boolean shouldIgnore(SpaceObject spaceObject)
+		{
+			// Don't add Space Objects which are marked as removed
+			if(spaceObject.getParentLocation().isPresent())
+				return REMOVE.equals(spaceObject.getParentLocation().get());
+			
+			return false;
+		}
+		
 		public static Star makeStar(ResourceLocation location, JsonElement element)
 		{
 			try
@@ -343,14 +354,32 @@ public class ResourcepackReloadListener
 			return null;
 		}
 		
-		public static StarField  makeStarField(ResourceLocation location, JsonElement element)
+		public static StarField makeStarField(ResourceLocation location, JsonElement element)
 		{
 			try
 			{
+				
 				JsonObject json = GsonHelper.convertToJsonObject(element, "star_field");
 				StarField starField = StarField.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Star Field", msg));
 				
 				return starField;
+			}
+			catch(RuntimeException e)
+			{
+				StellarView.LOGGER.error("Could not load " + location.toString() + " " + e);
+			}
+			
+			return null;
+		}
+		
+		public static Constellation makeConstellation(ResourceLocation location, JsonElement element)
+		{
+			try
+			{
+				JsonObject json = GsonHelper.convertToJsonObject(element, "constellation");
+				Constellation constellation = Constellation.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, msg -> StellarView.LOGGER.error("Failed to parse Constellation", msg));
+				
+				return constellation;
 			}
 			catch(RuntimeException e)
 			{

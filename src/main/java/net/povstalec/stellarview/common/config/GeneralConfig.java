@@ -7,6 +7,7 @@ public class GeneralConfig
 	public static final String PREFIX = "client.general";
 	
 	public static StellarViewConfigValue.BooleanValue static_sky;
+	public static StellarViewConfigValue.BooleanValue alt_vertex_build_order;
 	
 	public static StellarViewConfigValue.BooleanValue use_game_ticks;
 	public static StellarViewConfigValue.IntValue tick_multiplier;
@@ -29,6 +30,10 @@ public class GeneralConfig
 		static_sky = new StellarViewConfigValue.BooleanValue(client, "client.static_sky",
 				false,
 				"Makes the sky static (compatible with shaders)");
+		
+		alt_vertex_build_order = new StellarViewConfigValue.BooleanValue(client, "client.alt_vertex_build_order",
+				false,
+				"Changes the order in which vertices used in static_sky are built");
 		
 		
 		

@@ -125,7 +125,6 @@ public abstract class SpaceObject implements INBTSerializable<CompoundTag>
 		return true;
 	}
 	
-	
 	public void addChild(SpaceObject child)
 	{
 		if(!addChildRaw(child))
