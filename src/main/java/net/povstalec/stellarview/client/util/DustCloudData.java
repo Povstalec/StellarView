@@ -26,6 +26,7 @@ public abstract class DustCloudData
 	public static final int HEIGHT_OFFSET = 0;
 	public static final int WIDTH_OFFSET = HEIGHT_OFFSET + Float.BYTES;
 	public static final int STAR_SIZE_OFFSET = WIDTH_OFFSET + Float.BYTES;
+	public static final int DISTANCE_OFFSET = STAR_SIZE_OFFSET + Float.BYTES;
 	
 	public static final int INSTANCE_SIZE = CelestialInstancedBuffer.INSTANCE_SIZE;
 	
@@ -199,10 +200,10 @@ public abstract class DustCloudData
 				
 				builder.vertex(dustCloudCoords[i][0], dustCloudCoords[i][1], dustCloudCoords[i][2]).color(dustCloudRGBA[i][0], dustCloudRGBA[i][1], dustCloudRGBA[i][2], dustCloudRGBA[i][3]);
 				// These next few lines add a "custom" element defined as HeightWidthSize in StellarViewVertexFormat
-				builder.putFloat(0, (float) height);
-				builder.putFloat(4, (float) width);
-				builder.putFloat(8, (float) dustCloudSizes[i]);
-				builder.putFloat(12, (float) StarField.LOD_DISTANCE_HIGH);
+				builder.putFloat(HEIGHT_OFFSET, (float) height);
+				builder.putFloat(WIDTH_OFFSET, (float) width);
+				builder.putFloat(STAR_SIZE_OFFSET, (float) dustCloudSizes[i]);
+				builder.putFloat(DISTANCE_OFFSET, (float) StarField.LOD_DISTANCE_HIGH);
 				builder.nextElement();
 				
 				builder.uv( (float) (aLocation + 1) / 2F, (float) (bLocation + 1) / 2F);
@@ -231,7 +232,7 @@ public abstract class DustCloudData
 				// Size
 				instances[INSTANCE_SIZE * i + 8] = (float) dustCloudSizes[i];
 				// Max Distance
-				instances[INSTANCE_SIZE * i + 9] = (float) StarField.LOD_DISTANCE_HIGH; //TODO Change this
+				instances[INSTANCE_SIZE * i + 9] = (float) StarField.LOD_DISTANCE_HIGH;
 			}
 			
 			return instances;

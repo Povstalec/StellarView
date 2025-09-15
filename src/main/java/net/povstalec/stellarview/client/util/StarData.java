@@ -111,6 +111,7 @@ public abstract class StarData
 		
 		private double[][] starCoords;
 		private double[] starSizes;
+		private double[] starDistances;
 		
 		private short[][] starRGBA;
 		
@@ -122,6 +123,7 @@ public abstract class StarData
 		{
 			this.starCoords = new double[stars][3];
 			this.starSizes = new double[stars];
+			this.starDistances = new double[stars];
 			
 			this.starRotations = new double[stars];
 			
@@ -161,6 +163,8 @@ public abstract class StarData
 			
 			starSizes[stars] = starDefinition.size(); // This randomizes the Star size
 			
+			starDistances[stars] = starDefinition.maxVisibleDistance();
+			
 			// Set up color and alpha
 			
 			starRGBA[stars] = new short[] {(short) starDefinition.rgb().red(), (short) starDefinition.rgb().green(), (short) starDefinition.rgb().blue(), starDefinition.brightness()};
@@ -188,6 +192,8 @@ public abstract class StarData
 			starCoords[stars][0] = x;
 			starCoords[stars][1] = y;
 			starCoords[stars][2] = z;
+			
+			starDistances[stars] = starType.getMaxVisibleDistance();
 			
 			short alpha = starType.randomBrightness(random); // 0xAA is the default
 			Color.IntRGB rgb = starType.getRGB();
@@ -272,7 +278,7 @@ public abstract class StarData
 				builder.putFloat(HEIGHT_OFFSET, (float) height);
 				builder.putFloat(WIDTH_OFFSET, (float) width);
 				builder.putFloat(STAR_SIZE_OFFSET, (float) starSizes[i]);
-				builder.putFloat(DISTANCE_OFFSET, (float) StarField.LOD_DISTANCE_HIGH);
+				builder.putFloat(DISTANCE_OFFSET, (float) starDistances[i]);
 				builder.nextElement();
 				
 				if(hasTexture)
@@ -302,7 +308,7 @@ public abstract class StarData
 				// Size
 				instances[INSTANCE_SIZE * i + 8] = (float) starSizes[i];
 				// Max Distance
-				instances[INSTANCE_SIZE * i + 9] = (float) StarField.LOD_DISTANCE_HIGH; //TODO Change this
+				instances[INSTANCE_SIZE * i + 9] = (float) starDistances[i];
 			}
 			
 			return instances;

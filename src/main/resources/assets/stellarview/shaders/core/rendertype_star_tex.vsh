@@ -55,10 +55,8 @@ void main()
 	
 	float starSize = clampStar(HeightWidthSize.z * 4, distance);
 	
-	distance = 1.0 / distance;
-	xyz.x *= distance;
-	xyz.y *= distance;
-	xyz.z *= distance;
+	// Normalize
+	xyz /= distance;
 	
 	if(LensingIntensity > 1.0)
 		xyz = LensingMat * xyz;
