@@ -22,8 +22,8 @@
 			"size": 19000,
 			"min_size": 0.05,
 			"clamp_at_min_size": false,
-			"rotation": 90,
-			"uv": { "flip_uv": true	}
+			"rotation": 0,
+			"uv": { "flip_uv": false }
 		},
 		{
 			"texture": "stellarview:textures/environment/planet/sol/kerberos.png",
@@ -32,8 +32,8 @@
 			"size": 19000,
 			"min_size": 0.05,
 			"clamp_at_min_size": false,
-			"rotation": 90,
-			"uv": { "flip_uv": true }
+			"rotation": -90,
+			"uv": { "flip_uv": false }
 		}
 	]
 }

@@ -9,7 +9,7 @@
 		"orbit_clamp_distance": 100000000,
 		"orbital_period": { "ticks": 8643360 },
 		"argument_of_periapsis": 0,
-		"inclination": 5.8,
+		"inclination": 7.6,
 		"longtitude_of_ascending_node": 0,
 		"epoch_mean_anomaly": 92
 	},
@@ -22,8 +22,8 @@
 			"size": 357000,
 			"min_size": 0.08,
 			"clamp_at_min_size": false,
-			"rotation": 90,
-			"uv": { "flip_uv": true	}
+			"rotation": 0,
+			"uv": { "flip_uv": false }
 		},
 		{
 			"texture": "stellarview:textures/environment/planet/sol/nereid.png",
@@ -32,8 +32,8 @@
 			"size": 357000,
 			"min_size": 0.08,
 			"clamp_at_min_size": false,
-			"rotation": 90,
-			"uv": { "flip_uv": true }
+			"rotation": -90,
+			"uv": { "flip_uv": false }
 		}
 	]
 }

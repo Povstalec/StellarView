@@ -9,7 +9,7 @@
 		"orbit_clamp_distance": 3500000,
 		"orbital_period": { "ticks": 30312 },
 		"argument_of_periapsis": 0,
-		"inclination": 0.93,
+		"inclination": 1.8,
 		"longtitude_of_ascending_node": 81.75,
 		"epoch_mean_anomaly": 264
 	},
@@ -22,8 +22,8 @@
 			"size": 16080,
 			"min_size": 0.1,
 			"clamp_at_min_size": false,
-			"rotation": 90,
-			"uv": { "flip_uv": true	}
+			"rotation": 0,
+			"uv": { "flip_uv": false }
 		},
 		{
 			"texture": "stellarview:textures/environment/planet/sol/deimos.png",
@@ -32,8 +32,8 @@
 			"size": 16080,
 			"min_size": 0.1,
 			"clamp_at_min_size": false,
-			"rotation": 90,
-			"uv": { "flip_uv": true }
+			"rotation": -90,
+			"uv": { "flip_uv": false }
 		}
 	]
 }
