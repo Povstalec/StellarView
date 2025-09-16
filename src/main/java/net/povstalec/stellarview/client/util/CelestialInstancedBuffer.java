@@ -1,7 +1,6 @@
 package net.povstalec.stellarview.client.util;
 
 import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.platform.MemoryTracker;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferUploader;
 import net.povstalec.stellarview.client.render.SpaceRenderer;
@@ -10,11 +9,15 @@ import net.povstalec.stellarview.common.util.SpaceCoords;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.*;
+import org.lwjgl.system.MemoryUtil;
 
 import java.nio.ByteBuffer;
 
 public class CelestialInstancedBuffer implements AutoCloseable
 {
+	private static final MemoryUtil.MemoryAllocator ALLOCATOR = MemoryUtil.getAllocator(false);
+	private static final long INSTANCE_ADDRESS = ALLOCATOR.malloc(6);
+	
 	public static final int POS_SIZE = 3;
 	public static final int COLOR_SIZE = 4;
 	public static final int ROTATION_SIZE = 1;
@@ -38,7 +41,7 @@ public class CelestialInstancedBuffer implements AutoCloseable
 					1F, -1F, 0F,	1.0F, 0.0F,
 			};
 	
-	public static final ByteBuffer INDEX_BUFFER = indexBuffer();
+	public static final ByteBuffer INDEX_BUFFER = indexBuffer(INSTANCE_ADDRESS);
 	
 	private int instanceBufferId;
 	private int vertexBufferId;
@@ -54,9 +57,9 @@ public class CelestialInstancedBuffer implements AutoCloseable
 		this.arrayObjectId = GlStateManager._glGenVertexArrays();
 	}
 	
-	public static ByteBuffer indexBuffer()
+	public static ByteBuffer indexBuffer(long address)
 	{
-		ByteBuffer instanceBuffer = MemoryTracker.create(6);
+		ByteBuffer instanceBuffer = MemoryUtil.memByteBuffer(address, 6);
 		
 		// For some reason using just "put((byte) 0)" leads to an OUT_OF_MEMORY_ERROR, but put(0, (byte) 0) works just fine
 		instanceBuffer.put(0, (byte) 0);

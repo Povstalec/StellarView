@@ -3,9 +3,10 @@ package net.povstalec.stellarview.api.common.space_objects.resourcepack;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
 import net.povstalec.stellarview.common.util.*;
 
@@ -113,18 +114,18 @@ public class Constellation extends SpaceObject
 	//*************************************Saving and Loading*************************************
 	//============================================================================================
 	
-	private static CompoundTag serializeLODTypes(ArrayList<StarDefinition> lodTypes)
+	private static CompoundTag serializeLODTypes(HolderLookup.Provider provider, ArrayList<StarDefinition> lodTypes)
 	{
 		CompoundTag starTypesTag = new CompoundTag();
 		for(int i = 0; i < lodTypes.size(); i++)
 		{
-			starTypesTag.put("star_definition_" + i, lodTypes.get(i).serializeNBT());
+			starTypesTag.put("star_definition_" + i, lodTypes.get(i).serializeNBT(provider));
 		}
 		
 		return starTypesTag;
 	}
 	
-	private static ArrayList<StarDefinition> getLODTypes(CompoundTag tag, String key)
+	private static ArrayList<StarDefinition> getLODTypes(HolderLookup.Provider provider, CompoundTag tag, String key)
 	{
 		ArrayList<StarDefinition> lodTypes;
 		if(tag.contains(key))
@@ -134,7 +135,7 @@ public class Constellation extends SpaceObject
 			for(int i = 0; i < starTypesTag.size(); i++)
 			{
 				StarDefinition starDefinition = new StarDefinition();
-				starDefinition.deserializeNBT(starTypesTag.getCompound("star_definition_" + i));
+				starDefinition.deserializeNBT(provider, starTypesTag.getCompound("star_definition_" + i));
 				lodTypes.add(starDefinition);
 			}
 		}
@@ -145,28 +146,28 @@ public class Constellation extends SpaceObject
 	}
 	
 	@Override
-	public CompoundTag serializeNBT()
+	public CompoundTag serializeNBT(HolderLookup.Provider provider)
 	{
-		CompoundTag tag = super.serializeNBT();
+		CompoundTag tag = super.serializeNBT(provider);
 		
 		if(this.lod1stars != null)
-			tag.put(LOD1_STARS, serializeLODTypes(this.lod1stars));
+			tag.put(LOD1_STARS, serializeLODTypes(provider, this.lod1stars));
 		if(this.lod2stars != null)
-			tag.put(LOD2_STARS, serializeLODTypes(this.lod2stars));
+			tag.put(LOD2_STARS, serializeLODTypes(provider, this.lod2stars));
 		if(this.lod3stars != null)
-			tag.put(LOD3_STARS, serializeLODTypes(this.lod3stars));
+			tag.put(LOD3_STARS, serializeLODTypes(provider, this.lod3stars));
 		
 		return tag;
 	}
 	
 	@Override
-	public void deserializeNBT(CompoundTag tag)
+	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag)
 	{
-		super.deserializeNBT(tag);
+		super.deserializeNBT(provider, tag);
 		
-		this.lod1stars = getLODTypes(tag, LOD1_STARS);
-		this.lod2stars = getLODTypes(tag, LOD2_STARS);
-		this.lod3stars = getLODTypes(tag, LOD3_STARS);
+		this.lod1stars = getLODTypes(provider, tag, LOD1_STARS);
+		this.lod2stars = getLODTypes(provider, tag, LOD2_STARS);
+		this.lod3stars = getLODTypes(provider, tag, LOD3_STARS);
 	}
 	
 	
@@ -251,13 +252,13 @@ public class Constellation extends SpaceObject
 		//============================================================================================
 		
 		@Override
-		public CompoundTag serializeNBT()
+		public CompoundTag serializeNBT(HolderLookup.Provider provider)
 		{
 			CompoundTag tag = new CompoundTag();
 			
-			tag.put(COORDS, coords.serializeNBT());
+			tag.put(COORDS, coords.serializeNBT(provider));
 			
-			tag.put(RGB, rgb.serializeNBT());
+			tag.put(RGB, rgb.serializeNBT(provider));
 			
 			tag.putShort(BRIGHTNESS, brightness);
 			
@@ -271,13 +272,13 @@ public class Constellation extends SpaceObject
 		}
 		
 		@Override
-		public void deserializeNBT(CompoundTag tag)
+		public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag)
 		{
 			this.coords = new SpaceCoords();
-			coords.deserializeNBT(tag.getCompound(COORDS));
+			coords.deserializeNBT(provider, tag.getCompound(COORDS));
 			
 			this.rgb = new  Color.IntRGB();
-			this.rgb.deserializeNBT(tag.getCompound(RGB));
+			this.rgb.deserializeNBT(provider, tag.getCompound(RGB));
 			
 			this.brightness = tag.getShort(BRIGHTNESS);
 			

@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.FogRenderer;
@@ -103,22 +104,23 @@ public class ConstellationRenderer<T extends Constellation> extends SpaceObjectR
 	}
 	
 	@Override
-	public void render(ViewCenter viewCenter, ClientLevel level, float partialTicks, PoseStack stack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, BufferBuilder bufferbuilder, Vector3f parentVector, AxisRotation parentRotation)
+	public void render(ViewCenter viewCenter, ClientLevel level, float partialTicks, Matrix4f modelViewMatrix, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog, Tesselator tesselator, Vector3f parentVector, AxisRotation parentRotation)
 	{
-		if(shouldRender() && !GeneralConfig.disable_stars.get() && viewCenter.starBrightness() > 0.0F)
+		SpaceCoords difference = viewCenter.getCoords().sub(spaceCoords());
+		
+		if(starData == null)
+			setStars();
+		else if(requiresReset())
 		{
-			SpaceCoords difference = viewCenter.getCoords().sub(spaceCoords());
+			hasTexture = GeneralConfig.textured_stars.get();
+			starData.reset();
+		}
+		
+		if(!GeneralConfig.disable_stars.get() && viewCenter.starBrightness() > 0.0F)
+		{
+			final var transformedModelView = new Matrix4f(modelViewMatrix);
 			
-			if(starData == null)
-				setStars();
-			else if(requiresReset())
-			{
-				hasTexture = GeneralConfig.textured_stars.get();
-				starData.reset();
-			}
-			
-			stack.pushPose();
-			
+			//stack.translate(0, 0, 0);
 			if(hasTexture)
 				RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 			RenderSystem.setShaderColor(1, 1, 1, viewCenter.starBrightness());
@@ -128,16 +130,15 @@ public class ConstellationRenderer<T extends Constellation> extends SpaceObjectR
 			
 			Quaternionf q = SpaceCoords.getQuaternionf(level, viewCenter, partialTicks);
 			
-			stack.mulPose(q);
-			this.starData.renderStars(StarField.LevelOfDetail.fromDistance(difference), stack.last().pose(), projectionMatrix, difference, viewCenter.isStatic(), hasTexture);
+			transformedModelView.rotate(q);
+			this.starData.renderStars(StarField.LevelOfDetail.fromDistance(difference), transformedModelView, projectionMatrix, difference, viewCenter.isStatic(), hasTexture);
 			
 			setupFog.run();
-			stack.popPose();
 		}
 		
 		for(SpaceObjectRenderer<?> child : children)
 		{
-			child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, parentVector, new AxisRotation(0, 0, 0));
+			child.render(viewCenter, level, partialTicks, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog, tesselator, parentVector, new AxisRotation(0, 0, 0));
 		}
 	}
 }
