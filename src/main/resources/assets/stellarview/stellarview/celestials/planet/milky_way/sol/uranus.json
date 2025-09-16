@@ -34,6 +34,26 @@
 			"clamp_at_min_size": true,
 			"rotation": 7.77,
 			"uv": { "flip_uv": false }
+		},
+		{
+			"texture": "stellarview:textures/environment/ring_light.png",
+			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 64},
+			"blend": false,
+			"size": 25362000,
+			"min_size": 0.4,
+			"clamp_at_min_size": true,
+			"rotation": -90,
+			"uv": { "flip_uv": false }
+		},
+		{
+			"texture": "stellarview:textures/environment/ring_medium.png",
+			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 128},
+			"blend": false,
+			"size": 25362000,
+			"min_size": 0.4,
+			"clamp_at_min_size": true,
+			"rotation": -90,
+			"uv": { "flip_uv": false }
 		}
 	]
 }
