@@ -9,7 +9,7 @@ import net.minecraft.server.packs.resources.ResourceProvider;
 import javax.annotation.Nullable;
 import java.io.IOException;
 
-public class StarShaderInstance extends ShaderInstance
+public class CelestialShaderInstance extends ShaderInstance
 {
 	@Nullable
 	public final Uniform RELATIVE_SPACE_LY;
@@ -23,7 +23,7 @@ public class StarShaderInstance extends ShaderInstance
 	@Nullable
 	public final Uniform LENSING_INTENSITY;
 	
-	public StarShaderInstance(ResourceProvider provider, ResourceLocation shaderLocation, VertexFormat format)
+	public CelestialShaderInstance(ResourceProvider provider, ResourceLocation shaderLocation, VertexFormat format)
 			throws IOException
 	{
 		super(provider, shaderLocation, format);

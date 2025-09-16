@@ -1,4 +1,5 @@
 {
+	"parent": { "location": "stellarview:star_field/spiral_galaxy/milky_way/milky_way", "relative": false },
 	"coords": { "right_ascension": {"hours": 17, "minutes": 45, "seconds": 40.0409}, "declination": {"degrees": -29, "minutes": 0, "seconds": 28.118}, "distance": {"ly": 26996} },
 	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
 		

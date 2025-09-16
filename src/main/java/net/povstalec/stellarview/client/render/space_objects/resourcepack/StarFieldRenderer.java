@@ -7,6 +7,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.resources.ResourceLocation;
+import net.povstalec.stellarview.api.common.space_objects.resourcepack.Constellation;
 import net.povstalec.stellarview.api.common.space_objects.resourcepack.StarField;
 import net.povstalec.stellarview.client.render.LightEffects;
 import net.povstalec.stellarview.client.render.StellarViewEffects;
@@ -24,6 +25,7 @@ import org.joml.Vector3d;
 import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<T>
@@ -35,9 +37,10 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 	protected StarData starData;
 	protected int lod1stars = 0;
 	protected int lod2stars = 0;
+	protected int lod3stars = 0;
 	protected int totalLOD1stars;
 	protected int totalLOD2stars;
-	protected int totalStars;
+	protected int totalLOD3stars;
 	
 	protected int[] armLod1stars;
 	protected int[] armLod2stars;
@@ -49,25 +52,64 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 	protected DustCloudData dustCloudData;
 	protected int totalDustClouds;
 	
+	protected ArrayList<Constellation.StarDefinition> lod1definedStars;
+	protected ArrayList<Constellation.StarDefinition> lod2definedStars;
+	protected ArrayList<Constellation.StarDefinition> lod3definedStars;
+	
 	public StarFieldRenderer(T starField)
 	{
 		super(starField);
 		
-		this.totalStars = starField.getStars();
 		this.totalDustClouds = starField.getDustClouds();
 		
-		armDustCloudInfo = new DustCloudInfo[renderedObject.getSpiralArms().size()];
-		armLod1stars = new int[renderedObject.getSpiralArms().size()];
-		armLod2stars = new int[renderedObject.getSpiralArms().size()];
+		this.armDustCloudInfo = new DustCloudInfo[this.renderedObject.getSpiralArms().size()];
+		this.armLod1stars = new int[this.renderedObject.getSpiralArms().size()];
+		this.armLod2stars = new int[this.renderedObject.getSpiralArms().size()];
+		
+		this.lod1definedStars = new ArrayList<>();
+		this.lod2definedStars = new ArrayList<>();
+		this.lod3definedStars = new ArrayList<>();
+	}
+	
+	@Override
+	public void addChildRaw(SpaceObjectRenderer<?> child)
+	{
+		super.addChildRaw(child);
+		
+		if(child instanceof ConstellationRenderer<?> constellation)
+			addConstellation(constellation.renderedObject());
+	}
+	
+	@Override
+	public void addChild(SpaceObjectRenderer<?> child)
+	{
+		super.addChild(child);
+		
+		if(child instanceof ConstellationRenderer<?> constellation)
+			addConstellation(constellation.renderedObject());
+	}
+	
+	public void addConstellation(Constellation constellation)
+	{
+		constellation.relativeStars();
+		this.lod1definedStars.addAll(constellation.lod1stars());
+		this.lod2definedStars.addAll(constellation.lod2stars());
+		this.lod3definedStars.addAll(constellation.lod3stars());
 	}
 	
 	protected void setupLOD(StarInfo starInfo)
 	{
 		this.lod1stars = (int) (renderedObject.getStars() * ((float) starInfo.lod1Weight() / starInfo.totalWeight()));
 		this.lod2stars = (int) (renderedObject.getStars() * ((float) starInfo.lod2Weight() / starInfo.totalWeight()));
+		this.lod3stars = renderedObject.getStars() - this.lod1stars - this.lod2stars;
+		
+		this.lod1stars += this.lod1definedStars.size();
+		this.lod2stars += this.lod2definedStars.size();
+		this.lod3stars += this.lod3definedStars.size();
 		
 		this.totalLOD1stars = this.lod1stars;
 		this.totalLOD2stars = this.lod2stars;
+		this.totalLOD3stars = this.lod3stars;
 		
 		int i = 0;
 		for(StarField.SpiralArm arm : renderedObject.getSpiralArms())
@@ -75,9 +117,9 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 			armLod1stars[i] = (int) (arm.armStars() * ((float) starInfo.lod1Weight() / starInfo.totalWeight()));
 			armLod2stars[i] = (int) (arm.armStars() * ((float) starInfo.lod2Weight() / starInfo.totalWeight()));
 			
-			this.totalStars += arm.armStars();
 			this.totalLOD1stars += armLod1stars[i];
 			this.totalLOD2stars += armLod2stars[i];
+			this.totalLOD3stars += arm.armStars() - armLod1stars[i] - armLod2stars[i];
 			
 			this.totalDustClouds += arm.armDustClouds();
 			
@@ -180,7 +222,7 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 	//*******************************************Stars********************************************
 	//============================================================================================
 	
-	protected void generateStars(StarData.LOD lod, StarField.LevelOfDetail levelOfDetail, Random random)
+	protected void generateStars(StarData.LOD lod, StarField.LevelOfDetail levelOfDetail, Random random, ArrayList<Constellation.StarDefinition> definedStars)
 	{
 		int stars;
 		
@@ -193,10 +235,15 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 				stars = lod2stars;
 				break;
 			default:
-				stars = renderedObject.getStars() - lod1stars - lod2stars;
+				stars = lod3stars;
 		}
 		
-		for(int i = 0; i < stars; i++)
+		for(Constellation.StarDefinition star : definedStars)
+		{
+			lod.newStar(star, this.spaceCoords());
+		}
+		
+		for(int i = definedStars.size(); i < stars; i++)
 		{
 			// This generates random coordinates for the Star close to the camera
 			double distance = renderedObject.clumpStarsInCenter() ? random.nextDouble() : Math.cbrt(Math.abs(random.nextDouble()));
@@ -292,24 +339,28 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 			{
 				Random random;
 				int stars;
+				ArrayList<Constellation.StarDefinition> definedStars;
 				
 				switch(levelOfDetail)
 				{
 					case LOD1:
 						random = new Random(renderedObject.getSeed());
 						stars = totalLOD1stars;
+						definedStars = lod1definedStars;
 						break;
 					case LOD2:
 						random = new Random(renderedObject.getSeed() + 1);
 						stars = totalLOD2stars;
+						definedStars = lod2definedStars;
 						break;
 					default:
 						random = new Random(renderedObject.getSeed() + 2);
-						stars = totalStars - totalLOD1stars - totalLOD2stars;
+						stars = totalLOD3stars;
+						definedStars = lod3definedStars;
 				}
 				LOD lod = new LOD(stars);
 				
-				generateStars(lod, levelOfDetail, random);
+				generateStars(lod, levelOfDetail, random, definedStars);
 				
 				int i = 0;
 				for(StarField.SpiralArm arm : renderedObject.getSpiralArms()) //Draw each arm
@@ -426,16 +477,14 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 			starData.reset();
 		}
 		
-		float starBrightness = LightEffects.starBrightness(viewCenter, level, camera, partialTicks);
-		
-		if(!GeneralConfig.disable_stars.get() && starBrightness > 0.0F && totalStars > 0)
+		if(!GeneralConfig.disable_stars.get() && viewCenter.starBrightness() > 0.0F)
 		{
 			final var transformedModelView = new Matrix4f(modelViewMatrix);
 			
 			//stack.translate(0, 0, 0);
 			if(hasTexture)
 				RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-			RenderSystem.setShaderColor(1, 1, 1, starBrightness);
+			RenderSystem.setShaderColor(1, 1, 1, viewCenter.starBrightness());
 			if(hasTexture)
 				RenderSystem.setShaderTexture(0, renderedObject().getStarTexture());
 			FogRenderer.setupNoFog();
@@ -448,7 +497,7 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 			setupFog.run();
 		}
 		
-		for(SpaceObjectRenderer child : children)
+		for(SpaceObjectRenderer<?> child : children)
 		{
 			child.render(viewCenter, level, partialTicks, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog, tesselator, parentVector, new AxisRotation(0, 0, 0));
 		}
