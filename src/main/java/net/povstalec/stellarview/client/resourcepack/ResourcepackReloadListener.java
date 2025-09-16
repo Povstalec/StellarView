@@ -260,8 +260,8 @@ public class ResourcepackReloadListener
 		public static boolean shouldIgnore(SpaceObject spaceObject)
 		{
 			// Don't add Space Objects which are marked as removed
-			if(spaceObject.getParentLocation().isPresent())
-				return REMOVE.equals(spaceObject.getParentLocation().get());
+			if(spaceObject.getParentLocation() != null)
+				return REMOVE.equals(spaceObject.getParentLocation());
 			
 			return false;
 		}
@@ -419,11 +419,11 @@ public class ResourcepackReloadListener
 				spaceObject.setupSpaceObject(spaceObjectEntry.getKey());
 				
 				// Handle parents
-				if(spaceObject.renderedObject().getParentLocation().isPresent())
+				if(spaceObject.renderedObject().getParentLocation() != null)
 				{
 					for(Map.Entry<ResourceLocation, SpaceObjectRenderer<?>> parentEntry : spaceObjects.entrySet())
 					{
-						if(parentEntry.getKey().equals(spaceObject.renderedObject().getParentLocation().get()))
+						if(parentEntry.getKey().equals(spaceObject.renderedObject().getParentLocation()))
 						{
 							parentEntry.getValue().addChild(spaceObject);
 							break;

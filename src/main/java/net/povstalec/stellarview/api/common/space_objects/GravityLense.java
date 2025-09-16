@@ -18,7 +18,7 @@ public abstract class GravityLense extends StarLike
 	
 	public GravityLense() {}
 	
-	public GravityLense(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
+	public GravityLense(Optional<ParentInfo> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
 						Optional<OrbitInfo> orbitInfo, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler,
 						float minStarSize, float maxStarAlpha, float minStarAlpha,
 						float lensingIntensity, double maxLensingDistance)
