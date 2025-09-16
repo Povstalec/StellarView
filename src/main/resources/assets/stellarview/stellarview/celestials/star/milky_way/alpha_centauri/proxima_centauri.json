@@ -16,7 +16,7 @@
 		},
 		{
 			"texture": "stellarview:textures/environment/sunspot_overlay.png",
-			"rgba": {"red": 255, "green": 64, "blue": 64, "alpha": 255},
+			"rgba": {"red": 255, "green": 64, "blue": 64, "alpha": 96},
 			"blend": false,
 			"size": 692146201.5,
 			"min_size": 0.3,
