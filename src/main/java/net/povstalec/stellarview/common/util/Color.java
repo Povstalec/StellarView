@@ -3,6 +3,7 @@ package net.povstalec.stellarview.common.util;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.FastColor;
 import net.minecraftforge.common.util.INBTSerializable;
 
 public class Color
@@ -47,6 +48,13 @@ public class Color
 				).apply(instance, Color.IntRGB::new));
 		
 		public IntRGB() {}
+		
+		public IntRGB(int argb)
+		{
+			this.red = FastColor.ARGB32.red(argb);
+			this.green = FastColor.ARGB32.green(argb);
+			this.blue = FastColor.ARGB32.blue(argb);
+		}
 		
 		public IntRGB(int red, int green, int blue)
 		{
@@ -134,6 +142,13 @@ public class Color
 		
 		public IntRGBA() {}
 		
+		public IntRGBA(int argb)
+		{
+			super(argb);
+			
+			this.alpha = FastColor.ARGB32.alpha(argb);
+		}
+		
 		public IntRGBA(int red, int green, int blue, int alpha)
 		{
 			super(red, green, blue);
@@ -194,7 +209,14 @@ public class Color
 		
 		public FloatRGB() {}
 		
-		public FloatRGB(int red, int green, int blue)
+		public FloatRGB(int argb)
+		{
+			this.red = FastColor.ARGB32.red(argb) / 255F;
+			this.green = FastColor.ARGB32.green(argb) / 255F;
+			this.blue = FastColor.ARGB32.blue(argb) / 255F;
+		}
+		
+		protected FloatRGB(int red, int green, int blue)
 		{
 			if(red > MAX_INT_VALUE || green > MAX_INT_VALUE || blue > MAX_INT_VALUE)
 				throw(new IllegalArgumentException("No value may be higher than 255"));
@@ -301,7 +323,14 @@ public class Color
 		
 		public FloatRGBA() {}
 		
-		public FloatRGBA(int red, int green, int blue, int alpha)
+		public FloatRGBA(int argb)
+		{
+			super(argb);
+			
+			this.alpha = FastColor.ARGB32.alpha(argb) / 255F;
+		}
+		
+		protected FloatRGBA(int red, int green, int blue, int alpha)
 		{
 			super(red, green, blue);
 			

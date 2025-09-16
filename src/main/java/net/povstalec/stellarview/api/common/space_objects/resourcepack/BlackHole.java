@@ -7,7 +7,6 @@ import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.api.common.space_objects.OrbitingObject;
 import net.povstalec.stellarview.api.common.space_objects.StarLike;
@@ -22,7 +21,7 @@ import net.povstalec.stellarview.common.util.TextureLayer;
 public class BlackHole extends SupernovaLeftover
 {
 	public static final Codec<BlackHole> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			ResourceLocation.CODEC.optionalFieldOf("parent").forGetter(BlackHole::getParentLocation),
+			ParentInfo.CODEC.optionalFieldOf("parent").forGetter(BlackHole::getParentInfo),
 			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf("coords").forGetter(object -> Either.left(object.getCoords())),
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(BlackHole::getAxisRotation),
 			OrbitingObject.OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(blackHole -> Optional.ofNullable(blackHole.orbitInfo())),
@@ -40,7 +39,7 @@ public class BlackHole extends SupernovaLeftover
 	
 	public BlackHole() {}
 	
-	public BlackHole(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
+	public BlackHole(Optional<ParentInfo> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
 					 Optional<OrbitingObject.OrbitInfo> orbitInfo, List<TextureLayer> textureLayers, TexturedObject.FadeOutHandler fadeOutHandler,
 					 float minStarSize, float maxStarAlpha, float minStarAlpha,
 					 float lensingIntensity, double maxLensingDistance)

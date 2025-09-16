@@ -7,9 +7,6 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
-import net.povstalec.stellarview.api.common.space_objects.resourcepack.StarField;
-import net.povstalec.stellarview.api.common.space_objects.StarLike;
-import net.povstalec.stellarview.api.common.space_objects.ViewObject;
 import net.povstalec.stellarview.client.render.LightEffects;
 import net.povstalec.stellarview.client.render.SpaceRenderer;
 import net.povstalec.stellarview.client.render.space_objects.SpaceObjectRenderer;
@@ -380,7 +377,7 @@ public class ViewCenter
 		if(rotationPeriod <= 0)
 			return 0;
 		
-		double d0 = Mth.frac((double) ((this.oldDayTicks + dayTickDifference() * partialTicks) % rotationPeriod) / (double) rotationPeriod - 0.25D);
+		double d0 = Mth.frac((double) (this.oldDayTicks % this.rotationPeriod + dayTickDifference() * partialTicks) / (double) this.rotationPeriod - 0.25D);
 		double d1 = 0.5D - Math.cos(d0 * Math.PI) / 2.0D;
 		
 		return (float) (d0 * 2.0D + d1) / 3.0F;
@@ -403,6 +400,10 @@ public class ViewCenter
 		
 		stack.pushPose();
 		
+		//TODO Add a toggle for this
+		// Binds the celestial sphere to a physical location in the world
+		//stack.translate(-camera.getPosition().x(), -camera.getPosition().y() + 300, -camera.getPosition().z());
+		
 		if(!GeneralConfig.disable_view_center_rotation.get())
 		{
 			if(updateTicks)
@@ -424,7 +425,7 @@ public class ViewCenter
 		}
 		
 		viewObject.renderFrom(this, level, tickDifference() * partialTicks, stack, camera, projectionMatrix, StellarViewFogEffects.isFoggy(minecraft, camera), setupFog, bufferbuilder);
-
+		
 		stack.popPose();
 
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
@@ -440,6 +441,8 @@ public class ViewCenter
 	
 	public boolean renderSky(ClientLevel level, int ticks, float partialTicks, PoseStack stack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
 	{
+		minecraft.getProfiler().push(StellarView.MODID);
+		
 		if(viewObject == null && skyboxes == null)
 			return false;
 		
@@ -516,6 +519,8 @@ public class ViewCenter
 		
 		if(this.updateTicks)
 			this.updateTicks = false;
+		
+		minecraft.getProfiler().pop();
 		
 		return true;
 	}
