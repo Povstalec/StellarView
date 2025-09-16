@@ -33,6 +33,8 @@ public class Constellation extends SpaceObject
 			StarDefinition.CODEC.listOf().fieldOf(STARS).forGetter(constellation -> new ArrayList<>())
 	).apply(instance, Constellation::new));
 	
+	public Constellation() {}
+	
 	public Constellation(Optional<ParentInfo> parentLocation, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation, Optional<ResourceLocation> starTexture, List<StarDefinition> stars)
 	{
 		super(parentLocation, coords, axisRotation);
