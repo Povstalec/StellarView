@@ -71,6 +71,15 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 	}
 	
 	@Override
+	public void addChildRaw(SpaceObjectRenderer<?> child)
+	{
+		super.addChildRaw(child);
+		
+		if(child instanceof ConstellationRenderer<?> constellation)
+			addConstellation(constellation.renderedObject());
+	}
+	
+	@Override
 	public void addChild(SpaceObjectRenderer<?> child)
 	{
 		super.addChild(child);
