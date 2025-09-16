@@ -412,6 +412,9 @@ public abstract class StarData
 			
 			double distance = Math.sqrt(x * x + y * y + z * z); // Distance squared
 			
+			if(distance > starDistances[i])
+				return;
+			
 			// COLOR START - Adjusts the brightness (alpha) of the star based on its distance
 			
 			short alpha = starRGBA[i][3];
