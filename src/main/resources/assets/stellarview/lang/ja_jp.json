@@ -1,0 +1,50 @@
+{
+	"gui.stellarview.config": "Stellar View 設定",
+	"gui.stellarview.config.general": "全般設定",
+	"gui.stellarview.config.overworld": "オーバーワールド設定",
+	"gui.stellarview.config.nether": "ネザー設定",
+	"gui.stellarview.config.end": "エンド設定",
+	"gui.stellarview.config.twilight_forest": "黄昏の森設定",
+	"gui.stellarview.config.aether": "エーテル界設定",
+	
+	"gui.stellarview.vanilla_moon": "バニラの月",
+	"gui.stellarview.use_game_ticks": "ゲームティックを使用",
+	"gui.stellarview.tick_multiplier": "ティック倍率",
+	"gui.stellarview.disable_view_center_rotation": "視点中央の回転を無効化",
+	"gui.stellarview.gravitational_lensing": "重力レンズ効果",
+	"gui.stellarview.static_sky": "【シェーダー互換】静止した空",
+	"gui.stellarview.disable_stars": "星を無効化",
+	"gui.stellarview.day_stars": "昼の星を表示",
+	"gui.stellarview.textured_stars": "テクスチャ付きの星",
+	"gui.stellarview.dust_clouds": "塵の雲",
+	"gui.stellarview.light_pollution": "光害",
+	"gui.stellarview.star_brightness": "星の明るさ",
+	"gui.stellarview.dust_cloud_brightness": "塵雲の明るさ",
+	
+	"gui.stellarview.space_region_render_distance": "宇宙領域の描画距離",
+
+	"gui.stellarview.replace_vanilla": "バニラを置き換え",
+	"gui.stellarview.replace_default": "デフォルトを置き換え",
+	"gui.stellarview.config_priority": "設定を優先",
+	
+	"gui.stellarview.overworld_z_rotation_multiplier": "空の回転倍率",
+	
+	"gui.stellarview.meteor_shower_chance": "流星群の発生確率",
+	"gui.stellarview.shooting_star_chance": "流れ星の発生確率",
+
+	"gui.stellarview.sol.x_offset": "太陽のX位置調整",
+	"gui.stellarview.sol.y_offset": "太陽のY位置調整",
+	"gui.stellarview.sol.z_offset": "太陽のZ位置調整",
+	
+	"gui.stellarview.sol.x_rotation": "太陽のX回転",
+	"gui.stellarview.sol.y_rotation": "太陽のY回転",
+	"gui.stellarview.sol.z_rotation": "太陽のZ回転",
+	
+	"key.category.stellarview.config_screen": "Stellar View 設定画面",
+	"key.stellarview.open_config_screen": "設定画面を開く",
+	
+	"gui.stellarview.reset": "リセット",
+	"gui.stellarview.true": "有効",
+	"gui.stellarview.false": "無効",
+	"gui.stellarview.ly": "光年"
+}
