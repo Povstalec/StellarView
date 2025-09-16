@@ -36,16 +36,20 @@ public abstract class StarLikeRenderer<T extends StarLike> extends OrbitingObjec
 			return;
 		
 		float size = (float) textureLayer.mulSize(renderedObject.distanceSize(distance));
-		
-		if(size < textureLayer.minSize())
-		{
-			if(textureLayer.clampAtMinSize())
-			{
+
+		if(size < textureLayer.minSize()) {
+			if (textureLayer.clampAtMinSize()) {
 				size = (float) textureLayer.minSize();
-				
+
 				// Once the star has reached its usual min size, it will start getting smaller slowly again, but only up to a certain point
 				size = renderedObject.starSize(size, lyDistance);
 			}
+			else
+				return;
+		}
+		else if(size > textureLayer.maxSize()) {
+			if (textureLayer.clampAtMaxSize())
+				size = (float) textureLayer.maxSize();
 			else
 				return;
 		}
