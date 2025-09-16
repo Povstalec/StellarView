@@ -318,7 +318,7 @@ public class StellarCoordinates
 			double yProj = Math.sin(galacticLatitude);
 			double zProj = Math.cos(galacticLongtitude) * Math.cos(galacticLatitude);
 			
-			return new SpaceCoords(distance.mul(xProj, true), distance.mul(yProj, true), distance.mul(zProj, true));
+			return new SpaceCoords(distance.mul(xProj, false), distance.mul(yProj, false), distance.mul(zProj, false));
 		}
 		
 		@Override
