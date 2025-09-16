@@ -169,6 +169,9 @@ public class CelestialInstancedBuffer implements AutoCloseable
 		if(shaderInstance.PROJECTION_MATRIX != null)
 			shaderInstance.PROJECTION_MATRIX.set(projectionMatrix);
 		
+		if(shaderInstance.COLOR_MODULATOR != null)
+			shaderInstance.COLOR_MODULATOR.set(RenderSystem.getShaderColor());
+		
 		if(shaderInstance.RELATIVE_SPACE_LY != null)
 			shaderInstance.RELATIVE_SPACE_LY.set(relativeSpaceLy);
 		
