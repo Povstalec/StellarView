@@ -29,6 +29,7 @@ public class StellarViewClient implements ClientModInitializer
 		SpaceObjectRenderers.register(BlackHole.class, BlackHoleRenderer<BlackHole>::new);
 		SpaceObjectRenderers.register(Nebula.class, NebulaRenderer<Nebula>::new);
 		SpaceObjectRenderers.register(StarField.class, StarFieldRenderer<StarField>::new);
+		SpaceObjectRenderers.register(Constellation.class, ConstellationRenderer<Constellation>::new);
 		
 		registerConfig(StellarViewConfig.CLIENT_CONFIG, StellarView.MODID + "-client.toml");
 	}

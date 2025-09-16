@@ -17,11 +17,15 @@ import org.jetbrains.annotations.Nullable;
 
 public class StarField extends SpaceObject
 {
+	public static final long LOD_DISTANCE_HIGH = 10000000L;
+	public static final long LOD_DISTANCE_MEDIUM = 5000000L;
+	public static final long LOD_DISTANCE_LOW = 0L;
+	
 	public enum LevelOfDetail
 	{
-		LOD1((short) 225, 10000000L), // Very far away, most stars can't be seen
-		LOD2((short) 190, 5000000L), // Middle point, some stars can be seen
-		LOD3((short) 0, 0); // Very close, even the dimmest stars are seen
+		LOD1((short) 225, LOD_DISTANCE_HIGH), // Very far away, most stars can't be seen
+		LOD2((short) 190, LOD_DISTANCE_MEDIUM), // Middle point, some stars can be seen
+		LOD3((short) 0, LOD_DISTANCE_LOW); // Very close, even the dimmest stars are seen
 		
 		short minBrightness;
 		long minDistanceSquared;
@@ -106,7 +110,7 @@ public class StarField extends SpaceObject
 	protected ArrayList<SpiralArm> spiralArms;
 	
 	public static final Codec<StarField> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			ResourceLocation.CODEC.optionalFieldOf(PARENT_LOCATION).forGetter(StarField::getParentLocation),
+			ParentInfo.CODEC.optionalFieldOf(PARENT).forGetter(StarField::getParentInfo),
 			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf(COORDS).forGetter(object -> Either.left(object.getCoords())),
 			AxisRotation.CODEC.fieldOf(AXIS_ROTATION).forGetter(StarField::getAxisRotation),
 			
@@ -129,7 +133,7 @@ public class StarField extends SpaceObject
 	
 	public StarField() {}
 	
-	public StarField(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
+	public StarField(Optional<ParentInfo> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
 					 int dustClouds, Optional<ResourceLocation> dustCloudInfo, ResourceLocation dustCloudTexture, boolean clumpDustCloudsInCenter, Stretch dustCloudStretch,
 					 int stars, Optional<ResourceLocation> starInfo, ResourceLocation starTexture, boolean clumpStarsInCenter, Stretch starStretch,
 					 long seed, int diameter, List<SpiralArm> spiralArms)

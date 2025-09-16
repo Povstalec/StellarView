@@ -14,6 +14,11 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.povstalec.stellarview.common.util.*;
 import org.jetbrains.annotations.Nullable;
+import net.povstalec.stellarview.common.util.AxisRotation;
+import net.povstalec.stellarview.common.util.Color;
+import net.povstalec.stellarview.common.util.SpaceCoords;
+import net.povstalec.stellarview.common.util.StellarCoordinates;
+import net.povstalec.stellarview.common.util.TextureLayer;
 
 public class Star extends StarLike
 {
@@ -23,7 +28,7 @@ public class Star extends StarLike
 	private SupernovaInfo supernovaInfo;
 	
 	public static final Codec<Star> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			ResourceLocation.CODEC.optionalFieldOf("parent").forGetter(Star::getParentLocation),
+			ParentInfo.CODEC.optionalFieldOf("parent").forGetter(Star::getParentInfo),
 			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf("coords").forGetter(object -> Either.left(object.getCoords())),
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(Star::getAxisRotation),
 			OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(star -> Optional.ofNullable(star.orbitInfo())),
@@ -40,7 +45,7 @@ public class Star extends StarLike
 	
 	public Star() {}
 	
-	public Star(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
+	public Star(Optional<ParentInfo> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
 			Optional<OrbitInfo> orbitInfo, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler,
 			float minStarSize, float maxStarAlpha, float minStarAlpha,
 			Optional<SupernovaInfo> supernovaInfo)

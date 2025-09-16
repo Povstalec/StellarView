@@ -6,7 +6,7 @@ import net.povstalec.stellarview.mixin.VertexFormatElementMixin;
 
 public class StellarViewVertexFormat
 {
-	public static VertexFormatElement ELEMENT_HEIGHT_WIDTH_SIZE;
+	public static VertexFormatElement ELEMENT_HEIGHT_WIDTH_SIZE_DISTANCE;
 	
 	// NOTE: The order of elements very much MATTERS!!!
 	public static VertexFormat STAR_POS_COLOR_LY;
@@ -26,19 +26,19 @@ public class StellarViewVertexFormat
 	
 	public static void setupVertexFormats()
 	{
-		ELEMENT_HEIGHT_WIDTH_SIZE = register(VertexFormatElement.Type.FLOAT, VertexFormatElement.Usage.GENERIC, 3);
+		ELEMENT_HEIGHT_WIDTH_SIZE_DISTANCE = register(VertexFormatElement.Type.FLOAT, VertexFormatElement.Usage.GENERIC, 3);
 		
 		STAR_POS_COLOR_LY = VertexFormat.builder()
 				.add("StarPos", VertexFormatElement.POSITION)
 				.add("Color", VertexFormatElement.COLOR)
-				.add("HeightWidthSize", ELEMENT_HEIGHT_WIDTH_SIZE)
+				.add("HeightWidthSizeDistance", ELEMENT_HEIGHT_WIDTH_SIZE_DISTANCE)
 				.add("UV0", VertexFormatElement.UV0)
 				.build();
 		
 		STAR_POS_COLOR_LY_TEX = VertexFormat.builder()
 				.add("StarPos", VertexFormatElement.POSITION)
 				.add("Color", VertexFormatElement.COLOR)
-				.add("HeightWidthSize", ELEMENT_HEIGHT_WIDTH_SIZE)
+				.add("HeightWidthSizeDistance", ELEMENT_HEIGHT_WIDTH_SIZE_DISTANCE)
 				.add("UV0", VertexFormatElement.UV0)
 				.build();
 	}
