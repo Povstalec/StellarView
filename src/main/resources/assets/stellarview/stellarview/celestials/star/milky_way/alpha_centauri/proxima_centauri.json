@@ -13,6 +13,26 @@
 			"clamp_at_min_size": true,
 			"rotation": 12,
 			"uv": { "flip_uv": false }
+		},
+		{
+			"texture": "stellarview:textures/environment/sunspot_overlay.png",
+			"rgba": {"red": 255, "green": 64, "blue": 64, "alpha": 255},
+			"blend": false,
+			"size": 692146201.5,
+			"min_size": 0.3,
+			"clamp_at_min_size": true,
+			"rotation": -90,
+			"uv":
+			{
+				"phase_handler":
+				{
+					"ticks_per_phase": 7670086,
+					"phase_tick_offset": 2556695,
+					"columns": 4,
+					"rows": 2
+				},
+				"flip_uv": false
+			}
 		}
 	]
 }
