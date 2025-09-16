@@ -10,23 +10,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.povstalec.stellarview.api.common.space_objects.StarLike;
 import net.povstalec.stellarview.api.common.space_objects.SupernovaLeftover;
-import net.povstalec.stellarview.client.render.LightEffects;
-import org.joml.Matrix4f;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.client.Camera;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.GameRenderer;
-import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.Color;
 import net.povstalec.stellarview.common.util.SpaceCoords;
-import net.povstalec.stellarview.common.util.SphericalCoords;
 import net.povstalec.stellarview.common.util.StellarCoordinates;
 import net.povstalec.stellarview.common.util.TextureLayer;
 
@@ -38,7 +29,7 @@ public class Star extends StarLike
 	private SupernovaInfo supernovaInfo;
 	
 	public static final Codec<Star> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			ResourceLocation.CODEC.optionalFieldOf("parent").forGetter(Star::getParentLocation),
+			ParentInfo.CODEC.optionalFieldOf("parent").forGetter(Star::getParentInfo),
 			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf("coords").forGetter(object -> Either.left(object.getCoords())),
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(Star::getAxisRotation),
 			OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(star -> Optional.ofNullable(star.orbitInfo())),
@@ -55,7 +46,7 @@ public class Star extends StarLike
 	
 	public Star() {}
 	
-	public Star(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
+	public Star(Optional<ParentInfo> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
 			Optional<OrbitInfo> orbitInfo, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler,
 			float minStarSize, float maxStarAlpha, float minStarAlpha,
 			Optional<SupernovaInfo> supernovaInfo)

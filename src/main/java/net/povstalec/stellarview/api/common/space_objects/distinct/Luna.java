@@ -16,7 +16,7 @@ import java.util.Optional;
 public class Luna extends Moon
 {
 	public static final Codec<Luna> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			ResourceLocation.CODEC.optionalFieldOf("parent").forGetter(Luna::getParentLocation),
+			ParentInfo.CODEC.optionalFieldOf("parent").forGetter(Luna::getParentInfo),
 			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf("coords").forGetter(object -> Either.left(object.getCoords())),
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(Luna::getAxisRotation),
 			OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(moon -> Optional.ofNullable(moon.orbitInfo())),
@@ -29,7 +29,7 @@ public class Luna extends Moon
 	
 	public Luna() {}
 	
-	public Luna(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
+	public Luna(Optional<ParentInfo> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
 				Optional<OrbitInfo> orbitInfo, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler,
 				Optional<Compatibility> compatibility)
 	{

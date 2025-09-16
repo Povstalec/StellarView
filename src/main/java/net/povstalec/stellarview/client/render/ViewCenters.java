@@ -2,6 +2,7 @@ package net.povstalec.stellarview.client.render;
 
 import java.util.HashMap;
 
+import net.minecraft.client.Minecraft;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import org.joml.Matrix4f;
 
@@ -16,6 +17,8 @@ import javax.annotation.Nullable;
 
 public final class ViewCenters
 {
+	private static Minecraft minecraft = Minecraft.getInstance();
+	
 	private static final HashMap<ResourceLocation, ViewCenter> VIEW_CENTER_MAP = new HashMap<>();
 	
 	public static void clear()
