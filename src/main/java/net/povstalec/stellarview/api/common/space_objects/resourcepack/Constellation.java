@@ -3,7 +3,9 @@ package net.povstalec.stellarview.api.common.space_objects.resourcepack;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
 import net.povstalec.stellarview.common.util.*;
 
@@ -16,6 +18,10 @@ public class Constellation extends SpaceObject
 {
 	public static final String STAR_TEXTURE = "star_texture";
 	public static final String STARS = "stars";
+	
+	public static final String LOD1_STARS = "lod1_stars";
+	public static final String LOD2_STARS = "lod2_stars";
+	public static final String LOD3_STARS = "lod3_stars";
 	
 	private ArrayList<StarDefinition> lod1stars = new ArrayList<>();
 	private ArrayList<StarDefinition> lod2stars = new ArrayList<>();
@@ -103,9 +109,69 @@ public class Constellation extends SpaceObject
 		return parent instanceof StarField;
 	}
 	
+	//============================================================================================
+	//*************************************Saving and Loading*************************************
+	//============================================================================================
+	
+	private static CompoundTag serializeLODTypes(ArrayList<StarDefinition> lodTypes)
+	{
+		CompoundTag starTypesTag = new CompoundTag();
+		for(int i = 0; i < lodTypes.size(); i++)
+		{
+			starTypesTag.put("star_definition_" + i, lodTypes.get(i).serializeNBT());
+		}
+		
+		return starTypesTag;
+	}
+	
+	private static ArrayList<StarDefinition> getLODTypes(CompoundTag tag, String key)
+	{
+		ArrayList<StarDefinition> lodTypes;
+		if(tag.contains(key))
+		{
+			lodTypes = new ArrayList<StarDefinition>();
+			CompoundTag starTypesTag = tag.getCompound(key);
+			for(int i = 0; i < starTypesTag.size(); i++)
+			{
+				StarDefinition starDefinition = new StarDefinition();
+				starDefinition.deserializeNBT(starTypesTag.getCompound("star_definition_" + i));
+				lodTypes.add(starDefinition);
+			}
+		}
+		else
+			lodTypes = null;
+		
+		return lodTypes;
+	}
+	
+	@Override
+	public CompoundTag serializeNBT()
+	{
+		CompoundTag tag = super.serializeNBT();
+		
+		if(this.lod1stars != null)
+			tag.put(LOD1_STARS, serializeLODTypes(this.lod1stars));
+		if(this.lod2stars != null)
+			tag.put(LOD2_STARS, serializeLODTypes(this.lod2stars));
+		if(this.lod3stars != null)
+			tag.put(LOD3_STARS, serializeLODTypes(this.lod3stars));
+		
+		return tag;
+	}
+	
+	@Override
+	public void deserializeNBT(CompoundTag tag)
+	{
+		super.deserializeNBT(tag);
+		
+		this.lod1stars = getLODTypes(tag, LOD1_STARS);
+		this.lod2stars = getLODTypes(tag, LOD2_STARS);
+		this.lod3stars = getLODTypes(tag, LOD3_STARS);
+	}
 	
 	
-	public static class StarDefinition
+	
+	public static class StarDefinition implements INBTSerializable<CompoundTag>
 	{
 		public static final String RGB = "rgb";
 		public static final String SIZE = "size";
@@ -128,6 +194,8 @@ public class Constellation extends SpaceObject
 				Codec.DOUBLE.fieldOf(ROTATION).forGetter(starDefinition -> starDefinition.rotation),
 				Codec.LONG.optionalFieldOf(MAX_VISIBLE_DISTANCE, Long.MAX_VALUE).forGetter(starDefinition -> starDefinition.maxVisibleDistance)
 		).apply(instance, StarDefinition::new));
+		
+		public StarDefinition() {}
 		
 		public StarDefinition(Either<SpaceCoords, StellarCoordinates.Equatorial> coords, Color.IntRGB rgb, short brightness, float size, double rotation, long maxVisibleDistance)
 		{
@@ -176,6 +244,48 @@ public class Constellation extends SpaceObject
 		public long maxVisibleDistance()
 		{
 			return maxVisibleDistance;
+		}
+		
+		//============================================================================================
+		//*************************************Saving and Loading*************************************
+		//============================================================================================
+		
+		@Override
+		public CompoundTag serializeNBT()
+		{
+			CompoundTag tag = new CompoundTag();
+			
+			tag.put(COORDS, coords.serializeNBT());
+			
+			tag.put(RGB, rgb.serializeNBT());
+			
+			tag.putShort(BRIGHTNESS, brightness);
+			
+			tag.putFloat(SIZE, size);
+			
+			tag.putDouble(ROTATION, rotation);
+			
+			tag.putLong(MAX_VISIBLE_DISTANCE, maxVisibleDistance);
+			
+			return tag;
+		}
+		
+		@Override
+		public void deserializeNBT(CompoundTag tag)
+		{
+			this.coords = new SpaceCoords();
+			coords.deserializeNBT(tag.getCompound(COORDS));
+			
+			this.rgb = new  Color.IntRGB();
+			this.rgb.deserializeNBT(tag.getCompound(RGB));
+			
+			this.brightness = tag.getShort(BRIGHTNESS);
+			
+			this.size = tag.getFloat(SIZE);
+			
+			this.rotation = tag.getDouble(ROTATION);
+			
+			this.maxVisibleDistance = tag.getLong(MAX_VISIBLE_DISTANCE);
 		}
 	}
 }
