@@ -89,7 +89,10 @@ public abstract class SpaceObject implements INBTSerializable<CompoundTag>
 	
 	public boolean isRelative()
 	{
-		return parentInfo != null && parentInfo.relative();
+		if(parentInfo != null)
+			return parentInfo.relative();
+		
+		return true;
 	}
 	
 	public Optional<SpaceObject> getParent()
