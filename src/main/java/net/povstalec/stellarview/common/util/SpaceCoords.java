@@ -327,7 +327,7 @@ public class SpaceCoords implements ISerializable
 		
 		public double toLy()
 		{
-			return ly + km / KM_PER_LY;
+			return ly + kmToLy(km);
 		}
 		
 		public SpaceDistance add(SpaceDistance other)

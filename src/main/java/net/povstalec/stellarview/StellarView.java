@@ -1,20 +1,8 @@
 package net.povstalec.stellarview;
 
-import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.resources.ResourceLocation;
-import net.povstalec.stellarview.api.common.space_objects.distinct.Luna;
-import net.povstalec.stellarview.api.common.space_objects.distinct.Sol;
-import net.povstalec.stellarview.api.common.space_objects.resourcepack.*;
-import net.povstalec.stellarview.client.SpaceObjectRenderers;
-import net.povstalec.stellarview.client.render.space_objects.distinct.LunaRenderer;
-import net.povstalec.stellarview.client.render.space_objects.resourcepack.*;
-import net.povstalec.stellarview.common.config.StellarViewConfig;
-import net.povstalec.stellarview.common.config.StellarViewConfigSpec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -26,6 +26,8 @@ import net.povstalec.stellarview.common.util.SpaceCoords;
 
 public final class SpaceRenderer
 {
+	private static Minecraft minecraft = Minecraft.getInstance();
+	
 	private static final Vector3f NULL_VECTOR = new Vector3f();
 	
 	private static final int STAR_LIMIT = 100000;
@@ -119,6 +121,7 @@ public final class SpaceRenderer
 		for(Map.Entry<SpaceRegion.RegionPos, SpaceRegionRenderer> spaceRegionEntry : SPACE_REGIONS.entrySet())
 		{
 			spaceRegionEntry.getValue().resetStarFields();
+			spaceRegionEntry.getValue().resetConstellations();
 		}
 	}
 	
@@ -130,6 +133,7 @@ public final class SpaceRenderer
 		
 		SpaceRegion.RegionPos pos = new SpaceRegion.RegionPos(viewCenter.getCoords());
 		
+		minecraft.getProfiler().push("dustClouds");
 		if(viewCenter.dustCloudBrightness() > 0)
 		{
 			for(Map.Entry<SpaceRegion.RegionPos, SpaceRegionRenderer> spaceRegionEntry : SPACE_REGIONS.entrySet())
@@ -138,8 +142,10 @@ public final class SpaceRenderer
 					spaceRegionEntry.getValue().renderDustClouds(viewCenter, level, camera, partialTicks, stack, projectionMatrix, setupFog, viewCenter.dustCloudBrightness());
 			}
 		}
+		minecraft.getProfiler().pop();
 		
 		SpaceRegionRenderer centerRegion = null;
+		minecraft.getProfiler().push("spaceObjects");
 		for(Map.Entry<SpaceRegion.RegionPos, SpaceRegionRenderer> spaceRegionEntry : SPACE_REGIONS.entrySet())
 		{
 			if(!spaceRegionEntry.getKey().equals(pos))
@@ -155,6 +161,7 @@ public final class SpaceRenderer
 			centerRegion.render(viewCenter, masterParent, level, camera, partialTicks, stack, projectionMatrix, isFoggy, setupFog, bufferbuilder);
 		
 		masterParent.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, NULL_VECTOR, new AxisRotation());
+		minecraft.getProfiler().pop();
 	}
 	
 	

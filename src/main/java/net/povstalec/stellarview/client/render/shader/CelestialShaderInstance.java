@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
-public class DustCloudShaderInstance extends ShaderInstance
+public class CelestialShaderInstance extends ShaderInstance
 {
 	@Nullable
 	public final Uniform RELATIVE_SPACE_LY;
@@ -24,7 +24,7 @@ public class DustCloudShaderInstance extends ShaderInstance
 	@Nullable
 	public final Uniform LENSING_INTENSITY;
 	
-	public DustCloudShaderInstance(ResourceProvider provider, ResourceLocation shaderLocation, VertexFormat format)
+	public CelestialShaderInstance(ResourceProvider provider, ResourceLocation shaderLocation, VertexFormat format)
 			throws IOException
 	{
 		super(provider, shaderLocation.toString(), format);

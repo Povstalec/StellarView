@@ -9,7 +9,7 @@
     "attributes": [
 	"StarPos",
         "Color",
-        "HeightWidthSize",
+        "HeightWidthSizeDistance",
         "UV0"
     ],
     "samplers": [

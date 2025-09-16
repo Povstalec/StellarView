@@ -46,19 +46,19 @@ public class StarInfo implements ISerializable
 			{
 				case LOD1:
 					if(lod1Types == null)
-						this.lod1Types = new ArrayList<StarLike.StarType>(starTypes);
+						this.lod1Types = new ArrayList<StarLike.StarType>();
 					this.lod1Types.add(starType);
 					this.lod1Weight += starType.getWeight();
 					break;
 				case LOD2:
 					if(lod2Types == null)
-						this.lod2Types = new ArrayList<StarLike.StarType>(starTypes);
+						this.lod2Types = new ArrayList<StarLike.StarType>();
 					this.lod2Types.add(starType);
 					this.lod2Weight += starType.getWeight();
 					break;
 				default:
 					if(lod3Types == null)
-						this.lod3Types = new ArrayList<StarLike.StarType>(starTypes);
+						this.lod3Types = new ArrayList<StarLike.StarType>();
 					this.lod3Types.add(starType);
 					this.lod3Weight += starType.getWeight();
 					break;

@@ -1,4 +1,5 @@
 {
+	"parent": { "location": "stellarview:star_field/spiral_galaxy/andromeda/andromeda", "relative": false },
 	"coords": { "right_ascension": {"hours": 0, "minutes": 40, "seconds": 22.05446}, "declination": {"degrees": 41, "minutes": 41, "seconds": 7.4963}, "distance": {"ly": 2690000} },
 	"axis_rotation": { "x_axis": 94, "y_axis": 18, "z_axis": 234 },
 	

@@ -34,7 +34,7 @@ public class Nebula extends TexturedObject
 	private float minNebulaAlpha;
 	
 	public static final Codec<Nebula> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			ResourceLocation.CODEC.optionalFieldOf("parent").forGetter(Nebula::getParentLocation),
+			ParentInfo.CODEC.optionalFieldOf("parent").forGetter(Nebula::getParentInfo),
 			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf("coords").forGetter(object -> Either.left(object.getCoords())),
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(Nebula::getAxisRotation),
 			TextureLayer.CODEC.listOf().fieldOf("texture_layers").forGetter(Nebula::getTextureLayers),
@@ -48,7 +48,7 @@ public class Nebula extends TexturedObject
 	
 	public Nebula() {}
 	
-	public Nebula(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
+	public Nebula(Optional<ParentInfo> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
 			List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler, float minNebulaSize, float maxNebulaAlpha, float minNebulaAlpha)
 	{
 		super(parent, coords, axisRotation, textureLayers, fadeOutHandler);
