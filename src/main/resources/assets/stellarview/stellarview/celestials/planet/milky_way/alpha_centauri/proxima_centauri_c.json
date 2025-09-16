@@ -8,7 +8,7 @@
 		"periapsis": 223000000,
 		"orbital_period": { "ticks": 12161840 },
 		"argument_of_periapsis": 0,
-		"inclination": 16.4,
+		"inclination": 152,
 		"longtitude_of_ascending_node": 331,
 		"epoch_mean_anomaly": 0
 	},
@@ -21,7 +21,7 @@
 			"size": 24000000,
 			"min_size": 0.5,
 			"clamp_at_min_size": true,
-			"rotation": 90,
+			"rotation": 0,
 			"uv": { "flip_uv": false }
 		},
 		{
@@ -31,7 +31,7 @@
 			"size": 24000000,
 			"min_size": 0.5,
 			"clamp_at_min_size": true,
-			"rotation": -22.14,
+			"rotation": -90,
 			"uv": { "flip_uv": false }
 		}
 	]
