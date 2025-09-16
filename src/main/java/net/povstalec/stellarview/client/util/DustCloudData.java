@@ -4,12 +4,16 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Matrix4f;
 import net.minecraft.client.renderer.GameRenderer;
+import net.povstalec.stellarview.api.common.space_objects.resourcepack.StarField;
 import net.povstalec.stellarview.client.render.SpaceRenderer;
 import net.povstalec.stellarview.client.render.shader.StellarViewShaders;
 import net.povstalec.stellarview.client.render.shader.StellarViewVertexFormat;
+import net.povstalec.stellarview.client.render.shader.VertexOrder;
+import net.povstalec.stellarview.common.config.GeneralConfig;
 import net.povstalec.stellarview.common.util.Color;
 import net.povstalec.stellarview.common.util.DustCloudInfo;
 import net.povstalec.stellarview.common.util.SpaceCoords;
+import org.lwjgl.opengl.GL;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -19,6 +23,13 @@ public abstract class DustCloudData
 	public static final float DEFAULT_DISTANCE = 100;
 	public static final float MAX_SIZE = 50;
 	public static final float MAX_ALPHA = 0.025F;
+	
+	public static final int HEIGHT_OFFSET = 0;
+	public static final int WIDTH_OFFSET = HEIGHT_OFFSET + Float.BYTES;
+	public static final int STAR_SIZE_OFFSET = WIDTH_OFFSET + Float.BYTES;
+	public static final int DISTANCE_OFFSET = STAR_SIZE_OFFSET + Float.BYTES;
+	
+	public static final int INSTANCE_SIZE = CelestialInstancedBuffer.INSTANCE_SIZE;
 	
 	private LOD lod1;
 	
@@ -32,9 +43,18 @@ public abstract class DustCloudData
 	
 	public void renderDustClouds(Matrix4f pose, Matrix4f projectionMatrix, SpaceCoords difference, boolean isStatic)
 	{
-		if(lod1 == null)
-			lod1 = newDustClouds();
-		lod1.renderDustCloudBuffer(pose, projectionMatrix, difference, isStatic);
+		if(!isStatic && GeneralConfig.instancing.get() && GL.getCapabilities().GL_ARB_vertex_attrib_binding) // Use instancing if possible
+		{
+			if(lod1 == null)
+				lod1 = newDustClouds();
+			lod1.renderInstancedDustCloudBuffer(pose, projectionMatrix, difference);
+		}
+		else
+		{
+			if(lod1 == null)
+				lod1 = newDustClouds();
+			lod1.renderDustCloudBuffer(pose, projectionMatrix, difference, isStatic);
+		}
 	}
 	
 	protected abstract DustCloudData.LOD newDustClouds();
@@ -44,14 +64,16 @@ public abstract class DustCloudData
 	public static class LOD
 	{
 		@Nullable
-		protected DustCloudBuffer dustCloudBuffer;
+		protected CelestialBuffer dustCloudBuffer;
+		@Nullable
+		protected CelestialInstancedBuffer instancedDustCloudBuffer;
 		
 		private double[][] dustCloudCoords;
 		private double[] dustCloudSizes;
 		
 		private short[][] dustCloudRGBA;
 		
-		private double[][] randoms;
+		private double[] dustCloudRotations;
 		
 		private int dustClouds;
 		
@@ -60,7 +82,7 @@ public abstract class DustCloudData
 			this.dustCloudCoords = new double[dustClouds][3];
 			this.dustCloudSizes = new double[dustClouds];
 			
-			this.randoms = new double[dustClouds][2];
+			this.dustCloudRotations = new double[dustClouds];
 			
 			this.dustCloudRGBA = new short[dustClouds][4];
 			
@@ -69,22 +91,27 @@ public abstract class DustCloudData
 		
 		public void reset()
 		{
-			if(dustCloudBuffer == null)
-				return;
+			if(dustCloudBuffer != null)
+			{
+				dustCloudBuffer.close();
+				dustCloudBuffer = null;
+			}
 			
-			dustCloudBuffer.close();
-			dustCloudBuffer = null;
+			if(instancedDustCloudBuffer != null)
+			{
+				instancedDustCloudBuffer.close();
+				instancedDustCloudBuffer = null;
+			}
 		}
 		
 		/**
 		 * Creates information for a completely new star
-		 * @param builder BufferBuilder used for building the vertexes
+		 * @param dustCloudType TODO
 		 * @param random Random used for randomizing the star information
-		 * @param relativeCoords SpaceCoords that give a relative position between the observer and the star
 		 * @param x X coordinate of the star
 		 * @param y Y coordinate of the star
 		 * @param z Z coordinate of the star
-		 * @param i Index of the star
+		 * @param sizeMultiplier TODO
 		 */
 		public void newDustCloud(DustCloudInfo.DustCloudType dustCloudType, Random random, double x, double y, double z, double sizeMultiplier)
 		{
@@ -106,20 +133,18 @@ public abstract class DustCloudData
 			
 			this.dustCloudRGBA[dustClouds] = new short[] {(short) rgb.red(), (short) rgb.green(), (short) rgb.blue(), alpha};
 			
-			// sin and cos are used to effectively clamp the random number between two values without actually clamping it,
-			// wwhich would result in some awkward lines as Stars would be brought to the clamped values
-			// Both affect Star size and rotation
-			double randomValue = random.nextDouble() * Math.PI * 2.0D;
-			randoms[dustClouds][0] = Math.sin(randomValue); // sin random
-			randoms[dustClouds][1] = Math.cos(randomValue); // cos random
+			dustCloudRotations[dustClouds] = random.nextDouble() * Math.PI * 2.0D;
 			
 			dustClouds++;
 		}
 		
 		public void createDustCloud(BufferBuilder builder, int i)
 		{
-			double sinRandom = randoms[i][0];
-			double cosRandom = randoms[i][1];
+			// sin and cos are used to effectively clamp the random number between two values without actually clamping it,
+			// wwhich would result in some awkward lines as Stars would be brought to the clamped values
+			// Both affect Star size and rotation
+			double sinRandom = Math.sin(dustCloudRotations[i]);
+			double cosRandom = Math.cos(dustCloudRotations[i]);
 			
 			// This loop creates the 4 corners of a Star
 			for(int j = 0; j < 4; ++j)
@@ -176,15 +201,42 @@ public abstract class DustCloudData
 				
 				builder.vertex(dustCloudCoords[i][0], dustCloudCoords[i][1], dustCloudCoords[i][2]).color(dustCloudRGBA[i][0], dustCloudRGBA[i][1], dustCloudRGBA[i][2], dustCloudRGBA[i][3]);
 				// These next few lines add a "custom" element defined as HeightWidthSize in StellarViewVertexFormat
-				builder.putFloat(0, (float) height);
-				builder.putFloat(4, (float) width);
-				builder.putFloat(8, (float) dustCloudSizes[i]);
+				builder.putFloat(HEIGHT_OFFSET, (float) height);
+				builder.putFloat(WIDTH_OFFSET, (float) width);
+				builder.putFloat(STAR_SIZE_OFFSET, (float) dustCloudSizes[i] * 4F);
+				builder.putFloat(DISTANCE_OFFSET, (float) StarField.LOD_DISTANCE_HIGH);
 				builder.nextElement();
 				
 				builder.uv( (float) (aLocation + 1) / 2F, (float) (bLocation + 1) / 2F);
 				
 				builder.endVertex();
 			}
+		}
+		
+		public float[] getInstancedDustClouds()
+		{
+			float[] instances = new float[dustClouds * INSTANCE_SIZE];
+			
+			for(int i = 0; i < dustClouds; i++)
+			{
+				// Star Position
+				instances[INSTANCE_SIZE * i] = (float) dustCloudCoords[i][0];
+				instances[INSTANCE_SIZE * i + 1] = (float) dustCloudCoords[i][1];
+				instances[INSTANCE_SIZE * i + 2] = (float) dustCloudCoords[i][2];
+				// Color
+				instances[INSTANCE_SIZE * i + 3] = (float) dustCloudRGBA[i][0] / 255F;
+				instances[INSTANCE_SIZE * i + 4] = (float) dustCloudRGBA[i][1] / 255F;
+				instances[INSTANCE_SIZE * i + 5] = (float) dustCloudRGBA[i][2] / 255F;
+				instances[INSTANCE_SIZE * i + 6] = (float) dustCloudRGBA[i][3] / 255F;
+				// Rotation
+				instances[INSTANCE_SIZE * i + 7] = (float) dustCloudRotations[i];
+				// Size
+				instances[INSTANCE_SIZE * i + 8] = (float) dustCloudSizes[i] * 4F;
+				// Max Distance
+				instances[INSTANCE_SIZE * i + 9] = (float) StarField.LOD_DISTANCE_HIGH;
+			}
+			
+			return instances;
 		}
 		
 		public BufferBuilder.RenderedBuffer getDustCloudBuffer(BufferBuilder bufferBuilder)
@@ -208,7 +260,7 @@ public abstract class DustCloudData
 				if(!SpaceRenderer.loadNewDustClouds())
 					return;
 				
-				dustCloudBuffer = new DustCloudBuffer();
+				dustCloudBuffer = new CelestialBuffer();
 				
 				Tesselator tesselator = Tesselator.getInstance();
 				BufferBuilder bufferBuilder = tesselator.getBuilder();
@@ -220,10 +272,10 @@ public abstract class DustCloudData
 				dustCloudBuffer.bind();
 				dustCloudBuffer.upload(bufferbuilder$renderedbuffer);
 				if(isStatic)
-					dustCloudBuffer.drawWithShader(pose, projectionMatrix, GameRenderer.getPositionColorTexShader());
+					dustCloudBuffer.drawWithShader(pose, projectionMatrix, VertexOrder.texColorShader());
 				else
 					dustCloudBuffer.drawWithShader(pose, projectionMatrix, difference, StellarViewShaders.starDustCloudShader());
-				VertexBuffer.unbind();
+				CelestialBuffer.unbind();
 				
 				SpaceRenderer.loadedDustClouds(dustClouds);
 			}
@@ -231,11 +283,31 @@ public abstract class DustCloudData
 			{
 				dustCloudBuffer.bind();
 				if(isStatic)
-					dustCloudBuffer.drawWithShader(pose, projectionMatrix, GameRenderer.getPositionColorTexShader());
+					dustCloudBuffer.drawWithShader(pose, projectionMatrix, VertexOrder.texColorShader());
 				else
 					dustCloudBuffer.drawWithShader(pose, projectionMatrix, difference, StellarViewShaders.starDustCloudShader());
-				VertexBuffer.unbind();
+				CelestialBuffer.unbind();
 			}
+		}
+		
+		private void renderInstancedDustCloudBuffer(Matrix4f pose, Matrix4f projectionMatrix, SpaceCoords difference)
+		{
+			if(dustClouds == 0)
+				return;
+			
+			if(instancedDustCloudBuffer == null) // Buffer requires setup
+			{
+				if(!SpaceRenderer.loadNewStars())
+					return;
+				
+				instancedDustCloudBuffer = new CelestialInstancedBuffer();
+				instancedDustCloudBuffer.upload(getInstancedDustClouds(), true);
+				SpaceRenderer.loadedStars(dustClouds);
+			}
+			
+			instancedDustCloudBuffer.bind();
+			instancedDustCloudBuffer.drawWithShader(pose, projectionMatrix, difference, StellarViewShaders.instancedDustCloudShader(), dustClouds);
+			CelestialInstancedBuffer.unbind();
 		}
 		
 		//============================================================================================
@@ -244,7 +316,7 @@ public abstract class DustCloudData
 		
 		public BufferBuilder.RenderedBuffer getStaticDustCloudBuffer(BufferBuilder bufferBuilder, SpaceCoords difference)
 		{
-			bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
+			bufferBuilder.begin(VertexFormat.Mode.QUADS, VertexOrder.texColorFormat());
 			
 			for(int i = 0; i < dustClouds; i++)
 			{
@@ -297,7 +369,7 @@ public abstract class DustCloudData
 			
 			// COLOR END
 			
-			double starSize = clampDustCloud(dustCloudSizes[i] * 4, distance);
+			double starSize = clampDustCloud(dustCloudSizes[i] * 4F, distance);
 			
 			distance = 1.0D / distance; // Regular distance
 			x *= distance;
@@ -335,8 +407,11 @@ public abstract class DustCloudData
 			double sinPhi = Math.sin(sphericalPhi);
 			double cosPhi = Math.cos(sphericalPhi);
 			
-			double sinRandom = randoms[i][0];
-			double cosRandom = randoms[i][1];
+			// sin and cos are used to effectively clamp the random number between two values without actually clamping it,
+			// wwhich would result in some awkward lines as Stars would be brought to the clamped values
+			// Both affect Star size and rotation
+			double sinRandom = Math.sin(dustCloudRotations[i]);
+			double cosRandom = Math.cos(dustCloudRotations[i]);
 			
 			// This loop creates the 4 corners of a Star
 			for(int j = 0; j < 4; ++j)
@@ -408,7 +483,10 @@ public abstract class DustCloudData
 				double projectedX = heightProjectionXZ * sinTheta - width * cosTheta;
 				double projectedZ = width * sinTheta + heightProjectionXZ * cosTheta;
 				
-				builder.vertex(starX + projectedX, starY + heightProjectionY, starZ + projectedZ).color(dustCloudRGBA[i][0], dustCloudRGBA[i][1] , dustCloudRGBA[i][2], alpha).uv( (float) (aLocation + 1) / 2F, (float) (bLocation + 1) / 2F).endVertex();
+				if(VertexOrder.texColor())
+					builder.vertex(starX + projectedX, starY + heightProjectionY, starZ + projectedZ).uv( (float) (aLocation + 1) / 2F, (float) (bLocation + 1) / 2F).color(dustCloudRGBA[i][0], dustCloudRGBA[i][1] , dustCloudRGBA[i][2], alpha).endVertex();
+				else
+					builder.vertex(starX + projectedX, starY + heightProjectionY, starZ + projectedZ).color(dustCloudRGBA[i][0], dustCloudRGBA[i][1] , dustCloudRGBA[i][2], alpha).uv( (float) (aLocation + 1) / 2F, (float) (bLocation + 1) / 2F).endVertex();
 			}
 		}
 	}

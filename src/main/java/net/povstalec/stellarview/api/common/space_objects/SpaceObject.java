@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import javax.annotation.Nullable;
 
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.common.util.INBTSerializable;
 
@@ -21,7 +22,7 @@ import net.povstalec.stellarview.common.util.StellarCoordinates;
 
 public abstract class SpaceObject implements INBTSerializable<CompoundTag>
 {
-	public static final String PARENT_LOCATION = "parent";
+	public static final String PARENT = "parent";
 	public static final String COORDS = "coords";
 	public static final String AXIS_ROTATION = "axis_rotation";
 	public static final String ID = "id";
@@ -31,7 +32,7 @@ public abstract class SpaceObject implements INBTSerializable<CompoundTag>
 	public static final Codec<ResourceKey<SpaceObject>> RESOURCE_KEY_CODEC = ResourceKey.codec(REGISTRY_KEY);
 	
 	@Nullable
-	protected ResourceLocation parentLocation;
+	protected ParentInfo parentInfo;
 
 	@Nullable
 	protected SpaceObject parent;
@@ -45,10 +46,9 @@ public abstract class SpaceObject implements INBTSerializable<CompoundTag>
 	
 	public SpaceObject() {}
 	
-	public SpaceObject(Optional<ResourceLocation> parentLocation, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation)
+	public SpaceObject(Optional<ParentInfo> parentInfo, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation)
 	{
-		if(parentLocation.isPresent())
-				this.parentLocation = parentLocation.get();
+		this.parentInfo = parentInfo.orElse(null);
 		
 		if(coords.left().isPresent())
 			this.coords = coords.left().get();
@@ -73,9 +73,26 @@ public abstract class SpaceObject implements INBTSerializable<CompoundTag>
 		return children;
 	}
 	
-	public Optional<ResourceLocation> getParentLocation()
+	public Optional<ParentInfo> getParentInfo()
 	{
-		return Optional.ofNullable(parentLocation);
+		return Optional.ofNullable(parentInfo);
+	}
+	
+	@Nullable
+	public ResourceLocation getParentLocation()
+	{
+		if(parentInfo != null)
+			return parentInfo.parentLocation();
+		
+		return null;
+	}
+	
+	public boolean isRelative()
+	{
+		if(parentInfo != null)
+			return parentInfo.relative();
+		
+		return true;
 	}
 	
 	public Optional<SpaceObject> getParent()
@@ -97,7 +114,7 @@ public abstract class SpaceObject implements INBTSerializable<CompoundTag>
 	{
 		removeCoordsAndRotationFromChildren(getCoords(), getAxisRotation());
 		
-		if(this.parent != null)
+		if(this.parent != null && isRelative())
 		{
 			this.coords = coords.add(this.parent.getCoords());
 			this.axisRotation = axisRotation.add(this.parent.getAxisRotation());
@@ -111,6 +128,11 @@ public abstract class SpaceObject implements INBTSerializable<CompoundTag>
 		addCoordsAndRotationToChildren(this.coords, this.axisRotation);
 	}
 	
+	public void addParent(SpaceObject parent)
+	{
+		this.parent = parent;
+	}
+	
 	public boolean addChildRaw(SpaceObject child)
 	{
 		if(child.parent != null)
@@ -120,32 +142,36 @@ public abstract class SpaceObject implements INBTSerializable<CompoundTag>
 		}
 		
 		this.children.add(child);
+		child.addParent(this);
 		
 		return true;
 	}
-	
 	
 	public void addChild(SpaceObject child)
 	{
 		if(!addChildRaw(child))
 			return;
 		
-		child.parent = this;
-		child.coords = child.coords.add(this.coords);
-		
-		child.axisRotation = child.axisRotation.add(this.axisRotation);
-		
-		child.addCoordsAndRotationToChildren(this.coords, this.axisRotation);
+		if(child.isRelative())
+		{
+			child.coords = child.coords.add(this.coords);
+			child.axisRotation = child.axisRotation.add(this.axisRotation);
+			
+			child.addCoordsAndRotationToChildren(this.coords, this.axisRotation);
+		}
 	}
 	
 	protected void addCoordsAndRotationToChildren(SpaceCoords coords, AxisRotation axisRotation)
 	{
 		for(SpaceObject childOfChild : this.children)
 		{
-			childOfChild.coords = childOfChild.coords.add(coords);
-			childOfChild.axisRotation = childOfChild.axisRotation.add(axisRotation);
-			
-			childOfChild.addCoordsAndRotationToChildren(coords, axisRotation);
+			if(childOfChild.isRelative())
+			{
+				childOfChild.coords = childOfChild.coords.add(coords);
+				childOfChild.axisRotation = childOfChild.axisRotation.add(axisRotation);
+				
+				childOfChild.addCoordsAndRotationToChildren(coords, axisRotation);
+			}
 		}
 	}
 	
@@ -153,10 +179,13 @@ public abstract class SpaceObject implements INBTSerializable<CompoundTag>
 	{
 		for(SpaceObject childOfChild : this.children)
 		{
-			childOfChild.coords = childOfChild.coords.sub(coords);
-			childOfChild.axisRotation = childOfChild.axisRotation.sub(axisRotation);
-			
-			childOfChild.removeCoordsAndRotationFromChildren(coords, axisRotation);
+			if(childOfChild.isRelative())
+			{
+				childOfChild.coords = childOfChild.coords.sub(coords);
+				childOfChild.axisRotation = childOfChild.axisRotation.sub(axisRotation);
+				
+				childOfChild.removeCoordsAndRotationFromChildren(coords, axisRotation);
+			}
 		}
 	}
 	
@@ -181,8 +210,8 @@ public abstract class SpaceObject implements INBTSerializable<CompoundTag>
 		if(location != null)
 			tag.putString(ID, location.toString());
 		
-		if(parentLocation != null)
-			tag.putString(PARENT_LOCATION, parentLocation.toString());
+		if(parentInfo != null)
+			tag.put(PARENT, parentInfo.serializeNBT());
 		
 		tag.put(COORDS, coords.serializeNBT());
 		
@@ -197,13 +226,68 @@ public abstract class SpaceObject implements INBTSerializable<CompoundTag>
 		if(tag.contains(ID))
 			this.location = new ResourceLocation(tag.getString(ID));
 		
-		if(tag.contains(PARENT_LOCATION))
-			this.parentLocation = new ResourceLocation(tag.getString(PARENT_LOCATION));
+		if(tag.contains(PARENT))
+		{
+			this.parentInfo = new ParentInfo();
+			parentInfo.deserializeNBT(tag.getCompound(PARENT));
+		}
 		
 		this.coords = new SpaceCoords();
 		coords.deserializeNBT(tag.getCompound(COORDS));
 		
 		this.axisRotation = new AxisRotation();
 		axisRotation.deserializeNBT(tag.getCompound(AXIS_ROTATION));
+	}
+	
+	
+	
+	public static class ParentInfo implements INBTSerializable<CompoundTag>
+	{
+		public static final String PARENT_LOCATION = "location";
+		public static final String RELATIVE = "relative";
+		
+		public static final Codec<ParentInfo> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				ResourceLocation.CODEC.fieldOf(PARENT_LOCATION).forGetter(ParentInfo::parentLocation),
+				Codec.BOOL.optionalFieldOf(RELATIVE, true).forGetter(ParentInfo::relative)
+		).apply(instance, ParentInfo::new));
+		
+		protected ResourceLocation parentLocation;
+		protected boolean relative;
+		
+		public ParentInfo() {}
+		
+		public ParentInfo(ResourceLocation parentLocation, boolean relative)
+		{
+			this.parentLocation = parentLocation;
+			this.relative = relative;
+		}
+		
+		public ResourceLocation parentLocation()
+		{
+			return parentLocation;
+		}
+		
+		public boolean relative()
+		{
+			return relative;
+		}
+		
+		@Override
+		public CompoundTag serializeNBT()
+		{
+			CompoundTag tag = new CompoundTag();
+			
+			tag.putString(PARENT_LOCATION, this.parentLocation.toString());
+			tag.putBoolean(RELATIVE, this.relative);
+			
+			return tag;
+		}
+		
+		@Override
+		public void deserializeNBT(CompoundTag tag)
+		{
+			this.parentLocation = new ResourceLocation(tag.getString(PARENT_LOCATION));
+			this.relative = tag.getBoolean(RELATIVE);
+		}
 	}
 }
