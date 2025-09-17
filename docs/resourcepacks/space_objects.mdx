@@ -48,7 +48,7 @@ Examples of parent definition:
 Stellar View is scaled 1:1 with the real-life Universe, so it uses a custom coordinate system called Space Coords to define positions of Space Objects in the Universe based on cartesian coordinates.
 This system uses light years and kilometers as base units of measurement and doesn't lose precision no matter how far from the center of the Universe you get (there are still issues with orbits that are too large though).
 
-### Definition
+### Definition Fields
 
 * `x`, `y`, `z` **REQUIRED** - Distances from the origin in the X, Y and Z axes.
     * `ly` *OPTIONAL* - The distance in light years, adds up with kilometers if specified. 0 if left empty.
@@ -73,7 +73,7 @@ Which is why the [equatorial coordinate system](https://en.wikipedia.org/wiki/Eq
 You will find these used in scientific papers, astronomical sites and on wikipedia. And since converting from one coordinate system to another is tedious, you can simply use equatorial coordinate directly and Stellar View will convert them to Space Coords internally.
 All equatorial coordinates currently used in Stellar View are based on the J2000 epoch.
 
-### Definition
+### Definition Fields
 
 * `right_ascension` **REQUIRED** - [Right ascension](https://en.wikipedia.org/wiki/Equatorial_coordinate_system#Right_ascension) of the object.
     * `hours` *OPTIONAL* - 0 if left empty. [Min = 0.0 | Max = 24.0]
@@ -100,7 +100,7 @@ used in Stellar View with ones you can find on [Wikipedia](https://en.wikipedia.
 Space Objects can be rotated in various directions. This rotation can affect its visual appearance, relative positions of its children, as well as how the sky looks on it if it's used as a [View Center](https://moddedmc.wiki/cs/project/stellarview/latest/docs/resourcepacks/view_centers).
 Axis Rotation defines these rotations along the Y, Z and X axes in that order.
 
-### Definition
+### Definition Fields
 
 * `x_axis` **REQUIRED** - Rotation around the X-axis.
 * `y_axis` **REQUIRED** - Rotation around the Y-axis.
