@@ -16,12 +16,16 @@ public class TextureLayer implements ISerializable
 	public static final String SIZE = "size";
 	public static final String MIN_SIZE = "min_size";
 	public static final String CLAMP_AT_MIN_SIZE = "clamp_at_min_size";
+
+	public static final String MAX_SIZE = "max_size";
+	public static final String CLAMP_AT_MAX_SIZE = "clamp_at_max_size";
 	
 	public static final String ROTATION = "rotation";
 	
 	public static final String UV_QUAD = "uv";
 	
 	public static final double MIN_VISUAL_SIZE = 0.05;
+	public static final double MAX_VISUAL_SIZE = Double.MAX_VALUE;
 	
 	private ResourceLocation texture;
 	private Color.FloatRGBA rgba;
@@ -31,6 +35,8 @@ public class TextureLayer implements ISerializable
 	private double size;
 	private double minSize;
 	private boolean clampAtMinSize;
+	private double maxSize;
+	private boolean clampAtMaxSize;
 	
 	private double rotation;
 	
@@ -45,6 +51,8 @@ public class TextureLayer implements ISerializable
 			Codec.DOUBLE.fieldOf(SIZE).forGetter(TextureLayer::size),
 			Codec.doubleRange(0.0D, Double.MAX_VALUE).optionalFieldOf(MIN_SIZE, MIN_VISUAL_SIZE).forGetter(TextureLayer::minSize),
 			Codec.BOOL.optionalFieldOf(CLAMP_AT_MIN_SIZE, false).forGetter(TextureLayer::clampAtMinSize),
+			Codec.doubleRange(0.0D, Double.MAX_VALUE).optionalFieldOf(MAX_SIZE, MAX_VISUAL_SIZE).forGetter(TextureLayer::maxSize),
+			Codec.BOOL.optionalFieldOf(CLAMP_AT_MAX_SIZE, false).forGetter(TextureLayer::clampAtMaxSize),
 			
 			Codec.DOUBLE.fieldOf(ROTATION).forGetter(TextureLayer::rotation),
 			
@@ -54,7 +62,7 @@ public class TextureLayer implements ISerializable
 	public TextureLayer() {}
 	
 	public TextureLayer(ResourceLocation texture, Color.FloatRGBA rgba, boolean blend,
-			double size, double minSize, boolean clampAtMinSize,
+			double size, double minSize, boolean clampAtMinSize, double maxSize, boolean clampAtMaxSize,
 			double rotation, UV.Quad uv)
 	{
 		this.texture = texture;
@@ -65,6 +73,8 @@ public class TextureLayer implements ISerializable
 		this.size = size;
 		this.minSize = minSize;
 		this.clampAtMinSize = clampAtMinSize;
+		this.maxSize = maxSize;
+		this.clampAtMaxSize = clampAtMaxSize;
 		
 		this.rotation = Math.toRadians(rotation);
 		this.uv = uv;
@@ -90,41 +100,24 @@ public class TextureLayer implements ISerializable
 		return size;
 	}
 	
-	public double minSize()
-	{
-		return minSize;
-	}
+	public double minSize() { return minSize; }
 	
-	public boolean clampAtMinSize()
-	{
-		return clampAtMinSize;
-	}
+	public boolean clampAtMinSize() { return clampAtMinSize; }
+
+	public double maxSize() { return maxSize; }
+
+	public boolean clampAtMaxSize() { return clampAtMaxSize; }
 	
-	public double mulSize(double mulSize)
-	{
-		return size * mulSize;
-	}
+	public double mulSize(double mulSize) { return size * mulSize; }
 	
-	public double rotation()
-	{
-		return rotation;
-	}
+	public double rotation() { return rotation; }
 	
-	public double rotation(double addRotation)
-	{
-		return rotation + addRotation;
-	}
+	public double rotation(double addRotation) { return rotation + addRotation; }
 	
-	public UV.Quad uv()
-	{
-		return uv;
-	}
+	public UV.Quad uv() { return uv; }
 	
 	@Override
-	public String toString()
-	{
-		return texture.toString();
-	}
+	public String toString() { return texture.toString(); }
 	
 	//============================================================================================
 	//*************************************Saving and Loading*************************************
@@ -144,6 +137,8 @@ public class TextureLayer implements ISerializable
 		tag.putDouble(SIZE, size);
 		tag.putDouble(MIN_SIZE, minSize);
 		tag.putBoolean(CLAMP_AT_MIN_SIZE, clampAtMinSize);
+		tag.putDouble(MAX_SIZE, maxSize);
+		tag.putBoolean(CLAMP_AT_MAX_SIZE, clampAtMaxSize);
 		
 		tag.putDouble(ROTATION, rotation);
 		
@@ -164,6 +159,8 @@ public class TextureLayer implements ISerializable
 		this.size = tag.getDouble(SIZE);
 		this.minSize = tag.getDouble(MIN_SIZE);
 		this.clampAtMinSize = tag.getBoolean(CLAMP_AT_MIN_SIZE);
+		this.maxSize = tag.getDouble(MAX_SIZE);
+		this.clampAtMaxSize = tag.getBoolean(CLAMP_AT_MAX_SIZE);
 		
 		this.rotation = tag.getDouble(ROTATION);
 		this.uv = UV.Quad.deserialize(tag.getCompound(UV_QUAD));

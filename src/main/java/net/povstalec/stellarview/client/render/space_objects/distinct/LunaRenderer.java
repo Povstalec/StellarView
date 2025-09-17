@@ -26,8 +26,8 @@ public class LunaRenderer extends MoonRenderer<Luna>
 	public static final ResourceLocation MOON_LOCATION = ResourceLocation.withDefaultNamespace("textures/environment/moon_phases.png");
 	
 	public static final UV.Quad MOON_QUAD = new UV.Quad(new UV.PhaseHandler(24000, 0, 4, 2), true);
-	public static final TextureLayer MOON_TEXTURE_LAYER = new TextureLayer(MOON_LOCATION,new Color.FloatRGBA(1F, 1F, 1F, 1F),
-			true, 7697847.735118539, 0.15, true, 90, MOON_QUAD);
+	public static final TextureLayer MOON_TEXTURE_LAYER = new TextureLayer(MOON_LOCATION,new Color.FloatRGBA(1, 1, 1, 1),
+			true, 7697847.735118539, 0.15, true, Double.MAX_VALUE, false, 90, MOON_QUAD);
 	
 	public LunaRenderer(Luna luna)
 	{
