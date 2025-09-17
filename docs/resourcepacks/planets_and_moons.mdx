@@ -7,78 +7,29 @@ hide_meta: true
 
 As of now, Planets are a subtype of [Orbiting Objects](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/space_objects) with no additional functions.
 
+* **[Examples of Planets](https://github.com/Povstalec/StellarView/tree/main/src/main/resources/assets/stellarview/stellarview/celestials/planet)**
+
 
 
 # Moons
 
 Moons are a subtype of Planets, but have one additional property which Planets don't have.
 
+* **[Examples of Moons](https://github.com/Povstalec/StellarView/tree/main/src/main/resources/assets/stellarview/stellarview/celestials/moon)**
+
+## Definition
+
+* `compatibility` *OPTIONAL* - In the below example, we take a section from the [definition of Luna](https://github.com/Povstalec/StellarView/blob/main/src/main/resources/assets/stellarview/stellarview/celestials/moon/milky_way/sol/earth/luna.json).
+We can see a field called *compatibility*. This field is used for compatibilities with other mods.
+
+In this case, we specify that when [Enhanced Celestials](https://www.curseforge.com/minecraft/mc-mods/enhanced-celestials) is used, 
+Players in [Overworld](https://minecraft.wiki/w/Overworld) will see Luna change as the effects of Enhanced Celestials dictate, but these changes won't be visible from other dimensions.
+
 ```json
 {
-	"parent": "stellarview:planet/milky_way/sol/earth",
-	"coords": { "x": {"ly": 0}, "y": {"ly": 0}, "z": {"ly": 0} },
-	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
-	"orbit_info":
-	{
-		"apoapsis": 405400,
-		"periapsis": 362600,
-		"orbit_clamp_distance": 100000000,
-		"orbital_period": { "ticks": 192000, "synodic": true },
-		"argument_of_periapsis": 0,
-		"inclination": 5.145,
-		"longtitude_of_ascending_node": 0,
-		"epoch_mean_anomaly": 157.5
-	},
-	"texture_layers":
-	[
-		{
-			"texture": "stellarview:textures/environment/moon_halo_phases.png",
-			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
-			"blend": true,
-			"size": 7697847.735118539,
-			"min_size": 0.15,
-			"clamp_at_min_size": true,
-			"rotation": 90,
-			"uv":
-			{
-				"phase_handler":
-				{
-					"ticks_per_phase": 24000,
-					"phase_tick_offset": 0,
-					"columns": 4,
-					"rows": 2
-				},
-				"flip_uv": true
-			}
-		},
-		{
-			"texture": "stellarview:textures/environment/moon_phases.png",
-			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
-			"blend": false,
-			"size": 7697847.735118539,
-			"min_size": 0.15,
-			"clamp_at_min_size": true,
-			"rotation": 90,
-			"uv":
-			{
-				"phase_handler":
-				{
-					"ticks_per_phase": 24000,
-					"phase_tick_offset": 0,
-					"columns": 4,
-					"rows": 2
-				},
-				"flip_uv": true
-			}
-		}
-	],
-	
 	"compatibility":
 	{
 		"enhanced_celestials_moon_dimension": "minecraft:overworld"
 	}
 }
 ```
-
-In the above example, we see the definition of Luna.
-We can see a field called *compatibility*. This field is used for compatibility with [Enhanced Celestials](https://www.curseforge.com/minecraft/mc-mods/enhanced-celestials) and specifies the [Dimension](https://minecraft.wiki/w/Dimension) in which the visual effects (changing size and color) for a Moon added by Enhanced Celestials will become apparent.
