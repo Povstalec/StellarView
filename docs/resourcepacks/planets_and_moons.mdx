@@ -7,6 +7,8 @@ hide_meta: true
 
 As of now, Planets are a subtype of [Orbiting Objects](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/space_objects) with no additional functions.
 
+To make Stellar View recognize your json file as a Planet, put it inside the `assets/<namespace>/stellarview/celestials/planet` folder in your [Resourcepack](https://minecraft.wiki/w/Resource_pack).
+
 * **[Examples of Planets](https://github.com/Povstalec/StellarView/tree/main/src/main/resources/assets/stellarview/stellarview/celestials/planet)**
 
 
@@ -15,11 +17,13 @@ As of now, Planets are a subtype of [Orbiting Objects](https://moddedmc.wiki/cs/
 
 Moons are a subtype of Planets, but have one additional property which Planets don't have.
 
+To make Stellar View recognize your json file as a Moon, put it inside the `assets/<namespace>/stellarview/celestials/moon` folder in your [Resourcepack](https://minecraft.wiki/w/Resource_pack).
+
 * **[Examples of Moons](https://github.com/Povstalec/StellarView/tree/main/src/main/resources/assets/stellarview/stellarview/celestials/moon)**
 
 ## Definition
 
-* `compatibility` *OPTIONAL* - In the below example, we take a section from the [definition of Luna](https://github.com/Povstalec/StellarView/blob/main/src/main/resources/assets/stellarview/stellarview/celestials/moon/milky_way/sol/earth/luna.json).
+* `compatibility` *OPTIONAL* - In the below example, we take a section from the [definition of Luna](https://github.com/Povstalec/StellarView/blob/main/src/main/resources/assets/stellarview/stellarview/celestials/moon/milky_way/sol/earth/luna.json#L60-L63).
 We can see a field called *compatibility*. This field is used for compatibilities with other mods.
 
 In this case, we specify that when [Enhanced Celestials](https://www.curseforge.com/minecraft/mc-mods/enhanced-celestials) is used, 

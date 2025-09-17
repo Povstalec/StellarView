@@ -12,8 +12,34 @@ The following are considered Space Objects:
 * [Nebulae](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/nebulae)
 * [Star Fields](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/star_fields)
 
-### Parent Space Object
+## Definition
 
-If a parent is defined for a Space Object, the Space Object's relative coordinates and rotation will center around the parent.
+* `parent` *OPTIONAL* - References another object as this object's parent.
+* `coords` **REQUIRED** - Specifies the space coordinates of the object.
+* `axis_rotation` **REQUIRED** - Specifies the rotation of the object around its individual axes (X axis -> Z axis -> Y axis).
+
+## `parent`
+
+Parent field is used to define an object's parent-child relationship. If a Parent can't be rendered, its children won't be rendered as well. Additionally, child objects can have their position be relative to the paren't position
+
+### Definition
+
+* `location` *REQUIRED* - Defines the path (Resource Location) the object's [parent](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/space_objects).
+* `relative` *OPTIONAL* - If set to true, the Space Object's relative coordinates and rotation will center around the parent. If not defined, it will be true by default.
 For example: If a star is defined with `coords` equal to `(0, 2, 1)` and it references a galaxy at `coords` equal to `(0, 40, 0)` as its parent, the star's absolute position will be `(0, 42, 1)`, `axis_rotation` behaves similarly.
 
+Examples of parent definition:
+
+Orion is a child of Milky Way, but its coordinates aren't centered around Milky Way's center:  
+`"parent": { "location": "stellarview:star_field/spiral_galaxy/milky_way/milky_way", "relative": false },`
+
+Earth is a child of Sol and its coordinates are centered around it:  
+`"parent": { "location": "stellarview:star/milky_way/sol" },`
+
+## `coords`
+
+TODO
+
+## `axis_rotation`
+
+TODO
