@@ -46,16 +46,16 @@ This system uses light years and kilometers as base units of measurement and doe
 
 ### Definition
 
-* 'x', 'y', 'z' **REQUIRED** - Distances from the origin in the X, Y and Z axes.
-* 'ly' *OPTIONAL* - The distance in light years, adds up with kilometers if specified. 0 if left empty.
-* 'km' *OPTIONAL* - The distance in kilometers, adds up with light years if specified. 0 if left empty.
+* `x`, `y`, `z` **REQUIRED** - Distances from the origin in the X, Y and Z axes.
+    * `ly` *OPTIONAL* - The distance in light years, adds up with kilometers if specified. 0 if left empty.
+    * `km` *OPTIONAL* - The distance in kilometers, adds up with light years if specified. 0 if left empty.
 
 Examples of Space Coord definition:
 
 [Sol](https://github.com/Povstalec/StellarView/blob/main/src/main/resources/assets/stellarview/stellarview/celestials/star/milky_way/sol.json#L3) is placed in the exact center of the simulated Universe:  
 `"coords": { "x": {"ly": 0}, "y": {"ly": 0}, "z": {"ly": 0} },`
-[Proxima Centauri](https://github.com/Povstalec/StellarView/blob/main/src/main/resources/assets/stellarview/stellarview/celestials/star/milky_way/alpha_centauri/proxima_centauri.json#L3) is not even a light year away from the Alpha Centauri barycenter:  
 
+[Proxima Centauri](https://github.com/Povstalec/StellarView/blob/main/src/main/resources/assets/stellarview/stellarview/celestials/star/milky_way/alpha_centauri/proxima_centauri.json#L3) is not even a light year away from the Alpha Centauri barycenter:  
 `"coords": { "x": {"ly": 0, "km": -1118496303331.426}, "y": {"ly": 0, "km": -1118496303331.426}, "z": {"ly": 0, "km": -1118496303331.426} },`
 
 ### Equatorial Coordinate System
@@ -64,6 +64,20 @@ In real life, because of the nature of our position in space, it makes more sens
 Which is why the [equatorial coordinate system](https://en.wikipedia.org/wiki/Equatorial_coordinate_system) is used for specifying the position of any deep space object.  
 You will find these used in scientific papers, astronomical sites and on wikipedia. And since converting from one coordinate system to another is tedious, you can simply use equatorial coordinate directly and Stellar View will convert them to Space Coords internally.
 All equatorial coordinates currently used in Stellar View are based on the J2000 epoch.
+
+### Definition
+
+* `right_ascension` **REQUIRED** - [Right ascension](https://en.wikipedia.org/wiki/Equatorial_coordinate_system#Right_ascension) of the object.
+    * `hours` *OPTIONAL* - 0 if left empty.
+    * `minutes` *OPTIONAL* - 0 if left empty.
+    * `seconds` *OPTIONAL* - 0 if left empty.
+* `declination` **REQUIRED** - [Declination](https://en.wikipedia.org/wiki/Equatorial_coordinate_system#Declination) of the object.
+    * `degrees` *OPTIONAL* - 0 if left empty.
+    * `minutes` *OPTIONAL* - 0 if left empty.
+    * `seconds` *OPTIONAL* - 0 if left empty.
+* `distance` **REQUIRED** - Distance of the object from origin.
+    * `ly` *OPTIONAL* - The distance in light years, adds up with kilometers if specified. 0 if left empty.
+    * `km` *OPTIONAL* - The distance in kilometers, adds up with light years if specified. 0 if left empty.
 
 Example of Equatorial coordinates definition:
 
