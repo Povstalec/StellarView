@@ -127,11 +127,16 @@ public abstract class TexturedObjectRenderer<T extends TexturedObject> extends S
 			return;
 		
 		float size = (float) textureLayer.mulSize(renderedObject.distanceSize(distance));
-		
-		if(size < textureLayer.minSize())
-		{
-			if(textureLayer.clampAtMinSize())
+
+		if(size < textureLayer.minSize()) {
+			if (textureLayer.clampAtMinSize())
 				size = (float) textureLayer.minSize();
+			else
+				return;
+		}
+		else if(size > textureLayer.maxSize()) {
+			if (textureLayer.clampAtMaxSize())
+				size = (float) textureLayer.maxSize();
 			else
 				return;
 		}
