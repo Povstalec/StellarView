@@ -7,107 +7,13 @@ Space Objects represent nearly everything you see in the night sky, they contain
 
 The following are considered Space Objects:
 * [Planets and Moons](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/planets_and_moons)
-* Stars
-* Black Holes
-* Nebulae
+* [Stars](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/stars)
+* [Black Holes](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/black_holes)
+* [Nebulae](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/nebulae)
 * [Star Fields](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/star_fields)
 
 ### Parent Space Object
 
 If a parent is defined for a Space Object, the Space Object's relative coordinates and rotation will center around the parent.
 For example: If a star is defined with `coords` equal to `(0, 2, 1)` and it references a galaxy at `coords` equal to `(0, 40, 0)` as its parent, the star's absolute position will be `(0, 42, 1)`, `axis_rotation` behaves similarly.
-
-
-
-# Textured Object
-
-A Textured Object is a subtype of Space Object that is visually represented with one or more textures.
-
-The following are considered Textured Objects:
-* [Planets and Moons](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/planets_and_moons)
-* Stars
-* Black Holes
-* Nebulae
-
-Example of a Textured Object:
-
-```json
-{
-	"coords": { "right_ascension": {"hours": 5, "minutes": 34, "seconds": 31.94}, "declination": {"degrees": 22, "minutes": 0, "seconds": 52.2}, "distance": {"ly": 6500} },
-	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
-	"texture_layers":
-	[
-		{
-			"texture": "stellarview:textures/environment/halo_template.png",
-			"rgba": {"red": 255, "green": 0, "blue": 0, "alpha": 255},
-			"blend": true,
-			"size": 4488626469,
-			"min_size": 0.9,
-			"clamp_at_min_size": true,
-			"rotation": 0,
-			"uv": { "flip_uv": false }
-		},
-		{
-			"texture": "stellarview:textures/environment/nebula/crab_nebula.png",
-			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
-			"blend": true,
-			"size": 4488626469,
-			"min_size": 0.5,
-			"clamp_at_min_size": true,
-			"rotation": 0,
-			"uv": { "flip_uv": false }
-		}
-	]
-}
-```
-
-The Textured Object has a special field called *texture_layers* which allows Resourcepacks to define the textures used to represent the object, layer by layer.  
-These Texture Layers are rendered from top to bottom, which means that in the above example, halo_template.png is rendered first and crab_nebula.png is rendered second, above the first one.
-
-### Texture Layer
-
-Texture Layer definition consists of the following fields:
-
-* `texture` **REQUIRED** - Defines the path to the texture file used for rendering the layer.
-* `rgba` **REQUIRED** - A set of 4 values, the first 3 (*red*, *green*, *blue*) define color adjustments and the last one (*alpha*) adjusts the transparency (255 = no transparency, 0 = full transparency).
-* `blend` **REQUIRED** - Specifies whether or not the layer should blend with the background.
-* `size` **REQUIRED** - Defines the visual size of the layer (in meters). 
-* `min_size` *OPTIONAL* - When specified, defines the minimal visual size of the object. When the object is far enough away that its visual size would be smaller than min_size, the layer stops rendering.
-* `clamp_at_min_size` *OPTIONAL* - When specified and min_size is present, it changes the behaviour of min_size and instead of the layer no longer rendering, it will remain at this minimum size no matter how far away the object moves.
-* `rotation` **REQUIRED** - Defines the amount by which the layer is rotated by along the axis facing the player (in degrees).
-* `uv` *OPTIONAL* - Allows Resourcepacks to specify the `phase_handler` (*OPTIONAL*) which can change the [UV coordinates](https://en.wikipedia.org/wiki/UV_mapping) of a texture based on time and `flip_uv` (*OPTIONAL*) decides whether the texture should have its U coordinate flipped.
-
-```json
-"uv":
-{
-	"phase_handler":
-	{
-		"ticks_per_phase": 24000,
-		"phase_tick_offset": 0,
-		"columns": 4,
-		"rows": 2
-	},
-	"flip_uv": true
-}
-```
-
-In the above example taken from [Luna](https://github.com/Povstalec/StellarView/blob/main/src/main/resources/assets/stellarview/stellarview/celestials/moon/milky_way/sol/earth/luna.json), we define the 8 phases of the Moon using the following values:
-
-* `ticks_per_phase` **REQUIRED** - Specifies how many ticks it takes before the phase switches to the next one. In this case, the Moon's phases change each day, so we set it to 24000 ticks, which is exactly 1 day in Minecraft.
-* `phase_tick_offset` *OPTIONAL* - Specifies the offset at which the phases start. For example, setting it to 48000 would make the Moon start at its 3rd phase in this case.
-* `columns` **REQUIRED** - defines the number of columns used for phases along the U-axis. In the case of the Moon, there are 4 (see [Minecraft Wiki](https://minecraft.wiki/w/Moon#/media/File:201111102025_moon_phases.png) for reference)
-* `rows` **REQUIRED** - defines the number of rows used for phases along the V-axis. In the case of the Moon, there are 2 (see [Minecraft Wiki](https://minecraft.wiki/w/Moon#/media/File:201111102025_moon_phases.png) for reference)
-
-
-
-# Orbiting Object
-
-An Orbiting Object is a subtype of Textured Object, which can orbit other Space Objects.
-
-The following are considered Orbiting Objects:
-* [Planets and Moons](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/planets_and_moons)
-* Stars
-* Black Holes
-
-TODO
 
