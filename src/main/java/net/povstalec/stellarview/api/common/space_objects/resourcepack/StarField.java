@@ -112,7 +112,7 @@ public class StarField extends SpaceObject
 	protected ArrayList<SpiralArm> spiralArms;
 	
 	public static final Codec<StarField> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			ResourceLocation.CODEC.optionalFieldOf(PARENT_LOCATION).forGetter(StarField::getParentLocation),
+			ParentInfo.CODEC.optionalFieldOf(PARENT).forGetter(StarField::getParentInfo),
 			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf(COORDS).forGetter(object -> Either.left(object.getCoords())),
 			AxisRotation.CODEC.fieldOf(AXIS_ROTATION).forGetter(StarField::getAxisRotation),
 			
@@ -135,7 +135,7 @@ public class StarField extends SpaceObject
 	
 	public StarField() {}
 	
-	public StarField(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
+	public StarField(Optional<ParentInfo> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
 					 int dustClouds, Optional<ResourceLocation> dustCloudInfo, ResourceLocation dustCloudTexture, boolean clumpDustCloudsInCenter, Stretch dustCloudStretch,
 					 int stars, Optional<ResourceLocation> starInfo, ResourceLocation starTexture, boolean clumpStarsInCenter, Stretch starStretch,
 					 long seed, int diameter, List<SpiralArm> spiralArms)

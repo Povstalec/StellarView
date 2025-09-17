@@ -3,20 +3,14 @@ package net.povstalec.stellarview.client.render.space_objects.resourcepack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import com.mojang.datafixers.util.Either;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.FogRenderer;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
-import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.api.common.space_objects.resourcepack.Constellation;
 import net.povstalec.stellarview.api.common.space_objects.resourcepack.StarField;
 import net.povstalec.stellarview.client.render.StellarViewEffects;
-import net.povstalec.stellarview.client.render.shader.StellarViewShaders;
-import net.povstalec.stellarview.client.render.shader.StellarViewVertexFormat;
 import net.povstalec.stellarview.client.render.space_objects.SpaceObjectRenderer;
-import net.povstalec.stellarview.client.util.DustCloudBuffer;
 import net.povstalec.stellarview.client.util.StarData;
 import net.povstalec.stellarview.common.util.DustCloudInfo;
 import net.povstalec.stellarview.common.util.StarInfo;
@@ -31,8 +25,6 @@ import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
 
 public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<T>
@@ -76,27 +68,32 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 		this.lod1definedStars = new ArrayList<>();
 		this.lod2definedStars = new ArrayList<>();
 		this.lod3definedStars = new ArrayList<>();
+	}
+	
+	@Override
+	public void addChildRaw(SpaceObjectRenderer<?> child)
+	{
+		super.addChildRaw(child);
 		
-		if(new ResourceLocation(StellarView.MODID, "milky_way/milky_way_core_distribution").equals(this.renderedObject().getDustCloudInfo()))
-			addConstellation(Constellation.ORION);
+		if(child instanceof ConstellationRenderer<?> constellation)
+			addConstellation(constellation.renderedObject());
+	}
+	
+	@Override
+	public void addChild(SpaceObjectRenderer<?> child)
+	{
+		super.addChild(child);
+		
+		if(child instanceof ConstellationRenderer<?> constellation)
+			addConstellation(constellation.renderedObject());
 	}
 	
 	public void addConstellation(Constellation constellation)
 	{
-		for(Constellation.StarDefinition star : constellation.lod1stars())
-		{
-			this.lod1definedStars.add(star);
-		}
-		
-		for(Constellation.StarDefinition star : constellation.lod2stars())
-		{
-			this.lod2definedStars.add(star);
-		}
-		
-		for(Constellation.StarDefinition star : constellation.lod3stars())
-		{
-			this.lod3definedStars.add(star);
-		}
+		constellation.relativeStars();
+		this.lod1definedStars.addAll(constellation.lod1stars());
+		this.lod2definedStars.addAll(constellation.lod2stars());
+		this.lod3definedStars.addAll(constellation.lod3stars());
 	}
 	
 	protected void setupLOD(StarInfo starInfo)
@@ -498,7 +495,7 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 			stack.popPose();
 		}
 		
-		for(SpaceObjectRenderer child : children)
+		for(SpaceObjectRenderer<?> child : children)
 		{
 			child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, parentVector, new AxisRotation(0, 0, 0));
 		}

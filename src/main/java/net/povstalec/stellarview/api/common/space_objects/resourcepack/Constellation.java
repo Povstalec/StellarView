@@ -3,67 +3,49 @@ package net.povstalec.stellarview.api.common.space_objects.resourcepack;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.povstalec.stellarview.common.util.Color;
-import net.povstalec.stellarview.common.util.SpaceCoords;
-import net.povstalec.stellarview.common.util.StellarCoordinates;
+import net.minecraftforge.common.util.INBTSerializable;
+import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
+import net.povstalec.stellarview.common.util.*;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-public class Constellation
+public class Constellation extends SpaceObject
 {
-	public static final String COORDS = "coords";
+	public static final String STAR_TEXTURE = "star_texture";
+	public static final String STARS = "stars";
 	
-	public static final StarDefinition BETELGEUSE = new StarDefinition(Either.right(new StellarCoordinates.Equatorial(new StellarCoordinates.RightAscension(5, 55, 10.30536), new StellarCoordinates.Declination(7, 24, 25.4304), new SpaceCoords.SpaceDistance(478))),
-			new Color.IntRGB(255, 0, 0), (short) 255, 0.40F, 0, StarField.LOD_DISTANCE_HIGH);
-	public static final StarDefinition RIGEL = new StarDefinition(Either.right(new StellarCoordinates.Equatorial(new StellarCoordinates.RightAscension(5, 14, 32.27210), new StellarCoordinates.Declination(-8, 12, 5.8981), new SpaceCoords.SpaceDistance(848))),
-			new Color.IntRGB(255, 0, 0), (short) 255, 0.40F, 0, StarField.LOD_DISTANCE_HIGH);
-	public static final StarDefinition BELLATRIX = new StarDefinition(Either.right(new StellarCoordinates.Equatorial(new StellarCoordinates.RightAscension(5, 25, 7.86325), new StellarCoordinates.Declination(6, 20, 58.9318), new SpaceCoords.SpaceDistance(250))),
-			new Color.IntRGB(255, 0, 0), (short) 255, 0.40F, 0, StarField.LOD_DISTANCE_HIGH);
-	public static final StarDefinition MINTAKA = new StarDefinition(Either.right(new StellarCoordinates.Equatorial(new StellarCoordinates.RightAscension(5, 32, 0.40009), new StellarCoordinates.Declination(-0, 17, 56.7424), new SpaceCoords.SpaceDistance(1200))),
-			new Color.IntRGB(255, 0, 0), (short) 255, 0.40F, 0, StarField.LOD_DISTANCE_HIGH);
-	public static final StarDefinition ALNILAM = new StarDefinition(Either.right(new StellarCoordinates.Equatorial(new StellarCoordinates.RightAscension(5, 36, 12.8), new StellarCoordinates.Declination(-1, 12, 6.9), new SpaceCoords.SpaceDistance(1180))),
-			new Color.IntRGB(255, 0, 0), (short) 255, 0.40F, 0, StarField.LOD_DISTANCE_HIGH);
-	public static final StarDefinition ALNITAK = new StarDefinition(Either.right(new StellarCoordinates.Equatorial(new StellarCoordinates.RightAscension(5, 40, 45.52666), new StellarCoordinates.Declination(-1, 56, 34.2649), new SpaceCoords.SpaceDistance(1260))),
-			new Color.IntRGB(255, 0, 0), (short) 255, 0.40F, 0, StarField.LOD_DISTANCE_HIGH);
-	public static final StarDefinition SAIPH = new StarDefinition(Either.right(new StellarCoordinates.Equatorial(new StellarCoordinates.RightAscension(5, 47, 45.38884), new StellarCoordinates.Declination(-9, 40, 10.5777), new SpaceCoords.SpaceDistance(650))),
-			new Color.IntRGB(255, 0, 0), (short) 255, 0.40F, 0, StarField.LOD_DISTANCE_HIGH);
-	public static final StarDefinition MEISSA = new StarDefinition(Either.right(new StellarCoordinates.Equatorial(new StellarCoordinates.RightAscension(5, 35, 8.27608), new StellarCoordinates.Declination(9, 56, 2.9913), new SpaceCoords.SpaceDistance(1320))),
-			new Color.IntRGB(255, 0, 0), (short) 255, 0.40F, 0, StarField.LOD_DISTANCE_HIGH);
-	
-	public static final Constellation ORION = new Constellation(Either.left(new SpaceCoords(0, 0, 0)),  new ResourceLocation("a"),
-			List.of(BETELGEUSE,
-					RIGEL,
-					BELLATRIX,
-					MINTAKA,
-					ALNILAM,
-					ALNITAK,
-					SAIPH,
-					MEISSA));
-	
-	private SpaceCoords coords;
-	
-	private ResourceLocation starField;
+	public static final String LOD1_STARS = "lod1_stars";
+	public static final String LOD2_STARS = "lod2_stars";
+	public static final String LOD3_STARS = "lod3_stars";
 	
 	private ArrayList<StarDefinition> lod1stars = new ArrayList<>();
 	private ArrayList<StarDefinition> lod2stars = new ArrayList<>();
 	private ArrayList<StarDefinition> lod3stars = new ArrayList<>();
 	
+	@Nullable
+	protected ResourceLocation starTexture;
+	
 	public static final Codec<Constellation> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf(COORDS).forGetter(starDefinition -> Either.left(starDefinition.coords)),
-			ResourceLocation.CODEC.fieldOf("star_field").forGetter(constellation -> constellation.starField),
-			StarDefinition.CODEC.listOf().fieldOf("stars").forGetter(constellation -> new ArrayList<StarDefinition>())
+			ParentInfo.CODEC.optionalFieldOf(PARENT).forGetter(Constellation::getParentInfo),
+			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf(COORDS).forGetter(constellation -> Either.left(constellation.getCoords())),
+			AxisRotation.CODEC.fieldOf(AXIS_ROTATION).forGetter(Constellation::getAxisRotation),
+			
+			ResourceLocation.CODEC.optionalFieldOf(STAR_TEXTURE).forGetter(constellation -> Optional.of(constellation.starTexture)),
+			StarDefinition.CODEC.listOf().fieldOf(STARS).forGetter(constellation -> new ArrayList<>())
 	).apply(instance, Constellation::new));
 	
-	public Constellation(Either<SpaceCoords, StellarCoordinates.Equatorial> coords, ResourceLocation starField, List<StarDefinition> stars)
+	public Constellation() {}
+	
+	public Constellation(Optional<ParentInfo> parentLocation, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation, Optional<ResourceLocation> starTexture, List<StarDefinition> stars)
 	{
-		if(coords.left().isPresent())
-			this.coords = coords.left().get();
-		else
-			this.coords = coords.right().get().toGalactic().toSpaceCoords();
+		super(parentLocation, coords, axisRotation);
 		
-		this.starField = starField;
+		this.starTexture = starTexture.orElse(null);
 		
 		for(StarDefinition star : stars)
 		{
@@ -82,9 +64,29 @@ public class Constellation
 		}
 	}
 	
-	public ResourceLocation starField()
+	// Make stars relative to the constellation center coords
+	public void relativeStars()
 	{
-		return starField;
+		for(StarDefinition star : this.lod1stars)
+		{
+			star.offsetCoords(this.coords);
+		}
+		
+		for(StarDefinition star : this.lod2stars)
+		{
+			star.offsetCoords(this.coords);
+		}
+		
+		for(StarDefinition star : this.lod3stars)
+		{
+			star.offsetCoords(this.coords);
+		}
+	}
+	
+	@Nullable
+	public ResourceLocation getStarTexture()
+	{
+		return starTexture;
 	}
 	
 	public ArrayList<StarDefinition> lod1stars()
@@ -102,9 +104,74 @@ public class Constellation
 		return lod3stars;
 	}
 	
+	public boolean hasStarField()
+	{
+		return parent instanceof StarField;
+	}
+	
+	//============================================================================================
+	//*************************************Saving and Loading*************************************
+	//============================================================================================
+	
+	private static CompoundTag serializeLODTypes(ArrayList<StarDefinition> lodTypes)
+	{
+		CompoundTag starTypesTag = new CompoundTag();
+		for(int i = 0; i < lodTypes.size(); i++)
+		{
+			starTypesTag.put("star_definition_" + i, lodTypes.get(i).serializeNBT());
+		}
+		
+		return starTypesTag;
+	}
+	
+	private static ArrayList<StarDefinition> getLODTypes(CompoundTag tag, String key)
+	{
+		ArrayList<StarDefinition> lodTypes;
+		if(tag.contains(key))
+		{
+			lodTypes = new ArrayList<StarDefinition>();
+			CompoundTag starTypesTag = tag.getCompound(key);
+			for(int i = 0; i < starTypesTag.size(); i++)
+			{
+				StarDefinition starDefinition = new StarDefinition();
+				starDefinition.deserializeNBT(starTypesTag.getCompound("star_definition_" + i));
+				lodTypes.add(starDefinition);
+			}
+		}
+		else
+			lodTypes = null;
+		
+		return lodTypes;
+	}
+	
+	@Override
+	public CompoundTag serializeNBT()
+	{
+		CompoundTag tag = super.serializeNBT();
+		
+		if(this.lod1stars != null)
+			tag.put(LOD1_STARS, serializeLODTypes(this.lod1stars));
+		if(this.lod2stars != null)
+			tag.put(LOD2_STARS, serializeLODTypes(this.lod2stars));
+		if(this.lod3stars != null)
+			tag.put(LOD3_STARS, serializeLODTypes(this.lod3stars));
+		
+		return tag;
+	}
+	
+	@Override
+	public void deserializeNBT(CompoundTag tag)
+	{
+		super.deserializeNBT(tag);
+		
+		this.lod1stars = getLODTypes(tag, LOD1_STARS);
+		this.lod2stars = getLODTypes(tag, LOD2_STARS);
+		this.lod3stars = getLODTypes(tag, LOD3_STARS);
+	}
 	
 	
-	public static class StarDefinition
+	
+	public static class StarDefinition implements INBTSerializable<CompoundTag>
 	{
 		public static final String RGB = "rgb";
 		public static final String SIZE = "size";
@@ -128,6 +195,8 @@ public class Constellation
 				Codec.LONG.optionalFieldOf(MAX_VISIBLE_DISTANCE, Long.MAX_VALUE).forGetter(starDefinition -> starDefinition.maxVisibleDistance)
 		).apply(instance, StarDefinition::new));
 		
+		public StarDefinition() {}
+		
 		public StarDefinition(Either<SpaceCoords, StellarCoordinates.Equatorial> coords, Color.IntRGB rgb, short brightness, float size, double rotation, long maxVisibleDistance)
 		{
 			if(coords.left().isPresent())
@@ -140,6 +209,11 @@ public class Constellation
 			this.size = size;
 			this.rotation = Math.toRadians(rotation);
 			this.maxVisibleDistance = maxVisibleDistance;
+		}
+		
+		public void offsetCoords(SpaceCoords offset)
+		{
+			coords = coords.add(offset);
 		}
 		
 		public SpaceCoords coords()
@@ -170,6 +244,48 @@ public class Constellation
 		public long maxVisibleDistance()
 		{
 			return maxVisibleDistance;
+		}
+		
+		//============================================================================================
+		//*************************************Saving and Loading*************************************
+		//============================================================================================
+		
+		@Override
+		public CompoundTag serializeNBT()
+		{
+			CompoundTag tag = new CompoundTag();
+			
+			tag.put(COORDS, coords.serializeNBT());
+			
+			tag.put(RGB, rgb.serializeNBT());
+			
+			tag.putShort(BRIGHTNESS, brightness);
+			
+			tag.putFloat(SIZE, size);
+			
+			tag.putDouble(ROTATION, rotation);
+			
+			tag.putLong(MAX_VISIBLE_DISTANCE, maxVisibleDistance);
+			
+			return tag;
+		}
+		
+		@Override
+		public void deserializeNBT(CompoundTag tag)
+		{
+			this.coords = new SpaceCoords();
+			coords.deserializeNBT(tag.getCompound(COORDS));
+			
+			this.rgb = new  Color.IntRGB();
+			this.rgb.deserializeNBT(tag.getCompound(RGB));
+			
+			this.brightness = tag.getShort(BRIGHTNESS);
+			
+			this.size = tag.getFloat(SIZE);
+			
+			this.rotation = tag.getDouble(ROTATION);
+			
+			this.maxVisibleDistance = tag.getLong(MAX_VISIBLE_DISTANCE);
 		}
 	}
 }

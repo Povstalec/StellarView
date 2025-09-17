@@ -53,7 +53,12 @@ public abstract class SpaceObjectRenderer<RenderedObject extends SpaceObject>
 		return new Vector3f();
 	}
 	
-	public void addChildRaw(SpaceObjectRenderer child)
+	public void addParent(SpaceObjectRenderer<?> parent)
+	{
+		this.parent = parent;
+	}
+	
+	public void addChildRaw(SpaceObjectRenderer<?> child)
 	{
 		if(child.parent != null)
 		{
@@ -62,12 +67,12 @@ public abstract class SpaceObjectRenderer<RenderedObject extends SpaceObject>
 		}
 		
 		children.add(child);
-		child.parent = this;
+		child.addParent(this);
 		
 		renderedObject.addChildRaw(child.renderedObject);
 	}
 	
-	public void addChild(SpaceObjectRenderer child)
+	public void addChild(SpaceObjectRenderer<?> child)
 	{
 		if(child.parent != null)
 		{
@@ -76,7 +81,7 @@ public abstract class SpaceObjectRenderer<RenderedObject extends SpaceObject>
 		}
 		
 		children.add(child);
-		child.parent = this;
+		child.addParent(this);
 		
 		renderedObject.addChild(child.renderedObject);
 	}

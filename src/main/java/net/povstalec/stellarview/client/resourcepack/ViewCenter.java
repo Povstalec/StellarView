@@ -7,9 +7,6 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
-import net.povstalec.stellarview.api.common.space_objects.resourcepack.StarField;
-import net.povstalec.stellarview.api.common.space_objects.StarLike;
-import net.povstalec.stellarview.api.common.space_objects.ViewObject;
 import net.povstalec.stellarview.client.render.LightEffects;
 import net.povstalec.stellarview.client.render.SpaceRenderer;
 import net.povstalec.stellarview.client.render.space_objects.SpaceObjectRenderer;
@@ -403,6 +400,10 @@ public class ViewCenter
 		
 		stack.pushPose();
 		
+		//TODO Add a toggle for this
+		// Binds the celestial sphere to a physical location in the world
+		//stack.translate(-camera.getPosition().x(), -camera.getPosition().y() + 300, -camera.getPosition().z());
+		
 		if(!GeneralConfig.disable_view_center_rotation.get())
 		{
 			if(updateTicks)
@@ -411,10 +412,9 @@ public class ViewCenter
 				this.dayTicks = level.getDayTime();
 			}
 			double rotation = 2 * Math.PI * getTimeOfDay(partialTicks) + Math.PI;
-			level.getTimeOfDay(partialTicks);
 			
-			//if(viewObject.orbitInfo() != null)
-			//	rotation -= viewObject.orbitInfo().meanAnomaly(this.ticks % viewObject.orbitInfo().orbitalPeriod().ticks(), tickDifference() * partialTicks);
+			if(viewObject.orbitInfo() != null)
+				rotation -= viewObject.orbitInfo().meanAnomaly(this.ticks % viewObject.orbitInfo().orbitalPeriod().ticks(), tickDifference() * partialTicks);
 			
 			stack.mulPose(Axis.YP.rotation((float) getAxisRotation().yAxis()));
 			stack.mulPose(Axis.ZP.rotation((float) getAxisRotation().zAxis()));
@@ -425,7 +425,7 @@ public class ViewCenter
 		}
 		
 		viewObject.renderFrom(this, level, tickDifference() * partialTicks, stack, camera, projectionMatrix, StellarViewFogEffects.isFoggy(minecraft, camera), setupFog, bufferbuilder);
-
+		
 		stack.popPose();
 
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
