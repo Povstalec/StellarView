@@ -11,5 +11,35 @@ The following are considered Orbiting Objects:
 * [Stars](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/stars)
 * [Black Holes](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/black_holes)
 
-TODO
+### Definition
+* ***Fields from [Textured Object](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/textured_objects.***
+* `orbit_info` *OPTIONAL* - Defines the orbital behaviour of the object.
+    * `apoapsis` **REQUIRED** - The [apoapsis](https://en.wikipedia.org/wiki/Apsis) of the object's orbit.
+    * `periapsis` **REQUIRED** - The [periapsis](https://en.wikipedia.org/wiki/Apsis) of the object's orbit.
+    * `orbit_clamp_distance` *OPTIONAL* - The distance at which the object's orbit will stop shrinking. As you get further away from an object, its orbit will seem smaller, but with orbit clamp distance, it will remain the same size no matter how far away you are.
+    * `orbital_period` **REQUIRED** - Defines how long it will take the object to complete one or more orbits.
+        * `ticks` **REQUIRED** - Time it will take in ticks.
+        * `orbits` *OPTIONAL* - Number of orbits completed in a given time, doesn't need to be an integer. 1 if left empty.
+        * `synodic` *OPTIONAL* - Whether the defined time is [synodic](https://en.wikipedia.org/wiki/Synodic_day) or not. False if left empty.
+    * `argument_of_periapsis` - The [argument of periapsis](https://en.wikipedia.org/wiki/Argument_of_periapsis) of the object's orbit.
+    * `inclination` - The [inclination](https://en.wikipedia.org/wiki/Orbital_inclination) of the object's orbit.
+	* `longitude_of_ascending_node` - The [longitude of ascending node](https://en.wikipedia.org/wiki/Longitude_of_the_ascending_node) of the object's orbit.
+    * `epoch_mean_anomaly`- The [epoch mean anomaly](https://en.wikipedia.org/wiki/Mean_anomaly#Mean_anomaly_at_epoch) of the object's orbit.
 
+Example of orbit info definition:
+
+Here you can see [Luna's](https://github.com/Povstalec/StellarView/blob/main/src/main/resources/assets/stellarview/stellarview/celestials/moon/milky_way/sol/earth/luna.json#L6-L15) orbit info.
+The orbit is synodic because it's defined as we see it from the Earth.
+```json
+"orbit_info":
+{
+	"apoapsis": 405400,
+	"periapsis": 362600,
+	"orbit_clamp_distance": 100000000,
+	"orbital_period": { "ticks": 192000, "synodic": true },
+	"argument_of_periapsis": 0,
+	"inclination": 5.145,
+	"longtitude_of_ascending_node": 0,
+	"epoch_mean_anomaly": 157.5
+},
+```

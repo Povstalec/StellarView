@@ -13,7 +13,17 @@ The following are considered Textured Objects:
 
 ### Definition
 
-* **Fields from [Space Object](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/space_objects).**
+* ***Fields from [Space Object](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/space_objects).***
+* `fade_out_handler` *OPTIONAL* - Defines how the object fades out when it's far away.
+    * `fade_out_start_distance` **REQUIRED** - Distance at which the object will start to fade out. 
+        * `ly` *OPTIONAL* - The distance in light years, adds up with kilometers if specified. 0 if left empty.
+        * `km` *OPTIONAL* - The distance in kilometers, adds up with light years if specified. 0 if left empty.
+    * `fade_out_end_distance` **REQUIRED** - Distance at which the object will stop fading out and disappear entirely. 
+        * `ly` *OPTIONAL* - The distance in light years, adds up with kilometers if specified. 0 if left empty.
+        * `km` *OPTIONAL* - The distance in kilometers, adds up with light years if specified. 0 if left empty.
+    * `max_child_render_distance` **REQUIRED** - Maximum distance from which the object's children will be rendered.
+        * `ly` *OPTIONAL* - The distance in light years, adds up with kilometers if specified. 0 if left empty.
+        * `km` *OPTIONAL* - The distance in kilometers, adds up with light years if specified. 0 if left empty.
 * `texture_layers` **REQUIRED** - List of textures used to represent the object, layer by layer. Layers are rendered from top to bottom, meaning the last defined layer covers all previously defined layers.
     * `texture` **REQUIRED** - Defines the path to the texture file used for rendering the layer.
     * `rgba` **REQUIRED** - A set of 4 values, the first 3 (*red*, *green*, *blue*) define color adjustments and the last one (*alpha*) adjusts the transparency (255 = no transparency, 0 = full transparency).
@@ -33,10 +43,9 @@ The following are considered Textured Objects:
             * `columns` **REQUIRED** - defines the number of columns used for phases along the U-axis.
             * `rows` **REQUIRED** - defines the number of rows used for phases along the V-axis.
 
-Example of texture layer definition:
+Examples of texture layer definition:
 
-Texture layers of [Luna](https://github.com/Povstalec/StellarView/blob/main/src/main/resources/assets/stellarview/stellarview/celestials/moon/milky_way/sol/earth/luna.json#L16-L58).
-
+Here are the texture layers of [Luna](https://github.com/Povstalec/StellarView/blob/main/src/main/resources/assets/stellarview/stellarview/celestials/moon/milky_way/sol/earth/luna.json#L16-L58).
 Based on the order they are defined in, you can tell the [moon_halo_phases.png](https://github.com/Povstalec/StellarView/blob/main/src/main/resources/assets/stellarview/textures/environment/moon_halo_phases.png)
 file will be rendered first and thus be in the background, while [moon_phases.png](https://github.com/Povstalec/StellarView/blob/main/src/main/resources/assets/stellarview/textures/environment/moon_phases.png) will be rendered second.
 
@@ -45,9 +54,8 @@ Here you can see that:
 * If you set `phase_tick_offset` to 48000, it would make the Moon start at its 3rd phase.
 * There are 4 columns with phases (see [Minecraft Wiki](https://minecraft.wiki/w/Moon#/media/File:201111102025_moon_phases.png) for reference)
 * There are 2 rows with phases (see [Minecraft Wiki](https://minecraft.wiki/w/Moon#/media/File:201111102025_moon_phases.png) for reference)
-
+* The UV is flipped, just like with the Vanilla Moon.
 ```json
-{
 "texture_layers":
 [
 	{
@@ -93,3 +101,14 @@ Here you can see that:
 ]
 ```
 
+Here is the fade out handler of the [Alpha Centauri barycenter](https://github.com/Povstalec/StellarView/blob/main/src/main/resources/assets/stellarview/stellarview/celestials/star/milky_way/alpha_centauri/alpha_centauri_barycenter.json#L7-L12),
+its children (Alpha Centauri A, Alpha Centuari B and Proxima Centauri) will stop rendering if you are further than 5 million light years away.
+
+```json
+"fade_out_handler":
+{
+	"fade_out_start_distance": { "ly": 3000000 },
+	"fade_out_end_distance": { "ly": 5000000 },
+	"max_child_render_distance": { "ly": 5000000 }
+}
+```
