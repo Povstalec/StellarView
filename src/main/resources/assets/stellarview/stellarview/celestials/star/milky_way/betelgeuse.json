@@ -3,7 +3,7 @@
 	"coords": { "right_ascension": {"hours": 5, "minutes": 55, "seconds": 10.30536}, "declination": {"degrees": 7, "minutes": 24, "seconds": 25.4304}, "distance": {"ly": 478} },
 	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
 		
-	"min_star_size": 0.2,
+	"min_star_size": 0.25,
 	
 
 	"texture_layers":
