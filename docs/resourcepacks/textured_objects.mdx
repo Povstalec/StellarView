@@ -29,7 +29,7 @@ The following are considered Textured Objects:
     * `rgba` **REQUIRED** - A set of 4 values, the first 3 (*red*, *green*, *blue*) define color adjustments and the last one (*alpha*) adjusts the transparency (255 = no transparency, 0 = full transparency).
     * `blend` **REQUIRED** - Specifies whether or not the layer should blend with the background.
     * `size` **REQUIRED** - Defines the visual size of the layer in meters. Do note that it's the "radius", so the actual size will be double of what you specify.
-	And also note that most Stellar View planet textures only take up 1/4th of the width of the image file, so in their case, they are half as large as you would imagine.
+	And also note that most Stellar View planet textures only take up 1/4th of the width of the image file (8 pixel wide planets, 32 pixel wide images), so in their case, they are half as large as you would imagine (2 * 1/4 = 1/2).
     * `min_size` *OPTIONAL* - When specified, defines the minimal visual size of the object. When the object is far enough away that its visual size would be smaller than min_size, the layer stops rendering.
     * `clamp_at_min_size` *OPTIONAL* - When specified and min_size is present, it changes the behaviour of min_size and instead of the layer no longer rendering, it will remain at this minimum size no matter how far away the object moves.
     * `max_size` *OPTIONAL* - When specified, defines the maximal visual size of the object. When the object is close enough that its visual size would be larger than max_size, the layer stops rendering.
