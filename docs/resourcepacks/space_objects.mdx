@@ -21,7 +21,7 @@ The following are considered Space Objects:
 
 ## `parent`
 
-Parent field is used to define an object's parent-child relationship. If a Parent can't be rendered, its children won't be rendered as well. Additionally, child objects can have their position be relative to the paren't position
+Parent field is used to define an object's parent-child relationship. If a Parent can't be rendered, its children won't be rendered as well. Additionally, child objects can have their position and rotation be relative to the paren't position,
 
 ### Definition
 
@@ -81,11 +81,23 @@ All equatorial coordinates currently used in Stellar View are based on the J2000
 
 Example of Equatorial coordinates definition:
 
-You can compare the coordinates of [Betelgeuse](https://github.com/Povstalec/StellarView/blob/main/src/main/resources/assets/stellarview/stellarview/celestials/star/milky_way/betelgeuse.json#L3) used in Stellar View with ones you can find on [Wikipedia](https://en.wikipedia.org/wiki/Betelgeuse)
+You can compare the coordinates of [Betelgeuse](https://github.com/Povstalec/StellarView/blob/main/src/main/resources/assets/stellarview/stellarview/celestials/star/milky_way/betelgeuse.json#L3)
+used in Stellar View with ones you can find on [Wikipedia](https://en.wikipedia.org/wiki/Betelgeuse):  
 `"coords": { "right_ascension": {"hours": 5, "minutes": 55, "seconds": 10.30536}, "declination": {"degrees": 7, "minutes": 24, "seconds": 25.4304}, "distance": {"ly": 478} },`
-
-### Definition
 
 ## `axis_rotation`
 
-TODO
+Space Objects can be rotated in various directions. This rotation can affect the visual appearance, as well as relative positions of its children, as well as how the sky looks on it if it's used as a [View Center](https://moddedmc.wiki/cs/project/stellarview/latest/docs/resourcepacks/view_centers).
+Axis Rotation defines these rotations along the Y, Z and X axes in that order.
+
+### Definition
+
+* `x_axis` **REQUIRED** - Rotation around the X-axis.
+* `y_axis` **REQUIRED** - Rotation around the Y-axis.
+* `z_axis` **REQUIRED** - Rotation around the Z-axis.
+* `seconds` *OPTIONAL* - If true, the rotation is specified in degrees, if false it is specified in radians. True if left empty.
+
+Example of Axis Rotation definition:
+
+Axis Rotation of the [Andromeda Galaxy](https://github.com/Povstalec/StellarView/blob/main/src/main/resources/assets/stellarview/stellarview/celestials/star_field/spiral_galaxy/andromeda/andromeda.json#L3):  
+`"axis_rotation": { "x_axis": 0, "y_axis": 32, "z_axis": -49 },`
