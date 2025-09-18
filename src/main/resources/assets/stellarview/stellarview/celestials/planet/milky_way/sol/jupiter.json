@@ -26,8 +26,28 @@
 			"uv": { "flip_uv": false }
 		},
 		{
+			"texture": "stellarview:textures/environment/ring/ring_light_back.png",
+			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 64},
+			"blend": false,
+			"size": 69911000,
+			"min_size": 1.0,
+			"clamp_at_min_size": true,
+			"rotation": -90,
+			"uv": { "flip_uv": false }
+		},
+		{
 			"texture": "stellarview:textures/environment/planet/sol/jupiter.png",
 			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
+			"blend": false,
+			"size": 69911000,
+			"min_size": 1.0,
+			"clamp_at_min_size": true,
+			"rotation": -90,
+			"uv": { "flip_uv": false }
+		},
+		{
+			"texture": "stellarview:textures/environment/ring/ring_light_front.png",
+			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 64},
 			"blend": false,
 			"size": 69911000,
 			"min_size": 1.0,
