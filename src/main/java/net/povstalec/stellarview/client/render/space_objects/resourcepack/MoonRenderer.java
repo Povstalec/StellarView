@@ -28,7 +28,7 @@ public class MoonRenderer<T extends Moon> extends PlanetRenderer<T>
 	protected void renderTextureLayer(TextureLayer textureLayer, ViewCenter viewCenter, ClientLevel level, Camera camera, Tesselator tesselator,
 									  Matrix4f lastMatrix,SphericalCoords sphericalCoords, double fade, long ticks, double distance, float partialTicks)
 	{
-		if(!StellarView.isEnhancedCelestialsLoaded())
+		if(!StellarView.isEnhancedCelestialsLoaded() && !StellarView.isLunarLoaded())
 		{
 			super.renderTextureLayer(textureLayer, viewCenter, level, camera, tesselator, lastMatrix, sphericalCoords, fade, ticks, distance, partialTicks);
 			return;
