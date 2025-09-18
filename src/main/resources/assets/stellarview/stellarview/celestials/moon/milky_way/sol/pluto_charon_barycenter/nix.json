@@ -9,7 +9,7 @@
 		"orbit_clamp_distance": 10000000,
 		"orbital_period": { "ticks": 131853 },
 		"argument_of_periapsis": 0,
-		"inclination": 23.59,
+		"inclination": 0.2359,
 		"longtitude_of_ascending_node": 0,
 		"epoch_mean_anomaly": 65
 	},
@@ -22,8 +22,8 @@
 			"size": 49800,
 			"min_size": 0.05,
 			"clamp_at_min_size": false,
-			"rotation": 90,
-			"uv": { "flip_uv": true	}
+			"rotation": 0,
+			"uv": { "flip_uv": false }
 		},
 		{
 			"texture": "stellarview:textures/environment/planet/sol/nix.png",
@@ -32,8 +32,8 @@
 			"size": 49800,
 			"min_size": 0.05,
 			"clamp_at_min_size": false,
-			"rotation": 90,
-			"uv": { "flip_uv": true }
+			"rotation": 0,
+			"uv": { "flip_uv": false }
 		}
 	]
 }
