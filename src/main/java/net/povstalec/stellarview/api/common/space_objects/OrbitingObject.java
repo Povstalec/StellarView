@@ -6,7 +6,6 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.povstalec.stellarview.common.config.GeneralConfig;
 
@@ -218,7 +217,7 @@ public class OrbitingObject extends TexturedObject
 		public static final String ORBITAL_PERIOD = "orbital_period";
 		public static final String ARGUMENT_OF_PERIAPSIS = "argument_of_periapsis";
 		public static final String INCLINATION = "inclination";
-		public static final String LONGTITUDE_OF_ASCENDING_NODE = "longtitude_of_ascending_node";
+		public static final String LONGITUDE_OF_ASCENDING_NODE = "longitude_of_ascending_node";
 		public static final String EPOCH_MEAN_ANOMALY = "epoch_mean_anomaly";
 		
 		public static final Codec<OrbitInfo> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -232,7 +231,7 @@ public class OrbitingObject extends TexturedObject
 				Codec.FLOAT.optionalFieldOf(ARGUMENT_OF_PERIAPSIS, 0F).forGetter(OrbitInfo::argumentOfPeriapsis),
 				
 				Codec.FLOAT.optionalFieldOf(INCLINATION, 0F).forGetter(OrbitInfo::inclination),
-				Codec.FLOAT.optionalFieldOf(LONGTITUDE_OF_ASCENDING_NODE, 0F).forGetter(OrbitInfo::longtitudeOfAscendingNode),
+				Codec.FLOAT.optionalFieldOf(LONGITUDE_OF_ASCENDING_NODE, 0F).forGetter(OrbitInfo::longtitudeOfAscendingNode),
 				
 				Codec.FLOAT.optionalFieldOf(EPOCH_MEAN_ANOMALY, 0F).forGetter(OrbitInfo::epochMeanAnomaly)
 				).apply(instance, OrbitInfo::new));
@@ -246,7 +245,7 @@ public class OrbitingObject extends TexturedObject
 		private float argumentOfPeriapsis;
 		
 		private float inclination;
-		private float longtitudeOfAscendingNode;
+		private float longitudeOfAscendingNode;
 		
 		private float epochMeanAnomaly;
 		
@@ -261,7 +260,7 @@ public class OrbitingObject extends TexturedObject
 		public OrbitInfo(float apoapsis, float periapsis, float orbitClampDistance,
 				OrbitalPeriod orbitalPeriod,
 				float argumentOfPeriapsis,
-				float inclination, float longtitudeOfAscendingNode,
+				float inclination, float longitudeOfAscendingNode,
 				float meanAnomaly)
 		{
 			this.apoapsis = apoapsis;
@@ -273,7 +272,7 @@ public class OrbitingObject extends TexturedObject
 			this.argumentOfPeriapsis = (float) Math.toRadians(argumentOfPeriapsis);
 			
 			this.inclination = (float) Math.toRadians(inclination);
-			this.longtitudeOfAscendingNode = (float) Math.toRadians(longtitudeOfAscendingNode);
+			this.longitudeOfAscendingNode = (float) Math.toRadians(longitudeOfAscendingNode);
 			
 			this.epochMeanAnomaly = (float) Math.toRadians(meanAnomaly);
 			setupSweep();
@@ -320,7 +319,7 @@ public class OrbitingObject extends TexturedObject
 		
 		public float longtitudeOfAscendingNode()
 		{
-			return longtitudeOfAscendingNode;
+			return longitudeOfAscendingNode;
 		}
 		
 		public float epochMeanAnomaly()
@@ -393,7 +392,7 @@ public class OrbitingObject extends TexturedObject
 			
 			Mat4f inclinationMatrix = new Mat4f().rotate(Vector3f.ZP.rotation(inclination));
 			
-			Mat4f ascensionMatrix = new Mat4f().rotate(Vector3f.YP.rotation(longtitudeOfAscendingNode));
+			Mat4f ascensionMatrix = new Mat4f().rotate(Vector3f.YP.rotation(longitudeOfAscendingNode));
 			
 			return ascensionMatrix.mul(inclinationMatrix).mul(periapsisMatrix).mul(offsetMatrix).mul(eccentricityMatrix).mul(scaleMatrix);
 		}
@@ -422,7 +421,7 @@ public class OrbitingObject extends TexturedObject
 			tag.putFloat(ARGUMENT_OF_PERIAPSIS, argumentOfPeriapsis);
 			
 			tag.putFloat(INCLINATION, inclination);
-			tag.putFloat(LONGTITUDE_OF_ASCENDING_NODE, longtitudeOfAscendingNode);
+			tag.putFloat(LONGITUDE_OF_ASCENDING_NODE, longitudeOfAscendingNode);
 			
 			tag.putFloat(EPOCH_MEAN_ANOMALY, epochMeanAnomaly);
 			
@@ -442,7 +441,7 @@ public class OrbitingObject extends TexturedObject
 			this.argumentOfPeriapsis = tag.getFloat(ARGUMENT_OF_PERIAPSIS);
 			
 			this.inclination = tag.getFloat(INCLINATION);
-			this.longtitudeOfAscendingNode = tag.getFloat(LONGTITUDE_OF_ASCENDING_NODE);
+			this.longitudeOfAscendingNode = tag.getFloat(LONGITUDE_OF_ASCENDING_NODE);
 			
 			this.epochMeanAnomaly = tag.getFloat(EPOCH_MEAN_ANOMALY);
 			setupSweep();

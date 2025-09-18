@@ -10,7 +10,7 @@
 		"orbital_period": { "ticks": 5958960 },
 		"argument_of_periapsis": 21.60643,
 		"inclination": 27.63,
-		"longtitude_of_ascending_node": 44.99935,
+		"longitude_of_ascending_node": 44.99935,
 		"epoch_mean_anomaly": 94.30785
 	},
 	"texture_layers":
