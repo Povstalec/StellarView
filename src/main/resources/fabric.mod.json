@@ -32,5 +32,6 @@
 		"modmenu": "*"
 	},
 	"suggests": {
+		"lunar": ">=0.2.1"
 	}
 }

@@ -8,12 +8,10 @@ public class LunarCompatibility
 {
     public static float getMoonSize(float defaultSize)
     {
-        System.out.println("size");
         if(MoonHandler.isMoonScaled())
         {
             float moonScale = MoonHandler.getRawMoonScale();
             
-            System.out.println("scale");
             return moonScale * defaultSize;
         }
         return defaultSize;
