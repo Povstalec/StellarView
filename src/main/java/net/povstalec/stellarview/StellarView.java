@@ -25,13 +25,11 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import net.neoforged.neoforge.client.event.RegisterDimensionSpecialEffectsEvent;
-import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.povstalec.stellarview.client.render.level.StellarViewEndEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewNetherEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewOverworldEffects;
 import net.povstalec.stellarview.client.resourcepack.ResourcepackReloadListener;
 import net.povstalec.stellarview.common.config.StellarViewConfig;
-import net.povstalec.stellarview.common.util.KeyBindings;
 
 @Mod(StellarView.MODID)
 public class StellarView
@@ -105,12 +103,6 @@ public class StellarView
         public static void registerClientReloadListener(RegisterClientReloadListenersEvent event)
         {
     		ResourcepackReloadListener.ReloadListener.registerReloadListener(event);
-        }
-
-    	@SubscribeEvent
-        public static void onKeyRegister(RegisterKeyMappingsEvent event)
-        {
-        	event.register(KeyBindings.OPEN_CONFIG_KEY);
         }
     }
     
