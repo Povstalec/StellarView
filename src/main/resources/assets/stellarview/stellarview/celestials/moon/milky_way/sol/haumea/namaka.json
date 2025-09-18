@@ -9,7 +9,7 @@
 		"orbit_clamp_distance": 7000000,
 		"orbital_period": { "ticks": 438679 },
 		"argument_of_periapsis": 178.9,
-		"inclination": 113.013,
+		"inclination": 13,
 		"longtitude_of_ascending_node": 205.016,
 		"epoch_mean_anomaly": 178.5
 	},
@@ -22,8 +22,8 @@
 			"size": 170000,
 			"min_size": 0.05,
 			"clamp_at_min_size": false,
-			"rotation": 90,
-			"uv": { "flip_uv": true	}
+			"rotation": 0,
+			"uv": { "flip_uv": false }
 		},
 		{
 			"texture": "stellarview:textures/environment/planet/sol/namaka.png",
@@ -32,8 +32,8 @@
 			"size": 170000,
 			"min_size": 0.05,
 			"clamp_at_min_size": false,
-			"rotation": 90,
-			"uv": { "flip_uv": true }
+			"rotation": -90,
+			"uv": { "flip_uv": false }
 		}
 	]
 }

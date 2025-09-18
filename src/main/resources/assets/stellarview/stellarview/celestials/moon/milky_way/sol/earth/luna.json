@@ -9,7 +9,7 @@
 		"orbit_clamp_distance": 100000000,
 		"orbital_period": { "ticks": 192000, "synodic": true },
 		"argument_of_periapsis": 0,
-		"inclination": 5.145,
+		"inclination": 1.54,
 		"longtitude_of_ascending_node": 0,
 		"epoch_mean_anomaly": 157.5
 	},
@@ -22,7 +22,7 @@
 			"size": 7697847.735118539,
 			"min_size": 0.15,
 			"clamp_at_min_size": true,
-			"rotation": 90,
+			"rotation": 0,
 			"uv":
 			{
 				"phase_handler":
