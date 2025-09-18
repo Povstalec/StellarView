@@ -10,6 +10,7 @@ import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
 import net.povstalec.stellarview.client.render.space_objects.GravityLenseRenderer;
 import net.povstalec.stellarview.client.render.space_objects.OrbitingObjectRenderer;
 import net.povstalec.stellarview.client.render.space_objects.SpaceObjectRenderer;
+import net.povstalec.stellarview.client.render.space_objects.resourcepack.ConstellationRenderer;
 import net.povstalec.stellarview.client.render.space_objects.resourcepack.StarFieldRenderer;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.config.GeneralConfig;
@@ -29,6 +30,7 @@ public class SpaceRegionRenderer
 	
 	protected final ArrayList<GravityLenseRenderer> lensingRenderers = new ArrayList<GravityLenseRenderer>();
 	protected final ArrayList<StarFieldRenderer> starFieldRenderers = new ArrayList<StarFieldRenderer>();
+	protected final ArrayList<ConstellationRenderer> constellationRenderers = new ArrayList<ConstellationRenderer>();
 	
 	private boolean isSetUp = false;
 	
@@ -71,6 +73,8 @@ public class SpaceRegionRenderer
 	{
 		if(renderer instanceof StarFieldRenderer<?> starField)
 			starFieldRenderers.add(starField);
+		else if(renderer instanceof ConstellationRenderer<?> constellation && constellation.shouldRender())
+			constellationRenderers.add(constellation);
 		else if(renderer instanceof GravityLenseRenderer<?> lense)
 			lensingRenderers.add(lense);
 		
@@ -86,7 +90,7 @@ public class SpaceRegionRenderer
 	
 	public void renderDustClouds(ViewCenter viewCenter, ClientLevel level, Camera camera, float partialTicks, Matrix4f modelViewMatrix, Matrix4f projectionMatrix, Runnable setupFog, float brightness)
 	{
-		for(StarFieldRenderer starField : starFieldRenderers)
+		for(StarFieldRenderer<?> starField : starFieldRenderers)
 		{
 			starField.renderDustClouds(viewCenter, level, partialTicks, modelViewMatrix, camera, projectionMatrix, setupFog, brightness);
 		}
@@ -97,7 +101,7 @@ public class SpaceRegionRenderer
 		if(!isSetUp)
 			setupRegion();
 		
-		for(SpaceObjectRenderer spaceObject : children)
+		for(SpaceObjectRenderer<?> spaceObject : children)
 		{
 			if(spaceObject != masterParent) // Makes sure the master parent (usually galaxy) is rendered last, that way stars from other galaxies don't get rendered over planets
 				spaceObject.render(viewCenter, level, partialTicks, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog, tesselator, NULL_VECTOR, new AxisRotation());
@@ -114,7 +118,7 @@ public class SpaceRegionRenderer
 		}
 		else
 		{
-			for(GravityLenseRenderer gravityLense : lensingRenderers)
+			for(GravityLenseRenderer<?> gravityLense : lensingRenderers)
 			{
 				if(gravityLense.lensingIntensity() > SpaceRenderer.lensingIntensity)
 					gravityLense.setupLensing();
@@ -124,18 +128,26 @@ public class SpaceRegionRenderer
 	
 	public void setupSynodicOrbits()
 	{
-		for(SpaceObjectRenderer spaceObject : children)
+		for(SpaceObjectRenderer<?> spaceObject : children)
 		{
-			if(spaceObject instanceof OrbitingObjectRenderer orbitingObject)
+			if(spaceObject instanceof OrbitingObjectRenderer<?> orbitingObject)
 				orbitingObject.setupSynodicOrbit(null);
 		}
 	}
 	
 	public void resetStarFields()
 	{
-		for(StarFieldRenderer starField : starFieldRenderers)
+		for(StarFieldRenderer<?> starField : starFieldRenderers)
 		{
 			starField.reset();
+		}
+	}
+	
+	public void resetConstellations()
+	{
+		for(ConstellationRenderer<?> constellation : constellationRenderers)
+		{
+			constellation.reset();
 		}
 	}
 }

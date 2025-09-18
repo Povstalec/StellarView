@@ -12,19 +12,19 @@ import net.povstalec.stellarview.StellarView;
 @EventBusSubscriber(modid = StellarView.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class StellarViewVertexFormat
 {
-	public static final Lazy<VertexFormatElement> ELEMENT_HEIGHT_WIDTH_SIZE = register(VertexFormatElement.Type.FLOAT, VertexFormatElement.Usage.GENERIC, 3);
+	public static final Lazy<VertexFormatElement> ELEMENT_HEIGHT_WIDTH_SIZE_DISTANCE = register(VertexFormatElement.Type.FLOAT, VertexFormatElement.Usage.GENERIC, 4);
 	
 	// NOTE: The order of elements very much MATTERS!!!
 	public static final Lazy<VertexFormat> STAR_POS_COLOR_LY = Lazy.of(() -> VertexFormat.builder()
 			.add("StarPos", VertexFormatElement.POSITION)
 			.add("Color", VertexFormatElement.COLOR)
-			.add("HeightWidthSize", ELEMENT_HEIGHT_WIDTH_SIZE.get())
+			.add("HeightWidthSizeDistance", ELEMENT_HEIGHT_WIDTH_SIZE_DISTANCE.get())
 			.build());
 	
 	public static final Lazy<VertexFormat> STAR_POS_COLOR_LY_TEX = Lazy.of(() -> VertexFormat.builder()
 			.add("StarPos", VertexFormatElement.POSITION)
 			.add("Color", VertexFormatElement.COLOR)
-			.add("HeightWidthSize", ELEMENT_HEIGHT_WIDTH_SIZE.get())
+			.add("HeightWidthSizeDistance", ELEMENT_HEIGHT_WIDTH_SIZE_DISTANCE.get())
 			.add("UV0", VertexFormatElement.UV0)
 			.build());
 
@@ -46,7 +46,7 @@ public class StellarViewVertexFormat
 	{
 		// The registering of VertexFormatElements is not threadsafe so it needs to be done later
 		event.enqueueWork(() -> {
-			ELEMENT_HEIGHT_WIDTH_SIZE.get();
+			ELEMENT_HEIGHT_WIDTH_SIZE_DISTANCE.get();
 			STAR_POS_COLOR_LY.get();
 			STAR_POS_COLOR_LY_TEX.get();
 		});

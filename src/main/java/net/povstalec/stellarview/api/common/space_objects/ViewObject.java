@@ -14,7 +14,7 @@ public class ViewObject extends OrbitingObject
 {
 	public ViewObject() {}
 	
-	public ViewObject(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation, Optional<OrbitInfo> orbitInfo,
+	public ViewObject(Optional<ParentInfo> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation, Optional<OrbitInfo> orbitInfo,
 					  List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler)
 	{
 		super(parent, coords, axisRotation, orbitInfo, textureLayers, fadeOutHandler);

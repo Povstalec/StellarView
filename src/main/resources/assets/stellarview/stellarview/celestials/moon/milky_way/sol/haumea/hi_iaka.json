@@ -1,7 +1,7 @@
 {
-	"parent": "stellarview:planet/milky_way/sol/haumea",
+	"parent": { "location": "stellarview:planet/milky_way/sol/haumea" },
 	"coords": { "x": {"ly": 0}, "y": {"ly": 0}, "z": {"ly": 0} },
-	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
+	"axis_rotation": { "x_axis": 90, "y_axis": 0, "z_axis": 0 },
 	"orbit_info":
 	{
 		"apoapsis": 49880,
@@ -9,7 +9,7 @@
 		"orbit_clamp_distance": 7000000,
 		"orbital_period": { "ticks": 1187088 },
 		"argument_of_periapsis": 154.1,
-		"inclination": 126.356,
+		"inclination": 2,
 		"longtitude_of_ascending_node": 206.766,
 		"epoch_mean_anomaly": 152.8
 	},
@@ -22,8 +22,8 @@
 			"size": 310000,
 			"min_size": 0.05,
 			"clamp_at_min_size": false,
-			"rotation": 90,
-			"uv": { "flip_uv": true	}
+			"rotation": 0,
+			"uv": { "flip_uv": false }
 		},
 		{
 			"texture": "stellarview:textures/environment/planet/sol/hi_iaka.png",
@@ -32,8 +32,8 @@
 			"size": 310000,
 			"min_size": 0.05,
 			"clamp_at_min_size": false,
-			"rotation": 90,
-			"uv": { "flip_uv": true }
+			"rotation": 0,
+			"uv": { "flip_uv": false }
 		}
 	]
 }

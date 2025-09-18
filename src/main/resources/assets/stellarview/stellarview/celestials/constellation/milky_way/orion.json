@@ -1,0 +1,37 @@
+{
+	"parent": { "location": "stellarview:star_field/spiral_galaxy/milky_way/milky_way", "relative": false },
+	"coords": { "x": {"ly": 0}, "y": {"ly": 0}, "z": {"ly": 0} },
+	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
+	
+	"stars":
+	[
+		{
+			"coords": { "right_ascension": {"hours": 5, "minutes": 14, "seconds": 32.27210}, "declination": {"degrees": -8, "minutes": 12, "seconds": 5.8981}, "distance": {"ly": 848} },
+			"rgb": {"red": 207, "green": 207, "blue": 255}, "brightness": 210, "size": 0.3, "rotation": 327, "max_visible_distance": 5000000, "name": "Rigel"
+		},
+		{
+			"coords": { "right_ascension": {"hours": 5, "minutes": 25, "seconds": 7.86325}, "declination": {"degrees": 6, "minutes": 20, "seconds": 58.9318}, "distance": {"ly": 250} },
+			"rgb": {"red": 207, "green": 207, "blue": 255}, "brightness": 255, "size": 0.25, "rotation": 99, "max_visible_distance": 30000, "name": "Bellatrix"
+		},
+		{
+			"coords": { "right_ascension": {"hours": 5, "minutes": 32, "seconds": 0.40009}, "declination": {"degrees": -0, "minutes": 17, "seconds": 56.7424}, "distance": {"ly": 1200} },
+			"rgb": {"red": 207, "green": 207, "blue": 255}, "brightness": 255, "size": 0.2, "rotation": 2, "max_visible_distance": 30000, "name": "Mintaka"
+		},
+		{
+			"coords": { "right_ascension": {"hours": 5, "minutes": 36, "seconds": 12.8}, "declination": {"degrees": -1, "minutes": 12, "seconds": 6.9}, "distance": {"ly": 1180} },
+			"rgb": {"red": 207, "green": 207, "blue": 255}, "brightness": 255, "size": 0.25, "rotation": 111, "max_visible_distance": 30000, "name": "Alnilam"
+		},
+		{
+			"coords": { "right_ascension": {"hours": 5, "minutes": 40, "seconds": 45.52666}, "declination": {"degrees": -1, "minutes": 56, "seconds": 34.2649}, "distance": {"ly": 1260} },
+			"rgb": {"red": 207, "green": 207, "blue": 255}, "brightness": 255, "size": 0.25, "rotation": 264, "max_visible_distance": 15000, "name": "Alnitak"
+		},
+		{
+			"coords": { "right_ascension": {"hours": 5, "minutes": 47, "seconds": 45.38884}, "declination": {"degrees": -9, "minutes": 40, "seconds": 10.5777}, "distance": {"ly": 650} },
+			"rgb": {"red": 207, "green": 207, "blue": 255}, "brightness": 200, "size": 0.2, "rotation": 19, "max_visible_distance": 25000, "name": "Saiph"
+		},
+		{
+			"coords": { "right_ascension": {"hours": 5, "minutes": 35, "seconds": 8.27608}, "declination": {"degrees": 9, "minutes": 56, "seconds": 2.9913}, "distance": {"ly": 1320} },
+			"rgb": {"red": 207, "green": 207, "blue": 255}, "brightness": 255, "size": 0.15, "rotation": 68, "max_visible_distance": 15000, "name": "Meissa"
+		}
+	]
+}

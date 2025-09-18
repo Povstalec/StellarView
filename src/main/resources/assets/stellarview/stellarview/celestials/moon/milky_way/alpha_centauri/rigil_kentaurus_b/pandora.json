@@ -1,0 +1,39 @@
+{
+	"parent": { "location": "stellarview:planet/milky_way/alpha_centauri/rigil_kentaurus_b" },
+	"coords": { "x": {"ly": 0}, "y": {"ly": 0}, "z": {"ly": 0} },
+	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
+	"orbit_info":
+	{
+		"apoapsis": 541400,
+		"periapsis": 529561,
+		"orbit_clamp_distance": 100000000,
+		"orbital_period": { "ticks": 14830 },
+		"argument_of_periapsis": 0,
+		"inclination": 5,
+		"longtitude_of_ascending_node": 0,
+		"epoch_mean_anomaly": 180
+	},
+	"texture_layers":
+	[
+		{
+			"texture": "stellarview:textures/environment/halo_template.png",
+			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 192},
+			"blend": true,
+			"size": 15000000,
+			"min_size": 0.08,
+			"clamp_at_min_size": true,
+			"rotation": 90,
+			"uv": { "flip_uv": true	}
+		},
+		{
+			"texture": "stellarview:textures/environment/planet/rigil_kentaurus/pandora.png",
+			"rgba": {"red": 255, "green": 255, "blue": 255, "alpha": 255},
+			"blend": false,
+			"size": 15000000,
+			"min_size": 0.08,
+			"clamp_at_min_size": true,
+			"rotation": 90,
+			"uv": { "flip_uv": true }
+		}
+	]
+}

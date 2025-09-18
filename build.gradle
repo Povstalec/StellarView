@@ -6,7 +6,7 @@ plugins {
     id 'io.github.0ffz.github-packages' version '[1,2)'
 }
 
-version = mod_version
+version = "${mod_version}-NeoForge"
 group = mod_group_id
 
 repositories {
@@ -25,7 +25,7 @@ repositories {
     maven {
         url "https://cursemaven.com"
     }
-    maven githubPackage.invoke("The-Aether-Team/The-Aether")
+    maven { url = "https://packages.aether-mod.net/The-Aether" }
     maven { url = "https://maven.wispforest.io" }
     maven { url = "https://maven.wispforest.io/releases" }
     maven { url 'https://maven.su5ed.dev/releases' }
@@ -149,6 +149,9 @@ repositories {
 
 dependencies {
     implementation ("corgitaco.corgilib:Corgilib-NeoForge:${minecraft_version}-${corgilib_version}")
+    implementation ("dev.corgitaco:Data_Anchor-neoforge-${minecraft_version}:${data_anchor_version}")
+    implementation("corgitaco.enhancedcelestials:Enhanced-Celestials-NeoForge:${enhanced_celestials_version}")
+    
     implementation ("maven.modrinth:enhanced-celestials:${enhanced_celestials_version}-neoforge")
     implementation ("com.mrbysco.lunar:Lunar-common-${minecraft_version}:${lunar_version}") { transitive = false }
 

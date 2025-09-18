@@ -19,7 +19,7 @@ import java.util.Optional;
 public class Sol extends Star
 {
 	public static final Codec<Sol> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			ResourceLocation.CODEC.optionalFieldOf("parent").forGetter(Sol::getParentLocation),
+			ParentInfo.CODEC.optionalFieldOf("parent").forGetter(Sol::getParentInfo),
 			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf("coords").forGetter(object -> Either.left(object.getCoords())),
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(Sol::getAxisRotation),
 			OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(sol -> Optional.ofNullable(sol.orbitInfo())),
@@ -36,7 +36,7 @@ public class Sol extends Star
 	
 	public Sol() {}
 	
-	public Sol(Optional<ResourceLocation> parent, Either<SpaceCoords, Equatorial> coords,
+	public Sol(Optional<ParentInfo> parent, Either<SpaceCoords, Equatorial> coords,
 			AxisRotation axisRotation, Optional<OrbitInfo> orbitInfo, List<TextureLayer> textureLayers,
 			FadeOutHandler fadeOutHandler, float minStarSize, float maxStarAlpha, float minStarAlpha,
 			Optional<SupernovaInfo> supernovaInfo)

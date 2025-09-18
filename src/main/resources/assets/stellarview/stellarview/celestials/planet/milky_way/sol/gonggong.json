@@ -1,5 +1,5 @@
 {
-	"parent": "stellarview:star/milky_way/sol",
+	"parent": { "location": "stellarview:star/milky_way/sol" },
 	"coords": { "x": {"ly": 0}, "y": {"ly": 0}, "z": {"ly": 0} },
 	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
 	"orbit_info":
@@ -21,7 +21,7 @@
 			"size": 1230000,
 			"min_size": 0.2,
 			"clamp_at_min_size": false,
-			"rotation": 90,
+			"rotation": 0,
 			"uv": { "flip_uv": false }
 		},
 		{
@@ -31,7 +31,7 @@
 			"size": 1230000,
 			"min_size": 0.2,
 			"clamp_at_min_size": false,
-			"rotation": 90,
+			"rotation": 0,
 			"uv": { "flip_uv": false }
 		}
 	]

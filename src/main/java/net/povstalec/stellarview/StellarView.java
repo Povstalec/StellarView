@@ -78,6 +78,7 @@ public class StellarView
 				SpaceObjectRenderers.register(BlackHole.class, BlackHoleRenderer<BlackHole>::new);
 				SpaceObjectRenderers.register(Nebula.class, NebulaRenderer<Nebula>::new);
 				SpaceObjectRenderers.register(StarField.class, StarFieldRenderer<StarField>::new);
+				SpaceObjectRenderers.register(Constellation.class, ConstellationRenderer<Constellation>::new);
 			});
 		}
 		

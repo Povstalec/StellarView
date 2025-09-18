@@ -213,10 +213,24 @@ public class StellarCoordinates
 		public Declination(double degrees, double minutes, double seconds)
 		{
 			this.degrees = degrees;
-			this.minutes = minutes;
-			this.seconds = seconds;
 			
-			this.radians = toDeclination(degrees, minutes, seconds);
+			if(isNegative(degrees))
+			{
+				this.minutes = -minutes;
+				this.seconds = -seconds;
+			}
+			else
+			{
+				this.minutes = minutes;
+				this.seconds = seconds;
+			}
+			
+			this.radians = toDeclination(this.degrees, this.minutes, this.seconds);
+		}
+		
+		public static boolean isNegative(double degrees)
+		{
+			return Double.doubleToRawLongBits(degrees) < 0;
 		}
 		
 		public static double toDeclination(double degrees, double minutes, double seconds)
@@ -303,7 +317,7 @@ public class StellarCoordinates
 			double yProj = Math.sin(galacticLatitude);
 			double zProj = Math.cos(galacticLongtitude) * Math.cos(galacticLatitude);
 			
-			return new SpaceCoords(distance.mul(xProj, true), distance.mul(yProj, true), distance.mul(zProj, true));
+			return new SpaceCoords(distance.mul(xProj, false), distance.mul(yProj, false), distance.mul(zProj, false));
 		}
 		
 		@Override

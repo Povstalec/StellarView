@@ -1,5 +1,5 @@
 {
-	"parent": "stellarview:star/milky_way/alpha_centauri/alpha_centauri_barycenter",
+	"parent": { "location": "stellarview:star/milky_way/alpha_centauri/alpha_centauri_barycenter" },
 	"coords": { "x": {"ly": 0}, "y": {"ly": 0}, "z": {"ly": 0} },
 	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
 	"orbit_info":
@@ -8,7 +8,7 @@
 		"periapsis": 837748075.87,
 		"orbital_period": { "ticks": 182016000 },
 		"argument_of_periapsis": 252.3,
-		"inclination": 107.6,
+		"inclination": 0,
 		"longtitude_of_ascending_node": 231.519,
 		"epoch_mean_anomaly": 0
 	},
@@ -21,7 +21,7 @@
 			"size": 3856178999.5,
 			"min_size": 0.4,
 			"clamp_at_min_size": true,
-			"rotation": 12,
+			"rotation": -90,
 			"uv": { "flip_uv": false }
 		}
 	]

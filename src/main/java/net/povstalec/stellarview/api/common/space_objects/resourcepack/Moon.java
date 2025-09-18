@@ -33,7 +33,7 @@ public class Moon extends Planet
 	private Compatibility compatibility;
 	
 	public static final Codec<Moon> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			ResourceLocation.CODEC.optionalFieldOf("parent").forGetter(Moon::getParentLocation),
+			ParentInfo.CODEC.optionalFieldOf("parent").forGetter(Moon::getParentInfo),
 			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf("coords").forGetter(object -> Either.left(object.getCoords())),
 			AxisRotation.CODEC.fieldOf("axis_rotation").forGetter(Moon::getAxisRotation),
 			OrbitInfo.CODEC.optionalFieldOf("orbit_info").forGetter(moon -> Optional.ofNullable(moon.orbitInfo())),
@@ -46,7 +46,7 @@ public class Moon extends Planet
 	
 	public Moon() {}
 	
-	public Moon(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
+	public Moon(Optional<ParentInfo> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
 				Optional<OrbitInfo> orbitInfo, List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler,
 				Optional<Compatibility> compatibility)
 	{

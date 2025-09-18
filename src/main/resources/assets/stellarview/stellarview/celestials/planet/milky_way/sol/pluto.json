@@ -1,5 +1,5 @@
 {
-	"parent": "stellarview:planet/milky_way/sol/pluto_charon_barycenter",
+	"parent": { "location": "stellarview:planet/milky_way/sol/pluto_charon_barycenter" },
 	"coords": { "x": {"ly": 0}, "y": {"ly": 0}, "z": {"ly": 0} },
 	"axis_rotation": { "x_axis": 0, "y_axis": 0, "z_axis": 0 },
 	"orbit_info":
@@ -9,7 +9,7 @@
 		"orbit_clamp_distance": 10000000,
 		"orbital_period": { "ticks": 153293 },
 		"argument_of_periapsis": 293.834,
-		"inclination": 	112.783,
+		"inclination": 0,
 		"longtitude_of_ascending_node": 110.299,
 		"epoch_mean_anomaly": 0
 	},

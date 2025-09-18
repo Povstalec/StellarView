@@ -32,7 +32,7 @@ public class OrbitingObject extends TexturedObject
 	private OrbitInfo orbitInfo;
 	
 	public static final Codec<OrbitingObject> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			ResourceLocation.CODEC.optionalFieldOf(PARENT_LOCATION).forGetter(OrbitingObject::getParentLocation),
+			ParentInfo.CODEC.optionalFieldOf(PARENT).forGetter(OrbitingObject::getParentInfo),
 			Codec.either(SpaceCoords.CODEC, StellarCoordinates.Equatorial.CODEC).fieldOf(COORDS).forGetter(object -> Either.left(object.getCoords())),
 			AxisRotation.CODEC.fieldOf(AXIS_ROTATION).forGetter(OrbitingObject::getAxisRotation),
 			OrbitInfo.CODEC.optionalFieldOf(ORBIT_INFO).forGetter(object -> Optional.ofNullable(object.orbitInfo)),
@@ -43,7 +43,7 @@ public class OrbitingObject extends TexturedObject
 	
 	public OrbitingObject() {}
 	
-	public OrbitingObject(Optional<ResourceLocation> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation, Optional<OrbitInfo> orbitInfo,
+	public OrbitingObject(Optional<ParentInfo> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation, Optional<OrbitInfo> orbitInfo,
 			List<TextureLayer> textureLayers, FadeOutHandler fadeOutHandler)
 	{
 		super(parent, coords, axisRotation, textureLayers, fadeOutHandler);
@@ -146,7 +146,7 @@ public class OrbitingObject extends TexturedObject
 		
 		public void updateFromParentPeriod(OrbitalPeriod parentPeriod)
 		{
-			if(!synodic)
+			if(!synodic || parentPeriod == null)
 				return;
 			
 			this.ticks = parentPeriod.ticks;
