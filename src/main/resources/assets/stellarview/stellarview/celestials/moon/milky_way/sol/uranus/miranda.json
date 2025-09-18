@@ -9,7 +9,7 @@
 		"orbit_clamp_distance": 100000000,
 		"orbital_period": { "ticks": 33923 },
 		"argument_of_periapsis": 0,
-		"inclination": 86.462,
+		"inclination": 4.34,
 		"longtitude_of_ascending_node": 0,
 		"epoch_mean_anomaly": 64
 	},
@@ -22,8 +22,8 @@
 			"size": 480000,
 			"min_size": 0.08,
 			"clamp_at_min_size": true,
-			"rotation": 90,
-			"uv": { "flip_uv": true	}
+			"rotation": 0,
+			"uv": { "flip_uv": false }
 		},
 		{
 			"texture": "stellarview:textures/environment/planet/sol/miranda.png",
@@ -32,8 +32,8 @@
 			"size": 480000,
 			"min_size": 0.08,
 			"clamp_at_min_size": true,
-			"rotation": 90,
-			"uv": { "flip_uv": true }
+			"rotation": 0,
+			"uv": { "flip_uv": false }
 		}
 	]
 }
