@@ -9,7 +9,7 @@
 		"orbital_period": { "ticks": 27648000 },
 		"argument_of_periapsis": 273.867,
 		"inclination": 1.303,
-		"longtitude_of_ascending_node": 100.464,
+		"longitude_of_ascending_node": 100.464,
 		"epoch_mean_anomaly": 20.020
 	},
 	"texture_layers":
@@ -42,7 +42,7 @@
 			"size": 69911000,
 			"min_size": 1.0,
 			"clamp_at_min_size": true,
-			"rotation": 3.13,
+			"rotation": -86.87,
 			"uv": { "flip_uv": false }
 		},
 		{
