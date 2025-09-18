@@ -32,7 +32,7 @@
 			"size": 25362000,
 			"min_size": 0.4,
 			"clamp_at_min_size": true,
-			"rotation": -90,
+			"rotation": 97.77,
 			"uv": { "flip_uv": false }
 		},
 		{
@@ -42,7 +42,7 @@
 			"size": 25362000,
 			"min_size": 0.4,
 			"clamp_at_min_size": true,
-			"rotation": -90,
+			"rotation": 97.77,
 			"uv": { "flip_uv": false }
 		},
 		{
@@ -62,7 +62,7 @@
 			"size": 25362000,
 			"min_size": 0.4,
 			"clamp_at_min_size": true,
-			"rotation": -90,
+			"rotation": 97.77,
 			"uv": { "flip_uv": false }
 		},
 		{
@@ -72,7 +72,7 @@
 			"size": 25362000,
 			"min_size": 0.4,
 			"clamp_at_min_size": true,
-			"rotation": -90,
+			"rotation": 97.77,
 			"uv": { "flip_uv": false }
 		}
 	]
