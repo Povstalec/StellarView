@@ -167,10 +167,10 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
     
     compileOnly fg.deobf("maven.modrinth:corgilib:${mc_version}-${corgilib_version}-forge")
-    runtimeOnly fg.deobf("maven.modrinth:corgilib:${mc_version}-${corgilib_version}-forge")
+    //runtimeOnly fg.deobf("maven.modrinth:corgilib:${mc_version}-${corgilib_version}-forge")
     
     compileOnly fg.deobf("maven.modrinth:enhanced-celestials:${mc_version}-${enhanced_celestials_version}-forge")
-    runtimeOnly fg.deobf("maven.modrinth:enhanced-celestials:${mc_version}-${enhanced_celestials_version}-forge")
+    //runtimeOnly fg.deobf("maven.modrinth:enhanced-celestials:${mc_version}-${enhanced_celestials_version}-forge")
     implementation fg.deobf("curse.maven:the-twilight-forest-227639:4389567")
 
     implementation fg.deobf("com.aetherteam.aether:aether:${mc_version}-${aether_version}-forge")
