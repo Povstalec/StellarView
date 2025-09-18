@@ -391,7 +391,7 @@ public class OrbitingObject extends TexturedObject
 			Mat4f periapsisMatrix = new Mat4f().rotate(Vector3f.YP.rotation(argumentOfPeriapsis));
 			
 			Mat4f inclinationMatrix = new Mat4f().rotate(Vector3f.ZP.rotation(inclination));
-			
+
 			Mat4f ascensionMatrix = new Mat4f().rotate(Vector3f.YP.rotation(longitudeOfAscendingNode));
 			
 			return ascensionMatrix.mul(inclinationMatrix).mul(periapsisMatrix).mul(offsetMatrix).mul(eccentricityMatrix).mul(scaleMatrix);
