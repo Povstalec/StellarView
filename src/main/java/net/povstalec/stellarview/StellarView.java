@@ -13,6 +13,7 @@ public class StellarView implements ModInitializer
 	public static final String MODID = "stellarview";
 	
 	public static final String ENHANCED_CELESTIALS_MODID = "enhancedcelestials";
+	public static final String LUNAR_MODID = "lunar";
 	public static final String TWILIGHT_FOREST_MODID = "twilightforest";
 	public static final String AETHER_MODID = "aether";
 	
@@ -22,6 +23,7 @@ public class StellarView implements ModInitializer
 	public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
 	
 	private static Optional<Boolean> isEnhancedCelestialsLoaded = Optional.empty();
+	private static Optional<Boolean> isLunarLoaded = Optional.empty();
 
 	@Override
 	public void onInitialize()
@@ -35,5 +37,13 @@ public class StellarView implements ModInitializer
 			isEnhancedCelestialsLoaded = Optional.of(FabricLoader.getInstance().isModLoaded(ENHANCED_CELESTIALS_MODID));
 		
 		return isEnhancedCelestialsLoaded.get();
+	}
+	
+	public static boolean isLunarLoaded()
+	{
+		if(isLunarLoaded.isEmpty())
+			isLunarLoaded = Optional.of(FabricLoader.getInstance().isModLoaded(LUNAR_MODID));
+		
+		return isLunarLoaded.get();
 	}
 }
