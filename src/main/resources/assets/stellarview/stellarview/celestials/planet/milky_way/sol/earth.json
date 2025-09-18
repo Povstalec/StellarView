@@ -21,7 +21,7 @@
 			"size": 30791388,
 			"min_size": 0.5,
 			"clamp_at_min_size": true,
-			"rotation": 0,
+			"rotation": -66.85,
 			"uv": { "flip_uv": false }
 		},
 		{
@@ -31,7 +31,7 @@
 			"size": 30791388,
 			"min_size": 0.5,
 			"clamp_at_min_size": true,
-			"rotation": -90,
+			"rotation": -66.85,
 			"uv": { "flip_uv": false }
 		}
 	]
