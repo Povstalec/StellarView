@@ -24,6 +24,13 @@ repositories {
 		name 'JTDev-Maven-Repository'
 		url 'https://maven.jt-dev.tech/releases'
 	}
+	maven {
+		name "saps"
+		url "https://maven.saps.dev/releases"
+	}
+	maven {
+		url "https://maven.shedaniel.me/"
+	}
 }
 
 dependencies {
@@ -40,6 +47,9 @@ dependencies {
 	modImplementation ("corgitaco.corgilib:Corgilib-Fabric:${minecraft_version}-${corgilib_version}")
 	modImplementation ("dev.corgitaco:Data_Anchor-fabric-${minecraft_version}:${data_anchor_version}")
 	modImplementation ("corgitaco.enhancedcelestials:Enhanced-Celestials-Fabric:${project.enhanced_celestials_version}")
+
+	modImplementation("dev.architectury:architectury-fabric:${architectury_version}")
+	modImplementation("com.mrbysco.lunar:Lunar-fabric-${minecraft_version}:${lunar_version}")
 }
 
 processResources {

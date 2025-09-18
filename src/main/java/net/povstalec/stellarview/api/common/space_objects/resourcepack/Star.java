@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.api.common.space_objects.StarLike;
 import net.povstalec.stellarview.api.common.space_objects.SupernovaLeftover;
 

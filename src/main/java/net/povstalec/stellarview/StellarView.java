@@ -1,20 +1,8 @@
 package net.povstalec.stellarview;
 
-import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.resources.ResourceLocation;
-import net.povstalec.stellarview.api.common.space_objects.distinct.Luna;
-import net.povstalec.stellarview.api.common.space_objects.distinct.Sol;
-import net.povstalec.stellarview.api.common.space_objects.resourcepack.*;
-import net.povstalec.stellarview.client.SpaceObjectRenderers;
-import net.povstalec.stellarview.client.render.space_objects.distinct.LunaRenderer;
-import net.povstalec.stellarview.client.render.space_objects.resourcepack.*;
-import net.povstalec.stellarview.common.config.StellarViewConfig;
-import net.povstalec.stellarview.common.config.StellarViewConfigSpec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +13,7 @@ public class StellarView implements ModInitializer
 	public static final String MODID = "stellarview";
 	
 	public static final String ENHANCED_CELESTIALS_MODID = "enhancedcelestials";
+	public static final String LUNAR_MODID = "lunar";
 	public static final String TWILIGHT_FOREST_MODID = "twilightforest";
 	public static final String AETHER_MODID = "aether";
 	
@@ -34,6 +23,7 @@ public class StellarView implements ModInitializer
 	public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
 	
 	private static Optional<Boolean> isEnhancedCelestialsLoaded = Optional.empty();
+	private static Optional<Boolean> isLunarLoaded = Optional.empty();
 
 	@Override
 	public void onInitialize()
@@ -47,5 +37,13 @@ public class StellarView implements ModInitializer
 			isEnhancedCelestialsLoaded = Optional.of(FabricLoader.getInstance().isModLoaded(ENHANCED_CELESTIALS_MODID));
 		
 		return isEnhancedCelestialsLoaded.get();
+	}
+	
+	public static boolean isLunarLoaded()
+	{
+		if(isLunarLoaded.isEmpty())
+			isLunarLoaded = Optional.of(FabricLoader.getInstance().isModLoaded(LUNAR_MODID));
+		
+		return isLunarLoaded.get();
 	}
 }
