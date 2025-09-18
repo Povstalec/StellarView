@@ -45,8 +45,8 @@ Enjoy a Stellar View of the Sky
     ordering="AFTER"
     side="BOTH"
 [[dependencies.stellarview]]
-modId="lunar"
-mandatory=false
-versionRange="[0.2.1,)"
-ordering="AFTER"
-side="BOTH"
+    modId="lunar"
+    mandatory=false
+    versionRange="[0.2.1,)"
+    ordering="AFTER"
+    side="BOTH"
