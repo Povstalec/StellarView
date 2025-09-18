@@ -32,6 +32,7 @@
 		"modmenu": "*"
 	},
 	"suggests": {
-		"enhancedcelestials": "*"
+		"enhancedcelestials": "*",
+		"lunar": ">=0.2.6"
 	}
 }
