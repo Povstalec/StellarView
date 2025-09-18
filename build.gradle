@@ -148,12 +148,12 @@ repositories {
 }
 
 dependencies {
-    implementation ("corgitaco.corgilib:Corgilib-NeoForge:${minecraft_version}-${corgilib_version}")
-    implementation ("dev.corgitaco:Data_Anchor-neoforge-${minecraft_version}:${data_anchor_version}")
-    implementation("corgitaco.enhancedcelestials:Enhanced-Celestials-NeoForge:${enhanced_celestials_version}")
-    
-    implementation ("maven.modrinth:enhanced-celestials:${enhanced_celestials_version}-neoforge")
-    implementation ("com.mrbysco.lunar:Lunar-common-${minecraft_version}:${lunar_version}") { transitive = false }
+    compileOnly ("corgitaco.corgilib:Corgilib-NeoForge:${minecraft_version}-${corgilib_version}")
+    compileOnly ("dev.corgitaco:Data_Anchor-neoforge-${minecraft_version}:${data_anchor_version}")
+    compileOnly("corgitaco.enhancedcelestials:Enhanced-Celestials-NeoForge:${enhanced_celestials_version}")
+
+    compileOnly ("maven.modrinth:enhanced-celestials:${enhanced_celestials_version}-neoforge")
+    implementation ("com.mrbysco.lunar:Lunar-neoforge-${minecraft_version}:${lunar_version}") { transitive = false }
 
     implementation ("curse.maven:the-twilight-forest-227639:5983260")
 
@@ -177,7 +177,8 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
             mod_version            : mod_version,
             mod_authors            : mod_authors,
             mod_description        : mod_description,
-            ec_version_range       : ec_version_range
+            ec_version_range       : ec_version_range,
+            lunar_version_range    : lunar_version_range
     ]
     inputs.properties replaceProperties
     expand replaceProperties
