@@ -1,6 +1,43 @@
 # Changelog
 The list of changes that have been made during development. This is not an exhaustive list, some changes were most certainly forgotten about.
 
+## 0.5.0 - 2025 Sep 18
+### FORGE/NEO 1.19.2~1.19.4, 1.20.1, 1.21.1
+### FABRIC 1.20.1, 1.21.1
+- Added:
+  - Constellation object type, for adding groups of deliberately placed stars to existing star fields
+  - The Orion constellation, with more to come in future updates
+  - Lunar compatibility
+  - Stellar View is in the game profiler pie chart (do note that the game profiler can't track GPU, only CPU)
+  - Config option to change the order of texture and color in vertices
+  - Config option to turn of instancing for stars and dust clouds, in case your GPU would rather die than instance a mesh as small as a quad
+  - `clamp_at_max_size` and `max_size` fields for texture layers of celestials
+  - Hungarian and Japanese language support
+  - Rigil Kentaurus b, an ice giant recently discovered around Rigil Kentaurus (Alpha Centauri A)
+  - Pandora, a hypothetical moon orbiting Rigil Kent. b
+
+- Removed:
+  - Keybind for opening the Stellar View config menu, since it can be easily opened from the game pause menu (1.20.1+)
+
+- Changed:
+  - A bunch of optimizations, including instancing, which will be used for star and dust cloud rendering by default
+  - Locations of stars in Pleiades are now more accurate to their real life locations
+  - Nebulae have more realistic sizes now
+  - Adjusted axial tilts, image rotations, and inclinations of most bodies
+  - Rings are now on separate texture layers, and go entirely around planets
+  - Default Space Objects can now be removed by setting their parent to "sgjourney:remove", this should help if you want to remove stuff like the Moon without it throwing an exception
+  - Uranus is now slightly greener
+  - Jupiter and Neptune now have faint ring systems
+
+- Fixed:
+  - end.png in the wrong location
+  - Dust clouds rendering as yellow/red/green squares due to Oculus having inverted the rendering pipeline while shaders are active
+  - Sky jittering at high tick values (again)
+  - Fixed a typo in "longitude_of_ascending_node" (Resourcepacks will need to update orbit info of their orbiting objects because of this)
+
+- Known issues:
+  - All the planets are sideways
+
 ## 0.4.6 - 2025 May 17
 ### FORGE/NEO 1.19.2~1.19.4, 1.20.1, 1.21.1
 ### FABRIC 1.20.1, 1.21.1
