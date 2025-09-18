@@ -17,13 +17,13 @@ public class UV
 	private final float v;
 	
 	public static final Codec<UV> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-    		Codec.FLOAT.fieldOf("u").forGetter(UV::u),
-    		Codec.FLOAT.fieldOf("v").forGetter(UV::v)
+    		Codec.FLOAT.fieldOf(U).forGetter(UV::u),
+    		Codec.FLOAT.fieldOf(V).forGetter(UV::v)
 			).apply(instance, UV::new));
 	
-	public UV(UV.PhaseHandler phaseHandler, float u, float v)
+	public UV(@Nullable UV.PhaseHandler phaseHandler, float u, float v)
 	{
-		if(phaseHandler.doPhases())
+		if(phaseHandler != null && phaseHandler.doPhases())
 			this.phaseHandler = phaseHandler;
 		
 		this.u = u;
@@ -32,7 +32,7 @@ public class UV
 	
 	public UV(float u, float v)
 	{
-		this(UV.PhaseHandler.DEFAULT_PHASE_HANDLER, u, v);
+		this(null, u, v);
 	}
 	
 	public float u()
@@ -42,7 +42,7 @@ public class UV
 	
 	public float u(long ticks)
 	{
-		return phaseHandler != null ? (float) (u + phaseHandler.u(ticks)) / phaseHandler.columns() : u;
+		return phaseHandler != null ? (u + phaseHandler.u(ticks)) / phaseHandler.columns() : u;
 	}
 	
 	public float v()
@@ -52,7 +52,7 @@ public class UV
 	
 	public float v(long ticks)
 	{
-		return phaseHandler != null ? (float) (v + phaseHandler.v(ticks)) / phaseHandler.rows() : v;
+		return phaseHandler != null ? (v + phaseHandler.v(ticks)) / phaseHandler.rows() : v;
 	}
 	
 	//============================================================================================
@@ -90,7 +90,6 @@ public class UV
 		
 		private final UV.PhaseHandler phaseHandler;
 		
-		//TODO Check if you're flipping them correctly, maybe Y should be flipped and not X, I don't remember
 		private final UV topLeft;
 		private final UV bottomLeft;
 		private final UV bottomRight;
@@ -125,39 +124,22 @@ public class UV
 			this(phaseHandler, topLeft, bottomLeft, bottomRight, topRight, false);
 		}
 		
-		public Quad(UV.PhaseHandler phaseHandler, float topLeftX, float topLeftY, float bottomRightX, float bottomRightY, boolean flipped)
+		public Quad(UV.PhaseHandler phaseHandler, float topLeftU, float topLeftV, float bottomRightU, float bottomRightV, boolean flipped)
 		{
-			this.phaseHandler = phaseHandler;
-			
-			if(flipped)
-			{
-				this.topLeft = new UV(phaseHandler, bottomRightX, topLeftY);
-				this.bottomLeft = new UV(phaseHandler, bottomRightX, bottomRightY);
-				this.bottomRight = new UV(phaseHandler, topLeftX, bottomRightY);
-				this.topRight = new UV(phaseHandler, topLeftX, topLeftY);
-			}
-			else
-			{
-				this.topLeft = new UV(phaseHandler, topLeftX, topLeftY);
-				this.bottomLeft = new UV(phaseHandler, topLeftX, bottomRightY);
-				this.bottomRight = new UV(phaseHandler, bottomRightX, bottomRightY);
-				this.topRight = new UV(phaseHandler, bottomRightX, topLeftY);
-			}
-			
-			this.flipped = flipped;
+			this(phaseHandler, new UV(phaseHandler, topLeftU, topLeftV), new UV(phaseHandler, topLeftU, bottomRightV), new UV(phaseHandler, bottomRightU, bottomRightV), new UV(phaseHandler, bottomRightU, topLeftV), flipped);
 		}
 		
-		public Quad(UV.PhaseHandler phaseHandler, float topLeftX, float topLeftY, float bottomRightX, float bottomRightY)
+		public Quad(UV.PhaseHandler phaseHandler, float topLeftU, float topLeftV, float bottomRightU, float bottomRightV)
 		{
-			this(phaseHandler, bottomRightY, bottomRightY, bottomRightY, bottomRightY, false);
+			this(phaseHandler, topLeftU, topLeftV, bottomRightU, bottomRightV, false);
 		}
 		
 		public static final Codec<UV.Quad> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 	    		PhaseHandler.CODEC.optionalFieldOf("phase_handler", PhaseHandler.DEFAULT_PHASE_HANDLER).forGetter((quad) -> quad.phaseHandler),
-	    		Codec.FLOAT.optionalFieldOf("x_start", 0F).forGetter((quad) -> quad.topLeft.u()),
-	    		Codec.FLOAT.optionalFieldOf("y_start", 0F).forGetter((quad) -> quad.topLeft.v()),
-	    		Codec.FLOAT.optionalFieldOf("x_end", 1F).forGetter((quad) -> quad.bottomRight.u()),
-	    		Codec.FLOAT.optionalFieldOf("y_end", 1F).forGetter((quad) -> quad.bottomRight.v()),
+	    		Codec.FLOAT.optionalFieldOf("u_start", 0F).forGetter((quad) -> quad.topLeft.u()),
+	    		Codec.FLOAT.optionalFieldOf("v_start", 0F).forGetter((quad) -> quad.topLeft.v()),
+	    		Codec.FLOAT.optionalFieldOf("u_end", 1F).forGetter((quad) -> quad.bottomRight.u()),
+	    		Codec.FLOAT.optionalFieldOf("v_end", 1F).forGetter((quad) -> quad.bottomRight.v()),
 	    		Codec.BOOL.optionalFieldOf("flip_uv", false).forGetter((quad) -> quad.flipped)
 				).apply(instance, UV.Quad::new));
 		
@@ -170,24 +152,7 @@ public class UV
 		// Full quad
 		public Quad(boolean flipped)
 		{
-			this.phaseHandler = UV.PhaseHandler.DEFAULT_PHASE_HANDLER;
-			
-			if(flipped)
-			{
-				this.topLeft = new UV(1, 0);
-				this.bottomLeft = new UV(1, 1);
-				this.bottomRight = new UV(0, 1);
-				this.topRight = new UV(0, 0);
-			}
-			else
-			{
-				this.topLeft = new UV(0, 0);
-				this.bottomLeft = new UV(0, 1);
-				this.bottomRight = new UV(1, 1);
-				this.topRight = new UV(1, 0);
-			}
-			
-			this.flipped = flipped;
+			this(UV.PhaseHandler.DEFAULT_PHASE_HANDLER, new UV(0, 0), new UV(0, 1), new UV(1, 1), new UV(1, 0), flipped);
 		}
 		
 		public UV topLeft()
