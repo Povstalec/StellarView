@@ -18,6 +18,8 @@ public class CelestialInstancedBuffer implements AutoCloseable
 	private static final MemoryUtil.MemoryAllocator ALLOCATOR = MemoryUtil.getAllocator(false);
 	private static final long INSTANCE_ADDRESS = ALLOCATOR.malloc(6);
 	
+	public static final boolean INSTANCING_PREREQUISITES = GL.getCapabilities().GL_ARB_vertex_attrib_binding && GL.getCapabilities().GL_ARB_explicit_uniform_location;
+	
 	public static final int POS_SIZE = 3;
 	public static final int COLOR_SIZE = 4;
 	public static final int ROTATION_SIZE = 1;
