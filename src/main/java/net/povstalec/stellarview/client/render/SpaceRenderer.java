@@ -104,7 +104,7 @@ public final class SpaceRenderer
 		SPACE_REGIONS.remove(regionPos);
 	}
 	
-	public static void addSpaceObjectRenderer(SpaceObjectRenderer spaceObjectRenderer)
+	public static void addSpaceObjectRenderer(SpaceObjectRenderer<?> spaceObjectRenderer)
 	{
 		SpaceRegionRenderer region = getOrCreateRegion(spaceObjectRenderer.spaceCoords());
 		
