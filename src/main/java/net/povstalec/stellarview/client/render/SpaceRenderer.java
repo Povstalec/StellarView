@@ -209,7 +209,7 @@ public final class SpaceRenderer
 		
 		if(OverworldConfig.config_priority.get())
     	{
-			SpaceCoords coords = solCoords.copy().add(OverworldConfig.sol_x_offset.get() * 1000, OverworldConfig.sol_y_offset.get() * 1000, OverworldConfig.sol_z_offset.get() * 1000);
+			SpaceCoords coords = solCoords.copy().add(OverworldConfig.sol_x_offset.get() * 1000L, OverworldConfig.sol_y_offset.get() * 1000L, OverworldConfig.sol_z_offset.get() * 1000L);
     		AxisRotation axisRotation = solAxisRotation.copy().add(new AxisRotation(OverworldConfig.sol_x_rotation.get(), OverworldConfig.sol_y_rotation.get(), OverworldConfig.sol_z_rotation.get()));
     		
     		sol.setPosAndRotation(coords, axisRotation);
