@@ -23,7 +23,7 @@
 			"min_size": 1.2,
 			"clamp_at_min_size": true,
 			"rotation": 26.73,
-			"uv": { "flip_uv": false }
+			"uv": { "flip_uv": false, "rotation": -90 }
 		},
 		{
 			"texture": "stellarview:textures/environment/ring/ring_heavy_back.png",

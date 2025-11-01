@@ -22,7 +22,7 @@
 			"min_size": 0.2,
 			"clamp_at_min_size": false,
 			"rotation": 0,
-			"uv": { "flip_uv": false }
+			"uv": { "flip_uv": false, "rotation": -90 }
 		},
 		{
 			"texture": "stellarview:textures/environment/ring/ring_light_back.png",
@@ -31,8 +31,8 @@
 			"size": 1286000,
 			"min_size": 0.2,
 			"clamp_at_min_size": false,
-			"rotation": -90,
-			"uv": { "flip_uv": false }
+			"rotation": 0,
+			"uv": { "flip_uv": false, "rotation": -90 }
 		},
 		{
 			"texture": "stellarview:textures/environment/planet/sol/quaoar.png",
@@ -42,7 +42,7 @@
 			"min_size": 0.2,
 			"clamp_at_min_size": false,
 			"rotation": 0,
-			"uv": { "flip_uv": false }
+			"uv": { "flip_uv": false, "rotation": -90 }
 		},
 		{
 			"texture": "stellarview:textures/environment/ring/ring_light_front.png",
@@ -51,8 +51,8 @@
 			"size": 1286000,
 			"min_size": 0.2,
 			"clamp_at_min_size": false,
-			"rotation": -90,
-			"uv": { "flip_uv": false }
+			"rotation": 0,
+			"uv": { "flip_uv": false, "rotation": -90 }
 		}
 	]
 }
