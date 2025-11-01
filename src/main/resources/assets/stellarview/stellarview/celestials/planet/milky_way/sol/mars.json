@@ -9,7 +9,7 @@
 		"orbital_period": { "ticks": 4320000 },
 		"argument_of_periapsis": 286.5,
 		"inclination": 1.850,
-		"longtitude_of_ascending_node": 49.57854,
+		"longitude_of_ascending_node": 49.57854,
 		"epoch_mean_anomaly": 19.412
 	},
 	"texture_layers":
@@ -23,7 +23,7 @@
 			"min_size": 1.0,
 			"clamp_at_min_size": true,
 			"rotation": 25.19,
-			"uv": { "flip_uv": false }
+			"uv": { "flip_uv": false, "rotation": -90 }
 		},
 		{
 			"texture": "stellarview:textures/environment/planet/sol/mars.png",
@@ -33,7 +33,7 @@
 			"min_size": 0.5,
 			"clamp_at_min_size": true,
 			"rotation": 25.19,
-			"uv": { "flip_uv": false }
+			"uv": { "flip_uv": false, "rotation": -90 }
 		}
 	]
 }

@@ -43,7 +43,7 @@ public abstract class DustCloudData
 	
 	public void renderDustClouds(Matrix4f pose, Matrix4f projectionMatrix, SpaceCoords difference, boolean isStatic)
 	{
-		if(!isStatic && GeneralConfig.instancing.get() && GL.getCapabilities().GL_ARB_vertex_attrib_binding) // Use instancing if possible
+		if(!isStatic && GeneralConfig.instancing.get() && CelestialInstancedBuffer.INSTANCING_PREREQUISITES) // Use instancing if possible
 		{
 			if(lod1 == null)
 				lod1 = newDustClouds();

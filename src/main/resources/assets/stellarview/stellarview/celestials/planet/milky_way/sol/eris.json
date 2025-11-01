@@ -9,7 +9,7 @@
 		"orbital_period": { "ticks": 4900776000 },
 		"argument_of_periapsis": 151.639,
 		"inclination": 44.04,
-		"longtitude_of_ascending_node": 35.951,
+		"longitude_of_ascending_node": 35.951,
 		"epoch_mean_anomaly": 205.989
 	},
 	"texture_layers":
@@ -22,7 +22,7 @@
 			"min_size": 0.2,
 			"clamp_at_min_size": false,
 			"rotation": 0,
-			"uv": { "flip_uv": false }
+			"uv": { "flip_uv": false, "rotation": -90 }
 		},
 		{
 			"texture": "stellarview:textures/environment/planet/sol/eris.png",
@@ -32,7 +32,7 @@
 			"min_size": 0.2,
 			"clamp_at_min_size": false,
 			"rotation": 0,
-			"uv": { "flip_uv": false }
+			"uv": { "flip_uv": false, "rotation": -90 }
 		}
 	]
 }

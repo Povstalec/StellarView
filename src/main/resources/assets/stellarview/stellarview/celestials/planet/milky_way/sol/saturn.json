@@ -9,7 +9,7 @@
 		"orbital_period": { "ticks": 67728000 },
 		"argument_of_periapsis": 339.392,
 		"inclination": 2.485,
-		"longtitude_of_ascending_node": 113.665,
+		"longitude_of_ascending_node": 113.665,
 		"epoch_mean_anomaly": 317.020
 	},
 	"texture_layers":
@@ -23,7 +23,7 @@
 			"min_size": 1.2,
 			"clamp_at_min_size": true,
 			"rotation": 26.73,
-			"uv": { "flip_uv": false }
+			"uv": { "flip_uv": false, "rotation": -90 }
 		},
 		{
 			"texture": "stellarview:textures/environment/ring/ring_heavy_back.png",
@@ -33,7 +33,7 @@
 			"min_size": 0.8,
 			"clamp_at_min_size": true,
 			"rotation": 26.73,
-			"uv": { "flip_uv": false }
+			"uv": { "flip_uv": false, "rotation": -90 }
 		},
 		{
 			"texture": "stellarview:textures/environment/planet/sol/saturn.png",
@@ -43,7 +43,7 @@
 			"min_size": 0.8,
 			"clamp_at_min_size": true,
 			"rotation": 26.73,
-			"uv": { "flip_uv": false }
+			"uv": { "flip_uv": false, "rotation": -90 }
 		},
 		{
 			"texture": "stellarview:textures/environment/ring/ring_heavy_front.png",
@@ -53,7 +53,7 @@
 			"min_size": 0.8,
 			"clamp_at_min_size": true,
 			"rotation": 26.73,
-			"uv": { "flip_uv": false }
+			"uv": { "flip_uv": false, "rotation": -90 }
 		}
 	]
 }

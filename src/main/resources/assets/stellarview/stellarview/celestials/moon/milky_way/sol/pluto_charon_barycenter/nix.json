@@ -10,7 +10,7 @@
 		"orbital_period": { "ticks": 131853 },
 		"argument_of_periapsis": 0,
 		"inclination": 0.2359,
-		"longtitude_of_ascending_node": 0,
+		"longitude_of_ascending_node": 0,
 		"epoch_mean_anomaly": 65
 	},
 	"texture_layers":
@@ -23,7 +23,7 @@
 			"min_size": 0.05,
 			"clamp_at_min_size": false,
 			"rotation": 0,
-			"uv": { "flip_uv": false }
+			"uv": { "flip_uv": false, "rotation": -90 }
 		},
 		{
 			"texture": "stellarview:textures/environment/planet/sol/nix.png",
@@ -33,7 +33,7 @@
 			"min_size": 0.05,
 			"clamp_at_min_size": false,
 			"rotation": 0,
-			"uv": { "flip_uv": false }
+			"uv": { "flip_uv": false, "rotation": -90 }
 		}
 	]
 }

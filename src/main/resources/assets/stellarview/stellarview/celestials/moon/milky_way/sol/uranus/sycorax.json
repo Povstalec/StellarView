@@ -10,7 +10,7 @@
 		"orbital_period": { "ticks": 30870720 },
 		"argument_of_periapsis": 16.29680,
 		"inclination": 159.42,
-		"longtitude_of_ascending_node": 258.56478,
+		"longitude_of_ascending_node": 258.56478,
 		"epoch_mean_anomaly": 160.58731
 	},
 	"texture_layers":
@@ -23,7 +23,7 @@
 			"min_size": 0.06,
 			"clamp_at_min_size": false,
 			"rotation": 0,
-			"uv": { "flip_uv": false }
+			"uv": { "flip_uv": false, "rotation": -90 }
 		},
 		{
 			"texture": "stellarview:textures/environment/planet/sol/sycorax.png",
@@ -33,7 +33,7 @@
 			"min_size": 0.06,
 			"clamp_at_min_size": false,
 			"rotation": 0,
-			"uv": { "flip_uv": false }
+			"uv": { "flip_uv": false, "rotation": -90 }
 		}
 	]
 }

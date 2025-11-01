@@ -10,7 +10,7 @@
 		"orbital_period": { "ticks": 16664 },
 		"argument_of_periapsis": 0,
 		"inclination": 0.351,
-		"longtitude_of_ascending_node": 0,
+		"longitude_of_ascending_node": 0,
 		"epoch_mean_anomaly": 330
 	},
 	"texture_layers":
@@ -23,7 +23,7 @@
 			"min_size": 0.1,
 			"clamp_at_min_size": false,
 			"rotation": 0,
-			"uv": { "flip_uv": true	}
+			"uv": { "flip_uv": true, "rotation": -90	}
 		},
 		{
 			"texture": "stellarview:textures/environment/planet/sol/epimetheus.png",
@@ -33,7 +33,7 @@
 			"min_size": 0.1,
 			"clamp_at_min_size": false,
 			"rotation": 0,
-			"uv": { "flip_uv": true }
+			"uv": { "flip_uv": true, "rotation": -90 }
 		}
 	]
 }

@@ -9,6 +9,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.povstalec.stellarview.client.screens.config.ConfigList.BooleanConfigEntry;
+import net.povstalec.stellarview.client.util.CelestialInstancedBuffer;
 import net.povstalec.stellarview.common.config.GeneralConfig;
 
 public class GeneralConfigScreen extends Screen
@@ -42,8 +43,11 @@ public class GeneralConfigScreen extends Screen
 		
 		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.static_sky"),
 				this.width, GeneralConfig.static_sky));
-		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.instancing"),
-				this.width, GeneralConfig.instancing));
+		if(CelestialInstancedBuffer.INSTANCING_PREREQUISITES)
+		{
+			this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.instancing"),
+					this.width, GeneralConfig.instancing));
+		}
 		this.configList.add(new BooleanConfigEntry(Component.translatable("gui.stellarview.alt_vertex_build_order"),
 				this.width, GeneralConfig.alt_vertex_build_order));
 		

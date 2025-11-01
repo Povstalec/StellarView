@@ -9,7 +9,7 @@
 		"orbital_period": { "ticks": 2684280000 },
 		"argument_of_periapsis": 239.041,
 		"inclination": 28.9835,
-		"longtitude_of_ascending_node": 79.620,
+		"longitude_of_ascending_node": 79.620,
 		"epoch_mean_anomaly": 165.514
 	},
 	"texture_layers":
@@ -22,7 +22,7 @@
 			"min_size": 0.2,
 			"clamp_at_min_size": false,
 			"rotation": 0,
-			"uv": { "flip_uv": false }
+			"uv": { "flip_uv": false, "rotation": -90 }
 		},
 		{
 			"texture": "stellarview:textures/environment/planet/sol/makemake.png",
@@ -32,7 +32,7 @@
 			"min_size": 0.2,
 			"clamp_at_min_size": false,
 			"rotation": 0,
-			"uv": { "flip_uv": false }
+			"uv": { "flip_uv": false, "rotation": -90 }
 		}
 	]
 }

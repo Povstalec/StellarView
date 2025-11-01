@@ -9,7 +9,7 @@
 		"orbital_period": { "ticks": 2304000 },
 		"argument_of_periapsis": 0,
 		"inclination": 0,
-		"longtitude_of_ascending_node": 0,
+		"longitude_of_ascending_node": 0,
 		"epoch_mean_anomaly": 180
 	},
 	"texture_layers":
@@ -22,7 +22,7 @@
 			"min_size": 0.5,
 			"clamp_at_min_size": true,
 			"rotation": 23.15,
-			"uv": { "flip_uv": false }
+			"uv": { "flip_uv": false, "rotation": -90 }
 		},
 		{
 			"texture": "stellarview:textures/environment/planet/sol/earth.png",
@@ -32,7 +32,7 @@
 			"min_size": 0.5,
 			"clamp_at_min_size": true,
 			"rotation": 23.15,
-			"uv": { "flip_uv": false }
+			"uv": { "flip_uv": false, "rotation": -90 }
 		}
 	]
 }

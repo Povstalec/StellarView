@@ -9,7 +9,7 @@
 		"orbital_period": { "ticks": 40320000 },
 		"argument_of_periapsis": 73.6,
 		"inclination": 	10.6,
-		"longtitude_of_ascending_node": 80.3,
+		"longitude_of_ascending_node": 80.3,
 		"epoch_mean_anomaly": 291.4
 	},
 	"texture_layers":
@@ -23,7 +23,7 @@
 			"min_size": 0.2,
 			"clamp_at_min_size": true,
 			"rotation": 4,
-			"uv": { "flip_uv": false }
+			"uv": { "flip_uv": false, "rotation": -90 }
 		},
 		{
 			"texture": "stellarview:textures/environment/planet/sol/ceres.png",
@@ -33,7 +33,7 @@
 			"min_size": 0.2,
 			"clamp_at_min_size": true,
 			"rotation": 4,
-			"uv": { "flip_uv": false }
+			"uv": { "flip_uv": false, "rotation": -90 }
 		}
 	]
 }

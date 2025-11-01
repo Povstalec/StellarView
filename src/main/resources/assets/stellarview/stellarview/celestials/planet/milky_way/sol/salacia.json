@@ -9,7 +9,7 @@
 		"orbital_period": { "ticks": 2401752000 },
 		"argument_of_periapsis": 312.294,
 		"inclination": 23.921,
-		"longtitude_of_ascending_node": 279.880,
+		"longitude_of_ascending_node": 279.880,
 		"epoch_mean_anomaly": 123.138
 	},
 	"texture_layers":
@@ -22,7 +22,7 @@
 			"min_size": 0.2,
 			"clamp_at_min_size": false,
 			"rotation": 0,
-			"uv": { "flip_uv": false }
+			"uv": { "flip_uv": false, "rotation": -90 }
 		},
 		{
 			"texture": "stellarview:textures/environment/planet/sol/salacia.png",
@@ -32,7 +32,7 @@
 			"min_size": 0.2,
 			"clamp_at_min_size": false,
 			"rotation": 0,
-			"uv": { "flip_uv": false }
+			"uv": { "flip_uv": false, "rotation": -90 }
 		}
 	]
 }

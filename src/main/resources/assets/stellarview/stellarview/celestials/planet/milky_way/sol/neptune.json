@@ -9,7 +9,7 @@
 		"orbital_period": { "ticks": 380160000 },
 		"argument_of_periapsis": 273.187,
 		"inclination": 	1.770,
-		"longtitude_of_ascending_node": 131.783,
+		"longitude_of_ascending_node": 131.783,
 		"epoch_mean_anomaly": 259.883
 	},
 	"texture_layers":
@@ -23,7 +23,7 @@
 			"min_size": 0.5,
 			"clamp_at_min_size": true,
 			"rotation": 28.32,
-			"uv": { "flip_uv": false }
+			"uv": { "flip_uv": false, "rotation": -90 }
 		},
 		{
 			"texture": "stellarview:textures/environment/ring/ring_light_back.png",
@@ -33,7 +33,7 @@
 			"min_size": 0.3,
 			"clamp_at_min_size": true,
 			"rotation": 28.32,
-			"uv": { "flip_uv": false }
+			"uv": { "flip_uv": false, "rotation": -90 }
 		},
 		{
 			"texture": "stellarview:textures/environment/planet/sol/neptune.png",
@@ -43,7 +43,7 @@
 			"min_size": 0.3,
 			"clamp_at_min_size": true,
 			"rotation": 28.32,
-			"uv": { "flip_uv": false }
+			"uv": { "flip_uv": false, "rotation": -90 }
 		},
 		{
 			"texture": "stellarview:textures/environment/ring/ring_light_front.png",
@@ -53,7 +53,7 @@
 			"min_size": 0.3,
 			"clamp_at_min_size": true,
 			"rotation": 28.32,
-			"uv": { "flip_uv": false }
+			"uv": { "flip_uv": false, "rotation": -90 }
 		}
 	]
 }
