@@ -18,9 +18,6 @@ import java.util.Optional;
 
 public abstract class StellarViewSpecialEffects extends DimensionSpecialEffects
 {
-	@Nullable
-	protected Optional<ViewCenter> viewCenter = null;
-	
 	public StellarViewSpecialEffects(float cloudLevel, boolean hasGround, SkyType skyType, boolean forceBrightLightmap, boolean constantAmbientLight)
 	{
 		super(cloudLevel, hasGround, skyType, forceBrightLightmap, constantAmbientLight);
@@ -28,10 +25,7 @@ public abstract class StellarViewSpecialEffects extends DimensionSpecialEffects
 	
 	public boolean renderSky(ClientLevel level, int ticks, float partialTick, Matrix4f modelViewMatrix, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
 	{
-		if(viewCenter == null)
-			viewCenter = Optional.ofNullable(ViewCenters.getViewCenter(level));
-		
-		return viewCenter.isPresent() && viewCenter.get().renderSky(level, ticks, partialTick, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog);
+		return ViewCenters.renderViewCenterSky(level, ticks, partialTick, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog);
 	}
 	
 	@Override
@@ -43,9 +37,6 @@ public abstract class StellarViewSpecialEffects extends DimensionSpecialEffects
 	@Override
 	public boolean isFoggyAt(int x, int y)
 	{
-		if(NetherConfig.replace_vanilla.get() && viewCenter != null && viewCenter.isPresent())
-			return viewCenter.get().fog().isFoggyAt(x, y);
-		
 		return false;
 	}
 	

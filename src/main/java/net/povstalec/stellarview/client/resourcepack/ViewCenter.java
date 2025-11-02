@@ -410,7 +410,7 @@ public class ViewCenter
 			transformedModelView.rotate(Axis.ZP.rotation((float) getZRotation(level, camera, partialTicks)));
 		}
 		
-		viewObject.renderFrom(this, level, tickDifference() * partialTicks, transformedModelView, camera, projectionMatrix, StellarViewFogEffects.isFoggy(minecraft, camera), setupFog, tesselator);
+		viewObject.renderFrom(this, level, tickDifference() * partialTicks, transformedModelView, camera, projectionMatrix, StellarViewFogEffects.isFoggy(minecraft, camera, this), setupFog, tesselator);
 		
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		renderSkyEvents(level, camera, partialTicks, modelViewMatrix, tesselator);
@@ -438,7 +438,7 @@ public class ViewCenter
 		
 		setupFog.run();
 		
-		if(stars().ignoreFog() || !StellarViewFogEffects.isFoggy(this.minecraft, camera))
+		if(stars().ignoreFog() || !StellarViewFogEffects.isFoggy(this.minecraft, camera, this))
 		{
 			//RenderSystem.disableTexture();
 			Vec3 skyColor = level.getSkyColor(this.minecraft.gameRenderer.getMainCamera().getPosition(), partialTicks);
@@ -623,7 +623,6 @@ public class ViewCenter
 		{
 			for(MinMax minMax : height)
 			{
-				
 				if(minMax.isInBounds(y))
 					return true;
 			}
