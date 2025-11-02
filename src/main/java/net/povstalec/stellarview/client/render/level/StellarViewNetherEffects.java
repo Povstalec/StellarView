@@ -8,6 +8,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.DimensionSpecialEffects;
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.api.client.render.level.StellarViewSpecialEffects;
+import net.povstalec.stellarview.client.render.ViewCenters;
 import net.povstalec.stellarview.common.config.NetherConfig;
 
 import javax.annotation.Nullable;
