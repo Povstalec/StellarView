@@ -9,17 +9,20 @@
 	"create_horizon": false,
 	"create_void": false,
 	
-	"stars_always_visible": true,
+	"stars":
+	{
+		"during_day": true
+	},
 	
 	"skyboxes":
 	[
 		{
-			"top_facade": { "texture": "environment/end_sky.png", "uv": { "x_start": 0, "y_start": 0, "x_end": 16, "y_end": 16 }, "rgba": {"red": 40, "green": 40, "blue": 40, "alpha": 255} },
-			"north_facade": { "texture": "environment/end_sky.png", "uv": { "x_start": 0, "y_start": 0, "x_end": 16, "y_end": 16 }, "rgba": {"red": 40, "green": 40, "blue": 40, "alpha": 255} },
-			"east_facade": { "texture": "environment/end_sky.png", "uv": { "x_start": 0, "y_start": 0, "x_end": 16, "y_end": 16 }, "rgba": {"red": 40, "green": 40, "blue": 40, "alpha": 255} },
-			"south_facade": { "texture": "environment/end_sky.png", "uv": { "x_start": 0, "y_start": 0, "x_end": 16, "y_end": 16 }, "rgba": {"red": 40, "green": 40, "blue": 40, "alpha": 255} },
-			"west_facade": { "texture": "environment/end_sky.png", "uv": { "x_start": 0, "y_start": 0, "x_end": 16, "y_end": 16 }, "rgba": {"red": 40, "green": 40, "blue": 40, "alpha": 255} },
-			"bottom_facade": { "texture": "environment/end_sky.png", "uv": { "x_start": 0, "y_start": 0, "x_end": 16, "y_end": 16 }, "rgba": {"red": 40, "green": 40, "blue": 40, "alpha": 255} }
+			"top_facade": { "texture": "environment/end_sky.png", "uv": { "u_start": 0, "v_start": 0, "u_end": 16, "v_end": 16 }, "rgba": {"red": 40, "green": 40, "blue": 40, "alpha": 255} },
+			"north_facade": { "texture": "environment/end_sky.png", "uv": { "u_start": 0, "v_start": 0, "u_end": 16, "v_end": 16 }, "rgba": {"red": 40, "green": 40, "blue": 40, "alpha": 255} },
+			"east_facade": { "texture": "environment/end_sky.png", "uv": { "u_start": 0, "v_start": 0, "u_end": 16, "v_end": 16 }, "rgba": {"red": 40, "green": 40, "blue": 40, "alpha": 255} },
+			"south_facade": { "texture": "environment/end_sky.png", "uv": { "u_start": 0, "v_start": 0, "u_end": 16, "v_end": 16 }, "rgba": {"red": 40, "green": 40, "blue": 40, "alpha": 255} },
+			"west_facade": { "texture": "environment/end_sky.png", "uv": { "u_start": 0, "v_start": 0, "u_end": 16, "v_end": 16 }, "rgba": {"red": 40, "green": 40, "blue": 40, "alpha": 255} },
+			"bottom_facade": { "texture": "environment/end_sky.png", "uv": { "u_start": 0, "v_start": 0, "u_end": 16, "v_end": 16 }, "rgba": {"red": 40, "green": 40, "blue": 40, "alpha": 255} }
 		}
 	]
 }

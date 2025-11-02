@@ -207,9 +207,9 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 	}
 	
 	@Override
-	public void setupSpaceObject(ResourceLocation id)
+	public void setupSpaceObject(ResourceLocation id, @Nullable SpaceObjectRenderer<?> parent)
 	{
-		super.setupSpaceObject(id);
+		super.setupSpaceObject(id, parent);
 		
 		setupStarInfo();
 		setupLOD(getStarInfo());

@@ -184,7 +184,7 @@ public class ResourcepackReloadListener
 			}
 			catch(RuntimeException e)
 			{
-				StellarView.LOGGER.error("Could not load " + location.toString() + " " + e);
+				StellarView.LOGGER.error("Could not load " + location.toString(), e);
 			}
 		}
 		
@@ -215,7 +215,7 @@ public class ResourcepackReloadListener
 			}
 			catch(RuntimeException e)
 			{
-				StellarView.LOGGER.error("Could not load " + location.toString() + " " + e);
+				StellarView.LOGGER.error("Could not load " + location.toString(), e);
 			}
 		}
 		
@@ -232,7 +232,7 @@ public class ResourcepackReloadListener
 			}
 			catch(RuntimeException e)
 			{
-				StellarView.LOGGER.error("Could not load " + location.toString() + " " + e);
+				StellarView.LOGGER.error("Could not load " + location.toString(), e);
 			}
 		}
 		
@@ -249,7 +249,7 @@ public class ResourcepackReloadListener
 			}
 			catch(RuntimeException e)
 			{
-				StellarView.LOGGER.error("Could not load " + location.toString() + " " + e);
+				StellarView.LOGGER.error("Could not load " + location.toString(), e);
 			}
 		}
 		
@@ -287,7 +287,7 @@ public class ResourcepackReloadListener
 			}
 			catch(RuntimeException e)
 			{
-				StellarView.LOGGER.error("Could not load " + location.toString() + " " + e);
+				StellarView.LOGGER.error("Could not load " + location.toString(), e);
 			}
 			
 			return null;
@@ -304,7 +304,7 @@ public class ResourcepackReloadListener
 			}
 			catch(RuntimeException e)
 			{
-				StellarView.LOGGER.error("Could not load " + location.toString() + " " + e);
+				StellarView.LOGGER.error("Could not load " + location.toString(), e);
 			}
 			
 			return null;
@@ -321,7 +321,7 @@ public class ResourcepackReloadListener
 			}
 			catch(RuntimeException e)
 			{
-				StellarView.LOGGER.error("Could not load " + location.toString() + " " + e);
+				StellarView.LOGGER.error("Could not load " + location.toString(), e);
 			}
 			
 			return null;
@@ -348,7 +348,7 @@ public class ResourcepackReloadListener
 			}
 			catch(RuntimeException e)
 			{
-				StellarView.LOGGER.error("Could not load " + location.toString() + " " + e);
+				StellarView.LOGGER.error("Could not load " + location.toString(), e);
 			}
 			
 			return null;
@@ -366,7 +366,7 @@ public class ResourcepackReloadListener
 			}
 			catch(RuntimeException e)
 			{
-				StellarView.LOGGER.error("Could not load " + location.toString() + " " + e);
+				StellarView.LOGGER.error("Could not load " + location.toString(), e);
 			}
 			
 			return null;
@@ -383,7 +383,7 @@ public class ResourcepackReloadListener
 			}
 			catch(RuntimeException e)
 			{
-				StellarView.LOGGER.error("Could not load " + location.toString() + " " + e);
+				StellarView.LOGGER.error("Could not load " + location.toString(), e);
 			}
 			
 			return null;
@@ -400,7 +400,7 @@ public class ResourcepackReloadListener
 			}
 			catch(RuntimeException e)
 			{
-				StellarView.LOGGER.error("Could not load " + location.toString() + " " + e);
+				StellarView.LOGGER.error("Could not load " + location.toString(), e);
 			}
 			
 			return null;
@@ -414,11 +414,8 @@ public class ResourcepackReloadListener
 				
 				if(spaceObject.renderedObject() instanceof Sol sol)
 					SpaceRenderer.addSol(sol);
-
-				// Setup object
-				spaceObject.setupSpaceObject(spaceObjectEntry.getKey());
 				
-				// Handle parents
+				// Assign parents
 				if(spaceObject.renderedObject().getParentLocation() != null)
 				{
 					for(Map.Entry<ResourceLocation, SpaceObjectRenderer<?>> parentEntry : spaceObjects.entrySet())
@@ -430,11 +427,17 @@ public class ResourcepackReloadListener
 						}
 					}
 					
-					if(!spaceObject.renderedObject().getParent().isPresent())
+					if(spaceObject.renderedObject().getParent().isEmpty())
 						StellarView.LOGGER.error("Failed to find parent for " + spaceObject.toString());
 				}
 				else
 					SpaceRenderer.addSpaceObjectRenderer(spaceObjectEntry.getValue());
+			}
+			
+			// Setup objects
+			for(Map.Entry<ResourceLocation, SpaceObjectRenderer<?>> spaceObjectEntry : spaceObjects.entrySet())
+			{
+				spaceObjectEntry.getValue().setupSpaceObject(spaceObjectEntry.getKey(), null);
 			}
 		}
 		
