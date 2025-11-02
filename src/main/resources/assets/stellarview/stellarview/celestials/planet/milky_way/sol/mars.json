@@ -23,7 +23,7 @@
 			"min_size": 1.0,
 			"clamp_at_min_size": true,
 			"rotation": 25.19,
-			"uv": { "flip_uv": false }
+			"uv": { "flip_uv": false, "rotation": -90 }
 		},
 		{
 			"texture": "stellarview:textures/environment/planet/sol/mars.png",
@@ -33,7 +33,7 @@
 			"min_size": 0.5,
 			"clamp_at_min_size": true,
 			"rotation": 25.19,
-			"uv": { "flip_uv": false }
+			"uv": { "flip_uv": false, "rotation": -90 }
 		}
 	]
 }

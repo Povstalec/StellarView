@@ -10,6 +10,7 @@ import net.povstalec.stellarview.client.render.SpaceRenderer;
 import net.povstalec.stellarview.client.render.space_objects.SpaceObjectRenderer;
 import net.povstalec.stellarview.client.render.space_objects.ViewObjectRenderer;
 import org.jetbrains.annotations.Nullable;
+import net.povstalec.stellarview.common.util.MinMax;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -87,9 +88,8 @@ public class ViewCenter
 	public final boolean createHorizon;
 	public final boolean createVoid;
 	
-	public final boolean starsAlwaysVisible;
-	public final boolean starsIgnoreFog;
-	public final boolean starsIgnoreRain;
+	protected final Stars stars;
+	protected final Fog fog;
 	public final int zRotationMultiplier;
     
     public static final Codec<ViewCenter> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -108,17 +108,15 @@ public class ViewCenter
 			Codec.BOOL.optionalFieldOf("create_horizon", true).forGetter(viewCenter -> viewCenter.createHorizon),
 			Codec.BOOL.optionalFieldOf("create_void", true).forGetter(viewCenter -> viewCenter.createVoid),
 			
-			Codec.BOOL.optionalFieldOf("stars_always_visible", false).forGetter(viewCenter -> viewCenter.starsAlwaysVisible),
-			Codec.BOOL.optionalFieldOf("stars_ignore_fog", false).forGetter(viewCenter -> viewCenter.starsIgnoreFog),
-			Codec.BOOL.optionalFieldOf("stars_ignore_rain", false).forGetter(viewCenter -> viewCenter.starsIgnoreRain),
+			ViewCenter.Stars.CODEC.optionalFieldOf("stars", new ViewCenter.Stars()).forGetter(viewCenter -> viewCenter.stars),
+			ViewCenter.Fog.CODEC.optionalFieldOf("fog", new ViewCenter.Fog()).forGetter(viewCenter -> viewCenter.fog),
 			Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("z_rotation_multiplier", 30000000).forGetter(viewCenter -> viewCenter.zRotationMultiplier)
 			).apply(instance, ViewCenter::new));
 	
 	public ViewCenter(Optional<ResourceKey<SpaceObject>> viewCenterKey, Optional<List<Skybox>> skyboxes, AxisRotation axisRotation,
 			long rotationPeriod, DayBlending dayBlending, DayBlending sunDayBlending,
 			Optional<MeteorEffect.ShootingStar> shootingStar, Optional<MeteorEffect.MeteorShower> meteorShower,
-			boolean createHorizon, boolean createVoid,
-			boolean starsAlwaysVisible, boolean starsIgnoreFog, boolean starsIgnoreRain, int zRotationMultiplier)
+			boolean createHorizon, boolean createVoid, ViewCenter.Stars stars, ViewCenter.Fog fog, int zRotationMultiplier)
 	{
 		this.levelTicks = 0;
 		this.updateTicks = false;
@@ -129,11 +127,8 @@ public class ViewCenter
 		this.starBrightness = 0;
 		this.dustCloudBrightness = 0;
 		
-		if(viewCenterKey.isPresent())
-			this.viewCenterKey = viewCenterKey.get();
-		
-		if(skyboxes.isPresent())
-			this.skyboxes = skyboxes.get();
+		this.viewCenterKey = viewCenterKey.orElse(null);
+		this.skyboxes = skyboxes.orElse(null);
 		
 		this.axisRotation = axisRotation;
 		this.rotationPeriod = rotationPeriod;
@@ -141,8 +136,8 @@ public class ViewCenter
 		this.dayBlending = dayBlending;
 		this.sunDayBlending = sunDayBlending;
 		
-		this.shootingStar = shootingStar.isPresent() ? shootingStar.get() : null;
-		this.meteorShower = meteorShower.isPresent() ? meteorShower.get() : null;
+		this.shootingStar = shootingStar.orElse(null);
+		this.meteorShower = meteorShower.orElse(null);
 		
 		this.createHorizon = createHorizon;
 		this.createVoid = createVoid;
@@ -152,9 +147,8 @@ public class ViewCenter
 		if(createVoid)
 			darkBuffer = StellarViewSkyEffects.createDarkSky();
 		
-		this.starsAlwaysVisible = starsAlwaysVisible;
-		this.starsIgnoreFog = starsIgnoreFog;
-		this.starsIgnoreRain = starsIgnoreRain;
+		this.stars = stars;
+		this.fog = fog;
 		this.zRotationMultiplier = zRotationMultiplier;
 	}
 	
@@ -282,19 +276,14 @@ public class ViewCenter
 		return rotationPeriod;
 	}
 	
-	public boolean starsAlwaysVisible()
+	public Stars stars()
 	{
-		return starsAlwaysVisible;
+		return stars;
 	}
 	
-	public boolean starsIgnoreFog()
+	public Fog fog()
 	{
-		return starsIgnoreFog;
-	}
-	
-	public boolean starsIgnoreRain()
-	{
-		return starsIgnoreRain;
+		return fog;
 	}
 	
 	public double zRotationMultiplier()
@@ -453,7 +442,7 @@ public class ViewCenter
 		
 		setupFog.run();
 		
-		if(starsIgnoreFog() || !StellarViewFogEffects.isFoggy(this.minecraft, camera))
+		if(stars().ignoreFog() || !StellarViewFogEffects.isFoggy(this.minecraft, camera))
 		{
 			//RenderSystem.disableTexture();
 			Vec3 skyColor = level.getSkyColor(this.minecraft.gameRenderer.getMainCamera().getPosition(), partialTicks);
@@ -570,6 +559,81 @@ public class ViewCenter
 		public float dayVisibleRange()
 		{
 			return dayMaxVisibleSize - dayMinVisibleSize;
+		}
+	}
+	
+	
+	
+	public static class Stars
+	{
+		protected final boolean duringDay;
+		protected final boolean ignoreFog;
+		protected final boolean ignoreRain;
+		
+		public static final Codec<Stars> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				Codec.BOOL.optionalFieldOf("during_day", false).forGetter(stars -> stars.duringDay),
+				Codec.BOOL.optionalFieldOf("ignore_fog", false).forGetter(stars -> stars.ignoreFog),
+				Codec.BOOL.optionalFieldOf("ignore_rain", false).forGetter(stars -> stars.ignoreRain)
+		).apply(instance, Stars::new));
+		
+		public Stars(boolean duringDay, boolean ignoreFog, boolean ignoreRain)
+		{
+			this.duringDay = duringDay;
+			this.ignoreFog = ignoreFog;
+			this.ignoreRain = ignoreRain;
+		}
+		
+		public Stars()
+		{
+			this(false, false, false);
+		}
+		
+		public boolean duringDay()
+		{
+			return duringDay;
+		}
+		
+		public boolean ignoreRain()
+		{
+			return ignoreRain;
+		}
+		
+		public boolean ignoreFog()
+		{
+			return ignoreFog;
+		}
+	}
+	
+	
+	
+	public static class Fog
+	{
+		protected List<MinMax> height;
+		
+		public static final Codec<Fog> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				MinMax.CODEC.listOf().optionalFieldOf("height", List.of()).forGetter(fog -> fog.height)
+		).apply(instance, Fog::new));
+		
+		public Fog(List<MinMax> height)
+		{
+			this.height = height;
+		}
+		
+		public Fog()
+		{
+			this(List.of());
+		}
+		
+		public boolean isFoggyAt(int x, int y)
+		{
+			for(MinMax minMax : height)
+			{
+				
+				if(minMax.isInBounds(y))
+					return true;
+			}
+			
+			return false;
 		}
 	}
 }
