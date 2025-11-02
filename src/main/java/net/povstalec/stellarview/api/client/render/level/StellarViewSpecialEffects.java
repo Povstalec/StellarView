@@ -1,10 +1,8 @@
 package net.povstalec.stellarview.api.client.render.level;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.DimensionSpecialEffects;
-import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.client.render.ViewCenters;
@@ -29,12 +27,12 @@ public abstract class StellarViewSpecialEffects extends DimensionSpecialEffects
 	}
 	
 	@Override
-	public boolean renderSky(ClientLevel level, int ticks, float partialTick, PoseStack poseStack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
+	public boolean renderSky(ClientLevel level, int ticks, float partialTick, Matrix4f modelViewMatrix, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
 	{
 		if(viewCenter == null)
 			viewCenter = Optional.ofNullable(ViewCenters.getViewCenter(level));
 		
-		return viewCenter.isPresent() && viewCenter.get().renderSky(level, ticks, partialTick, poseStack, camera, projectionMatrix, isFoggy, setupFog);
+		return viewCenter.isPresent() && viewCenter.get().renderSky(level, ticks, partialTick, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog);
 	}
 	
 	@Override
