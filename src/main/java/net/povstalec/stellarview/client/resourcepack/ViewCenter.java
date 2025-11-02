@@ -628,7 +628,6 @@ public class ViewCenter
 		{
 			for(MinMax minMax : height)
 			{
-				
 				if(minMax.isInBounds(y))
 					return true;
 			}
