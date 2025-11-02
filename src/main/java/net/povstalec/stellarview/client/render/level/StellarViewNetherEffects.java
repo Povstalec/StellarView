@@ -32,7 +32,7 @@ public class StellarViewNetherEffects extends StellarViewSpecialEffects
 	public boolean renderSky(ClientLevel level, int ticks, float partialTick, PoseStack poseStack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
     {
 		if(NetherConfig.replace_vanilla.get())
-			super.renderSky(level, ticks, partialTick, poseStack, camera, projectionMatrix, isFoggy, setupFog);
+			return ViewCenters.renderViewCenterSky(level, ticks, partialTick, poseStack, camera, projectionMatrix, isFoggy, setupFog);
 		
         return false;
     }
