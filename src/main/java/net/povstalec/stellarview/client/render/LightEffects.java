@@ -70,7 +70,7 @@ public class LightEffects
 	{
 		float brightness = GeneralConfig.star_brightness.get() / 100F;
 		
-		if(!viewCenter.starsAlwaysVisible())
+		if(!viewCenter.stars().duringDay())
 			brightness *= level.getStarBrightness(partialTicks);
 		else
 			brightness *= 0.5F;
@@ -87,7 +87,7 @@ public class LightEffects
 	{
 		float brightness = GeneralConfig.dust_cloud_brightness.get() / 100F;
 		
-		if(!viewCenter.starsAlwaysVisible())
+		if(!viewCenter.stars().duringDay())
 			brightness *= level.getStarBrightness(partialTicks);
 		else
 			brightness *= 0.5F;
@@ -116,7 +116,7 @@ public class LightEffects
 				brightness = minBrightness;
 		}
 		
-		return viewCenter.starsIgnoreRain() ? brightness : brightness * LightEffects.rainDimming(level, partialTicks);
+		return viewCenter.stars().ignoreRain() ? brightness : brightness * LightEffects.rainDimming(level, partialTicks);
 	}
 	
 	public static float starDayBrightness(ViewCenter viewCenter, float size, long ticks, ClientLevel level, Camera camera, float partialTicks)
@@ -133,14 +133,14 @@ public class LightEffects
 				brightness = minBrightness;
 		}
 		
-		return viewCenter.starsIgnoreRain() ? brightness : brightness * LightEffects.rainDimming(level, partialTicks);
+		return viewCenter.stars().ignoreRain() ? brightness : brightness * LightEffects.rainDimming(level, partialTicks);
 	}
 	
 	public static float dustCloudBrightness(ViewCenter viewCenter, ClientLevel level, Camera camera, float partialTicks)
 	{
 		float brightness = getDustBrightness(viewCenter, level, camera, partialTicks);
 		
-		return viewCenter.starsIgnoreRain() ? brightness : brightness * LightEffects.rainDimming(level, partialTicks);
+		return viewCenter.stars().ignoreRain() ? brightness : brightness * LightEffects.rainDimming(level, partialTicks);
 	}
 	
 	public static float nebulaBrightness(ViewCenter viewCenter, float size, long ticks, ClientLevel level, Camera camera, float partialTicks)
@@ -157,7 +157,7 @@ public class LightEffects
 				brightness = minBrightness;
 		}
 		
-		return viewCenter.starsIgnoreRain() ? brightness : brightness * LightEffects.rainDimming(level, partialTicks);
+		return viewCenter.stars().ignoreRain() ? brightness : brightness * LightEffects.rainDimming(level, partialTicks);
 	}
 	
 	/**
@@ -171,6 +171,6 @@ public class LightEffects
 	{
 		float brightness = getStarBrightness(viewCenter, level, camera, partialTicks);
 		
-		return viewCenter.starsIgnoreRain() ? brightness : brightness * LightEffects.rainDimming(level, partialTicks);
+		return viewCenter.stars().ignoreRain() ? brightness : brightness * LightEffects.rainDimming(level, partialTicks);
 	}
 }

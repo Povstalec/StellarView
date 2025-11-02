@@ -22,7 +22,7 @@
 			"size": 7697847.735118539,
 			"min_size": 0.15,
 			"clamp_at_min_size": true,
-			"rotation": 90,
+			"rotation": 0,
 			"uv":
 			{
 				"phase_handler":
@@ -32,7 +32,8 @@
 					"columns": 4,
 					"rows": 2
 				},
-				"flip_uv": true
+				"flip_uv": true,
+				"rotation": 90
 			}
 		},
 		{
@@ -42,7 +43,7 @@
 			"size": 7697847.735118539,
 			"min_size": 0.15,
 			"clamp_at_min_size": true,
-			"rotation": 90,
+			"rotation": 0,
 			"uv":
 			{
 				"phase_handler":
@@ -52,7 +53,8 @@
 					"columns": 4,
 					"rows": 2
 				},
-				"flip_uv": true
+				"flip_uv": true,
+				"rotation": 90
 			}
 		}
 	],
