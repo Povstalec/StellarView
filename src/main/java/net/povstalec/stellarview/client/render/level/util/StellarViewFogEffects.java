@@ -8,6 +8,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.material.FogType;
 import net.minecraft.world.phys.Vec3;
+import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 
 public class StellarViewFogEffects
 {
@@ -20,11 +21,11 @@ public class StellarViewFogEffects
 			return livingentity.hasEffect(MobEffects.BLINDNESS) || livingentity.hasEffect(MobEffects.DARKNESS);
 	}
 	
-	public static boolean isFoggy(Minecraft minecraft, Camera camera)
+	public static boolean isFoggy(Minecraft minecraft, Camera camera, ViewCenter viewCenter)
 	{
 		Vec3 cameraPos = camera.getPosition();
 		
-		boolean isFoggyAt = minecraft.level.effects().isFoggyAt(Mth.floor(cameraPos.x()), Mth.floor(cameraPos.y()));
+		boolean isFoggyAt = viewCenter.fog().isFoggyAt(Mth.floor(cameraPos.x()), Mth.floor(cameraPos.y()));
 		boolean isWorldFog = minecraft.gui.getBossOverlay().shouldCreateWorldFog();
 		
 		boolean isFoggy = isFoggyAt || isWorldFog; // TODO Let people disable boss fog
