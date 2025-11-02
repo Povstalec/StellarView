@@ -95,10 +95,15 @@ public abstract class SpaceObjectRenderer<RenderedObject extends SpaceObject>
 		return renderedObject;
 	}
 	
-	public void setupSpaceObject(ResourceLocation id)
+	public void setupSpaceObject(ResourceLocation id, @Nullable SpaceObjectRenderer<?> parent)
 	{
 		if(id != null)
 			renderedObject().setResourceLocation(id);
+		
+		for(SpaceObjectRenderer<?> child : children)
+		{
+			child.setupSpaceObject(id, this);
+		}
 	}
 	
 	@Override

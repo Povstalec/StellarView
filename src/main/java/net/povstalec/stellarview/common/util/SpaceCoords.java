@@ -250,8 +250,8 @@ public class SpaceCoords implements INBTSerializable<CompoundTag>
 		public static final String LY = "ly";
 		public static final String KM = "km";
 		
-		private long ly; // Light Years
-		private double km; // Kilometers
+		protected long ly; // Light Years
+		protected double km; // Kilometers
 		
 		public static final Codec<SpaceDistance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 	    		// Coordinates in Light Years
@@ -283,7 +283,7 @@ public class SpaceCoords implements INBTSerializable<CompoundTag>
 			this(0, kilometers);
 		}
 		
-		private void handleKmOverflow()
+		protected void handleKmOverflow()
 		{
 			if(this.km >= KM_PER_LY || this.km <= -KM_PER_LY)
 			{

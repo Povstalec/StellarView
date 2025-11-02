@@ -23,7 +23,7 @@
 			"min_size": 1.5,
 			"clamp_at_min_size": true,
 			"rotation": 3.13,
-			"uv": { "flip_uv": false }
+			"uv": { "flip_uv": false, "rotation": -90 }
 		},
 		{
 			"texture": "stellarview:textures/environment/ring/ring_light_back.png",
@@ -32,8 +32,8 @@
 			"size": 69911000,
 			"min_size": 1.0,
 			"clamp_at_min_size": true,
-			"rotation": -90,
-			"uv": { "flip_uv": false }
+			"rotation": 3.13,
+			"uv": { "flip_uv": false, "rotation": -90 }
 		},
 		{
 			"texture": "stellarview:textures/environment/planet/sol/jupiter.png",
@@ -42,8 +42,8 @@
 			"size": 69911000,
 			"min_size": 1.0,
 			"clamp_at_min_size": true,
-			"rotation": -86.87,
-			"uv": { "flip_uv": false }
+			"rotation": 3.13,
+			"uv": { "flip_uv": false, "rotation": -90 }
 		},
 		{
 			"texture": "stellarview:textures/environment/ring/ring_light_front.png",
@@ -52,8 +52,8 @@
 			"size": 69911000,
 			"min_size": 1.0,
 			"clamp_at_min_size": true,
-			"rotation": -90,
-			"uv": { "flip_uv": false }
+			"rotation": 3.13,
+			"uv": { "flip_uv": false, "rotation": -90 }
 		}
 	]
 }

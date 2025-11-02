@@ -23,7 +23,7 @@
 			"min_size": 1.2,
 			"clamp_at_min_size": true,
 			"rotation": 26.73,
-			"uv": { "flip_uv": false }
+			"uv": { "flip_uv": false, "rotation": -90 }
 		},
 		{
 			"texture": "stellarview:textures/environment/ring/ring_heavy_back.png",
@@ -32,8 +32,8 @@
 			"size": 60268000,
 			"min_size": 0.8,
 			"clamp_at_min_size": true,
-			"rotation": -90,
-			"uv": { "flip_uv": false }
+			"rotation": 26.73,
+			"uv": { "flip_uv": false, "rotation": -90 }
 		},
 		{
 			"texture": "stellarview:textures/environment/planet/sol/saturn.png",
@@ -42,8 +42,8 @@
 			"size": 60268000,
 			"min_size": 0.8,
 			"clamp_at_min_size": true,
-			"rotation": -63.27,
-			"uv": { "flip_uv": false }
+			"rotation": 26.73,
+			"uv": { "flip_uv": false, "rotation": -90 }
 		},
 		{
 			"texture": "stellarview:textures/environment/ring/ring_heavy_front.png",
@@ -52,8 +52,8 @@
 			"size": 60268000,
 			"min_size": 0.8,
 			"clamp_at_min_size": true,
-			"rotation": -90,
-			"uv": { "flip_uv": false }
+			"rotation": 26.73,
+			"uv": { "flip_uv": false, "rotation": -90 }
 		}
 	]
 }
