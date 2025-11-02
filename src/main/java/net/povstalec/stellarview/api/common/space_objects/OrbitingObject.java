@@ -143,7 +143,7 @@ public class OrbitingObject extends TexturedObject
 			this.frequency = orbits / ticks;
 		}
 		
-		public void updateFromParentPeriod(OrbitalPeriod parentPeriod)
+		public void updateFromParentPeriod(@Nullable OrbitalPeriod parentPeriod)
 		{
 			if(!synodic || parentPeriod == null)
 				return;

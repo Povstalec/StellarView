@@ -33,22 +33,20 @@ public final class DefaultViewCenters
 				Codec.BOOL.optionalFieldOf("create_horizon", true).forGetter(viewCenter -> viewCenter.createHorizon),
 				Codec.BOOL.optionalFieldOf("create_void", true).forGetter(viewCenter -> viewCenter.createVoid),
 				
-				Codec.BOOL.optionalFieldOf("stars_always_visible", false).forGetter(viewCenter -> viewCenter.starsAlwaysVisible),
-				Codec.BOOL.optionalFieldOf("stars_ignore_fog", false).forGetter(viewCenter -> viewCenter.starsIgnoreFog),
-				Codec.BOOL.optionalFieldOf("stars_ignore_rain", false).forGetter(viewCenter -> viewCenter.starsIgnoreRain),
+				ViewCenter.Stars.CODEC.optionalFieldOf("stars", new ViewCenter.Stars()).forGetter(viewCenter -> viewCenter.stars),
+				ViewCenter.Fog.CODEC.optionalFieldOf("fog", new ViewCenter.Fog()).forGetter(viewCenter -> viewCenter.fog),
 				Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("z_rotation_multiplier", 30000000).forGetter(viewCenter -> viewCenter.zRotationMultiplier)
 				).apply(instance, Overworld::new));
 		
 		public Overworld(Optional<ResourceKey<SpaceObject>> viewCenterKey, Optional<List<Skybox>> skyboxes, AxisRotation axisRotation,
 				long rotationPeriod, DayBlending dayBlending, DayBlending sunDayBlending,
 						 Optional<MeteorEffect.ShootingStar> shootingStar, Optional<MeteorEffect.MeteorShower> meteorShower,
-				boolean createHorizon, boolean createVoid,
-				boolean starsAlwaysVisible, boolean starsIgnoreFog, boolean starsIgnoreRain, int zRotationMultiplier)
+				boolean createHorizon, boolean createVoid, ViewCenter.Stars stars, ViewCenter.Fog fog, int zRotationMultiplier)
 		{
 			super(viewCenterKey, skyboxes, axisRotation,
 					rotationPeriod, dayBlending,sunDayBlending,
 					shootingStar, meteorShower, createHorizon, createVoid,
-					starsAlwaysVisible, starsIgnoreFog, starsIgnoreRain, zRotationMultiplier);
+					stars, fog, zRotationMultiplier);
 		}
 		
 		public double zRotationMultiplier()
@@ -90,22 +88,20 @@ public final class DefaultViewCenters
 				Codec.BOOL.optionalFieldOf("create_horizon", true).forGetter(viewCenter -> viewCenter.createHorizon),
 				Codec.BOOL.optionalFieldOf("create_void", true).forGetter(viewCenter -> viewCenter.createVoid),
 				
-				Codec.BOOL.optionalFieldOf("stars_always_visible", false).forGetter(viewCenter -> viewCenter.starsAlwaysVisible),
-				Codec.BOOL.optionalFieldOf("stars_ignore_fog", false).forGetter(viewCenter -> viewCenter.starsIgnoreFog),
-				Codec.BOOL.optionalFieldOf("stars_ignore_rain", false).forGetter(viewCenter -> viewCenter.starsIgnoreRain),
+				ViewCenter.Stars.CODEC.optionalFieldOf("stars", new ViewCenter.Stars()).forGetter(viewCenter -> viewCenter.stars),
+				ViewCenter.Fog.CODEC.optionalFieldOf("fog", new ViewCenter.Fog()).forGetter(viewCenter -> viewCenter.fog),
 				Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("z_rotation_multiplier", 0).forGetter(viewCenter -> viewCenter.zRotationMultiplier)
 				).apply(instance, Nether::new));
 		
 		public Nether(Optional<ResourceKey<SpaceObject>> viewCenterKey, Optional<List<Skybox>> skyboxes, AxisRotation axisRotation,
 				long rotationPeriod, DayBlending dayBlending, DayBlending sunDayBlending,
 					  Optional<MeteorEffect.ShootingStar> shootingStar, Optional<MeteorEffect.MeteorShower> meteorShower,
-				boolean createHorizon, boolean createVoid,
-					  boolean starsAlwaysVisible, boolean starsIgnoreFog, boolean starsIgnoreRain, int zRotationMultiplier)
+				boolean createHorizon, boolean createVoid, ViewCenter.Stars stars, ViewCenter.Fog fog, int zRotationMultiplier)
 		{
 			super(viewCenterKey, skyboxes, axisRotation,
 					rotationPeriod, dayBlending,sunDayBlending,
 					shootingStar, meteorShower, createHorizon, createVoid,
-					starsAlwaysVisible, starsIgnoreFog, starsIgnoreRain, zRotationMultiplier);
+					stars, fog, zRotationMultiplier);
 		}
 		
 		public boolean overrideMeteorEffects()
@@ -142,22 +138,20 @@ public final class DefaultViewCenters
 				Codec.BOOL.optionalFieldOf("create_horizon", true).forGetter(viewCenter -> viewCenter.createHorizon),
 				Codec.BOOL.optionalFieldOf("create_void", true).forGetter(viewCenter -> viewCenter.createVoid),
 				
-				Codec.BOOL.optionalFieldOf("stars_always_visible", false).forGetter(viewCenter -> viewCenter.starsAlwaysVisible),
-				Codec.BOOL.optionalFieldOf("stars_ignore_fog", false).forGetter(viewCenter -> viewCenter.starsIgnoreFog),
-				Codec.BOOL.optionalFieldOf("stars_ignore_rain", false).forGetter(viewCenter -> viewCenter.starsIgnoreRain),
+				ViewCenter.Stars.CODEC.optionalFieldOf("stars", new ViewCenter.Stars()).forGetter(viewCenter -> viewCenter.stars),
+				ViewCenter.Fog.CODEC.optionalFieldOf("fog", new ViewCenter.Fog()).forGetter(viewCenter -> viewCenter.fog),
 				Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("z_rotation_multiplier", 0).forGetter(viewCenter -> viewCenter.zRotationMultiplier)
 				).apply(instance, End::new));
 		
 		public End(Optional<ResourceKey<SpaceObject>> viewCenterKey, Optional<List<Skybox>> skyboxes, AxisRotation axisRotation,
 				long rotationPeriod, DayBlending dayBlending, DayBlending sunDayBlending,
 				   Optional<MeteorEffect.ShootingStar> shootingStar, Optional<MeteorEffect.MeteorShower> meteorShower,
-				boolean createHorizon, boolean createVoid,
-				   boolean starsAlwaysVisible, boolean starsIgnoreFog, boolean starsIgnoreRain, int zRotationMultiplier)
+				boolean createHorizon, boolean createVoid,ViewCenter.Stars stars, ViewCenter.Fog fog, int zRotationMultiplier)
 		{
 			super(viewCenterKey, skyboxes, axisRotation,
 					rotationPeriod, dayBlending,sunDayBlending,
 					shootingStar, meteorShower, createHorizon, createVoid,
-					starsAlwaysVisible, starsIgnoreFog, starsIgnoreRain, zRotationMultiplier);
+					stars, fog, zRotationMultiplier);
 		}
 		
 		public boolean overrideMeteorEffects()

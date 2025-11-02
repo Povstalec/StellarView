@@ -15,8 +15,6 @@ import javax.annotation.Nullable;
 
 public final class ViewCenters
 {
-	private static Minecraft minecraft = Minecraft.getInstance();
-	
 	private static final HashMap<ResourceLocation, ViewCenter> VIEW_CENTER_MAP = new HashMap<>();
 	
 	public static void clear()
@@ -41,6 +39,12 @@ public final class ViewCenters
 	public static ViewCenter getViewCenter(ResourceLocation location)
 	{
 		return VIEW_CENTER_MAP.get(location);
+	}
+	
+	@Nullable
+	public static ViewCenter getViewCenter(ClientLevel level)
+	{
+		return VIEW_CENTER_MAP.get(level.dimension().location());
 	}
 	
 	public static boolean renderViewCenterSky(ResourceLocation location, ClientLevel level, int ticks, float partialTicks, Matrix4f modelViewMatrix, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
