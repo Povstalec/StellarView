@@ -1,5 +1,6 @@
 package net.povstalec.stellarview.client.render.space_objects;
 
+import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.api.common.space_objects.OrbitingObject;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.util.AxisRotation;
@@ -17,6 +18,15 @@ public abstract class OrbitingObjectRenderer<T extends OrbitingObject> extends T
 	public OrbitingObject.OrbitInfo orbitInfo()
 	{
 		return renderedObject.orbitInfo();
+	}
+	
+	@Override
+	public void setupSpaceObject(ResourceLocation id, @Nullable SpaceObjectRenderer<?> parent)
+	{
+		super.setupSpaceObject(id, parent);
+		
+		if(parent instanceof OrbitingObjectRenderer<?> orbitingObjectRenderer && orbitingObjectRenderer.renderedObject.orbitInfo() != null)
+			setupSynodicOrbit(orbitingObjectRenderer.renderedObject.orbitInfo().orbitalPeriod());
 	}
 	
 	public void setupSynodicOrbit(@Nullable OrbitingObject.OrbitalPeriod parentOrbitalPeriod)

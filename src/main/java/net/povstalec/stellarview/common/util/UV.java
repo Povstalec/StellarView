@@ -74,6 +74,43 @@ public class UV
 	}
 	
 	
+	public enum Rotation
+	{
+		DEG_0,
+		DEG_90,
+		DEG_180,
+		DEG_270;
+		
+		public UV shiftUV(UV[] uv, int i)
+		{
+			return uv[(i + this.ordinal()) % uv.length];
+		}
+		
+		public static Rotation rotationFromInt(int rotation) throws IllegalArgumentException
+		{
+			switch (rotation)
+			{
+				case 0:
+					return DEG_0;
+				case 90, -270:
+					return DEG_90;
+				case 180, -180:
+					return DEG_180;
+				case 270, -90:
+					return DEG_270;
+				default:
+					throw new IllegalArgumentException("Invalid rotation value: " + rotation + ", must be one of {0, 90, 180, 270, -90}");
+			}
+		}
+		
+		public static Rotation rotationFromUV(float topLeftU, float topLeftV, float bottomRightU, float bottomRightV)
+		{
+			if(topLeftU <= bottomRightU)
+				return topLeftV <= bottomRightV ? DEG_0 : DEG_90;
+			else
+				return topLeftV <= bottomRightV ? DEG_180 : DEG_270;
+		}
+	}
 	
 	public static class Quad
 	{
@@ -97,23 +134,25 @@ public class UV
 		
 		private final boolean flipped;
 		
-		public Quad(UV.PhaseHandler phaseHandler, UV topLeft, UV bottomLeft, UV bottomRight, UV topRight, boolean flipped)
+		public Quad(UV.PhaseHandler phaseHandler, UV topLeft, UV bottomLeft, UV bottomRight, UV topRight, Rotation rotation, boolean flipped)
 		{
+			UV[] uv = { topLeft, bottomLeft, bottomRight, topRight };
+			
 			this.phaseHandler = phaseHandler;
 			
 			if(flipped)
 			{
-				this.topLeft = topRight;
-				this.bottomLeft = bottomRight;
-				this.bottomRight = bottomLeft;
-				this.topRight = topLeft;
+				this.topLeft = rotation.shiftUV(uv, 3);
+				this.bottomLeft = rotation.shiftUV(uv, 2);
+				this.bottomRight = rotation.shiftUV(uv, 1);
+				this.topRight = rotation.shiftUV(uv, 0);
 			}
 			else
 			{
-				this.topLeft = topLeft;
-				this.bottomLeft = bottomLeft;
-				this.bottomRight = bottomRight;
-				this.topRight = topRight;
+				this.topLeft = rotation.shiftUV(uv, 0);
+				this.bottomLeft = rotation.shiftUV(uv, 1);
+				this.bottomRight = rotation.shiftUV(uv, 2);
+				this.topRight = rotation.shiftUV(uv, 3);
 			}
 			
 			this.flipped = flipped;
@@ -121,17 +160,17 @@ public class UV
 		
 		public Quad(UV.PhaseHandler phaseHandler, UV topLeft, UV bottomLeft, UV bottomRight, UV topRight)
 		{
-			this(phaseHandler, topLeft, bottomLeft, bottomRight, topRight, false);
+			this(phaseHandler, topLeft, bottomLeft, bottomRight, topRight, Rotation.DEG_0, false);
 		}
 		
-		public Quad(UV.PhaseHandler phaseHandler, float topLeftU, float topLeftV, float bottomRightU, float bottomRightV, boolean flipped)
+		public Quad(UV.PhaseHandler phaseHandler, float topLeftU, float topLeftV, float bottomRightU, float bottomRightV, int rotation, boolean flipped)
 		{
-			this(phaseHandler, new UV(phaseHandler, topLeftU, topLeftV), new UV(phaseHandler, topLeftU, bottomRightV), new UV(phaseHandler, bottomRightU, bottomRightV), new UV(phaseHandler, bottomRightU, topLeftV), flipped);
+			this(phaseHandler, new UV(phaseHandler, topLeftU, topLeftV), new UV(phaseHandler, topLeftU, bottomRightV), new UV(phaseHandler, bottomRightU, bottomRightV), new UV(phaseHandler, bottomRightU, topLeftV), Rotation.rotationFromInt(rotation), flipped);
 		}
 		
-		public Quad(UV.PhaseHandler phaseHandler, float topLeftU, float topLeftV, float bottomRightU, float bottomRightV)
+		public Quad(UV.PhaseHandler phaseHandler, float topLeftU, float topLeftV, float bottomRightU, float bottomRightV, int rotation)
 		{
-			this(phaseHandler, topLeftU, topLeftV, bottomRightU, bottomRightV, false);
+			this(phaseHandler, topLeftU, topLeftV, bottomRightU, bottomRightV, rotation, false);
 		}
 		
 		public static final Codec<UV.Quad> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -140,19 +179,20 @@ public class UV
 	    		Codec.FLOAT.optionalFieldOf("v_start", 0F).forGetter((quad) -> quad.topLeft.v()),
 	    		Codec.FLOAT.optionalFieldOf("u_end", 1F).forGetter((quad) -> quad.bottomRight.u()),
 	    		Codec.FLOAT.optionalFieldOf("v_end", 1F).forGetter((quad) -> quad.bottomRight.v()),
+				Codec.INT.optionalFieldOf("rotation", 0).forGetter((quad) -> 0),
 	    		Codec.BOOL.optionalFieldOf("flip_uv", false).forGetter((quad) -> quad.flipped)
 				).apply(instance, UV.Quad::new));
 		
 		// Phase dependant Quad UV
 		public Quad(UV.PhaseHandler phaseHandler, boolean flipped)
 		{
-			this(phaseHandler, 0, 0, 1, 1, flipped);
+			this(phaseHandler, 0, 0, 1, 1, 0, flipped);
 		}
 		
 		// Full quad
 		public Quad(boolean flipped)
 		{
-			this(UV.PhaseHandler.DEFAULT_PHASE_HANDLER, new UV(0, 0), new UV(0, 1), new UV(1, 1), new UV(1, 0), flipped);
+			this(UV.PhaseHandler.DEFAULT_PHASE_HANDLER, new UV(0, 0), new UV(0, 1), new UV(1, 1), new UV(1, 0), Rotation.DEG_0, flipped);
 		}
 		
 		public UV topLeft()

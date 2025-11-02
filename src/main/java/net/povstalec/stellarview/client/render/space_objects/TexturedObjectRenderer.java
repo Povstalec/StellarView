@@ -47,7 +47,7 @@ public abstract class TexturedObjectRenderer<T extends TexturedObject> extends S
 		double childRenderDistance = renderedObject.getFadeOutHandler().getMaxChildRenderDistance().toKm();
 		if(childRenderDistance > lastDistance)
 		{
-			for(SpaceObjectRenderer child : children)
+			for(SpaceObjectRenderer<?> child : children)
 			{
 				// Render child behind the parent
 				if(child.lastDistance >= this.lastDistance)
@@ -61,7 +61,7 @@ public abstract class TexturedObjectRenderer<T extends TexturedObject> extends S
 		
 		if(childRenderDistance > lastDistance)
 		{
-			for(SpaceObjectRenderer child : children)
+			for(SpaceObjectRenderer<?> child : children)
 			{
 				// Render child in front of the parent
 				if(child.lastDistance < this.lastDistance)

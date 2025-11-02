@@ -28,9 +28,9 @@ public class SpaceRegionRenderer
 	
 	protected final ArrayList<SpaceObjectRenderer<?>> children = new ArrayList<SpaceObjectRenderer<?>>();
 	
-	protected final ArrayList<GravityLenseRenderer> lensingRenderers = new ArrayList<GravityLenseRenderer>();
-	protected final ArrayList<StarFieldRenderer> starFieldRenderers = new ArrayList<StarFieldRenderer>();
-	protected final ArrayList<ConstellationRenderer> constellationRenderers = new ArrayList<ConstellationRenderer>();
+	protected final ArrayList<GravityLenseRenderer<?>> lensingRenderers = new ArrayList<GravityLenseRenderer<?>>();
+	protected final ArrayList<StarFieldRenderer<?>> starFieldRenderers = new ArrayList<StarFieldRenderer<?>>();
+	protected final ArrayList<ConstellationRenderer<?>> constellationRenderers = new ArrayList<ConstellationRenderer<?>>();
 	
 	private boolean isSetUp = false;
 	
@@ -49,7 +49,7 @@ public class SpaceRegionRenderer
 		return children;
 	}
 	
-	public boolean addChild(SpaceObjectRenderer child)
+	public boolean addChild(SpaceObjectRenderer<?> child)
 	{
 		if(!this.region.addChild(child.renderedObject()))
 			return false;

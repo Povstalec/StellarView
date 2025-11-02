@@ -11,6 +11,7 @@ import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.util.AxisRotation;
 import net.povstalec.stellarview.common.util.SpaceCoords;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -94,10 +95,15 @@ public abstract class SpaceObjectRenderer<RenderedObject extends SpaceObject>
 		return renderedObject;
 	}
 	
-	public void setupSpaceObject(ResourceLocation id)
+	public void setupSpaceObject(ResourceLocation id, @Nullable SpaceObjectRenderer<?> parent)
 	{
 		if(id != null)
 			renderedObject().setResourceLocation(id);
+		
+		for(SpaceObjectRenderer<?> child : children)
+		{
+			child.setupSpaceObject(id, this);
+		}
 	}
 	
 	@Override
