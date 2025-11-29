@@ -9,6 +9,8 @@ Since it was initially made to enhance the views from different planets in Starg
 
 [Stellar View Rendering API](https://github.com/Povstalec/StellarView/blob/main/src/main/java/net/povstalec/stellarview/api/client/StellarViewRendering.java)
 
+
+
 # Forge/NeoForge dependency
 
 ## 1. build.gradle
@@ -50,20 +52,17 @@ Look at [StellarViewRendering](https://github.com/Povstalec/StellarView/blob/mai
 
 Call it inside the renderSky() method of your class that extends DimensionSpecialEffects, it has the exact same parameters as renderSky(), [example here](https://github.com/Povstalec/StargateJourney/blob/5c9f710e796794f9f48f50baf49511deab808893/src/main/java/net/povstalec/sgjourney/client/render/level/SGJourneyDimensionSpecialEffects.java#L64-L65).
 
-Maybe consider making a [wrapper class](https://github.com/Povstalec/StargateJourney/blob/5c9f710e796794f9f48f50baf49511deab808893/src/main/java/net/povstalec/sgjourney/client/render/level/StellarViewCompatibility.java#L14-L17) or something like that so your game doesn't crash when Java tries to call a function from a StellarView class when StellarView isn't installed.
-
-[Example of how to use Stellar View in your custom DimensionSpecialEffects for rendering](https://github.com/Povstalec/StargateJourney/blob/e2419d72c2000262cd05757a30e5feda1248ff27/src/main/java/net/povstalec/sgjourney/client/render/level/StellarViewRendering.java#L68-L69)
-
-https://github.com/Povstalec/StargateJourney/blob/5c9f710e796794f9f48f50baf49511deab808893/src/main/java/net/povstalec/sgjourney/client/render/level/StellarViewCompatibility.java#L14-L17
+Maybe consider making a wrapper class or something like that and some kind of check to make sure you're trying to call a function from a StellarView class when StellarView isn't installed [like here](https://github.com/Povstalec/StargateJourney/blob/5c9f710e796794f9f48f50baf49511deab808893/src/main/java/net/povstalec/sgjourney/client/render/level/StellarViewCompatibility.java#L14-L17)
+and [here](https://github.com/Povstalec/StargateJourney/blob/5c9f710e796794f9f48f50baf49511deab808893/src/main/java/net/povstalec/sgjourney/client/render/level/SGJourneyDimensionSpecialEffects.java#L64-L65).
 
 ## 3. View Center
 
 In order to tell the game where in the Universe to specifically render your Dimension Sky from, you will need a [View Center](https://moddedmc.wiki/cs/project/stellarview/latest/docs/resourcepacks/view_centers), 
 which allows you to view the universe with some [Space Object](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/space_objects) as the center you're viewing everything from.
 
-After you've created the appropriate View Center, 
+After you've created the appropriate View Center, you should see Stellar View sky in your Dimension in-game.
 
-TODO
+
 
 # Fabric dependency
 
