@@ -7,7 +7,9 @@ Stellar View started out as a side project when I was figuring out how to add cu
 It quickly evolved into its own mod when I found out how exactly star positions are calculated and started using simple transformations to shape them into more complex structures.
 Since it was initially made to enhance the views from different planets in Stargate Journey, Stellar View is built with compatibility in mind.
 
-# Forge dependency
+[Stellar View Rendering API](https://github.com/Povstalec/StellarView/blob/main/src/main/java/net/povstalec/stellarview/api/client/StellarViewRendering.java)
+
+# Forge/NeoForge dependency
 
 ## 1. build.gradle
 
@@ -33,22 +35,33 @@ repositories {
 You can find the specific `<Version ID>` in https://modrinth.com/mod/stellarview/versions in the Metadata section of your version of choice.
 
 
-### 2.a Required Dependency
+## 2.a Required Dependency - DimensionSpecialEffects
 
 If you're okay with using Stellar View as a required dependency, all you need to do is simply extend the [StellarViewSpecialEffects class](https://github.com/Povstalec/StellarView/blob/main/src/main/java/net/povstalec/stellarview/api/client/render/level/StellarViewSpecialEffects.java).
 
-This class handles all the sky rendering on its own. You just need to register it. If you don't know how, check out the [guide for creating custom Dimension sky](https://moddedmc.wiki/cs/project/stellarview/docs/modding/custom_dimension_sky).
+This class handles all the sky rendering on its own. You just need to register your new class and attach it to your dimension of choice. If you don't know how to do that, I explain it in the [guide for creating custom Dimension sky](https://moddedmc.wiki/cs/project/stellarview/docs/modding/custom_dimension_sky).
 
-### 2.b Optional Dependency
+## 2.b Optional Dependency - DimensionSpecialEffects
+
+If you have your own class that extends DimensionSpecialEffects, here is how you can add Stellar View sky rendering to it.
+
+Look at [StellarViewRendering](https://github.com/Povstalec/StellarView/blob/main/src/main/java/net/povstalec/stellarview/api/client/StellarViewRendering.java) and pick whichever renderViewCenterSky() function you find more appropriate
+(usually it's the second one, which renders the sky using the same ResourceLocation as the Level's Dimension ResourceLocation).
+
+Call it inside the renderSky() method of your class that extends DimensionSpecialEffects, it has the exact same parameters as renderSky(), [example here](https://github.com/Povstalec/StargateJourney/blob/5c9f710e796794f9f48f50baf49511deab808893/src/main/java/net/povstalec/sgjourney/client/render/level/SGJourneyDimensionSpecialEffects.java#L64-L65).
+
+Maybe consider making a [wrapper class](https://github.com/Povstalec/StargateJourney/blob/5c9f710e796794f9f48f50baf49511deab808893/src/main/java/net/povstalec/sgjourney/client/render/level/StellarViewCompatibility.java#L14-L17) or something like that so your game doesn't crash when Java tries to call a function from a StellarView class when StellarView isn't installed.
 
 [Example of how to use Stellar View in your custom DimensionSpecialEffects for rendering](https://github.com/Povstalec/StargateJourney/blob/e2419d72c2000262cd05757a30e5feda1248ff27/src/main/java/net/povstalec/sgjourney/client/render/level/StellarViewRendering.java#L68-L69)
+
+https://github.com/Povstalec/StargateJourney/blob/5c9f710e796794f9f48f50baf49511deab808893/src/main/java/net/povstalec/sgjourney/client/render/level/StellarViewCompatibility.java#L14-L17
 
 ## 3. View Center
 
 In order to tell the game where in the Universe to specifically render your Dimension Sky from, you will need a [View Center](https://moddedmc.wiki/cs/project/stellarview/latest/docs/resourcepacks/view_centers), 
 which allows you to view the universe with some [Space Object](https://moddedmc.wiki/cs/project/stellarview/docs/resourcepacks/space_objects) as the center you're viewing everything from.
 
-After you've created the appropriate View Center,
+After you've created the appropriate View Center, 
 
 TODO
 
