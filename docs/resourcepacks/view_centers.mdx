@@ -5,7 +5,10 @@ hide_meta: true
 
 A View Center defines what you will be able to see in the sky when you are looking at it in a certain [Dimension](https://minecraft.wiki/w/Dimension).
 
-To make Stellar View recognize your json file as a Star, put it inside the `assets/<namespace>/stellarview/celestials/star` folder in your [Resourcepack](https://minecraft.wiki/w/Resource_pack).
+To make Stellar View recognize your json file as a View Center, put it inside the `assets/<namespace>/stellarview/view_centers` folder in your [Resourcepack](https://minecraft.wiki/w/Resource_pack).
+
+To connect your View Center to a Dimension, it must have the same namespace and name as the Dimension it's meant to connect to.
+This means that a View Center for the Dimension `minecraft:the_nether` would be located in your Resourcepack at: `assets/minecraft/stellarview/view_centers/the_nether.json`
 
 * **[[Examples of View Centers](https://github.com/Povstalec/StellarView/blob/main/src/main/resources/assets/minecraft/stellarview/view_centers)]**
 
@@ -13,5 +16,39 @@ To make Stellar View recognize your json file as a Star, put it inside the `asse
 
 ### Definition Fields
 
-`view_center` *OPTIONAL* - Defines the path to the Space Object, which will be tied to the View Center's Dimension and the sky will be rendered as seen from this Space Object.
-TODO
+* `view_center` *OPTIONAL* - Defines the path to the Space Object, which will be tied to the View Center's Dimension and the sky will be rendered as seen from this Space Object.
+* `skyboxes` *OPTIONAL* - A list of skyboxes the Dimension will draw over the sky created by Stellar View.
+* `axis_rotation` **REQUIRED** - Specifies the rotation of the View Center around its individual axes (X axis -> Z axis -> Y axis).
+* `rotation_period` *OPTIONAL* - Specifies the amount of time it takes the View Center to rotate around its rotation axis. The View Center will not rotate if this field is left out.
+* `day_blending` *OPTIONAL* - Controls how normal objects will blend into the atmosphere during the day.
+* `sun_day_blending` *OPTIONAL* - Controls how Sun-like objects will blend into the atmosphere during the day.
+* `shooting_star` *OPTIONAL* - 
+* `meteor_shower` *OPTIONAL* - 
+* `create_horizon` *OPTIONAL* - Creates a fog colored horizon effect in the sky, true if left unspecified.
+* `create_void` *OPTIONAL* - Creates a black disc when the player is near the bottom of the world, true if left unspecified.
+* `stars` *OPTIONAL* - 
+* `fog` *OPTIONAL* - 
+* `z_rotation_multiplier` *OPTIONAL* - Multiplier by which the sky is rotated as the player moves further along the Z-axis. Set to 30'000'000 if left unspecified.
+
+## stars
+
+## fog
+
+## skyboxes
+
+## day_blending
+
+Day Blending field is used to control how normal objects will blend into the atmosphere during the day.
+
+## shooting_star/meteor_shower
+
+### Definition Fields
+
+* `meteor_types`
+* `probability`
+
+## z_rotation_multiplier
+
+The further the player moves away from the 0 coordinate along the Z-axis, the more the sky rotates.
+
+The rotation is defined by the following equation: `2 * atan(zPos / zRotationMultiplier)`

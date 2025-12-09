@@ -1,0 +1,96 @@
+---
+title: Custom Dimension Sky
+hide_meta: true
+---
+
+In case you don't know how you can create a custom sky for your modded Dimension, here's a quick walkthrough on how to do it from scratch.
+
+It's really quite simple, actually.
+
+# Forge/NeoForge
+
+1. Making Custom Dimension Effects
+
+Firstly you will need to create a class that extends the DimensionSpecialEffects class.
+
+```java
+public class MySpecialDimensionEffects extends DimensionSpecialEffects
+{
+        public MySpecialDimensionEffects()
+		{
+			// These are the same parameters that Overworld uses, do whatever you like here
+            super(192.0F, true, DimensionSpecialEffects.SkyType.NORMAL, false, false);
+        }
+		
+		// We're required to implement these two following abstract functions
+		
+		@Override
+        public Vec3 getBrightnessDependentFogColor(Vec3 biomeFogColor, float daylight) 
+		{
+            return biomeFogColor; // Implement this however you like
+        }
+
+		@Override
+        public boolean isFoggyAt(int x, int y)
+		{
+            return false; // Implement this however you like
+        }
+		
+		// Here is where the important part starts, the renderSky() function runs during the step when LevelRenderer renders sky.
+		// If you override this function, whatever you code here will execute every frame.
+		// The return of this function specifies whether you want to render the Vanilla sky as well (false) or if you want to cancel the rendering of the Vanilla sky (true).
+		
+		// !!! Works pre-1.21 !!!
+		@Override
+		public boolean renderSky(ClientLevel level, int ticks, float partialTick, PoseStack poseStack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
+		{
+			// Here you can render whatever you like, assuming you know how rendering works, which is a totally different beast from just making a custom sky for a dimension.
+			// You can check out LevelRenderer from Vanilla for inspiration.
+			
+			return true; // By default this function returns false, but if you want to get rid of the Dimension's original sky completely, make this method return true
+		}
+		
+		// !!! Works post 1.21 !!!
+		@Override
+		public boolean renderSky(ClientLevel level, int ticks, float partialTick, Matrix4f modelViewMatrix, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
+		{
+			// Here you can render whatever you like, assuming you know how rendering works, which is a totally different beast from just making a custom sky for a dimension.
+			// You can check out LevelRenderer from Vanilla for inspiration.
+			
+			return true; // By default this function returns false, but if you want to get rid of the Dimension's original sky completely, make this method return true
+		}
+    }
+}
+```
+
+2. Registering Custom Dimension Effects
+
+I'll assume you know how to use `@SubscribeEvent` in Forge and NeoForge modding. If you don't know how events work there, I suggest you check out Kaupenjoe's tutorial video for [Forge](https://www.youtube.com/watch?v=o_XsgejS57Q) and/or [NeoForge](https://www.youtube.com/watch?v=OxlkjxzjV4k).
+
+You can register your custom Dimension Special Effects by subscribing to `RegisterDimensionSpecialEffectsEvent`.
+
+It only takes a few lines of code inside your mod's class annotated with `@Mod` (or wherever else you like to put your functions related to events:
+
+```java
+public static final ResourceLocation EFFECTS_ID = new ResourceLocation(mymodid, "custom_effects"); // You can just create a new ResourceLocation instance directly in the register() method if you won't be using it for anything else
+
+...
+
+@SubscribeEvent
+public static void registerDimensionEffects(RegisterDimensionSpecialEffectsEvent event)
+{
+	event.register(EFFECTS_ID, new MySpecialDimensionEffects());
+}
+```
+
+An example of how this can look like can be found [here](https://github.com/Povstalec/StellarView/blob/d026804c119725551e1e32a1a31995d97c93d28b/src/main/java/net/povstalec/stellarview/StellarView.java#L83-L99).
+
+3. Using Custom Dimension Effects in a Dimension
+
+The custom Dimension Effects are registered, but you need to specify which Dimensions will actually be using them. To do that, locate your Dimension's [Dimension Type](https://minecraft.wiki/w/Dimension_type) file and find the field called `effects` if you can't find it, simply add one. Write the ID you registered your Dimension Effects as here.
+
+For example, if you registered your effects as `sgjourney:abydos`, your Dimension Type file should look something like [this](https://github.com/Povstalec/StargateJourney/blob/5c9f710e796794f9f48f50baf49511deab808893/src/main/resources/data/sgjourney/dimension_type/abydos.json#L23).
+
+# Fabric
+
+TODO

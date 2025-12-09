@@ -3,6 +3,13 @@ title: Frequently Asked Questions (FAQ)
 hide_meta: true
 ---
 
+## How do I make this mod work with a custom Dimension I made?
+
+I have 2 answers for this question:  
+1) If your custom Dimension is using Vanilla effects in its [Dimension Type](https://minecraft.wiki/w/Dimension_type) (Vanilla uses `minecraft:overworld`, `minecraft:the_nether` and `minecraft:the_end`),
+make a custom [View Center](https://moddedmc.wiki/cs/project/stellarview/latest/docs/resourcepacks/view_centers) with the same name and namespace as your Dimension and add it to a [Resourcepack](https://minecraft.wiki/w/Resource_pack).
+2) If you want to add it to a modded Dimension that doesn't use the Vanilla effects, you can do it through code, as described [here](https://moddedmc.wiki/cs/project/stellarview/docs/modding/custom_dimension_sky).
+
 ## I noticed the Moon sometimes passes in front of the Sun, but there is no solar eclipse, why?
 
 I haven't yet gotten around to adding Solar Eclipses, but they will be in the mod one day. It would be easy to do a hardcoded solar eclipse, but since every single aspect of Stellar View can be changed using Resourcepacks, adding solar eclipses that behave properly even when some values are changed using Resourcepacks will require a bunch of math (mainly trigonometry, which will be... quite interesting to do I suppose).
