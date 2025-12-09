@@ -12,30 +12,66 @@ This means that a View Center for the Dimension `minecraft:the_nether` would be 
 
 * **[[Examples of View Centers](https://github.com/Povstalec/StellarView/blob/main/src/main/resources/assets/minecraft/stellarview/view_centers)]**
 
-[Overworld View Center example](https://github.com/Povstalec/StellarView/blob/main/src/main/resources/assets/minecraft/stellarview/view_centers/overworld.json)
-
 ### Definition Fields
 
 * `view_center` *OPTIONAL* - Defines the path to the Space Object, which will be tied to the View Center's Dimension and the sky will be rendered as seen from this Space Object.
 * `skyboxes` *OPTIONAL* - A list of skyboxes the Dimension will draw over the sky created by Stellar View.
 * `axis_rotation` **REQUIRED** - Specifies the rotation of the View Center around its individual axes (X axis -> Z axis -> Y axis).
 * `rotation_period` *OPTIONAL* - Specifies the amount of time it takes the View Center to rotate around its rotation axis. The View Center will not rotate if this field is left out.
-* `stars` *OPTIONAL* - Specifies under which circumstances stars (and other celestial objects) can render.
-* `fog` *OPTIONAL* - Specifies where in the world fog can appear.
 * `day_blending` *OPTIONAL* - Controls how normal objects will blend into the atmosphere during the day.
 * `sun_day_blending` *OPTIONAL* - Controls how Sun-like objects will blend into the atmosphere during the day.
-* `shooting_star` *OPTIONAL* - TODO
-* `meteor_shower` *OPTIONAL* - TODO
+* `shooting_star` *OPTIONAL* - List of types of shooting stars can appear at night.
+* `meteor_shower` *OPTIONAL* - List of meteor shower types that can appear at night.
 * `create_horizon` *OPTIONAL* - Creates a fog colored horizon effect in the sky. True if left unspecified.
 * `create_void` *OPTIONAL* - Creates a black disc when the player is near the bottom of the world. True if left unspecified.
+* `stars` *OPTIONAL* - Specifies under which circumstances stars (and other celestial objects) can render.
+* `fog` *OPTIONAL* - Specifies where in the world fog can appear.
 * `z_rotation_multiplier` *OPTIONAL* - Multiplier by which the sky is rotated as the player moves further along the Z-axis. Set to 30'000'000 if left unspecified.
 
-## skyboxes
+## `axis_rotation`
+
+Space Objects can be rotated in various directions. This rotation can affect its visual appearance, relative positions of its children, as well as how the sky looks on it if it's used as a [View Center](https://moddedmc.wiki/cs/project/stellarview/latest/docs/resourcepacks/view_centers).
+Axis Rotation defines these rotations along the Y, Z and X axes in that order.
+
+### Definition Fields
+
+* `x_axis` **REQUIRED** - Rotation around the X-axis.
+* `y_axis` **REQUIRED** - Rotation around the Y-axis.
+* `z_axis` **REQUIRED** - Rotation around the Z-axis.
+* `in_degrees` *OPTIONAL* - If true, the rotation is specified in degrees, if false it is specified in radians. True if left empty.
+
+Example of Axis Rotation definition:
+
+Axis Rotation of the [Overworld](https://github.com/Povstalec/StellarView/blob/main/src/main/resources/assets/minecraft/stellarview/view_centers/overworld.json):  
+```json
+`"axis_rotation": { "x_axis": 0, "y_axis": -90, "z_axis": -90 },
+
+
+## `skyboxes`
 
 TODO
 
 
-## stars
+## `day_blending`
+
+Day Blending field is used to control how normal objects will blend into the atmosphere during the day.
+
+### Definition Fields
+
+TODO
+
+
+## `shooting_star`/`meteor_shower`
+
+TODO
+
+### Definition Fields
+
+* `meteor_types`
+* `probability`
+
+
+## `stars`
 
 Specifies under which circumstances stars (and other celestial objects) can render.
 
@@ -46,7 +82,7 @@ Specifies under which circumstances stars (and other celestial objects) can rend
 * `ignore_rain` *OPTIONAL* - If true, stars will be visible even in during rain. False if left unspecified.
 
 
-## fog
+## `fog`
 
 Specifies where in the world fog can appear.
 
@@ -69,26 +105,7 @@ Fog that appears from height -infinity to 128 and then from 256 to 312.
 ```
 
 
-## day_blending
-
-Day Blending field is used to control how normal objects will blend into the atmosphere during the day.
-
-### Definition Fields
-
-TODO
-
-
-## shooting_star/meteor_shower
-
-TODO
-
-### Definition Fields
-
-* `meteor_types`
-* `probability`
-
-
-## z_rotation_multiplier
+## `z_rotation_multiplier`
 
 The further the player moves away from the 0 coordinate along the Z-axis, the more the sky rotates.
 
