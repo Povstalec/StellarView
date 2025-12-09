@@ -20,32 +20,73 @@ This means that a View Center for the Dimension `minecraft:the_nether` would be 
 * `skyboxes` *OPTIONAL* - A list of skyboxes the Dimension will draw over the sky created by Stellar View.
 * `axis_rotation` **REQUIRED** - Specifies the rotation of the View Center around its individual axes (X axis -> Z axis -> Y axis).
 * `rotation_period` *OPTIONAL* - Specifies the amount of time it takes the View Center to rotate around its rotation axis. The View Center will not rotate if this field is left out.
+* `stars` *OPTIONAL* - Specifies under which circumstances stars (and other celestial objects) can render.
+* `fog` *OPTIONAL* - Specifies where in the world fog can appear.
 * `day_blending` *OPTIONAL* - Controls how normal objects will blend into the atmosphere during the day.
 * `sun_day_blending` *OPTIONAL* - Controls how Sun-like objects will blend into the atmosphere during the day.
-* `shooting_star` *OPTIONAL* - 
-* `meteor_shower` *OPTIONAL* - 
-* `create_horizon` *OPTIONAL* - Creates a fog colored horizon effect in the sky, true if left unspecified.
-* `create_void` *OPTIONAL* - Creates a black disc when the player is near the bottom of the world, true if left unspecified.
-* `stars` *OPTIONAL* - 
-* `fog` *OPTIONAL* - 
+* `shooting_star` *OPTIONAL* - TODO
+* `meteor_shower` *OPTIONAL* - TODO
+* `create_horizon` *OPTIONAL* - Creates a fog colored horizon effect in the sky. True if left unspecified.
+* `create_void` *OPTIONAL* - Creates a black disc when the player is near the bottom of the world. True if left unspecified.
 * `z_rotation_multiplier` *OPTIONAL* - Multiplier by which the sky is rotated as the player moves further along the Z-axis. Set to 30'000'000 if left unspecified.
+
+## skyboxes
+
+TODO
+
 
 ## stars
 
+Specifies under which circumstances stars (and other celestial objects) can render.
+
+### Definition Fields
+
+* `during_day` *OPTIONAL* - If true, stars will be rendered during day. False if left unspecified.
+* `ignore_fog` *OPTIONAL* - If true, stars will render through fog. False if left unspecified.
+* `ignore_rain` *OPTIONAL* - If true, stars will be visible even in during rain. False if left unspecified.
+
+
 ## fog
 
-## skyboxes
+Specifies where in the world fog can appear.
+
+### Definition Fields
+
+* `height` *OPTIONAL* - List of height bounds at which fog is present. Bound is specified by a min and max height.
+
+Example of height definition:
+
+Fog that appears from height -infinity to 128 and then from 256 to 312.
+```json
+"fog":
+{
+	"height":
+	[
+		{ "max": 128 },
+		{ "min": 256, "max": 312 }
+	]
+}
+```
+
 
 ## day_blending
 
 Day Blending field is used to control how normal objects will blend into the atmosphere during the day.
 
+### Definition Fields
+
+TODO
+
+
 ## shooting_star/meteor_shower
+
+TODO
 
 ### Definition Fields
 
 * `meteor_types`
 * `probability`
+
 
 ## z_rotation_multiplier
 
