@@ -218,7 +218,7 @@ public class ViewCenter
 		if(viewObject != null)
 			return viewObject.axisRotation();
 		
-		return new AxisRotation();
+		return AxisRotation.NONE;
 	}
 	
 	public Optional<ResourceKey<SpaceObject>> getViewCenterKey()

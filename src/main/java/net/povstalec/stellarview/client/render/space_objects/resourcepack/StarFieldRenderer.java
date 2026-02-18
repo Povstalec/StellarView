@@ -249,7 +249,7 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 			double theta = random.nextDouble() * 2F * Math.PI;
 			double phi = Math.acos(2F * random.nextDouble() - 1F); // This prevents the formation of that weird streak that normally happens
 			
-			Vector3d cartesian = new SphericalCoords(distance * renderedObject.getDiameter(), theta, phi).toCartesianD();
+			Vector3d cartesian = SphericalCoords.sphericalToCartesianD(distance * renderedObject.getDiameter(), theta, phi);
 			
 			cartesian.x *= renderedObject.starStretch().xStretch();
 			cartesian.y *= renderedObject.starStretch().yStretch();
@@ -497,7 +497,7 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 		
 		for(SpaceObjectRenderer<?> child : children)
 		{
-			child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, parentVector, new AxisRotation(0, 0, 0));
+			child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, parentVector, AxisRotation.NONE);
 		}
 	}
 	

@@ -118,9 +118,14 @@ public abstract class StarData
 		
 		private double[] starRotations;
 		
-		private int stars;
+		private int stars = 0;
 		
 		public LOD(int stars)
+		{
+			setupMemory(stars);
+		}
+		
+		public void setupMemory(int stars)
 		{
 			this.starCoords = new double[3 * stars];
 			this.starSizes = new double[stars];
@@ -129,6 +134,19 @@ public abstract class StarData
 			this.starRotations = new double[stars];
 			
 			this.starRGBA = new short[4 * stars];
+			
+			this.stars = 0;
+		}
+		
+		public void cleanMemory()
+		{
+			this.starCoords = null;
+			this.starSizes = null;
+			this.starDistances = null;
+			
+			this.starRotations = null;
+			
+			this.starRGBA = null;
 			
 			this.stars = 0;
 		}

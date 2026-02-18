@@ -41,6 +41,8 @@ public abstract class MeteorEffect
 	
 	protected double rarity;
 	
+	protected Color.FloatRGBA meteorColor = Color.FloatRGBA.white();
+	
 	public MeteorEffect(List<MeteorType> meteorTypes, double rarity)
 	{
 		this.meteorTypes = new ArrayList<MeteorType>(meteorTypes);
@@ -98,8 +100,9 @@ public abstract class MeteorEffect
 		float brightness = LightEffects.getStarBrightness(viewCenter, level, camera, partialTicks) / 2F;
 		
 		brightness *= LightEffects.rainDimming(level, partialTicks);
+		meteorColor.setAlpha(brightness);
 		
-		return new Color.FloatRGBA(1, 1, 1, brightness);
+		return meteorColor;
 	}
 	
 	public abstract void render(ViewCenter viewCenter, ClientLevel level, Camera camera, float partialTicks, PoseStack stack, BufferBuilder bufferbuilder);
