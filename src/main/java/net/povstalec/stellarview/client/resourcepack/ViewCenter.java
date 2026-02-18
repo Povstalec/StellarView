@@ -111,7 +111,7 @@ public class ViewCenter
 			
 			ViewCenter.Stars.CODEC.optionalFieldOf("stars", new ViewCenter.Stars()).forGetter(viewCenter -> viewCenter.stars),
 			ViewCenter.Fog.CODEC.optionalFieldOf("fog", new ViewCenter.Fog()).forGetter(viewCenter -> viewCenter.fog),
-			Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("z_rotation_multiplier", 30000000).forGetter(viewCenter -> viewCenter.zRotationMultiplier)
+			Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("z_rotation_multiplier", 30000000).forGetter(viewCenter -> viewCenter.zRotationMultiplier)
 			).apply(instance, ViewCenter::new));
 	
 	public ViewCenter(Optional<ResourceKey<SpaceObject>> viewCenterKey, Optional<List<Skybox>> skyboxes, AxisRotation axisRotation,
@@ -447,9 +447,9 @@ public class ViewCenter
 		{
 			RenderSystem.disableTexture();
 			Vec3 skyColor = level.getSkyColor(this.minecraft.gameRenderer.getMainCamera().getPosition(), partialTicks);
-			float skyX = (float)skyColor.x;
-	        float skyY = (float)skyColor.y;
-	        float skyZ = (float)skyColor.z;
+			float skyX = (float) skyColor.x;
+	        float skyY = (float) skyColor.y;
+	        float skyZ = (float) skyColor.z;
 	        FogRenderer.levelFogColor();
 			BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
 			RenderSystem.depthMask(false);
