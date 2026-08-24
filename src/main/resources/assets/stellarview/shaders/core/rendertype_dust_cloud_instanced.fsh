@@ -1,7 +1,5 @@
 #version 330 core
 
-uniform sampler2D Sampler0;
-
 uniform vec4 ColorModulator;
 
 in vec4 vertexColor;
@@ -9,8 +7,21 @@ in vec2 texCoord0;
 
 out vec4 fragColor;
 
+const float CORE_SIZE = 0.125;
+const float FALLOFF_SIGMA = 0.1;
+
+float dustCloud(vec2 uv) {
+    float r = length(uv - vec2(0.5, 0.5));
+    if (r <= CORE_SIZE) {
+        return 1.0;
+    }
+
+    float x = r - CORE_SIZE;
+    return exp(-x * x / (2.0 * FALLOFF_SIGMA * FALLOFF_SIGMA));
+}
+
 void main() {
-    vec4 color = texture(Sampler0, texCoord0) * vertexColor;
+    vec4 color = dustCloud(texCoord0) * vertexColor;
     if (color.a < 0.0) {
         discard;
     }
