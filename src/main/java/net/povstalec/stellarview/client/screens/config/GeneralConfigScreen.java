@@ -81,6 +81,13 @@ public class GeneralConfigScreen extends Screen
 		this.configList.add(new ConfigList.SliderConfigEntry(Component.translatable("gui.stellarview.dust_cloud_brightness").append(Component.literal(": ")),
 				Component.literal("%"),
 				this.width, GeneralConfig.dust_cloud_brightness));
+
+		this.configList.add(new ConfigList.DoubleSliderConfigEntry(Component.translatable("gui.stellarview.dust_cloud_size").append(Component.literal(": ")),
+				Component.literal("%"),
+				this.width, GeneralConfig.dust_cloud_size, 100.0 / GeneralConfig.dust_cloud_size.getMax()));
+		this.configList.add(new ConfigList.DoubleSliderConfigEntry(Component.translatable("gui.stellarview.dust_cloud_falloff").append(Component.literal(": ")),
+				Component.literal("%"),
+				this.width, GeneralConfig.dust_cloud_falloff, 100.0 / GeneralConfig.dust_cloud_falloff.getMax()));
 		
 		this.addWidget(this.configList);
 

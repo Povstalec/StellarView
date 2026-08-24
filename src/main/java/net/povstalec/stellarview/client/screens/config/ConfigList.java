@@ -212,4 +212,86 @@ public class ConfigList extends ObjectSelectionList<ConfigList.ConfigEntry>
 		}
 		
 	}
+
+	public static class DoubleSliderConfigEntry extends ConfigEntry
+	{
+		protected AbstractWidget sliderButton;
+		protected StellarViewConfigValue.DoubleValue value;
+		protected double multiplier;
+		
+		public DoubleSliderConfigEntry(Component component1, Component component2, int screenWidth, StellarViewConfigValue.DoubleValue value, double multiplier)
+		{
+			this.value = value;
+			this.multiplier = multiplier;
+			this.sliderButton = new ForgeSlider(0, 0, 200, 20, 
+					component1, component2,
+					value.getMin() * multiplier, value.getMax() * multiplier, value.get() * multiplier, 0, 1, true);
+		}
+		
+		public DoubleSliderConfigEntry(Component component1, Component component2, int screenWidth, StellarViewConfigValue.DoubleValue value)
+		{
+			this(component1, component2, screenWidth, value, 1.0);
+		}
+		
+		protected void reset()
+		{
+			this.value.set(this.value.getDefault());
+			((ForgeSlider) this.sliderButton).setValue((double) this.value.get() * multiplier);
+			super.reset();
+		}
+		
+		protected void onChanged()
+		{
+	    	value.set(((ForgeSlider) this.sliderButton).getValue() / multiplier);
+	    	update();
+		}
+	    
+	    @Override
+	    public boolean mouseClicked(double mouseX, double mouseY, int key)
+	    {
+	    	if(this.sliderButton.isMouseOver(mouseX, mouseY))
+	    		((ForgeSlider) this.sliderButton).mouseClicked(mouseX, mouseY, key);
+	    	onChanged();
+	    	
+			return super.mouseClicked(mouseX, mouseY, key);
+	    }
+	    
+	    @Override
+	    public boolean mouseDragged(double mouseX, double mouseY, int key, double dragX, double dragY)
+	    {
+	    	if(this.sliderButton.isMouseOver(mouseX, mouseY))
+	    		((ForgeSlider) this.sliderButton).mouseDragged(mouseX, mouseY, key, dragX, dragY);
+	    	
+			return super.mouseDragged(mouseX, mouseY, key, dragX, dragY);
+	    }
+	    
+	    @Override
+	    public boolean mouseReleased(double mouseX, double mouseY, int key)
+	    {
+	    	if(this.sliderButton.isMouseOver(mouseX, mouseY))
+	    		((ForgeSlider) this.sliderButton).mouseReleased(mouseX, mouseY, key);
+	    	onChanged();
+	    	
+			return super.mouseReleased(mouseX, mouseY, key);
+	    }
+	    
+	    @Override
+	    public void mouseMoved(double mouseX, double mouseY)
+	    {
+	    	if(this.sliderButton.isMouseOver(mouseX, mouseY))
+	    		((ForgeSlider) this.sliderButton).mouseMoved(mouseX, mouseY);
+	    	
+			super.mouseMoved(mouseX, mouseY);
+	    }
+		
+		@Override
+		public void render(PoseStack stack, int i, int j, int k, int l, int m, int n, int o, boolean bl, float partialTick)
+		{
+			this.sliderButton.setX(k);
+	        this.sliderButton.setY(j);
+	        this.sliderButton.render(stack, n, o, partialTick);
+			super.render(stack, i, j, k, l, m, n, o, bl, partialTick);
+		}
+		
+	}
 }

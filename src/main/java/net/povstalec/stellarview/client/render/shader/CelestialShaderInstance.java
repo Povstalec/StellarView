@@ -22,6 +22,9 @@ public class CelestialShaderInstance extends ShaderInstance
 	public final Uniform LENSING_MAT_INV;
 	@Nullable
 	public final Uniform LENSING_INTENSITY;
+
+	@Nullable
+	public final Uniform DUST_CLOUD_PARAMS;
 	
 	public CelestialShaderInstance(ResourceProvider provider, ResourceLocation shaderLocation, VertexFormat format)
 			throws IOException
@@ -33,5 +36,7 @@ public class CelestialShaderInstance extends ShaderInstance
 		this.LENSING_MAT = this.getUniform("LensingMat");
 		this.LENSING_MAT_INV = this.getUniform("LensingMatInv");
 		this.LENSING_INTENSITY = this.getUniform("LensingIntensity");
+
+    this.DUST_CLOUD_PARAMS = this.getUniform("DustCloudParams");
 	}
 }

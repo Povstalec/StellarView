@@ -1,23 +1,21 @@
 #version 330 core
 
 uniform vec4 ColorModulator;
+uniform vec2 DustCloudParams;
 
 in vec4 vertexColor;
 in vec2 texCoord0;
 
 out vec4 fragColor;
 
-const float CORE_SIZE = 0.125;
-const float FALLOFF_SIGMA = 0.1;
-
 float dustCloud(vec2 uv) {
     float r = length(uv - vec2(0.5, 0.5));
-    if (r <= CORE_SIZE) {
+    if (r <= DustCloudParams.x) {
         return 1.0;
     }
 
-    float x = r - CORE_SIZE;
-    return exp(-x * x / (2.0 * FALLOFF_SIGMA * FALLOFF_SIGMA));
+    float x = r - DustCloudParams.x;
+    return exp(-x * x / (2.0 * DustCloudParams.y * DustCloudParams.y));
 }
 
 void main() {
