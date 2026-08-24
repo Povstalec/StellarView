@@ -520,7 +520,6 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 			
 			RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 			RenderSystem.setShaderColor(1, 1, 1, brightness);
-			RenderSystem.setShaderTexture(0, renderedObject.getDustCloudTexture());
 			FogRenderer.setupNoFog();
 			
 			Quaternionf q = SpaceCoords.getQuaternionf(level, viewCenter, partialTicks);

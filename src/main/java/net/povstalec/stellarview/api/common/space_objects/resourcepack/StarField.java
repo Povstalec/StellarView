@@ -77,11 +77,9 @@ public class StarField extends SpaceObject
 	}
 	
 	public static final ResourceLocation DEFAULT_STAR_TEXTURE = new ResourceLocation(StellarView.MODID,"textures/environment/star.png");
-	public static final ResourceLocation DEFAULT_DUST_CLOUD_TEXTURE = new ResourceLocation(StellarView.MODID,"textures/environment/dust_cloud.png");
 	
 	public static final String DUST_CLOUDS = "dust_clouds";
 	public static final String DUST_CLOUD_INFO = "dust_cloud_info";
-	public static final String DUST_CLOUD_TEXTURE = "dust_cloud_texture";
 	public static final String CLUMP_DUST_CLOUDS_IN_CENTER = "clump_dust_clouds_in_center";
 	public static final String DUST_CLOUD_STRETCH = "dust_cloud_stretch";
 	
@@ -97,7 +95,6 @@ public class StarField extends SpaceObject
 	
 	protected int dustClouds;
 	protected ResourceLocation dustCloudInfo;
-	protected ResourceLocation dustCloudTexture;
 	protected boolean clumpDustCloudsInCenter;
 	protected Stretch dustCloudStretch;
 	
@@ -118,7 +115,6 @@ public class StarField extends SpaceObject
 			
 			Codec.intRange(0, 4000).optionalFieldOf(DUST_CLOUDS, 0).forGetter(StarField::getDustClouds),
 			ResourceLocation.CODEC.optionalFieldOf(DUST_CLOUD_INFO).forGetter(starField -> Optional.ofNullable(starField.dustCloudInfo)),
-			ResourceLocation.CODEC.optionalFieldOf(DUST_CLOUD_TEXTURE, DEFAULT_DUST_CLOUD_TEXTURE).forGetter(StarField::getDustCloudTexture),
 			Codec.BOOL.optionalFieldOf(CLUMP_DUST_CLOUDS_IN_CENTER, true).forGetter(StarField::clumpDustCloudsInCenter),
 			Stretch.CODEC.optionalFieldOf(DUST_CLOUD_STRETCH, Stretch.DEFAULT_STRETCH).forGetter(StarField::dustCloudStretch),
 			
@@ -136,7 +132,7 @@ public class StarField extends SpaceObject
 	public StarField() {}
 	
 	public StarField(Optional<ParentInfo> parent, Either<SpaceCoords, StellarCoordinates.Equatorial> coords, AxisRotation axisRotation,
-					 int dustClouds, Optional<ResourceLocation> dustCloudInfo, ResourceLocation dustCloudTexture, boolean clumpDustCloudsInCenter, Stretch dustCloudStretch,
+					 int dustClouds, Optional<ResourceLocation> dustCloudInfo, boolean clumpDustCloudsInCenter, Stretch dustCloudStretch,
 					 int stars, Optional<ResourceLocation> starInfo, ResourceLocation starTexture, boolean clumpStarsInCenter, Stretch starStretch,
 					 long seed, int diameter, List<SpiralArm> spiralArms)
 	{
@@ -144,7 +140,6 @@ public class StarField extends SpaceObject
 		
 		this.dustClouds = dustClouds;
 		this.dustCloudInfo = dustCloudInfo.isPresent() ? dustCloudInfo.get() : null;
-		this.dustCloudTexture = dustCloudTexture;
 		this.clumpDustCloudsInCenter = clumpDustCloudsInCenter;
 		this.dustCloudStretch = dustCloudStretch;
 		
@@ -168,11 +163,6 @@ public class StarField extends SpaceObject
 	public ResourceLocation getDustCloudInfo()
 	{
 		return dustCloudInfo;
-	}
-	
-	public ResourceLocation getDustCloudTexture()
-	{
-		return dustCloudTexture;
 	}
 	
 	@Nullable
@@ -244,7 +234,6 @@ public class StarField extends SpaceObject
 		CompoundTag tag = super.serializeNBT();
 		
 		tag.putInt(DUST_CLOUDS, dustClouds);
-		tag.putString(DUST_CLOUD_TEXTURE, dustCloudTexture.toString());
 		if(dustCloudInfo != null)
 			tag.putString(DUST_CLOUD_INFO, dustCloudInfo.toString());
 		tag.putBoolean(CLUMP_DUST_CLOUDS_IN_CENTER, clumpDustCloudsInCenter);
@@ -276,7 +265,6 @@ public class StarField extends SpaceObject
 		super.deserializeNBT(tag);
 		
 		dustClouds = tag.getInt(DUST_CLOUDS);
-		dustCloudTexture = new ResourceLocation(tag.getString(DUST_CLOUD_TEXTURE));
 		dustCloudInfo = tag.contains(DUST_CLOUD_INFO) ? new ResourceLocation(tag.getString(DUST_CLOUD_INFO)) : null;
 		clumpDustCloudsInCenter = tag.getBoolean(CLUMP_DUST_CLOUDS_IN_CENTER);
 		dustCloudStretch = new Stretch();
