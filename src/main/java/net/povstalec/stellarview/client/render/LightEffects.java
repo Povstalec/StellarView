@@ -2,6 +2,7 @@ package net.povstalec.stellarview.client.render;
 
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.entity.Entity;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.config.GeneralConfig;
 
@@ -9,11 +10,52 @@ public class LightEffects
 {
 	private static float starBrightness = 0F;
 	private static float dustCloudBrightness = 0F;
-	
+
+  private static float lerp(float a, float b, float t) {
+    return (a * (1 - t)) + (b * t);
+  }
+
+  private static float getInterpolatedLight(ClientLevel level, Entity player) {
+    var pos = player.position();
+    var xFrac = pos.x - Math.floor(pos.x);
+    var yFrac = pos.y - Math.floor(pos.y);
+    var zFrac = pos.z - Math.floor(pos.z);
+
+    var centerPos = player.getOnPos().above();
+
+    int xProbeOffset = xFrac < 0.5f ? -1 : 1;
+    int yProbeOffset = yFrac < 0.5f ? -1 : 1;
+    int zProbeOffset = zFrac < 0.5f ? -1 : 1;
+
+    int[] samples = new int[8];
+    samples[0] = level.getLightEngine().getRawBrightness(centerPos, 15);
+    for (int i = 1; i < 8; i++) {
+      var samplePos = centerPos.offset(
+        (i & 1) != 0 ? xProbeOffset : 0,
+        (i & 2) != 0 ? yProbeOffset : 0,
+        (i & 4) != 0 ? zProbeOffset : 0);
+      samples[i] = level.getBlockState(samplePos).isAir()
+        ? level.getLightEngine().getRawBrightness(samplePos, 15)
+        : samples[0];
+    }
+
+    float tX = (float)Math.abs(xFrac - 0.5);
+    float x00 = lerp(samples[0b000], samples[0b001], tX);
+    float x10 = lerp(samples[0b010], samples[0b011], tX);
+    float x01 = lerp(samples[0b100], samples[0b101], tX);
+    float x11 = lerp(samples[0b110], samples[0b111], tX);
+
+    float tY = (float)Math.abs(yFrac - 0.5);
+    float y0 = lerp(x00, x10, tY);
+    float y1 = lerp(x01, x11, tY);
+
+    return lerp(y0, y1, (float)Math.abs(zFrac - 0.5));
+  }
+
 	public static float lightSourceStarDimming(ClientLevel level, Camera camera)
 	{
 		// Brightness of the position where the player is standing, 15 is subtracted from the ambient skylight, that way only block light is accounted for
-		int brightnessAtBlock = level.getLightEngine().getRawBrightness(camera.getEntity().getOnPos().above(), 15);
+		float brightnessAtBlock = getInterpolatedLight(level, camera.getEntity());
 		float brightness = 0.5F + 1.5F * ((15F - brightnessAtBlock) / 15F);
 		
 		if(starBrightness < brightness)
@@ -37,7 +79,7 @@ public class LightEffects
 	public static float lightSourceDustCloudDimming(ClientLevel level, Camera camera)
 	{
 		// Brightness of the position where the player is standing, 15 is subtracted from the ambient skylight, that way only block light is accounted for
-		int brightnessAtBlock = level.getLightEngine().getRawBrightness(camera.getEntity().getOnPos().above(), 15);
+		float brightnessAtBlock = getInterpolatedLight(level, camera.getEntity());
 		float brightness = 2F * ((7F - brightnessAtBlock) / 7F);
 		
 		if(brightness < 0)
