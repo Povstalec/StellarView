@@ -248,10 +248,6 @@
 				{
 					"file": "gradle.properties",
 					"property": "mod_version"
-				},
-				{
-					"file": "src/main/resources/META-INF/mods.toml",
-					"property": "version"
 				}
 			],
 			"dependencies": {
