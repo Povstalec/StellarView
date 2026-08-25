@@ -15,6 +15,8 @@ public class AxisRotation implements INBTSerializable<CompoundTag>
 	public static final String Y_AXIS = "y_axis";
 	public static final String Z_AXIS = "z_axis";
 	
+	public static final AxisRotation NONE = new AxisRotation();
+	
 	private boolean inDegrees;
 	
 	private double xAxis;

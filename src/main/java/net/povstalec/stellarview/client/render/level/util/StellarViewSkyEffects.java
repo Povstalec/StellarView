@@ -104,7 +104,7 @@ public class StellarViewSkyEffects {
         float skyX = (float) skyColor.x;
         float skyY = (float) skyColor.y;
         float skyZ = (float) skyColor.z;
-
+		
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.disableBlend();
 

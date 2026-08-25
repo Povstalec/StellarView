@@ -29,10 +29,12 @@ public abstract class StarLike extends OrbitingObject
 	public static final float MAX_ALPHA = 1F;
 	public static final float MIN_ALPHA = MAX_ALPHA * 0.1F; // Previously used (MAX_ALPHA - 0.66F) * 2 / 5;
 	
-	private float minStarSize;
-
-	private float maxStarAlpha;
-	private float minStarAlpha;
+	protected float minStarSize;
+	
+	protected float maxStarAlpha;
+	protected float minStarAlpha;
+	
+	protected Color.FloatRGBA starColor = Color.FloatRGBA.white();
 	
 	public StarLike() {}
 	
@@ -79,9 +81,9 @@ public abstract class StarLike extends OrbitingObject
 		alpha -= lyDistance / 100000;
 		
 		if(alpha < getMinStarAlpha())
-				alpha = getMinStarAlpha();
+			starColor.setAlpha(getMinStarAlpha());
 		
-		return new Color.FloatRGBA(1, 1, 1, alpha);
+		return starColor;
 	}
 	
 	//============================================================================================

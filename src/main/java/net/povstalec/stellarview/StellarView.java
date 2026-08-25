@@ -1,35 +1,35 @@
 package net.povstalec.stellarview;
 
-import java.util.Optional;
-
-import net.neoforged.bus.api.EventPriority;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.povstalec.stellarview.api.common.space_objects.distinct.Luna;
-import net.povstalec.stellarview.api.common.space_objects.distinct.Sol;
-import net.povstalec.stellarview.api.common.space_objects.resourcepack.*;
-import net.povstalec.stellarview.client.SpaceObjectRenderers;
-import net.povstalec.stellarview.client.render.space_objects.distinct.*;
-import net.povstalec.stellarview.client.render.space_objects.resourcepack.*;
-import net.povstalec.stellarview.client.screens.config.ConfigScreen;
-import net.povstalec.stellarview.compatibility.aether.AetherCompatibility;
-import net.povstalec.stellarview.compatibility.twilightforest.TwilightForestCompatibility;
-import org.slf4j.Logger;
-
 import com.mojang.logging.LogUtils;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import net.neoforged.neoforge.client.event.RegisterDimensionSpecialEffectsEvent;
+import net.povstalec.stellarview.api.common.space_objects.distinct.Luna;
+import net.povstalec.stellarview.api.common.space_objects.distinct.Sol;
+import net.povstalec.stellarview.api.common.space_objects.resourcepack.*;
+import net.povstalec.stellarview.client.SpaceObjectRenderers;
 import net.povstalec.stellarview.client.render.level.StellarViewEndEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewNetherEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewOverworldEffects;
+import net.povstalec.stellarview.client.render.space_objects.distinct.LunaRenderer;
+import net.povstalec.stellarview.client.render.space_objects.resourcepack.*;
 import net.povstalec.stellarview.client.resourcepack.ResourcepackReloadListener;
+import net.povstalec.stellarview.client.screens.config.ConfigScreen;
 import net.povstalec.stellarview.common.config.StellarViewConfig;
+import net.povstalec.stellarview.compatibility.aether.AetherCompatibility;
+import net.povstalec.stellarview.compatibility.twilightforest.TwilightForestCompatibility;
+import org.slf4j.Logger;
+
+import java.util.Optional;
 
 @Mod(StellarView.MODID)
 public class StellarView
@@ -136,5 +136,10 @@ public class StellarView
 			isAetherLoaded = Optional.of(ModList.get().isLoaded(AETHER_MODID));
 		
 		return isAetherLoaded.get();
+	}
+	
+	public static ResourceLocation stellarViewLocation(String path)
+	{
+		return ResourceLocation.fromNamespaceAndPath(StellarView.MODID, path);
 	}
 }	

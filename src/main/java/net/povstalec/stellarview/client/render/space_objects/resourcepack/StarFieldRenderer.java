@@ -2,21 +2,18 @@ package net.povstalec.stellarview.client.render.space_objects.resourcepack;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.Tesselator;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.povstalec.stellarview.api.common.space_objects.resourcepack.Constellation;
 import net.povstalec.stellarview.api.common.space_objects.resourcepack.StarField;
-import net.povstalec.stellarview.client.render.LightEffects;
 import net.povstalec.stellarview.client.render.StellarViewEffects;
 import net.povstalec.stellarview.client.render.space_objects.SpaceObjectRenderer;
-import net.povstalec.stellarview.client.util.StarData;
-import net.povstalec.stellarview.common.util.DustCloudInfo;
-import net.povstalec.stellarview.common.util.StarInfo;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.client.util.DustCloudData;
+import net.povstalec.stellarview.client.util.StarData;
 import net.povstalec.stellarview.common.config.GeneralConfig;
 import net.povstalec.stellarview.common.util.*;
 import org.joml.Matrix4f;
@@ -250,7 +247,7 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 			double theta = random.nextDouble() * 2F * Math.PI;
 			double phi = Math.acos(2F * random.nextDouble() - 1F); // This prevents the formation of that weird streak that normally happens
 			
-			Vector3d cartesian = new SphericalCoords(distance * renderedObject.getDiameter(), theta, phi).toCartesianD();
+			Vector3d cartesian = SphericalCoords.sphericalToCartesianD(distance * renderedObject.getDiameter(), theta, phi);
 			
 			cartesian.x *= renderedObject.starStretch().xStretch();
 			cartesian.y *= renderedObject.starStretch().yStretch();
@@ -499,7 +496,7 @@ public class StarFieldRenderer<T extends StarField> extends SpaceObjectRenderer<
 		
 		for(SpaceObjectRenderer<?> child : children)
 		{
-			child.render(viewCenter, level, partialTicks, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog, tesselator, parentVector, new AxisRotation(0, 0, 0));
+			child.render(viewCenter, level, partialTicks, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog, tesselator, parentVector, AxisRotation.NONE);
 		}
 	}
 	

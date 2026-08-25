@@ -130,11 +130,15 @@ public class SpaceCoords implements INBTSerializable<CompoundTag>
 	}
 	
 	/**
-	 * @param viewCenter The coordinates this object is viewed from
-	 * @param r The radius of the sphere onto which the sky position is projected
-	 * @return Returns the sky position at which the coordinates of this would appear on the sky when viewed from the viewCenter
+	 * @param dest Destination Spherical Coords into which the calculated values should be written
+	 * @param level Current Level
+	 * @param viewCenter The View center this object is viewed from
+	 * @param radius The radius of the sphere onto which the sky position is projected
+	 * @param partialTicks Partial Ticks
+	 * @param adjustForRotation Whether the returned value should adjust for sky rotation (for example, when it's disabled in the config)
+	 * @return Returns the distance from the View Center the object was at originally
 	 */
-	public SphericalCoords skyPosition(ClientLevel level, ViewCenter viewCenter, float radius, float partialTicks, boolean adjustForRotation)
+	public double skyPosition(SphericalCoords dest, ClientLevel level, ViewCenter viewCenter, float radius, float partialTicks, boolean adjustForRotation)
 	{
 		SpaceCoords viewCenterCoords = viewCenter.getCoords();
 		Vector3d positionVector = new Vector3d(this.x.sub(viewCenterCoords.x).toKm(), this.y.sub(viewCenterCoords.y).toKm(), this.z.sub(viewCenterCoords.z).toKm());
@@ -145,14 +149,21 @@ public class SpaceCoords implements INBTSerializable<CompoundTag>
 			q.transform(positionVector);
 		}
 		
-		return new SphericalCoords(positionVector, radius);
+		dest.fromCartesian(positionVector);
+		double distance = dest.r;
+		dest.r = radius;
+		
+		return distance;
 	}
 	
 	/**
-	 * @param viewCenter The coordinates this object is viewed from
-	 * @return Returns the sky position at which the coordinates of this would appear on the sky when viewed from the viewCenter
+	 * @param dest Destination Spherical Coords into which the calculated values should be written
+	 * @param level Current Level
+	 * @param viewCenter The View center this object is viewed from
+	 * @param partialTicks Partial Ticks
+	 * @param adjustForRotation Whether the returned value should adjust for sky rotation (for example, when it's disabled in the config)
 	 */
-	public SphericalCoords skyPosition(ClientLevel level, ViewCenter viewCenter, float partialTicks, boolean adjustForRotation)
+	public void skyPosition(SphericalCoords dest, ClientLevel level, ViewCenter viewCenter, float partialTicks, boolean adjustForRotation)
 	{
 		SpaceCoords viewCenterCoords = viewCenter.getCoords();
 		Vector3d positionVector = new Vector3d(this.x.sub(viewCenterCoords.x).toKm(), this.y.sub(viewCenterCoords.y).toKm(), this.z.sub(viewCenterCoords.z).toKm());
@@ -163,7 +174,7 @@ public class SpaceCoords implements INBTSerializable<CompoundTag>
 			q.transform(positionVector);
 		}
 		
-		return new SphericalCoords(positionVector);
+		dest.fromCartesian(positionVector);
 	}
 	
 	public SpaceCoords add(SpaceCoords other)

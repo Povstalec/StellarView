@@ -38,6 +38,8 @@ public class Color
 	
 	public static class IntRGB implements INBTSerializable<CompoundTag>
 	{
+		public static final IntRGB WHITE = new IntRGB(255, 255, 255);
+		
 		protected int red;
 		protected int green;
 		protected int blue;
@@ -49,6 +51,13 @@ public class Color
 				).apply(instance, Color.IntRGB::new));
 		
 		public IntRGB() {}
+		
+		public IntRGB(IntRGB other)
+		{
+			this.red = other.red;
+			this.green = other.green;
+			this.blue = other.blue;
+		}
 		
 		public IntRGB(int argb)
 		{
@@ -105,6 +114,11 @@ public class Color
 			return blue;
 		}
 		
+		public static IntRGB white()
+		{
+			return new Color.IntRGB(Color.IntRGB.WHITE);
+		}
+		
 		//============================================================================================
 		//*************************************Saving and Loading*************************************
 		//============================================================================================
@@ -132,6 +146,8 @@ public class Color
 	
 	public static class IntRGBA extends IntRGB
 	{
+		public static final IntRGBA WHITE = new IntRGBA(255, 255, 255, 255);
+		
 	    public static final Codec<Color.IntRGBA> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				Codec.intRange(MIN_INT_VALUE, MAX_INT_VALUE).fieldOf(RED).forGetter(Color.IntRGBA::red),
 				Codec.intRange(MIN_INT_VALUE, MAX_INT_VALUE).fieldOf(GREEN).forGetter(Color.IntRGBA::green),
@@ -142,6 +158,13 @@ public class Color
 	    protected int alpha;
 		
 		public IntRGBA() {}
+		
+		public IntRGBA(IntRGBA other)
+		{
+			super(other.red, other.green, other.blue);
+			
+			this.alpha = other.alpha;
+		}
 		
 		public IntRGBA(int argb)
 		{
@@ -179,6 +202,11 @@ public class Color
 			return alpha;
 		}
 		
+		public static IntRGBA white()
+		{
+			return new Color.IntRGBA(Color.IntRGBA.WHITE);
+		}
+		
 		//============================================================================================
 		//*************************************Saving and Loading*************************************
 		//============================================================================================
@@ -204,11 +232,20 @@ public class Color
 	
 	public static class FloatRGB implements INBTSerializable<CompoundTag>
 	{
+		public static final FloatRGB WHITE = new FloatRGB(1F, 1F, 1F);
+		
 		protected float red;
 		protected float green;
 		protected float blue;
 		
 		public FloatRGB() {}
+		
+		public FloatRGB(FloatRGB other)
+		{
+			this.red = other.red;
+			this.green = other.green;
+			this.blue = other.blue;
+		}
 		
 		public FloatRGB(int argb)
 		{
@@ -277,6 +314,11 @@ public class Color
 			return blue;
 		}
 		
+		public static FloatRGB white()
+		{
+			return new Color.FloatRGB(Color.FloatRGB.WHITE);
+		}
+		
 		//============================================================================================
 		//*************************************Saving and Loading*************************************
 		//============================================================================================
@@ -304,7 +346,7 @@ public class Color
 	
 	public static class FloatRGBA extends FloatRGB
 	{
-		public static final FloatRGBA DEFAULT = new FloatRGBA(1F, 1F, 1F, 1F);
+		public static final FloatRGBA WHITE = new FloatRGBA(1F, 1F, 1F, 1F);
 		
 	    public static final Codec<Color.FloatRGBA> INT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				Codec.intRange(MIN_INT_VALUE, MAX_INT_VALUE).fieldOf(RED).forGetter(color -> (int) (color.red * 255)),
@@ -323,6 +365,13 @@ public class Color
 	    protected float alpha;
 		
 		public FloatRGBA() {}
+		
+		public FloatRGBA(FloatRGBA other)
+		{
+			super(other);
+			
+			this.alpha = other.alpha;
+		}
 		
 		public FloatRGBA(int argb)
 		{
@@ -375,6 +424,11 @@ public class Color
 		public float alpha()
 		{
 			return alpha;
+		}
+		
+		public static FloatRGBA white()
+		{
+			return new Color.FloatRGBA(Color.FloatRGBA.WHITE);
 		}
 		
 		//============================================================================================

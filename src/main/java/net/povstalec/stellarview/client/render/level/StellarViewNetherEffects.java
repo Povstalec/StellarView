@@ -1,13 +1,12 @@
 package net.povstalec.stellarview.client.render.level;
 
-import net.povstalec.stellarview.api.client.render.level.StellarViewSpecialEffects;
-import org.joml.Matrix4f;
-
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.DimensionSpecialEffects;
 import net.minecraft.resources.ResourceLocation;
+import net.povstalec.stellarview.api.client.render.level.StellarViewSpecialEffects;
 import net.povstalec.stellarview.common.config.NetherConfig;
+import org.joml.Matrix4f;
 
 import javax.annotation.Nullable;
 

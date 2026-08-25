@@ -15,13 +15,13 @@ import org.joml.Vector3f;
 
 public abstract class GravityLenseRenderer<T extends GravityLense> extends StarLikeRenderer<T>
 {
-	protected SphericalCoords sphericalCoords;
+	protected SphericalCoords gravityLensePosition;
 	
 	public GravityLenseRenderer(T gravityLense)
 	{
 		super(gravityLense);
 		
-		this.sphericalCoords = new SphericalCoords(0, 0, 0);
+		this.gravityLensePosition = new SphericalCoords();
 	}
 	
 	public float lensingIntensity()
@@ -41,8 +41,8 @@ public abstract class GravityLenseRenderer<T extends GravityLense> extends StarL
 		if(intensity < SpaceRenderer.lensingIntensity)
 			return;
 		
-		Quaternionf lensingQuat = new Quaternionf().rotateY((float) sphericalCoords.theta);
-		lensingQuat.mul(new Quaternionf().rotateX((float) sphericalCoords.phi));
+		Quaternionf lensingQuat = new Quaternionf().rotateY((float) gravityLensePosition.theta);
+		lensingQuat.mul(new Quaternionf().rotateX((float) gravityLensePosition.phi));
 		
 		Matrix3f lensingMatrixInv = new Matrix3f().rotate(lensingQuat);
 		Matrix3f lensingMatrix = new Matrix3f().rotate(lensingQuat.invert());
@@ -103,16 +103,13 @@ public abstract class GravityLenseRenderer<T extends GravityLense> extends StarL
 		SpaceCoords coords = renderedObject.getCoords().add(positionVector);
 		
 		// Subtract coords of this from View Center coords to get relative coords
-		sphericalCoords = coords.skyPosition(level, viewCenter, partialTicks, false);
-		SphericalCoords sphericalCoords = coords.skyPosition(level, viewCenter, partialTicks, true);
-		
-		lastDistance = sphericalCoords.r;
-		sphericalCoords.r = DEFAULT_DISTANCE;
+		coords.skyPosition(gravityLensePosition, level, viewCenter, partialTicks, false);
+		lastDistance = coords.skyPosition(sphericalCoords, level, viewCenter, DEFAULT_DISTANCE, partialTicks, true);
 		
 		double childRenderDistance = renderedObject.getFadeOutHandler().getMaxChildRenderDistance().toKm();
 		if(childRenderDistance > lastDistance)
 		{
-			for(SpaceObjectRenderer child : children)
+			for(SpaceObjectRenderer<?> child : children)
 			{
 				// Render child behind the parent
 				if(child.lastDistance >= this.lastDistance)
@@ -126,7 +123,7 @@ public abstract class GravityLenseRenderer<T extends GravityLense> extends StarL
 		
 		if(childRenderDistance > lastDistance)
 		{
-			for(SpaceObjectRenderer child : children)
+			for(SpaceObjectRenderer<?> child : children)
 			{
 				// Render child in front of the parent
 				if(child.lastDistance < this.lastDistance)
