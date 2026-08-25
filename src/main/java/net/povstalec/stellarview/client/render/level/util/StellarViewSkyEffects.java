@@ -88,7 +88,7 @@ public class StellarViewSkyEffects
 			float sunriseR = sunriseColor[0];
 			float sunriseG = sunriseColor[1];
 			float sunriseB = sunriseColor[2];
-			float sunriseA = sunriseColor[2];
+			float sunriseA = sunriseColor[3];
 			Matrix4f sunriseMatrix = stack.last().pose();
 			// Thanks to tehgreatdoge for finding out what these do
 			// Create a cone with the vertex near the sun to act as the slanted part of the sunrise
