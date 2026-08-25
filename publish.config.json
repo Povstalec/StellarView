@@ -236,7 +236,7 @@
 		},
 		"1.20.1-Fabric": {
 			"file_glob": "build/libs/*-1.20.1-{version}-Fabric.jar",
-			"branch": "stellarview-1.20.1",
+			"branch": "stellarview-1.20.1-fabric",
 			"loaders": [
 				"Fabric"
 			],
@@ -357,7 +357,7 @@
 		},
 		"1.21.1-Fabric": {
 			"file_glob": "build/libs/*-1.21.1-{version}-Fabric.jar",
-			"branch": "main",
+			"branch": "stellarview-1.21.1-fabric",
 			"loaders": [
 				"Fabric"
 			],
