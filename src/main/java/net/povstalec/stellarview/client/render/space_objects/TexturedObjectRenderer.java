@@ -19,6 +19,8 @@ public abstract class TexturedObjectRenderer<T extends TexturedObject> extends S
 {
 	public static final float DEFAULT_DISTANCE = 100.0F;
 	
+	protected SphericalCoords sphericalCoords = new SphericalCoords();
+	
 	public TexturedObjectRenderer(T texturedObject)
 	{
 		super(texturedObject);
@@ -39,10 +41,7 @@ public abstract class TexturedObjectRenderer<T extends TexturedObject> extends S
 		SpaceCoords coords = spaceCoords().add(positionVector);
 		
 		// Subtract coords of this from View Center coords to get relative coords
-		SphericalCoords sphericalCoords = coords.skyPosition(level, viewCenter, partialTicks, true);
-		
-		lastDistance = sphericalCoords.r;
-		sphericalCoords.r = DEFAULT_DISTANCE;
+		lastDistance = coords.skyPosition(sphericalCoords, level, viewCenter, DEFAULT_DISTANCE, partialTicks, true);
 		
 		double childRenderDistance = renderedObject.getFadeOutHandler().getMaxChildRenderDistance().toKm();
 		if(childRenderDistance > lastDistance)
@@ -141,7 +140,7 @@ public abstract class TexturedObjectRenderer<T extends TexturedObject> extends S
 				return;
 		}
 		
-		renderOnSphere(textureLayer.rgba(), Color.FloatRGBA.DEFAULT, textureLayer.texture(), textureLayer.uv(),
+		renderOnSphere(textureLayer.rgba(), Color.FloatRGBA.WHITE, textureLayer.texture(), textureLayer.uv(),
 				level, camera, bufferbuilder, lastMatrix, sphericalCoords,
 				ticks, distance, partialTicks, LightEffects.dayBrightness(viewCenter, size, ticks, level, camera, partialTicks) * (float) fade,
 				size, (float) textureLayer.rotation(), textureLayer.shoulBlend());

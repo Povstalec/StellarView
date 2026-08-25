@@ -3,6 +3,7 @@ package net.povstalec.stellarview;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,5 +56,10 @@ public class StellarView implements ModInitializer
 			isKiltLoaded = Optional.of(FabricLoader.getInstance().isModLoaded(KILT_MODID));
 		
 		return isKiltLoaded.get();
+	}
+	
+	public static ResourceLocation stellarViewLocation(String path)
+	{
+		return new ResourceLocation(StellarView.MODID, path);
 	}
 }
