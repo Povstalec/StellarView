@@ -16,30 +16,31 @@ public class SphericalCoords
 		this.phi = phi;
 	}
 	
-	public SphericalCoords(Vector3f cartesianCoords)
+	public SphericalCoords()
 	{
-		this.r = sphericalR(cartesianCoords);
-		this.theta = sphericalTheta(cartesianCoords);
-		this.phi = sphericalPhi(cartesianCoords);
+		this(0, 0, 0);
 	}
 	
-	public SphericalCoords(Vector3f cartesianCoords, float r)
+	public SphericalCoords(Vector3f cartesianCoords)
 	{
-		this.r = r;
-		this.theta = sphericalTheta(cartesianCoords);
-		this.phi = sphericalPhi(cartesianCoords);
+		fromCartesian(cartesianCoords);
 	}
 	
 	public SphericalCoords(Vector3d cartesianCoords)
 	{
+		fromCartesian(cartesianCoords);
+	}
+	
+	public void fromCartesian(Vector3f cartesianCoords)
+	{
 		this.r = sphericalR(cartesianCoords);
 		this.theta = sphericalTheta(cartesianCoords);
 		this.phi = sphericalPhi(cartesianCoords);
 	}
 	
-	public SphericalCoords(Vector3d cartesianCoords, double r)
+	public void fromCartesian(Vector3d cartesianCoords)
 	{
-		this.r = r;
+		this.r = sphericalR(cartesianCoords);
 		this.theta = sphericalTheta(cartesianCoords);
 		this.phi = sphericalPhi(cartesianCoords);
 	}
@@ -52,6 +53,16 @@ public class SphericalCoords
 	public Vector3d toCartesianD()
 	{
 		return new Vector3d(cartesianX(this), cartesianY(this), cartesianZ(this));
+	}
+	
+	public static Vector3f sphericalToCartesianF(double r, double theta, double phi)
+	{
+		return new Vector3f((float) cartesianX(r, theta, phi), (float) cartesianY(r, phi), (float) cartesianZ(r, theta, phi));
+	}
+	
+	public static Vector3d sphericalToCartesianD(double r, double theta, double phi)
+	{
+		return new Vector3d(cartesianX(r, theta, phi), cartesianY(r, phi), cartesianZ(r, theta, phi));
 	}
 	
 	public static SphericalCoords cartesianToSpherical(Vector3f cartesianCoordinates)
@@ -100,19 +111,34 @@ public class SphericalCoords
 	
 	
 	
+	public static double cartesianX(double r, double theta, double phi)
+	{
+		return r * Math.sin(phi) * Math.sin(theta);
+	}
+	
 	public static double cartesianX(SphericalCoords sphericalCoords)
 	{
-		return sphericalCoords.r * Math.sin(sphericalCoords.phi) * Math.sin(sphericalCoords.theta);
+		return cartesianX(sphericalCoords.r, sphericalCoords.theta, sphericalCoords.phi);
+	}
+	
+	public static double cartesianY(double r, double phi)
+	{
+		return r * Math.cos(phi);
 	}
 	
 	public static double cartesianY(SphericalCoords sphericalCoords)
 	{
-		return sphericalCoords.r * Math.cos(sphericalCoords.phi);
+		return cartesianY(sphericalCoords.r, sphericalCoords.phi);
+	}
+	
+	public static double cartesianZ(double r, double theta, double phi)
+	{
+		return r * Math.sin(phi) * Math.cos(theta);
 	}
 	
 	public static double cartesianZ(SphericalCoords sphericalCoords)
 	{
-		return sphericalCoords.r * Math.sin(sphericalCoords.phi) * Math.cos(sphericalCoords.theta);
+		return cartesianZ(sphericalCoords.r, sphericalCoords.theta, sphericalCoords.phi);
 	}
 	
 	

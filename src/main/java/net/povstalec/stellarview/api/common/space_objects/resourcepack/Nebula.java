@@ -28,10 +28,12 @@ public class Nebula extends TexturedObject
 	public static final float MAX_ALPHA = 1F;
 	public static final float MIN_ALPHA = MAX_ALPHA * 0.1F;
 	
-	private float minNebulaSize;
-
-	private float maxNebulaAlpha;
-	private float minNebulaAlpha;
+	protected float minNebulaSize;
+	
+	protected float maxNebulaAlpha;
+	protected float minNebulaAlpha;
+	
+	protected Color.FloatRGBA nebulaColor = Color.FloatRGBA.white();
 	
 	public static final Codec<Nebula> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			ParentInfo.CODEC.optionalFieldOf("parent").forGetter(Nebula::getParentInfo),
@@ -88,12 +90,12 @@ public class Nebula extends TexturedObject
 	{
 		float alpha = getMaxNebulaAlpha();
 		
-		alpha -= lyDistance / 100000;
+		alpha -= (float) (lyDistance / 100000);
 		
 		if(alpha < getMinNebulaAlpha())
-				alpha = getMinNebulaAlpha();
+			nebulaColor.setAlpha(getMinNebulaAlpha());
 		
-		return new Color.FloatRGBA(1, 1, 1, alpha);
+		return nebulaColor;
 	}
 	
 	//============================================================================================

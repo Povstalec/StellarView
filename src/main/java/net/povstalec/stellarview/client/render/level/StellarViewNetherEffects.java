@@ -1,9 +1,7 @@
 package net.povstalec.stellarview.client.render.level;
 
 import net.povstalec.stellarview.api.client.render.level.StellarViewSpecialEffects;
-import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
@@ -11,11 +9,8 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.DimensionSpecialEffects;
 import net.minecraft.resources.ResourceLocation;
-import net.povstalec.stellarview.StellarView;
-import net.povstalec.stellarview.client.render.level.util.StellarViewLightmapEffects;
 import net.povstalec.stellarview.client.render.ViewCenters;
 import net.povstalec.stellarview.common.config.NetherConfig;
-import net.povstalec.stellarview.compatibility.enhancedcelestials.EnhancedCelestialsCompatibility;
 
 import javax.annotation.Nullable;
 

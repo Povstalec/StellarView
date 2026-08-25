@@ -6,12 +6,8 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
-import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.api.common.space_objects.distinct.Luna;
-import net.povstalec.stellarview.api.common.space_objects.resourcepack.Moon;
-import net.povstalec.stellarview.client.render.LightEffects;
 import net.povstalec.stellarview.client.render.space_objects.resourcepack.MoonRenderer;
-import net.povstalec.stellarview.client.render.space_objects.resourcepack.PlanetRenderer;
 import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.config.OverworldConfig;
 import net.povstalec.stellarview.common.util.Color;
@@ -25,7 +21,7 @@ public class LunaRenderer extends MoonRenderer<Luna>
 	public static final ResourceLocation MOON_LOCATION = new ResourceLocation("textures/environment/moon_phases.png");
 	
 	public static final UV.Quad MOON_QUAD = new UV.Quad(new UV.PhaseHandler(24000, 0, 4, 2), true);
-	public static final TextureLayer MOON_TEXTURE_LAYER = new TextureLayer(MOON_LOCATION,new Color.FloatRGBA(1, 1, 1, 1),
+	public static final TextureLayer MOON_TEXTURE_LAYER = new TextureLayer(MOON_LOCATION, Color.FloatRGBA.WHITE,
 			true, 7697847.735118539, 0.15, true, Double.MAX_VALUE, false, 90, MOON_QUAD);
 	
 	public LunaRenderer(Luna luna)

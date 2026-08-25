@@ -6,21 +6,17 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.povstalec.stellarview.common.util.AxisRotation;
-import net.povstalec.stellarview.common.util.Color;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 import net.povstalec.stellarview.common.util.StellarCoordinates;
 import net.povstalec.stellarview.common.util.TextureLayer;
-import net.povstalec.stellarview.compatibility.enhancedcelestials.EnhancedCelestialsCompatibility;
 
 /**
  * A subtype of planet that should be compatible with enhanced celestials
@@ -59,24 +55,6 @@ public class Moon extends Planet
 		return Optional.ofNullable(compatibility);
 	}
 	
-	public float sizeMultiplier(ClientLevel level)
-	{
-		// If the Moon is being viewed from the correct dimension, make it larger
-		if(getCompatibility().isPresent() && level.dimension().equals(getCompatibility().get().enhancedCelestialsMoonDimension))
-			return EnhancedCelestialsCompatibility.getMoonSize(level, 20) / 20F;
-		
-		return 1F;
-	}
-	
-	public Color.FloatRGBA moonRGBA(ClientLevel level, float partialTicks)
-	{
-		// If the Moon is being viewed from the correct dimension, color it differently
-		if(getCompatibility().isPresent() && level.dimension().equals(getCompatibility().get().enhancedCelestialsMoonDimension))
-			return EnhancedCelestialsCompatibility.getMoonColor(level, partialTicks);
-		
-		return new Color.FloatRGBA(1F, 1F, 1F);
-	}
-	
 	//============================================================================================
 	//*************************************Saving and Loading*************************************
 	//============================================================================================
@@ -100,20 +78,21 @@ public class Moon extends Planet
 	
 	public static class Compatibility
 	{
+		@Nullable
 		private ResourceKey<Level> enhancedCelestialsMoonDimension;
 		
 		public static final Codec<Compatibility> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-				Level.RESOURCE_KEY_CODEC.fieldOf("enhanced_celestials_moon_dimension").forGetter(Compatibility::getEnhancedCelestialsMoonDimension)
+				Level.RESOURCE_KEY_CODEC.optionalFieldOf("enhanced_celestials_moon_dimension").forGetter(Compatibility::getEnhancedCelestialsMoonDimension)
 				).apply(instance, Compatibility::new));
 		
-		public Compatibility(ResourceKey<Level> enhancedCelestialsMoonDimension)
+		public Compatibility(Optional<ResourceKey<Level>> enhancedCelestialsMoonDimension)
 		{
-			this.enhancedCelestialsMoonDimension = enhancedCelestialsMoonDimension;
+			this.enhancedCelestialsMoonDimension = enhancedCelestialsMoonDimension.orElse(null);
 		}
 		
-		public ResourceKey<Level> getEnhancedCelestialsMoonDimension()
+		public Optional<ResourceKey<Level>> getEnhancedCelestialsMoonDimension()
 		{
-			return enhancedCelestialsMoonDimension;
+			return Optional.ofNullable(enhancedCelestialsMoonDimension);
 		}
 	}
 }
