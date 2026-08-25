@@ -50,7 +50,7 @@ public class MoonRenderer<T extends Moon> extends PlanetRenderer<T>
 				return LunarCompatibility.getMoonColor();
 			}
 		}
-		return new Color.FloatRGBA(1F, 1F, 1F);
+		return Color.FloatRGBA.WHITE;
 	}
 	
 	//============================================================================================
