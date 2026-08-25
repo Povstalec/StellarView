@@ -2,6 +2,7 @@ package net.povstalec.stellarview.mixin;
 
 import net.fabricmc.fabric.impl.client.rendering.FabricShaderProgram;
 import net.minecraft.client.renderer.ShaderInstance;
+import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.client.render.shader.CelestialShaderInstance;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,7 +20,7 @@ public class StellarViewShaderMixin
 	@ModifyArg(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/resources/ResourceLocation;<init>(Ljava/lang/String;)V"), allow = 1)
 	private String modifyProgramId(String id)
 	{
-		if ((Object) this instanceof CelestialShaderInstance)
+		if((Object) this instanceof CelestialShaderInstance && !StellarView.isKiltLoaded())
 			return FabricShaderProgram.rewriteAsId(id, name);
 		
 		return id;

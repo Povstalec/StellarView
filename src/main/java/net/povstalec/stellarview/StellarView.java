@@ -16,6 +16,7 @@ public class StellarView implements ModInitializer
 	public static final String LUNAR_MODID = "lunar";
 	public static final String TWILIGHT_FOREST_MODID = "twilightforest";
 	public static final String AETHER_MODID = "aether";
+	public static final String KILT_MODID = "kilt";
 	
 	// This logger is used to write text to the console and the log file.
 	// It is considered best practice to use your mod id as the logger's name.
@@ -24,6 +25,7 @@ public class StellarView implements ModInitializer
 	
 	private static Optional<Boolean> isEnhancedCelestialsLoaded = Optional.empty();
 	private static Optional<Boolean> isLunarLoaded = Optional.empty();
+	private static Optional<Boolean> isKiltLoaded = Optional.empty();
 
 	@Override
 	public void onInitialize()
@@ -45,5 +47,13 @@ public class StellarView implements ModInitializer
 			isLunarLoaded = Optional.of(FabricLoader.getInstance().isModLoaded(LUNAR_MODID));
 		
 		return isLunarLoaded.get();
+	}
+	
+	public static boolean isKiltLoaded()
+	{
+		if(isKiltLoaded.isEmpty())
+			isKiltLoaded = Optional.of(FabricLoader.getInstance().isModLoaded(KILT_MODID));
+		
+		return isKiltLoaded.get();
 	}
 }
