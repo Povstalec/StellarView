@@ -10,6 +10,8 @@ import net.povstalec.stellarview.client.resourcepack.ViewCenter;
 import net.povstalec.stellarview.common.util.Color;
 import net.povstalec.stellarview.common.util.SphericalCoords;
 import net.povstalec.stellarview.common.util.TextureLayer;
+import net.povstalec.stellarview.compatibility.enhancedcelestials.EnhancedCelestialsCompatibility;
+import net.povstalec.stellarview.compatibility.lunar.LunarCompatibility;
 import org.joml.Matrix4f;
 
 public class MoonRenderer<T extends Moon> extends PlanetRenderer<T>
@@ -17,6 +19,38 @@ public class MoonRenderer<T extends Moon> extends PlanetRenderer<T>
 	public MoonRenderer(T moon)
 	{
 		super(moon);
+	}
+	
+	public float sizeMultiplier(ClientLevel level)
+	{
+		// If the Moon is being viewed from the correct dimension, make it larger
+		if(renderedObject.getCompatibility().isPresent()) {
+			/* Presumably, no one will have EnhancedCelestials AND Lunar.
+			They shouldn't be compatible with each other! -NW */
+			if(StellarView.isEnhancedCelestialsLoaded() && level.dimension().equals(renderedObject.getCompatibility().get().getEnhancedCelestialsMoonDimension().orElse(null))) {
+				return EnhancedCelestialsCompatibility.getMoonSize(level, 20) / 20F;
+			}
+			else if(StellarView.isLunarLoaded() && level.dimension().equals(renderedObject.getCompatibility().get().getLunarMoonDimension().orElse(null))) {
+				return LunarCompatibility.getMoonSize(20) / 20F;
+			}
+		}
+		return 1F;
+	}
+	
+	public Color.FloatRGBA moonRGBA(ClientLevel level, float partialTicks)
+	{
+		// If the Moon is being viewed from the correct dimension, color it differently
+		if(renderedObject.getCompatibility().isPresent()) {
+			/* Presumably, no one will have EnhancedCelestials AND Lunar.
+			They shouldn't be compatible with each other! -NW */
+			if(StellarView.isEnhancedCelestialsLoaded() && level.dimension().equals(renderedObject.getCompatibility().get().getEnhancedCelestialsMoonDimension().orElse(null))) {
+				return EnhancedCelestialsCompatibility.getMoonColor(level, partialTicks);
+			}
+			else if(StellarView.isLunarLoaded() && level.dimension().equals(renderedObject.getCompatibility().get().getLunarMoonDimension().orElse(null))) {
+				return LunarCompatibility.getMoonColor();
+			}
+		}
+		return new Color.FloatRGBA(1F, 1F, 1F);
 	}
 	
 	//============================================================================================
@@ -34,7 +68,7 @@ public class MoonRenderer<T extends Moon> extends PlanetRenderer<T>
 			return;
 		}
 		
-		Color.FloatRGBA moonRGBA = renderedObject.moonRGBA(level, partialTicks);
+		Color.FloatRGBA moonRGBA = moonRGBA(level, partialTicks);
 		
 		if(moonRGBA.alpha() <= 0.0F || textureLayer.rgba().alpha() <= 0)
 			return;
@@ -54,7 +88,7 @@ public class MoonRenderer<T extends Moon> extends PlanetRenderer<T>
 				return;
 		}
 		
-		size *= renderedObject.sizeMultiplier(level);
+		size *= sizeMultiplier(level);
 		
 		renderOnSphere(textureLayer.rgba(), moonRGBA, textureLayer.texture(), textureLayer.uv(),
 				level, camera, bufferbuilder, lastMatrix, sphericalCoords,
