@@ -1,9 +1,8 @@
 package net.povstalec.stellarview.client.render.level;
 
-import net.povstalec.stellarview.api.client.render.level.StellarViewSpecialEffects;
-
 import net.minecraft.client.renderer.DimensionSpecialEffects;
 import net.minecraft.resources.ResourceLocation;
+import net.povstalec.stellarview.api.client.render.level.StellarViewSpecialEffects;
 import org.jetbrains.annotations.Nullable;
 
 public class StellarViewNetherEffects extends StellarViewSpecialEffects

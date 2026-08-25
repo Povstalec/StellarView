@@ -1,26 +1,11 @@
 package net.povstalec.stellarview.client.resourcepack;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-
-import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
-import net.povstalec.stellarview.client.render.LightEffects;
-import net.povstalec.stellarview.client.render.SpaceRenderer;
-import net.povstalec.stellarview.client.render.space_objects.SpaceObjectRenderer;
-import net.povstalec.stellarview.client.render.space_objects.ViewObjectRenderer;
-import org.jetbrains.annotations.Nullable;
-import net.povstalec.stellarview.common.util.MinMax;
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
-
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexBuffer;
 import com.mojang.math.Axis;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -32,12 +17,25 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.povstalec.stellarview.StellarView;
+import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
+import net.povstalec.stellarview.client.render.LightEffects;
+import net.povstalec.stellarview.client.render.SpaceRenderer;
 import net.povstalec.stellarview.client.render.level.util.StellarViewFogEffects;
 import net.povstalec.stellarview.client.render.level.util.StellarViewSkyEffects;
+import net.povstalec.stellarview.client.render.space_objects.SpaceObjectRenderer;
+import net.povstalec.stellarview.client.render.space_objects.ViewObjectRenderer;
 import net.povstalec.stellarview.client.resourcepack.effects.MeteorEffect;
 import net.povstalec.stellarview.common.config.GeneralConfig;
 import net.povstalec.stellarview.common.util.AxisRotation;
+import net.povstalec.stellarview.common.util.MinMax;
 import net.povstalec.stellarview.common.util.SpaceCoords;
+import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 
 public class ViewCenter
 {
@@ -108,7 +106,7 @@ public class ViewCenter
 			
 			ViewCenter.Stars.CODEC.optionalFieldOf("stars", new ViewCenter.Stars()).forGetter(viewCenter -> viewCenter.stars),
 			ViewCenter.Fog.CODEC.optionalFieldOf("fog", new ViewCenter.Fog()).forGetter(viewCenter -> viewCenter.fog),
-			Codec.intRange(1, Integer.MAX_VALUE).optionalFieldOf("z_rotation_multiplier", 30000000).forGetter(viewCenter -> viewCenter.zRotationMultiplier)
+			Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("z_rotation_multiplier", 30000000).forGetter(viewCenter -> viewCenter.zRotationMultiplier)
 	).apply(instance, ViewCenter::new));
 	
 	public ViewCenter(Optional<ResourceKey<SpaceObject>> viewCenterKey, Optional<List<Skybox>> skyboxes, AxisRotation axisRotation,
@@ -215,7 +213,7 @@ public class ViewCenter
 		if(viewObject != null)
 			return viewObject.axisRotation();
 		
-		return new AxisRotation();
+		return AxisRotation.NONE;
 	}
 	
 	public Optional<ResourceKey<SpaceObject>> getViewCenterKey()

@@ -1,14 +1,9 @@
 package net.povstalec.stellarview.client.resourcepack;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
-
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
-
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -16,7 +11,9 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.api.client.events.StellarViewEvents;
+import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
 import net.povstalec.stellarview.api.common.space_objects.distinct.Luna;
+import net.povstalec.stellarview.api.common.space_objects.distinct.Sol;
 import net.povstalec.stellarview.api.common.space_objects.resourcepack.*;
 import net.povstalec.stellarview.client.SpaceObjectRenderers;
 import net.povstalec.stellarview.client.render.SpaceRenderer;
@@ -25,18 +22,20 @@ import net.povstalec.stellarview.client.render.ViewCenters;
 import net.povstalec.stellarview.client.render.level.StellarViewEndEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewNetherEffects;
 import net.povstalec.stellarview.client.render.level.StellarViewOverworldEffects;
-import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
-import net.povstalec.stellarview.api.common.space_objects.distinct.Sol;
 import net.povstalec.stellarview.client.render.space_objects.SpaceObjectRenderer;
 import net.povstalec.stellarview.client.resourcepack.effects.MeteorEffect;
 import net.povstalec.stellarview.common.util.DustCloudInfo;
 import net.povstalec.stellarview.common.util.StarInfo;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
+
 public class ResourcepackReloadListener
 {
-	public static final ResourceLocation REMOVE = ResourceLocation.fromNamespaceAndPath(StellarView.MODID, "remove");
+	public static final ResourceLocation REMOVE = StellarView.stellarViewLocation("remove");
 	
-	public static final String PATH = "stellarview";
+	public static final String PATH = StellarView.MODID;
 	
 	public static final String VIEW_CENTERS = "view_centers";
 	
@@ -54,9 +53,9 @@ public class ResourcepackReloadListener
 	public static final String STAR_INFO = "star_info";
 	public static final String DUST_CLOUD_INFO = "dust_cloud_info";
 	
-	private static final ResourceLocation MILKY_WAY_LOCATION = ResourceLocation.fromNamespaceAndPath(StellarView.MODID, "star_field/milky_way/milky_way");
-	private static final ResourceLocation SOL_LOCATION = ResourceLocation.fromNamespaceAndPath(StellarView.MODID, "star/milky_way/sol");
-	private static final ResourceLocation LUNA_LOCATION = ResourceLocation.fromNamespaceAndPath(StellarView.MODID, "moon/milky_way/sol/earth/luna");
+	private static final ResourceLocation MILKY_WAY_LOCATION = StellarView.stellarViewLocation("star_field/milky_way/milky_way");
+	private static final ResourceLocation SOL_LOCATION = StellarView.stellarViewLocation("star/milky_way/sol");
+	private static final ResourceLocation LUNA_LOCATION = StellarView.stellarViewLocation("moon/milky_way/sol/earth/luna");
 	
 	private static HashMap<ResourceLocation, ViewCenter> viewCenters;
 	private static HashMap<ResourceLocation, SpaceObjectRenderer<?>> spaceObjects;
@@ -128,7 +127,7 @@ public class ResourcepackReloadListener
 					
 					if(spaceObject != null && !shouldIgnore(spaceObject))
 					{
-						SpaceObjectRenderer renderer = SpaceObjectRenderers.constructObjectRenderer(spaceObject);
+						SpaceObjectRenderer<?> renderer = SpaceObjectRenderers.constructObjectRenderer(spaceObject);
 						
 						if(renderer != null)
 							spaceObjects.put(location, renderer);
@@ -178,9 +177,9 @@ public class ResourcepackReloadListener
 				
 				viewCenters.put(location, viewCenter);
 			}
-			catch(RuntimeException e)
+			catch(Exception e)
 			{
-				StellarView.LOGGER.error("Could not load " + location.toString(), e);
+				StellarView.LOGGER.error("Could not load {}", location.toString(), e);
 			}
 		}
 		
@@ -188,7 +187,7 @@ public class ResourcepackReloadListener
 		{
 			for(Map.Entry<ResourceLocation, ViewCenter> viewCenterEntry : viewCenters.entrySet())
 			{
-				// Set the View Center's Space Object if it exists, if it doesn't don't add it to View Center Map
+				// Set the View Center's Space Object if it exists, if it doesn't, don't add it to View Center Map
 				if(viewCenterEntry.getValue().setViewObjectRenderer(spaceObjects))
 					ViewCenters.addViewCenter(viewCenterEntry.getKey(), viewCenterEntry.getValue());
 			}
@@ -203,15 +202,12 @@ public class ResourcepackReloadListener
 			try
 			{
 				JsonObject json = GsonHelper.convertToJsonObject(element, "star_info");
-				StarInfo starInfo;
-				
-				starInfo = StarInfo.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(loggedExceptionProvider("Failed to parse Star Info"));
-				
+				StarInfo starInfo = StarInfo.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(loggedExceptionProvider("Failed to parse Star Info"));
 				starTypes.put(location, starInfo);
 			}
-			catch(RuntimeException e)
+			catch(Exception e)
 			{
-				StellarView.LOGGER.error("Could not load " + location.toString(), e);
+				StellarView.LOGGER.error("Could not load {}", location.toString(), e);
 			}
 		}
 		
@@ -220,15 +216,12 @@ public class ResourcepackReloadListener
 			try
 			{
 				JsonObject json = GsonHelper.convertToJsonObject(element, "dust_cloud_info");
-				DustCloudInfo dustCloudInfo;
-				
-				dustCloudInfo = DustCloudInfo.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(loggedExceptionProvider("Failed to parse Dust Cloud Info"));
-				
+				DustCloudInfo dustCloudInfo = DustCloudInfo.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(loggedExceptionProvider("Failed to parse Dust Cloud Info"));
 				dustCloudTypes.put(location, dustCloudInfo);
 			}
-			catch(RuntimeException e)
+			catch(Exception e)
 			{
-				StellarView.LOGGER.error("Could not load " + location.toString(), e);
+				StellarView.LOGGER.error("Could not load {}", location.toString(), e);
 			}
 		}
 		
@@ -237,15 +230,12 @@ public class ResourcepackReloadListener
 			try
 			{
 				JsonObject json = GsonHelper.convertToJsonObject(element, "meteor_type");
-				MeteorEffect.MeteorType meteorType;
-				
-				meteorType = MeteorEffect.MeteorType.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(loggedExceptionProvider("Failed to parse Meteor Type"));
-				
+				MeteorEffect.MeteorType meteorType = MeteorEffect.MeteorType.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(loggedExceptionProvider("Failed to parse Meteor Type"));
 				meteorTypes.put(location, meteorType);
 			}
-			catch(RuntimeException e)
+			catch(Exception e)
 			{
-				StellarView.LOGGER.error("Could not load " + location.toString(), e);
+				StellarView.LOGGER.error("Could not load {}", location.toString(), e);
 			}
 		}
 		
@@ -266,25 +256,15 @@ public class ResourcepackReloadListener
 		{
 			try
 			{
+				JsonObject json = GsonHelper.convertToJsonObject(element, "star");
 				if(SOL_LOCATION.equals(location))
-				{
-					JsonObject json = GsonHelper.convertToJsonObject(element, "star");
-					Sol sol = Sol.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(loggedExceptionProvider("Failed to parse Sol"));
-					SpaceRenderer.addSol(sol);
-					
-					return sol;
-				}
+					return Sol.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(loggedExceptionProvider("Failed to parse Sol"));
 				else
-				{
-					JsonObject json = GsonHelper.convertToJsonObject(element, "star");
-					Star star = Star.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(loggedExceptionProvider("Failed to parse Star"));
-					
-					return star;
-				}
+					return Star.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(loggedExceptionProvider("Failed to parse Star"));
 			}
-			catch(RuntimeException e)
+			catch(Exception e)
 			{
-				StellarView.LOGGER.error("Could not load " + location.toString(), e);
+				StellarView.LOGGER.error("Could not load {}", location.toString(), e);
 			}
 			
 			return null;
@@ -295,13 +275,11 @@ public class ResourcepackReloadListener
 			try
 			{
 				JsonObject json = GsonHelper.convertToJsonObject(element, "black_hole");
-				BlackHole blackHole = BlackHole.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(loggedExceptionProvider("Failed to parse Black Hole"));
-				
-				return blackHole;
+				return BlackHole.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(loggedExceptionProvider("Failed to parse Black Hole"));
 			}
-			catch(RuntimeException e)
+			catch(Exception e)
 			{
-				StellarView.LOGGER.error("Could not load " + location.toString(), e);
+				StellarView.LOGGER.error("Could not load {}", location.toString(), e);
 			}
 			
 			return null;
@@ -312,13 +290,11 @@ public class ResourcepackReloadListener
 			try
 			{
 				JsonObject json = GsonHelper.convertToJsonObject(element, "planet");
-				Planet planet = Planet.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(loggedExceptionProvider("Failed to parse Planet"));
-				
-				return planet;
+				return Planet.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(loggedExceptionProvider("Failed to parse Planet"));
 			}
-			catch(RuntimeException e)
+			catch(Exception e)
 			{
-				StellarView.LOGGER.error("Could not load " + location.toString(), e);
+				StellarView.LOGGER.error("Could not load {}", location.toString(), e);
 			}
 			
 			return null;
@@ -328,24 +304,15 @@ public class ResourcepackReloadListener
 		{
 			try
 			{
+				JsonObject json = GsonHelper.convertToJsonObject(element, "moon");
 				if(LUNA_LOCATION.equals(location))
-				{
-					JsonObject json = GsonHelper.convertToJsonObject(element, "moon");
-					Luna luna = Luna.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(loggedExceptionProvider("Failed to parse Luna"));
-					
-					return luna;
-				}
+					return Luna.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(loggedExceptionProvider("Failed to parse Luna"));
 				else
-				{
-					JsonObject json = GsonHelper.convertToJsonObject(element, "moon");
-					Moon moon = Moon.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(loggedExceptionProvider("Failed to parse Moon"));
-					
-					return moon;
-				}
+					return Moon.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(loggedExceptionProvider("Failed to parse Moon"));
 			}
-			catch(RuntimeException e)
+			catch(Exception e)
 			{
-				StellarView.LOGGER.error("Could not load " + location.toString(), e);
+				StellarView.LOGGER.error("Could not load {}", location.toString(), e);
 			}
 			
 			return null;
@@ -355,14 +322,12 @@ public class ResourcepackReloadListener
 		{
 			try
 			{
-				
 				JsonObject json = GsonHelper.convertToJsonObject(element, "star_field");
-				StarField starField = StarField.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(loggedExceptionProvider("Failed to parse Star Field"));
-				return starField;
+				return StarField.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(loggedExceptionProvider("Failed to parse Star Field"));
 			}
-			catch(RuntimeException e)
+			catch(Exception e)
 			{
-				StellarView.LOGGER.error("Could not load " + location.toString(), e);
+				StellarView.LOGGER.error("Could not load {}", location.toString(), e);
 			}
 			
 			return null;
@@ -373,13 +338,11 @@ public class ResourcepackReloadListener
 			try
 			{
 				JsonObject json = GsonHelper.convertToJsonObject(element, "constellation");
-				Constellation constellation = Constellation.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(loggedExceptionProvider("Failed to parse Constellation"));
-				
-				return constellation;
+				return Constellation.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(loggedExceptionProvider("Failed to parse Constellation"));
 			}
-			catch(RuntimeException e)
+			catch(Exception e)
 			{
-				StellarView.LOGGER.error("Could not load " + location.toString(), e);
+				StellarView.LOGGER.error("Could not load {}", location.toString(), e);
 			}
 			
 			return null;
@@ -390,13 +353,11 @@ public class ResourcepackReloadListener
 			try
 			{
 				JsonObject json = GsonHelper.convertToJsonObject(element, "nebula");
-				Nebula nebula = Nebula.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(loggedExceptionProvider("Failed to parse Nebula"));
-				
-				return nebula;
+				return Nebula.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(loggedExceptionProvider("Failed to parse Nebula"));
 			}
-			catch(RuntimeException e)
+			catch(Exception e)
 			{
-				StellarView.LOGGER.error("Could not load " + location.toString(), e);
+				StellarView.LOGGER.error("Could not load {}", location.toString(), e);
 			}
 			
 			return null;
@@ -424,7 +385,7 @@ public class ResourcepackReloadListener
 					}
 					
 					if(spaceObject.renderedObject().getParent().isEmpty())
-						StellarView.LOGGER.error("Failed to find parent for " + spaceObject.toString());
+						StellarView.LOGGER.error("Failed to find parent for {}", spaceObject);
 				}
 				else
 					SpaceRenderer.addSpaceObjectRenderer(spaceObjectEntry.getValue());

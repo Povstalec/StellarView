@@ -13,7 +13,6 @@ import net.povstalec.stellarview.common.util.DustCloudInfo;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
-import org.lwjgl.opengl.GL;
 
 import java.util.Random;
 
@@ -67,10 +66,10 @@ public abstract class DustCloudData
 		@Nullable
 		protected CelestialInstancedBuffer instancedDustCloudBuffer;
 		
-		private double[][] dustCloudCoords;
+		private double[] dustCloudCoords;
 		private double[] dustCloudSizes;
 		
-		private short[][] dustCloudRGBA;
+		private short[] dustCloudRGBA;
 		
 		private double[] dustCloudRotations;
 		
@@ -78,12 +77,12 @@ public abstract class DustCloudData
 		
 		public LOD(int dustClouds)
 		{
-			this.dustCloudCoords = new double[dustClouds][3];
+			this.dustCloudCoords = new double[3 * dustClouds];
 			this.dustCloudSizes = new double[dustClouds];
 			
 			this.dustCloudRotations = new double[dustClouds];
 			
-			this.dustCloudRGBA = new short[dustClouds][4];
+			this.dustCloudRGBA = new short[4 * dustClouds];
 			
 			this.dustClouds = 0;
 		}
@@ -116,9 +115,9 @@ public abstract class DustCloudData
 		{
 			// Set up position
 			
-			dustCloudCoords[dustClouds][0] = x;
-			dustCloudCoords[dustClouds][1] = y;
-			dustCloudCoords[dustClouds][2] = z;
+			dustCloudCoords[3 * dustClouds] = x;
+			dustCloudCoords[3 * dustClouds + 1] = y;
+			dustCloudCoords[3 * dustClouds + 2] = z;
 			
 			Color.IntRGB rgb = dustCloudType.getRGB();
 			
@@ -130,7 +129,10 @@ public abstract class DustCloudData
 			
 			short alpha = dustCloudType.randomBrightness(random); // 0xAA is the default
 			
-			this.dustCloudRGBA[dustClouds] = new short[] {(short) rgb.red(), (short) rgb.green(), (short) rgb.blue(), alpha};
+			dustCloudRGBA[4 * dustClouds] = (short) rgb.red();
+			dustCloudRGBA[4 * dustClouds + 1] = (short) rgb.green();
+			dustCloudRGBA[4 * dustClouds + 2] = (short) rgb.blue();
+			dustCloudRGBA[4 * dustClouds + 3] = alpha;
 			
 			dustCloudRotations[dustClouds] = random.nextDouble() * Math.PI * 2.0D;
 			
@@ -198,10 +200,10 @@ public abstract class DustCloudData
 				double height = aLocation * cosRandom - bLocation * sinRandom;
 				double width = bLocation * cosRandom + aLocation * sinRandom;
 				
-				builder.addVertex((float) dustCloudCoords[i][0], (float) dustCloudCoords[i][1], (float) dustCloudCoords[i][2])
-						.setColor((byte) dustCloudRGBA[i][0], (byte) dustCloudRGBA[i][1], (byte) dustCloudRGBA[i][2], (byte) dustCloudRGBA[i][3]);
+				builder.addVertex((float) dustCloudCoords[3 * i], (float) dustCloudCoords[3 * i + 1], (float) dustCloudCoords[3 * i + 2])
+						.setColor((byte) dustCloudRGBA[4 * i], (byte) dustCloudRGBA[4 * i + 1], (byte) dustCloudRGBA[4 * i + 2], (byte) dustCloudRGBA[4 * i + 3]);
 				
-				StarData.addStarHeightWidthSizeDistance(builder, (float) height, (float) width, (float) dustCloudSizes[i], (float) StarField.LOD_DISTANCE_HIGH);
+				StarData.addStarHeightWidthSizeDistance(builder, (float) height, (float) width, (float) dustCloudSizes[i] * 4F, (float) StarField.LOD_DISTANCE_HIGH);
 				
 				builder.setUv( (float) (aLocation + 1) / 2F, (float) (bLocation + 1) / 2F);
 			}
@@ -214,14 +216,14 @@ public abstract class DustCloudData
 			for(int i = 0; i < dustClouds; i++)
 			{
 				// Star Position
-				instances[INSTANCE_SIZE * i] = (float) dustCloudCoords[i][0];
-				instances[INSTANCE_SIZE * i + 1] = (float) dustCloudCoords[i][1];
-				instances[INSTANCE_SIZE * i + 2] = (float) dustCloudCoords[i][2];
+				instances[INSTANCE_SIZE * i] = (float) dustCloudCoords[3 * i];
+				instances[INSTANCE_SIZE * i + 1] = (float) dustCloudCoords[3 * i + 1];
+				instances[INSTANCE_SIZE * i + 2] = (float) dustCloudCoords[3 * i + 2];
 				// Color
-				instances[INSTANCE_SIZE * i + 3] = (float) dustCloudRGBA[i][0] / 255F;
-				instances[INSTANCE_SIZE * i + 4] = (float) dustCloudRGBA[i][1] / 255F;
-				instances[INSTANCE_SIZE * i + 5] = (float) dustCloudRGBA[i][2] / 255F;
-				instances[INSTANCE_SIZE * i + 6] = (float) dustCloudRGBA[i][3] / 255F;
+				instances[INSTANCE_SIZE * i + 3] = (float) dustCloudRGBA[4 * i] / 255F;
+				instances[INSTANCE_SIZE * i + 4] = (float) dustCloudRGBA[4 * i + 1] / 255F;
+				instances[INSTANCE_SIZE * i + 5] = (float) dustCloudRGBA[4 * i + 2] / 255F;
+				instances[INSTANCE_SIZE * i + 6] = (float) dustCloudRGBA[4 * i + 3] / 255F;
 				// Rotation
 				instances[INSTANCE_SIZE * i + 7] = (float) dustCloudRotations[i];
 				// Size
@@ -344,15 +346,15 @@ public abstract class DustCloudData
 		
 		private void createStaticDustCloud(BufferBuilder builder, int i, SpaceCoords difference)
 		{
-			double x = dustCloudCoords[i][0] - difference.x().toLy();
-			double y = dustCloudCoords[i][1] - difference.y().toLy();
-			double z = dustCloudCoords[i][2] - difference.z().toLy();
+			double x = dustCloudCoords[3 * i] - difference.x().toLy();
+			double y = dustCloudCoords[3 * i + 1] - difference.y().toLy();
+			double z = dustCloudCoords[3 * i + 2] - difference.z().toLy();
 			
 			double distance = Math.sqrt(x * x + y * y + z * z); // Distance squared
 			
 			// COLOR START - Adjusts the brightness (alpha) of the star based on its distance
 			
-			short alpha = dustCloudRGBA[i][3];
+			short alpha = dustCloudRGBA[4 * i + 3];
 			alpha = (short) (255 * clampAlpha(alpha / 255D, distance));
 			
 			//if(alpha < 26)
@@ -476,7 +478,7 @@ public abstract class DustCloudData
 				
 				builder.addVertex((float) (starX + projectedX), (float) (starY + heightProjectionY), (float) (starZ + projectedZ))
 						.setUv( (float) (aLocation + 1) / 2F, (float) (bLocation + 1) / 2F)
-						.setColor((byte) dustCloudRGBA[i][0], (byte) dustCloudRGBA[i][1], (byte) dustCloudRGBA[i][2], alpha);
+						.setColor((byte) dustCloudRGBA[4 * i], (byte) dustCloudRGBA[4 * i + 1] , (byte) dustCloudRGBA[4 * i + 2], alpha);
 			}
 		}
 	}

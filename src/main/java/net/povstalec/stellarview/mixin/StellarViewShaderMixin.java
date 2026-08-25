@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.fabricmc.fabric.impl.client.rendering.FabricShaderProgram;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.resources.ResourceLocation;
+import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.client.render.shader.CelestialShaderInstance;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -21,7 +22,7 @@ public class StellarViewShaderMixin
 	@WrapOperation(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/resources/ResourceLocation;withDefaultNamespace(Ljava/lang/String;)Lnet/minecraft/resources/ResourceLocation;"), allow = 1)
 	private ResourceLocation modifyId(String id, Operation<ResourceLocation> original)
 	{
-		if ((Object) this instanceof CelestialShaderInstance)
+		if((Object) this instanceof CelestialShaderInstance && !StellarView.isKiltLoaded())
 			return FabricShaderProgram.rewriteAsId(id, name);
 		
 		return original.call(id);

@@ -2,7 +2,10 @@ package net.povstalec.stellarview.client.render.space_objects;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.BufferUploader;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.GameRenderer;
@@ -18,6 +21,8 @@ import org.joml.Vector3f;
 public abstract class TexturedObjectRenderer<T extends TexturedObject> extends SpaceObjectRenderer<T>
 {
 	public static final float DEFAULT_DISTANCE = 100.0F;
+	
+	protected SphericalCoords sphericalCoords = new SphericalCoords();
 	
 	public TexturedObjectRenderer(T texturedObject)
 	{
@@ -39,10 +44,7 @@ public abstract class TexturedObjectRenderer<T extends TexturedObject> extends S
 		SpaceCoords coords = renderedObject.getCoords().add(positionVector);
 		
 		// Subtract coords of this from View Center coords to get relative coords
-		SphericalCoords sphericalCoords = coords.skyPosition(level, viewCenter, partialTicks, true);
-		
-		lastDistance = sphericalCoords.r;
-		sphericalCoords.r = DEFAULT_DISTANCE;
+		lastDistance = coords.skyPosition(sphericalCoords, level, viewCenter, DEFAULT_DISTANCE, partialTicks, true);
 		
 		double childRenderDistance = renderedObject.getFadeOutHandler().getMaxChildRenderDistance().toKm();
 		if(childRenderDistance > lastDistance)
@@ -141,7 +143,7 @@ public abstract class TexturedObjectRenderer<T extends TexturedObject> extends S
 				return;
 		}
 		
-		renderOnSphere(textureLayer.rgba(), Color.FloatRGBA.DEFAULT, textureLayer.texture(), textureLayer.uv(),
+		renderOnSphere(textureLayer.rgba(), Color.FloatRGBA.WHITE, textureLayer.texture(), textureLayer.uv(),
 				level, camera, tesselator, lastMatrix, sphericalCoords,
 				ticks, distance, partialTicks, LightEffects.dayBrightness(viewCenter, size, ticks, level, camera, partialTicks) * (float) fade, size, (float) textureLayer.rotation(), textureLayer.shoulBlend());
 	}

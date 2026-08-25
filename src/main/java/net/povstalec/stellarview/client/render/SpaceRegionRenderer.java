@@ -1,12 +1,9 @@
 package net.povstalec.stellarview.client.render;
 
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.povstalec.stellarview.api.common.SpaceRegion;
-import net.povstalec.stellarview.api.common.space_objects.SpaceObject;
 import net.povstalec.stellarview.client.render.space_objects.GravityLenseRenderer;
 import net.povstalec.stellarview.client.render.space_objects.OrbitingObjectRenderer;
 import net.povstalec.stellarview.client.render.space_objects.SpaceObjectRenderer;
@@ -104,7 +101,7 @@ public class SpaceRegionRenderer
 		for(SpaceObjectRenderer<?> spaceObject : children)
 		{
 			if(spaceObject != masterParent) // Makes sure the master parent (usually galaxy) is rendered last, that way stars from other galaxies don't get rendered over planets
-				spaceObject.render(viewCenter, level, partialTicks, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog, tesselator, NULL_VECTOR, new AxisRotation());
+				spaceObject.render(viewCenter, level, partialTicks, modelViewMatrix, camera, projectionMatrix, isFoggy, setupFog, tesselator, NULL_VECTOR, AxisRotation.NONE);
 		}
 	}
 	
