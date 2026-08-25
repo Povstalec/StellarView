@@ -1,10 +1,12 @@
 package net.povstalec.stellarview.client.render.shader;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.asm.enumextension.EnumProxy;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.common.util.Lazy;
 import net.povstalec.stellarview.StellarView;
@@ -12,7 +14,7 @@ import net.povstalec.stellarview.StellarView;
 @EventBusSubscriber(modid = StellarView.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class StellarViewVertexFormat
 {
-	public static final Lazy<VertexFormatElement> ELEMENT_HEIGHT_WIDTH_SIZE_DISTANCE = register(VertexFormatElement.Type.FLOAT, VertexFormatElement.Usage.GENERIC, 4);
+	public static final Lazy<VertexFormatElement> ELEMENT_HEIGHT_WIDTH_SIZE_DISTANCE = register(VertexFormatElement.Type.FLOAT, UsageEnumProxies.HEIGHT_WIDTH_SIZE_DISTANCE_ENUM_PROXY.getValue(), 4);
 	
 	// NOTE: The order of elements very much MATTERS!!!
 	public static final Lazy<VertexFormat> STAR_POS_COLOR_LY = Lazy.of(() -> VertexFormat.builder()
@@ -37,7 +39,7 @@ public class StellarViewVertexFormat
 	{
         return Lazy.of(() -> {
 			final int index = (int) VertexFormatElement.ELEMENTS.stream().filter((el) -> el.usage().equals(usage)).count();
-			return VertexFormatElement.register(getNextVertexFormatElementId(), index, type, usage, count);
+			return VertexFormatElement.register(VertexFormatElement.findNextId(), index, type, usage, count);
 		});
 	}
 
@@ -50,15 +52,5 @@ public class StellarViewVertexFormat
 			STAR_POS_COLOR_LY.get();
 			STAR_POS_COLOR_LY_TEX.get();
 		});
-	}
-
-	private static int getNextVertexFormatElementId() {
-		int id = VertexFormatElement.ELEMENTS.size();
-		while (VertexFormatElement.byId(id) != null) {
-			if (++id >= VertexFormatElement.MAX_COUNT) {
-				throw new RuntimeException("Too many mods registering VertexFormatElements");
-			}
-		}
-		return id;
 	}
 }

@@ -12,6 +12,8 @@ credits="Noobly Walker, tehgreatdoge, Erdragh, tristankechlo"
 authors="${mod_authors}"
 description="""${mod_description}"""
 
+enumExtensions = "META-INF/enumextensions.json"
+
 [[accessTransformers]]
 file="META-INF/accesstransformer.cfg"
 
