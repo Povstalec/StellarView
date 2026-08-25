@@ -1,6 +1,5 @@
 package net.povstalec.stellarview.client.render.space_objects.resourcepack;
 
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.Tesselator;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -12,6 +11,7 @@ import net.povstalec.stellarview.common.util.Color;
 import net.povstalec.stellarview.common.util.SphericalCoords;
 import net.povstalec.stellarview.common.util.TextureLayer;
 import net.povstalec.stellarview.compatibility.enhancedcelestials.EnhancedCelestialsCompatibility;
+import net.povstalec.stellarview.compatibility.lunar.LunarCompatibility;
 import org.joml.Matrix4f;
 
 public class MoonRenderer<T extends Moon> extends PlanetRenderer<T>
@@ -24,21 +24,33 @@ public class MoonRenderer<T extends Moon> extends PlanetRenderer<T>
 	public float sizeMultiplier(ClientLevel level)
 	{
 		// If the Moon is being viewed from the correct dimension, make it larger
-		if(renderedObject.getCompatibility().isPresent() && renderedObject.getCompatibility().get().getEnhancedCelestialsMoonDimension().isPresent() &&
-				level.dimension().equals(renderedObject.getCompatibility().get().getEnhancedCelestialsMoonDimension().get()))
-			return EnhancedCelestialsCompatibility.getMoonSize(level, 20) / 20F;
-		
+		if(renderedObject.getCompatibility().isPresent()) {
+			/* Presumably, no one will have EnhancedCelestials AND Lunar.
+			They shouldn't be compatible with each other! -NW */
+			if(StellarView.isEnhancedCelestialsLoaded() && level.dimension().equals(renderedObject.getCompatibility().get().getEnhancedCelestialsMoonDimension().orElse(null))) {
+				return EnhancedCelestialsCompatibility.getMoonSize(level, 20) / 20F;
+			}
+			else if(StellarView.isLunarLoaded() && level.dimension().equals(renderedObject.getCompatibility().get().getLunarMoonDimension().orElse(null))) {
+				return LunarCompatibility.getMoonSize(20) / 20F;
+			}
+		}
 		return 1F;
 	}
 	
 	public Color.FloatRGBA moonRGBA(ClientLevel level, float partialTicks)
 	{
 		// If the Moon is being viewed from the correct dimension, color it differently
-		if(renderedObject.getCompatibility().isPresent() && renderedObject.getCompatibility().get().getEnhancedCelestialsMoonDimension().isPresent() &&
-				level.dimension().equals(renderedObject.getCompatibility().get().getEnhancedCelestialsMoonDimension().get()))
-			return EnhancedCelestialsCompatibility.getMoonColor(level, partialTicks);
-		
-		return new Color.FloatRGBA(1F, 1F, 1F);
+		if(renderedObject.getCompatibility().isPresent()) {
+			/* Presumably, no one will have EnhancedCelestials AND Lunar.
+			They shouldn't be compatible with each other! -NW */
+			if(StellarView.isEnhancedCelestialsLoaded() && level.dimension().equals(renderedObject.getCompatibility().get().getEnhancedCelestialsMoonDimension().orElse(null))) {
+				return EnhancedCelestialsCompatibility.getMoonColor(level, partialTicks);
+			}
+			else if(StellarView.isLunarLoaded() && level.dimension().equals(renderedObject.getCompatibility().get().getLunarMoonDimension().orElse(null))) {
+				return LunarCompatibility.getMoonColor();
+			}
+		}
+		return Color.FloatRGBA.WHITE;
 	}
 	
 	//============================================================================================

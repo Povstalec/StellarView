@@ -87,7 +87,7 @@ public abstract class GravityLenseRenderer<T extends GravityLense> extends StarL
 				return;
 		}
 		
-		renderOnSphere(textureLayer.rgba(), Color.FloatRGBA.DEFAULT, textureLayer.texture(), textureLayer.uv(),
+		renderOnSphere(textureLayer.rgba(), Color.FloatRGBA.WHITE, textureLayer.texture(), textureLayer.uv(),
 				level, camera, tesselator, lastMatrix, sphericalCoords,
 				ticks, distance, partialTicks, LightEffects.dayBrightness(viewCenter, size, ticks, level, camera, partialTicks) * (float) fade, size, (float) textureLayer.rotation(), textureLayer.shoulBlend());
 	}
