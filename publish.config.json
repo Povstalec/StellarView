@@ -1,0 +1,426 @@
+{
+	"environment": "Client Only",
+	"curseforge_enabled": true,
+	"modrinth_enabled": true,
+	"discord_enabled": true,
+	"discord_announce_nightly_builds": false,
+	"curseforge_project_slug": "stellarview",
+	"curseforge_project_id": "865273",
+	"modrinth_project_id": "Iairjv0A",
+	"default_release_type": "Stable",
+	"discord_webhook": {
+		"release_content": "<@&1110657909383245884>",
+		"release_embed": {
+			"description": "# Stellar View v{version} released!{changelog}",
+			"color": "#ffdc00",
+			"thumbnail": {
+				"url": "https://media.forgecdn.net/avatars/thumbnails/1161/674/256/256/638730475551156563.png"
+			}
+		},
+		"nightly_content": "# Experimental: Stellar ViewA new experimental build is available for download from GitHubv{version}"
+	},
+	"artifacts": {
+		"1.19.2-Forge": {
+			"file_glob": "build/libs/*-1.19.2-{version}-Forge.jar",
+			"branch": "stellarview-1.19.2",
+			"loaders": [
+				"Forge"
+			],
+			"game_versions": [
+				"1.19.2"
+			],
+			"java_version": "17",
+			"version_properties": [
+				{
+					"file": "gradle.properties",
+					"property": "mod_version"
+				},
+				{
+					"file": "src/main/resources/META-INF/mods.toml",
+					"property": "version"
+				}
+			],
+			"dependencies": {
+				"modrinth": [
+					{
+						"slug": "enhanced-celestials",
+						"id": "2rL16t1O",
+						"dependency_type": "Optional"
+					},
+					{
+						"slug": "aether",
+						"dependency_type": "Optional",
+						"id": "YhmgMVyu"
+					},
+					{
+						"slug": "lunar",
+						"dependency_type": "Optional",
+						"id": "PwhlJMsW"
+					}
+				],
+				"curseforge": [
+					{
+						"slug": "enhanced-celestials",
+						"dependency_type": "Optional"
+					},
+					{
+						"slug": "aether",
+						"dependency_type": "Optional"
+					},
+					{
+						"slug": "the-twilight-forest",
+						"dependency_type": "Optional"
+					},
+					{
+						"slug": "lunar",
+						"dependency_type": "Optional"
+					}
+				]
+			}
+		},
+		"1.19.3-Forge": {
+			"file_glob": "build/libs/*-1.19.3-{version}-Forge.jar",
+			"branch": "stellarview-1.19.3",
+			"loaders": [
+				"Forge"
+			],
+			"game_versions": [
+				"1.19.3"
+			],
+			"java_version": "17",
+			"version_properties": [
+				{
+					"file": "gradle.properties",
+					"property": "mod_version"
+				},
+				{
+					"file": "src/main/resources/META-INF/mods.toml",
+					"property": "version"
+				}
+			],
+			"dependencies": {
+				"modrinth": [
+					{
+						"slug": "enhanced-celestials",
+						"id": "2rL16t1O",
+						"dependency_type": "Optional"
+					},
+					{
+						"slug": "aether",
+						"dependency_type": "Optional",
+						"id": "YhmgMVyu"
+					}
+				],
+				"curseforge": [
+					{
+						"slug": "enhanced-celestials",
+						"dependency_type": "Optional"
+					},
+					{
+						"slug": "aether",
+						"dependency_type": "Optional"
+					},
+					{
+						"slug": "the-twilight-forest",
+						"dependency_type": "Optional"
+					}
+				]
+			}
+		},
+		"1.19.4-Forge": {
+			"file_glob": "build/libs/*-1.19.4-{version}-Forge.jar",
+			"branch": "stellarview-1.19.4",
+			"loaders": [
+				"Forge"
+			],
+			"game_versions": [
+				"1.19.4"
+			],
+			"java_version": "17",
+			"version_properties": [
+				{
+					"file": "gradle.properties",
+					"property": "mod_version"
+				},
+				{
+					"file": "src/main/resources/META-INF/mods.toml",
+					"property": "version"
+				}
+			],
+			"dependencies": {
+				"modrinth": [
+					{
+						"slug": "enhanced-celestials",
+						"id": "2rL16t1O",
+						"dependency_type": "Optional"
+					},
+					{
+						"slug": "aether",
+						"dependency_type": "Optional",
+						"id": "YhmgMVyu"
+					}
+				],
+				"curseforge": [
+					{
+						"slug": "enhanced-celestials",
+						"dependency_type": "Optional"
+					},
+					{
+						"slug": "aether",
+						"dependency_type": "Optional"
+					},
+					{
+						"slug": "the-twilight-forest",
+						"dependency_type": "Optional"
+					}
+				]
+			}
+		},
+		"1.20.1-Forge": {
+			"file_glob": "build/libs/*-1.20.1-{version}-Forge.jar",
+			"branch": "stellarview-1.20.1",
+			"loaders": [
+				"Forge"
+			],
+			"game_versions": [
+				"1.20.1"
+			],
+			"java_version": "17",
+			"version_properties": [
+				{
+					"file": "gradle.properties",
+					"property": "mod_version"
+				},
+				{
+					"file": "src/main/resources/META-INF/mods.toml",
+					"property": "version"
+				}
+			],
+			"dependencies": {
+				"modrinth": [
+					{
+						"slug": "enhanced-celestials",
+						"id": "2rL16t1O",
+						"dependency_type": "Optional"
+					},
+					{
+						"slug": "aether",
+						"dependency_type": "Optional",
+						"id": "YhmgMVyu"
+					},
+					{
+						"slug": "lunar",
+						"dependency_type": "Optional",
+						"id": "PwhlJMsW"
+					}
+				],
+				"curseforge": [
+					{
+						"slug": "enhanced-celestials",
+						"dependency_type": "Optional"
+					},
+					{
+						"slug": "aether",
+						"dependency_type": "Optional"
+					},
+					{
+						"slug": "the-twilight-forest",
+						"dependency_type": "Optional"
+					},
+					{
+						"slug": "lunar",
+						"dependency_type": "Optional"
+					}
+				]
+			}
+		},
+		"1.20.1-Fabric": {
+			"file_glob": "build/libs/*-1.20.1-{version}-Fabric.jar",
+			"branch": "stellarview-1.20.1",
+			"loaders": [
+				"Fabric"
+			],
+			"game_versions": [
+				"1.20.1"
+			],
+			"java_version": "17",
+			"version_properties": [
+				{
+					"file": "gradle.properties",
+					"property": "mod_version"
+				},
+				{
+					"file": "src/main/resources/META-INF/mods.toml",
+					"property": "version"
+				}
+			],
+			"dependencies": {
+				"modrinth": [
+					{
+						"dependency_type": "Required",
+						"slug": "modmenu",
+						"id": "mOgUt4GM"
+					},
+					{
+						"slug": "enhanced-celestials",
+						"id": "2rL16t1O",
+						"dependency_type": "Optional"
+					},
+					{
+						"slug": "aether",
+						"dependency_type": "Optional",
+						"id": "YhmgMVyu"
+					},
+					{
+						"slug": "lunar",
+						"dependency_type": "Optional",
+						"id": "PwhlJMsW"
+					}
+				],
+				"curseforge": [
+					{
+						"slug": "modmenu",
+						"dependency_type": "Required"
+					},
+					{
+						"slug": "enhanced-celestials",
+						"dependency_type": "Optional"
+					},
+					{
+						"slug": "aether",
+						"dependency_type": "Optional"
+					},
+					{
+						"slug": "the-twilight-forest",
+						"dependency_type": "Optional"
+					},
+					{
+						"slug": "lunar",
+						"dependency_type": "Optional"
+					}
+				]
+			}
+		},
+		"1.21.1-NeoForge": {
+			"file_glob": "build/libs/*-1.21.1-{version}-NeoForge.jar",
+			"branch": "main",
+			"loaders": [
+				"Neoforge"
+			],
+			"game_versions": [
+				"1.21.1"
+			],
+			"java_version": "21",
+			"version_properties": [
+				{
+					"file": "gradle.properties",
+					"property": "mod_version"
+				}
+			],
+			"dependencies": {
+				"modrinth": [
+					{
+						"slug": "enhanced-celestials",
+						"id": "2rL16t1O",
+						"dependency_type": "Optional"
+					},
+					{
+						"slug": "aether",
+						"dependency_type": "Optional",
+						"id": "YhmgMVyu"
+					},
+					{
+						"slug": "lunar",
+						"dependency_type": "Optional",
+						"id": "PwhlJMsW"
+					}
+				],
+				"curseforge": [
+					{
+						"slug": "enhanced-celestials",
+						"dependency_type": "Optional"
+					},
+					{
+						"slug": "aether",
+						"dependency_type": "Optional"
+					},
+					{
+						"slug": "the-twilight-forest",
+						"dependency_type": "Optional"
+					},
+					{
+						"slug": "lunar",
+						"dependency_type": "Optional"
+					}
+				]
+			}
+		},
+		"1.21.1-Fabric": {
+			"file_glob": "build/libs/*-1.21.1-{version}-Fabric.jar",
+			"branch": "main",
+			"loaders": [
+				"Fabric"
+			],
+			"game_versions": [
+				"1.21.1"
+			],
+			"java_version": "21",
+			"version_properties": [
+				{
+					"file": "gradle.properties",
+					"property": "mod_version"
+				}
+			],
+			"dependencies": {
+				"modrinth": [
+					{
+						"dependency_type": "Required",
+						"slug": "modmenu",
+						"id": "mOgUt4GM"
+					},
+					{
+						"slug": "enhanced-celestials",
+						"id": "2rL16t1O",
+						"dependency_type": "Optional"
+					},
+					{
+						"slug": "aether",
+						"dependency_type": "Optional",
+						"id": "YhmgMVyu"
+					},
+					{
+						"slug": "lunar",
+						"dependency_type": "Optional",
+						"id": "PwhlJMsW"
+					}
+				],
+				"curseforge": [
+					{
+						"slug": "modmenu",
+						"dependency_type": "Required"
+					},
+					{
+						"slug": "enhanced-celestials",
+						"dependency_type": "Optional"
+					},
+					{
+						"slug": "aether",
+						"dependency_type": "Optional"
+					},
+					{
+						"slug": "the-twilight-forest",
+						"dependency_type": "Optional"
+					},
+					{
+						"slug": "lunar",
+						"dependency_type": "Optional"
+					}
+				]
+			}
+		}
+	},
+	"common_dependencies": {
+		"curseforge": [],
+		"modrinth": []
+	}
+}
