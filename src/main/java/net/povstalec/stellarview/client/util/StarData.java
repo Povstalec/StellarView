@@ -110,25 +110,43 @@ public abstract class StarData
 		@Nullable
 		private CelestialInstancedBuffer instancedStarBuffer;
 		
-		private double[][] starCoords;
+		private double[] starCoords;
 		private double[] starSizes;
 		private double[] starDistances;
 		
-		private short[][] starRGBA;
+		private short[] starRGBA;
 		
 		private double[] starRotations;
 		
-		private int stars;
+		private int stars = 0;
 		
 		public LOD(int stars)
 		{
-			this.starCoords = new double[stars][3];
+			setupMemory(stars);
+		}
+		
+		public void setupMemory(int stars)
+		{
+			this.starCoords = new double[3 * stars];
 			this.starSizes = new double[stars];
 			this.starDistances = new double[stars];
 			
 			this.starRotations = new double[stars];
 			
-			this.starRGBA = new short[stars][4];
+			this.starRGBA = new short[4 * stars];
+			
+			this.stars = 0;
+		}
+		
+		public void cleanMemory()
+		{
+			this.starCoords = null;
+			this.starSizes = null;
+			this.starDistances = null;
+			
+			this.starRotations = null;
+			
+			this.starRGBA = null;
 			
 			this.stars = 0;
 		}
@@ -155,9 +173,9 @@ public abstract class StarData
 		public void newStar(Constellation.StarDefinition starDefinition, SpaceCoords offsetCoords)
 		{
 			// Set up position
-			starCoords[stars][0] = starDefinition.coords().x().toLy() - offsetCoords.x().toLy();
-			starCoords[stars][1] = starDefinition.coords().y().toLy() - offsetCoords.y().toLy();
-			starCoords[stars][2] = starDefinition.coords().z().toLy() - offsetCoords.z().toLy();
+			starCoords[3 * stars] = starDefinition.coords().x().toLy() - offsetCoords.x().toLy();
+			starCoords[3 * stars + 1] = starDefinition.coords().y().toLy() - offsetCoords.y().toLy();
+			starCoords[3 * stars + 2] = starDefinition.coords().z().toLy() - offsetCoords.z().toLy();
 			
 			// Set up size
 			starSizes[stars] = starDefinition.size(); // This randomizes the Star size
@@ -166,7 +184,10 @@ public abstract class StarData
 			starDistances[stars] = starDefinition.maxVisibleDistance();
 			
 			// Set up color and alpha
-			starRGBA[stars] = new short[] {(short) starDefinition.rgb().red(), (short) starDefinition.rgb().green(), (short) starDefinition.rgb().blue(), starDefinition.brightness()};
+			starRGBA[4 * stars] = (short) starDefinition.rgb().red();
+			starRGBA[4 * stars + 1] = (short) starDefinition.rgb().green();
+			starRGBA[4 * stars + 2] = (short) starDefinition.rgb().blue();
+			starRGBA[4 * stars + 3] = starDefinition.brightness();
 			
 			starRotations[stars] = starDefinition.rotation();
 			
@@ -185,9 +206,9 @@ public abstract class StarData
 		public void newStar(StarLike.StarType starType, Random random, double x, double y, double z)
 		{
 			// Set up position
-			starCoords[stars][0] = x;
-			starCoords[stars][1] = y;
-			starCoords[stars][2] = z;
+			starCoords[3 * stars] = x;
+			starCoords[3 * stars + 1] = y;
+			starCoords[3 * stars + 2] = z;
 			
 			starDistances[stars] = starType.getMaxVisibleDistance();
 			
@@ -198,7 +219,10 @@ public abstract class StarData
 			starSizes[stars] = starType.randomSize(random); // This randomizes the Star size
 			
 			// Set up color and alpha
-			starRGBA[stars] = new short[] {(short) rgb.red(), (short) rgb.green(), (short) rgb.blue(), alpha};
+			starRGBA[4 * stars] = (short) rgb.red();
+			starRGBA[4 * stars + 1] = (short) rgb.green();
+			starRGBA[4 * stars + 2] = (short) rgb.blue();
+			starRGBA[4 * stars + 3] = alpha;
 			
 			starRotations[stars] = random.nextDouble() * Math.PI * 2.0D;
 			
@@ -267,7 +291,7 @@ public abstract class StarData
 				double height = aLocation * cosRandom - bLocation * sinRandom;
 				double width = bLocation * cosRandom + aLocation * sinRandom;
 				
-				builder.vertex(starCoords[i][0], starCoords[i][1], starCoords[i][2]).color(starRGBA[i][0], starRGBA[i][1], starRGBA[i][2], starRGBA[i][3]);
+				builder.vertex(starCoords[3 * i], starCoords[3 * i + 1], starCoords[3 * i + 2]).color(starRGBA[4 * i], starRGBA[4 * i + 1], starRGBA[4 * i + 2], starRGBA[4 * i + 3]);
 				// These next few lines add a "custom" element defined as HeightWidthSize in StellarViewVertexFormat
 				builder.putFloat(HEIGHT_OFFSET, (float) height);
 				builder.putFloat(WIDTH_OFFSET, (float) width);
@@ -289,14 +313,14 @@ public abstract class StarData
 			for(int i = 0; i < stars; i++)
 			{
 				// Star Position
-				instances[INSTANCE_SIZE * i] = (float) starCoords[i][0];
-				instances[INSTANCE_SIZE * i + 1] = (float) starCoords[i][1];
-				instances[INSTANCE_SIZE * i + 2] = (float) starCoords[i][2];
+				instances[INSTANCE_SIZE * i] = (float) starCoords[3 * i];
+				instances[INSTANCE_SIZE * i + 1] = (float) starCoords[3 * i + 1];
+				instances[INSTANCE_SIZE * i + 2] = (float) starCoords[3 * i + 2];
 				// Color
-				instances[INSTANCE_SIZE * i + 3] = (float) starRGBA[i][0] / 255F;
-				instances[INSTANCE_SIZE * i + 4] = (float) starRGBA[i][1] / 255F;
-				instances[INSTANCE_SIZE * i + 5] = (float) starRGBA[i][2] / 255F;
-				instances[INSTANCE_SIZE * i + 6] = (float) starRGBA[i][3] / 255F;
+				instances[INSTANCE_SIZE * i + 3] = (float) starRGBA[4 * i] / 255F;
+				instances[INSTANCE_SIZE * i + 4] = (float) starRGBA[4 * i + 1] / 255F;
+				instances[INSTANCE_SIZE * i + 5] = (float) starRGBA[4 * i + 2] / 255F;
+				instances[INSTANCE_SIZE * i + 6] = (float) starRGBA[4 * i + 3] / 255F;
 				// Rotation
 				instances[INSTANCE_SIZE * i + 7] = (float) starRotations[i];
 				// Size
@@ -406,9 +430,9 @@ public abstract class StarData
 		
 		private void createStaticStar(BufferBuilder builder, boolean hasTexture, int i, SpaceCoords difference)
 		{
-			double x = starCoords[i][0] - difference.x().toLy();
-			double y = starCoords[i][1] - difference.y().toLy();
-			double z = starCoords[i][2] - difference.z().toLy();
+			double x = starCoords[3 * i] - difference.x().toLy();
+			double y = starCoords[3 * i + 1] - difference.y().toLy();
+			double z = starCoords[3 * i + 2] - difference.z().toLy();
 			
 			double distance = Math.sqrt(x * x + y * y + z * z); // Distance squared
 			
@@ -417,7 +441,7 @@ public abstract class StarData
 			
 			// COLOR START - Adjusts the brightness (alpha) of the star based on its distance
 			
-			short alpha = starRGBA[i][3];
+			short alpha = starRGBA[4 * i + 3];
 			short minAlpha = (short) (alpha / 10);
 			
 			// Stars appear dimmer the further away they are
@@ -548,12 +572,12 @@ public abstract class StarData
 				if(hasTexture)
 				{
 					if(VertexOrder.texColor())
-						builder.vertex(starX + projectedX, starY + heightProjectionY, starZ + projectedZ).uv( (float) (aLocation + 1) / 2F, (float) (bLocation + 1) / 2F).color(starRGBA[i][0], starRGBA[i][1] , starRGBA[i][2], alpha).endVertex();
+						builder.vertex(starX + projectedX, starY + heightProjectionY, starZ + projectedZ).uv( (float) (aLocation + 1) / 2F, (float) (bLocation + 1) / 2F).color(starRGBA[4 * i], starRGBA[4 * i + 1] , starRGBA[4 * i + 2], alpha).endVertex();
 					else
-						builder.vertex(starX + projectedX, starY + heightProjectionY, starZ + projectedZ).color(starRGBA[i][0], starRGBA[i][1] , starRGBA[i][2], alpha).uv( (float) (aLocation + 1) / 2F, (float) (bLocation + 1) / 2F).endVertex();
+						builder.vertex(starX + projectedX, starY + heightProjectionY, starZ + projectedZ).color(starRGBA[4 * i], starRGBA[4 * i + 1] , starRGBA[4 * i + 2], alpha).uv( (float) (aLocation + 1) / 2F, (float) (bLocation + 1) / 2F).endVertex();
 				}
 				else
-					builder.vertex(starX + projectedX, starY + heightProjectionY, starZ + projectedZ).color(starRGBA[i][0], starRGBA[i][1], starRGBA[i][2], alpha).endVertex();
+					builder.vertex(starX + projectedX, starY + heightProjectionY, starZ + projectedZ).color(starRGBA[4 * i], starRGBA[4 * i + 1], starRGBA[4 * i + 2], alpha).endVertex();
 			}
 		}
 	}

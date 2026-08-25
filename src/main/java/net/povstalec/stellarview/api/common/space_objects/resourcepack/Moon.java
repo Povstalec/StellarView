@@ -1,27 +1,19 @@
 package net.povstalec.stellarview.api.common.space_objects.resourcepack;
 
-import java.util.List;
-import java.util.Optional;
-
-import javax.annotation.Nullable;
-
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-
-import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
-import net.povstalec.stellarview.StellarView;
 import net.povstalec.stellarview.common.util.AxisRotation;
-import net.povstalec.stellarview.common.util.Color;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 import net.povstalec.stellarview.common.util.StellarCoordinates;
 import net.povstalec.stellarview.common.util.TextureLayer;
-import net.povstalec.stellarview.compatibility.enhancedcelestials.EnhancedCelestialsCompatibility;
-import net.povstalec.stellarview.compatibility.lunar.LunarCompatibility;
+
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * A subtype of planet that should be compatible with enhanced celestials
@@ -60,38 +52,6 @@ public class Moon extends Planet
 		return Optional.ofNullable(compatibility);
 	}
 	
-	public float sizeMultiplier(ClientLevel level)
-	{
-		// If the Moon is being viewed from the correct dimension, make it larger
-		if(getCompatibility().isPresent()) {
-			/* Presumably, no one will have EnhancedCelestials AND Lunar.
-			They shouldn't be compatible with each other! -NW */
-			if(StellarView.isEnhancedCelestialsLoaded() && level.dimension().equals(getCompatibility().get().enhancedCelestialsMoonDimension)) {
-				return EnhancedCelestialsCompatibility.getMoonSize(level, 20) / 20F;
-			}
-			else if(StellarView.isLunarLoaded() && level.dimension().equals(getCompatibility().get().lunarMoonDimension)) {
-				return LunarCompatibility.getMoonSize(20) / 20F;
-			}
-		}
-		return 1F;
-	}
-	
-	public Color.FloatRGBA moonRGBA(ClientLevel level, float partialTicks)
-	{
-		// If the Moon is being viewed from the correct dimension, color it differently
-		if(getCompatibility().isPresent()) {
-			/* Presumably, no one will have EnhancedCelestials AND Lunar.
-			They shouldn't be compatible with each other! -NW */
-			if(StellarView.isEnhancedCelestialsLoaded() && level.dimension().equals(getCompatibility().get().enhancedCelestialsMoonDimension)) {
-				return EnhancedCelestialsCompatibility.getMoonColor(level, partialTicks);
-			}
-			else if(StellarView.isLunarLoaded() && level.dimension().equals(getCompatibility().get().lunarMoonDimension)) {
-				return LunarCompatibility.getMoonColor();
-			}
-		}
-		return new Color.FloatRGBA(1F, 1F, 1F);
-	}
-	
 	//============================================================================================
 	//*************************************Saving and Loading*************************************
 	//============================================================================================
@@ -115,24 +75,29 @@ public class Moon extends Planet
 	
 	public static class Compatibility
 	{
+		@Nullable
 		private ResourceKey<Level> enhancedCelestialsMoonDimension;
 		private ResourceKey<Level> lunarMoonDimension;
 		
 		public static final Codec<Compatibility> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-				Level.RESOURCE_KEY_CODEC.fieldOf("enhanced_celestials_moon_dimension").forGetter(Compatibility::getEnhancedCelestialsMoonDimension),
-				Level.RESOURCE_KEY_CODEC.fieldOf("lunar_moon_dimension").forGetter(Compatibility::getLunarMoonDimension)
+				Level.RESOURCE_KEY_CODEC.optionalFieldOf("enhanced_celestials_moon_dimension").forGetter(Compatibility::getEnhancedCelestialsMoonDimension),
+				Level.RESOURCE_KEY_CODEC.optionalFieldOf("lunar_moon_dimension").forGetter(Compatibility::getLunarMoonDimension)
 				).apply(instance, Compatibility::new));
 		
-		public Compatibility(ResourceKey<Level> enhancedCelestialsMoonDimension, ResourceKey<Level> lunarMoonDimension)
+		public Compatibility(Optional<ResourceKey<Level>> enhancedCelestialsMoonDimension, Optional<ResourceKey<Level>> lunarMoonDimension)
 		{
-			this.enhancedCelestialsMoonDimension = enhancedCelestialsMoonDimension;
-			this.lunarMoonDimension = lunarMoonDimension;
+			this.enhancedCelestialsMoonDimension = enhancedCelestialsMoonDimension.orElse(null);
+			this.lunarMoonDimension = lunarMoonDimension.orElse(null);
 		}
 		
-		public ResourceKey<Level> getEnhancedCelestialsMoonDimension()
+		public Optional<ResourceKey<Level>> getEnhancedCelestialsMoonDimension()
 		{
-			return enhancedCelestialsMoonDimension;
+			return Optional.ofNullable(enhancedCelestialsMoonDimension);
 		}
-		public ResourceKey<Level> getLunarMoonDimension() { return lunarMoonDimension; }
+		
+		public Optional<ResourceKey<Level>> getLunarMoonDimension()
+		{
+			return Optional.ofNullable(lunarMoonDimension);
+		}
 	}
 }

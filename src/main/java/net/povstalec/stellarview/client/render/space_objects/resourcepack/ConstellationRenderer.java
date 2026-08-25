@@ -137,7 +137,7 @@ public class ConstellationRenderer<T extends Constellation> extends SpaceObjectR
 		
 		for(SpaceObjectRenderer<?> child : children)
 		{
-			child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, parentVector, new AxisRotation(0, 0, 0));
+			child.render(viewCenter, level, partialTicks, stack, camera, projectionMatrix, isFoggy, setupFog, bufferbuilder, parentVector, AxisRotation.NONE);
 		}
 	}
 }
