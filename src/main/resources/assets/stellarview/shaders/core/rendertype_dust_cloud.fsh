@@ -15,14 +15,15 @@ float hash(vec2 p) {
 }
 
 float dustCloud(vec2 uv) {
-    float r = length(uv - vec2(0.5, 0.5));
+    vec2 temp = uv - vec2(0.5, 0.5);
+    float rSquared = (temp.x * temp.x) + (temp.y * temp.y);
 
     float density;
 
-    if (r <= DustCloudParams.x) {
+    if (rSquared <= (DustCloudParams.x * DustCloudParams.x)) {
         density = 1.0;
     } else {
-        float x = r - DustCloudParams.x;
+        float x = sqrt(rSquared) - DustCloudParams.x;
         density = exp(-x * x / (2.0 * DustCloudParams.y * DustCloudParams.y));
     }
 
@@ -30,6 +31,7 @@ float dustCloud(vec2 uv) {
 
     return clamp(density + noise, 0.0, 1.0);
 }
+
 
 void main() {
     vec4 color = dustCloud(texCoord0) * vertexColor;
