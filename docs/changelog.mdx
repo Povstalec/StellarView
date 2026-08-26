@@ -1,5 +1,25 @@
 # Changelog
-The list of changes that have been made during development. This is not an exhaustive list, some changes were most certainly forgotten about.
+The list of changes that have been made during development. This is not an exhaustive list; some changes were most certainly forgotten about.
+
+## 0.5.3 - 2026 Aug 25
+### FORGE/NEO 1.19.2~1.19.4, 1.20.1, 1.21.1
+### FABRIC 1.20.1, 1.21.1
+- Changed:
+  - Made a bunch of small memory improvements
+- Fixed:
+  - Incorrect sunrise alpha
+  - Kilt crash (Fabric)
+  - Fixed issues with loading when another mod registered a VertexFormatElement with generic usage (NeoForge 1.21.1)
+
+## 0.5.2 - 2025 Nov 02
+### FORGE/NEO 1.19.2~1.19.4, 1.20.1, 1.21.1
+### FABRIC 1.20.1, 1.21.1
+- Added:
+  - "rotation" to UV field which accepts {0, 90, 180, 270, -90 } as values and rotates the rendered UV rendered on the quad by these values
+  - "fog" (respectively "height") field to View Center definition, which can control at which heights fog appears
+- Fixed:
+  - Synodic orbits not being present on some objects, like the Moon
+  - Incorrect UV of the End skybox
 
 ## 0.5.1 - 2025 Sep 21
 ### FORGE/NEO 1.19.2~1.19.4, 1.20.1, 1.21.1
@@ -17,7 +37,7 @@ The list of changes that have been made during development. This is not an exhau
   - Lunar compatibility
   - Stellar View is in the game profiler pie chart (do note that the game profiler can't track GPU, only CPU)
   - Config option to change the order of texture and color in vertices
-  - Config option to turn of instancing for stars and dust clouds, in case your GPU would rather die than instance a mesh as small as a quad
+  - Config option to turn off instancing for stars and dust clouds, in case your GPU would rather die than instance a mesh as small as a quad
   - `clamp_at_max_size` and `max_size` fields for texture layers of celestials
   - Hungarian and Japanese language support
   - Rigil Kentaurus b, an ice giant recently discovered around Rigil Kentaurus (Alpha Centauri A)
