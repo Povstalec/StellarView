@@ -102,6 +102,48 @@ public abstract class StellarViewConfigValue
 			return long_value.getDefault();
 		}
 	}
+
+	public static class DoubleValue
+	{
+		public ForgeConfigSpec.DoubleValue double_value;
+		protected double min;
+		protected double max;
+		
+		public DoubleValue(ForgeConfigSpec.Builder builder, String path, double defaultValue, double min, double max, String comment)
+		{
+			this.double_value = builder
+					.comment(comment)
+					.defineInRange(path, defaultValue, min, max);
+			this.min = min;
+			this.max = max;
+		}
+		
+		public void set(double value)
+		{
+			double_value.set(value);
+			double_value.save();
+		}
+		
+		public double get()
+		{
+			return double_value.get();
+		}
+		
+		public double getDefault()
+		{
+			return double_value.getDefault();
+		}
+		
+		public double getMin()
+		{
+			return this.min;
+		}
+		
+		public double getMax()
+		{
+			return this.max;
+		}
+	}
 	
 	public static class RGBAValue
 	{

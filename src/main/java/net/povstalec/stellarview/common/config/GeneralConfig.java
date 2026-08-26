@@ -25,6 +25,8 @@ public class GeneralConfig
 	public static StellarViewConfigValue.BooleanValue light_pollution;
 	public static StellarViewConfigValue.IntValue star_brightness;
 	public static StellarViewConfigValue.IntValue dust_cloud_brightness;
+  public static StellarViewConfigValue.DoubleValue dust_cloud_size;
+  public static StellarViewConfigValue.DoubleValue dust_cloud_falloff;
 	
 	public static void init(ForgeConfigSpec.Builder client)
 	{
@@ -93,5 +95,13 @@ public class GeneralConfig
 		dust_cloud_brightness = new StellarViewConfigValue.IntValue(client, "client.dust_cloud_brightness",
 				100, 0, 100,
 				"Specifies the base brightness of dust clouds and nebulae");
+
+    dust_cloud_size = new StellarViewConfigValue.DoubleValue(client, "client.dust_cloud_size",
+        0.125, 0, 0.25,
+        "Specifies how big the center of a dust cloud should be");
+
+    dust_cloud_falloff = new StellarViewConfigValue.DoubleValue(client, "client.dust_cloud_falloff",
+        0.1, 0, 0.25,
+        "Specifies how big the falloff of a dust cloud should be");
 	}
 }

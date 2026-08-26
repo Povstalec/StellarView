@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.povstalec.stellarview.client.render.SpaceRenderer;
 import net.povstalec.stellarview.client.render.shader.CelestialShaderInstance;
+import net.povstalec.stellarview.common.config.GeneralConfig;
 import net.povstalec.stellarview.common.util.SpaceCoords;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -226,6 +227,9 @@ public class CelestialBuffer implements AutoCloseable
 		
 		if(shaderInstance.LENSING_INTENSITY != null)
 			shaderInstance.LENSING_INTENSITY.set(SpaceRenderer.lensingIntensity);
+
+    if (shaderInstance.DUST_CLOUD_PARAMS != null)
+      shaderInstance.DUST_CLOUD_PARAMS.set(new float[] { (float)GeneralConfig.dust_cloud_size.get(), (float)GeneralConfig.dust_cloud_falloff.get() });
 		
 		_drawWithShader(modelViewMatrix, projectionMatrix, shaderInstance);
 	}

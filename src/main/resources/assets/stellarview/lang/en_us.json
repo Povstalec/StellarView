@@ -22,6 +22,8 @@
 	"gui.stellarview.light_pollution": "Light Pollution",
 	"gui.stellarview.star_brightness": "Star Brightness",
 	"gui.stellarview.dust_cloud_brightness": "Dust Cloud Brightness",
+	"gui.stellarview.dust_cloud_size": "Dust Cloud Size",
+	"gui.stellarview.dust_cloud_falloff": "Dust Cloud Falloff",
 	
 	"gui.stellarview.space_region_render_distance": "Space Region Render Distance",
 
