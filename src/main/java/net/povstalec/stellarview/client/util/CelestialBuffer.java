@@ -40,8 +40,13 @@ public class CelestialBuffer implements AutoCloseable
 		this.arrayObjectId = GlStateManager._glGenVertexArrays();
 	}
 	
-	public void upload(MeshData mesh)
+	public void upload(@Nullable MeshData mesh)
 	{
+		// A builder that emitted no vertices produces no mesh, which happens when every star in a buffer is
+		// culled. The buffer then stays empty and drawing it renders nothing.
+		if(mesh == null)
+			return;
+		
 		if(!this.isInvalid())
 		{
 			RenderSystem.assertOnRenderThread();
@@ -120,6 +125,9 @@ public class CelestialBuffer implements AutoCloseable
 	
 	public void draw()
 	{
+		if(this.mode == null) // Nothing has been uploaded yet
+			return;
+		
 		RenderSystem.drawElements(this.mode.asGLMode, this.indexCount, this.getIndexType().asGLType);
 	}
 	
